@@ -1,0 +1,191 @@
+//! Verify signatures over the raw request body before decoding a typed event.
+//!
+//! Accepts Polar's original UTF-8 signing key and Standard Webhooks base64
+//! keys. Timestamps must be within five minutes of the current time.
+
+use std::time::{SystemTime, UNIX_EPOCH};
+
+use base64::{
+    Engine,
+    engine::general_purpose::{STANDARD, STANDARD_NO_PAD},
+};
+use hmac::{Hmac, Mac};
+use reqwest::header::HeaderMap;
+use sha2::Sha256;
+
+#[path = "webhook_events.rs"]
+mod events;
+pub use events::WebhookEvent;
+
+const TOLERANCE_SECONDS: u64 = 300;
+
+#[derive(Debug, thiserror::Error)]
+pub enum WebhookError {
+    #[error("webhook signature verification failed: {0}")]
+    Verification(&'static str),
+    #[error("invalid webhook payload: {0}")]
+    Payload(#[source] serde_json::Error),
+    #[error("unsupported webhook event type: {0:?}")]
+    UnknownType(Option<String>),
+}
+
+/// Validate a raw webhook body and decode a payload for API version 2027-01.
+pub fn validate_event(
+    body: &[u8],
+    headers: &HeaderMap,
+    secret: &str,
+) -> Result<WebhookEvent, WebhookError> {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_err(|_| WebhookError::Verification("system clock precedes Unix epoch"))?
+        .as_secs();
+    validate_at(body, headers, secret, now)
+}
+
+fn header<'a>(headers: &'a HeaderMap, name: &'static str) -> Result<&'a str, WebhookError> {
+    headers
+        .get(name)
+        .and_then(|value| value.to_str().ok())
+        .filter(|s| !s.is_empty())
+        .ok_or(WebhookError::Verification("missing or invalid signature headers"))
+}
+
+fn decode_base64(value: &str) -> Option<Vec<u8>> {
+    STANDARD.decode(value).or_else(|_| STANDARD_NO_PAD.decode(value)).ok()
+}
+
+fn validate_at(
+    body: &[u8],
+    headers: &HeaderMap,
+    secret: &str,
+    now: u64,
+) -> Result<WebhookEvent, WebhookError> {
+    if secret.is_empty() {
+        return Err(WebhookError::Verification("empty signing secret"));
+    }
+    let id = header(headers, "webhook-id")?;
+    let timestamp = header(headers, "webhook-timestamp")?;
+    let signatures = header(headers, "webhook-signature")?;
+    let seconds: u64 =
+        timestamp.parse().map_err(|_| WebhookError::Verification("invalid timestamp"))?;
+    if seconds.abs_diff(now) > TOLERANCE_SECONDS {
+        return Err(WebhookError::Verification("timestamp outside the five-minute tolerance"));
+    }
+    let mut keys = vec![secret.as_bytes().to_vec()];
+    if let Some(key) = decode_base64(secret.strip_prefix("whsec_").unwrap_or(secret))
+        && !key.is_empty()
+        && key != keys[0]
+    {
+        keys.push(key);
+    }
+    let mut verified = false;
+    for candidate in signatures.split_ascii_whitespace() {
+        let Some(("v1", signature)) = candidate.split_once(',') else { continue };
+        let Some(signature) = decode_base64(signature) else { continue };
+        for key in &keys {
+            let mut mac = Hmac::<Sha256>::new_from_slice(key)
+                .map_err(|_| WebhookError::Verification("invalid signing key"))?;
+            mac.update(id.as_bytes());
+            mac.update(b".");
+            mac.update(seconds.to_string().as_bytes());
+            mac.update(b".");
+            mac.update(body);
+            // The HMAC implementation compares the MAC in constant time.
+            verified |= mac.verify_slice(&signature).is_ok();
+        }
+    }
+    if !verified {
+        return Err(WebhookError::Verification("no matching signature"));
+    }
+    let value = serde_json::from_slice(body).map_err(WebhookError::Payload)?;
+    WebhookEvent::parse(value)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const BODY: &[u8] = include_bytes!("tests/fixtures/customer-deleted.json");
+    const NOW: u64 = 1_767_225_600;
+    const SECRET: &str = "whsec_Zml4dHVyZS1zaWduaW5nLWtleS1kby1ub3QtdXNl";
+    // Computed by the scaffolder over the exact versioned fixture bytes.
+    const LEGACY: &str = "K1z6uhsGlZMGJuJOfsH366SI0Iu1HauKWXVD0G4iiks=";
+    const STANDARD_SIGNATURE: &str = "L5sonux3CAPUKFVTVtpKo80+pfQ1DhIq7RGIXKNnHIg=";
+
+    fn headers(signature: &str) -> HeaderMap {
+        let mut headers = HeaderMap::new();
+        headers.insert("webhook-id", "msg_fixture".parse().unwrap());
+        headers.insert("webhook-timestamp", NOW.to_string().parse().unwrap());
+        headers.insert("webhook-signature", signature.parse().unwrap());
+        headers
+    }
+
+    #[test]
+    fn accepts_both_signing_key_conventions_and_decodes_typed_event() {
+        for signature in [LEGACY, STANDARD_SIGNATURE] {
+            let event =
+                validate_at(BODY, &headers(&format!("v1,{signature}")), SECRET, NOW).unwrap();
+            assert_eq!(event.event_type(), "customer.deleted");
+            let WebhookEvent::CustomerDeleted(payload) = event else {
+                panic!("wrong event variant")
+            };
+            assert_eq!(payload.api_version, "2027-01");
+            assert_eq!(payload.timestamp.timestamp(), NOW as i64);
+        }
+    }
+
+    #[test]
+    fn accepts_rotated_signatures_and_unpadded_base64() {
+        let signature = STANDARD_SIGNATURE.trim_end_matches('=');
+        validate_at(BODY, &headers(&format!("v2,ignored v1,invalid v1,{signature}")), SECRET, NOW)
+            .unwrap();
+    }
+
+    #[test]
+    fn rejects_tampering_wrong_secret_missing_headers_and_stale_timestamps() {
+        let headers = headers(&format!("v1,{LEGACY}"));
+        let mut altered = BODY.to_vec();
+        altered.push(b' ');
+        for result in [
+            validate_at(&altered, &headers, SECRET, NOW),
+            validate_at(BODY, &headers, "wrong-secret", NOW),
+            validate_at(BODY, &headers, "", NOW),
+            validate_at(BODY, &HeaderMap::new(), SECRET, NOW),
+            validate_at(BODY, &headers, SECRET, NOW + 301),
+            validate_at(BODY, &headers, SECRET, NOW - 301),
+        ] {
+            assert!(matches!(result, Err(WebhookError::Verification(_))));
+        }
+        validate_at(BODY, &headers, SECRET, NOW + 300).unwrap();
+        validate_at(BODY, &headers, SECRET, NOW - 300).unwrap();
+    }
+
+    fn sign(body: &[u8]) -> HeaderMap {
+        let mut mac = Hmac::<Sha256>::new_from_slice(SECRET.as_bytes()).unwrap();
+        mac.update(format!("msg_fixture.{NOW}.").as_bytes());
+        mac.update(body);
+        headers(&format!("v1,{}", STANDARD.encode(mac.finalize().into_bytes())))
+    }
+
+    #[test]
+    fn distinguishes_signature_payload_and_unknown_type_errors() {
+        let invalid_json = b"not JSON";
+        assert!(matches!(
+            validate_at(invalid_json, &sign(invalid_json), SECRET, NOW),
+            Err(WebhookError::Payload(_))
+        ));
+        let unknown = br#"{"type":"future.event"}"#;
+        assert!(
+            matches!(validate_at(unknown, &sign(unknown), SECRET, NOW), Err(WebhookError::UnknownType(Some(event))) if event == "future.event")
+        );
+        let missing_fields = br#"{"type":"customer.deleted"}"#;
+        assert!(matches!(
+            validate_at(missing_fields, &sign(missing_fields), SECRET, NOW),
+            Err(WebhookError::Payload(_))
+        ));
+        assert!(matches!(
+            validate_at(unknown, &headers("v1,invalid"), SECRET, NOW),
+            Err(WebhookError::Verification(_))
+        ));
+    }
+}

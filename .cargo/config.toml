@@ -1,0 +1,6 @@
+[alias]
+sdkgen = "run -p sdkgen --"
+sdk-contracts = "run -p sdk-contracts --"
+
+[target.'cfg(all())']
+rustflags = ["-Znext-solver"]

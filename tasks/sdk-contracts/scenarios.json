@@ -1,0 +1,797 @@
+[
+  {
+    "name": "repeated-filters-and-metadata",
+    "actions": [
+      {
+        "operation": "products.list",
+        "query": {
+          "page": 1,
+          "limit": 10,
+          "sorting": [
+            "name",
+            "-created_at"
+          ],
+          "organization_id": [
+            "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+            "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+          ],
+          "id": [
+            "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+            "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+          ],
+          "benefit_id": [
+            "992fae2a-2a17-4b7a-8d9e-e287cf90131b"
+          ],
+          "metadata": {
+            "tier": [
+              "pro",
+              "team"
+            ],
+            "active": false,
+            "seats": 0
+          }
+        }
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "scalar-filter",
+    "actions": [
+      {
+        "operation": "products.list",
+        "query": {
+          "page": 1,
+          "limit": 10,
+          "sorting": [
+            "-created_at"
+          ],
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+        }
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "empty-filters",
+    "actions": [
+      {
+        "operation": "products.list",
+        "query": {
+          "page": 1,
+          "limit": 10,
+          "sorting": [],
+          "id": [],
+          "organization_id": [],
+          "benefit_id": [],
+          "metadata": {}
+        }
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "null-filters",
+    "actions": [
+      {
+        "operation": "products.list",
+        "query": {
+          "page": 1,
+          "limit": 10,
+          "sorting": [
+            "-created_at"
+          ],
+          "organization_id": null,
+          "id": null,
+          "query": null,
+          "metadata": null
+        }
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "escaping",
+    "actions": [
+      {
+        "operation": "products.list",
+        "query": {
+          "page": 1,
+          "limit": 10,
+          "sorting": [
+            "-created_at"
+          ],
+          "query": "café / & + ? = #",
+          "metadata": {
+            "plan name": "a&b+c / café"
+          }
+        }
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "false-zero-empty",
+    "actions": [
+      {
+        "operation": "products.list",
+        "query": {
+          "page": 0,
+          "limit": 0,
+          "sorting": [],
+          "query": "",
+          "is_archived": false,
+          "is_recurring": false,
+          "metadata": {
+            "flag": false,
+            "count": 0,
+            "empty": ""
+          }
+        }
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "default-query-difference",
+    "actions": [
+      {
+        "operation": "products.list",
+        "query": {}
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "items": [],
+          "pagination": {
+            "total_count": 0,
+            "max_page": 1
+          }
+        }
+      }
+    ],
+    "known_default_query": true
+  },
+  {
+    "name": "customer-native-types",
+    "actions": [
+      {
+        "operation": "customers.get",
+        "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b"
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "created_at": "2026-01-01T00:00:00Z",
+          "modified_at": null,
+          "metadata": {},
+          "email": "customer@example.com",
+          "email_verified": true,
+          "type": "individual",
+          "name": null,
+          "billing_name": null,
+          "billing_address": null,
+          "tax_id": null,
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737",
+          "deleted_at": null,
+          "first_user_event_at": null,
+          "avatar_url": null
+        }
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "email": "customer@example.com",
+          "name": null,
+          "created_at": "2026-01-01T00:00:00Z",
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+        }
+      }
+    ]
+  },
+  {
+    "name": "external-id-escaping",
+    "actions": [
+      {
+        "operation": "customers.get_external",
+        "id": "acct/café &+?#"
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "created_at": "2026-01-01T00:00:00Z",
+          "modified_at": null,
+          "metadata": {},
+          "email": "customer@example.com",
+          "email_verified": true,
+          "type": "individual",
+          "name": null,
+          "billing_name": null,
+          "billing_address": null,
+          "tax_id": null,
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737",
+          "deleted_at": null,
+          "first_user_event_at": null,
+          "avatar_url": null
+        }
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "email": "customer@example.com",
+          "name": null,
+          "created_at": "2026-01-01T00:00:00Z",
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+        }
+      }
+    ]
+  },
+  {
+    "name": "presence-absent",
+    "actions": [
+      {
+        "operation": "customers.update",
+        "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+        "body": {}
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "created_at": "2026-01-01T00:00:00Z",
+          "modified_at": null,
+          "metadata": {},
+          "email": "customer@example.com",
+          "email_verified": true,
+          "type": "individual",
+          "name": null,
+          "billing_name": null,
+          "billing_address": null,
+          "tax_id": null,
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737",
+          "deleted_at": null,
+          "first_user_event_at": null,
+          "avatar_url": null
+        }
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "email": "customer@example.com",
+          "name": null,
+          "created_at": "2026-01-01T00:00:00Z",
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+        }
+      }
+    ]
+  },
+  {
+    "name": "presence-null",
+    "actions": [
+      {
+        "operation": "customers.update",
+        "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+        "body": {
+          "name": null
+        }
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "created_at": "2026-01-01T00:00:00Z",
+          "modified_at": null,
+          "metadata": {},
+          "email": "customer@example.com",
+          "email_verified": true,
+          "type": "individual",
+          "name": null,
+          "billing_name": null,
+          "billing_address": null,
+          "tax_id": null,
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737",
+          "deleted_at": null,
+          "first_user_event_at": null,
+          "avatar_url": null
+        }
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "email": "customer@example.com",
+          "name": null,
+          "created_at": "2026-01-01T00:00:00Z",
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+        }
+      }
+    ]
+  },
+  {
+    "name": "presence-value",
+    "actions": [
+      {
+        "operation": "customers.update",
+        "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+        "body": {
+          "name": "Ada"
+        }
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "created_at": "2026-01-01T00:00:00Z",
+          "modified_at": null,
+          "metadata": {},
+          "email": "customer@example.com",
+          "email_verified": true,
+          "type": "individual",
+          "name": "Ada",
+          "billing_name": null,
+          "billing_address": null,
+          "tax_id": null,
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737",
+          "deleted_at": null,
+          "first_user_event_at": null,
+          "avatar_url": null
+        }
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "email": "customer@example.com",
+          "name": "Ada",
+          "created_at": "2026-01-01T00:00:00Z",
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+        }
+      }
+    ]
+  },
+  {
+    "name": "delete-empty-response",
+    "actions": [
+      {
+        "operation": "customers.delete",
+        "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+        "query": {
+          "anonymize": false
+        }
+      }
+    ],
+    "responses": [
+      {
+        "status": 204
+      }
+    ],
+    "expected": [
+      {
+        "ok": null
+      }
+    ]
+  },
+  {
+    "name": "token-override-isolation",
+    "actions": [
+      {
+        "operation": "customers.get",
+        "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+        "access_token": "request-token"
+      },
+      {
+        "operation": "customers.get",
+        "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b"
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "created_at": "2026-01-01T00:00:00Z",
+          "modified_at": null,
+          "metadata": {},
+          "email": "customer@example.com",
+          "email_verified": true,
+          "type": "individual",
+          "name": null,
+          "billing_name": null,
+          "billing_address": null,
+          "tax_id": null,
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737",
+          "deleted_at": null,
+          "first_user_event_at": null,
+          "avatar_url": null
+        }
+      },
+      {
+        "status": 200,
+        "body": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "created_at": "2026-01-01T00:00:00Z",
+          "modified_at": null,
+          "metadata": {},
+          "email": "customer@example.com",
+          "email_verified": true,
+          "type": "individual",
+          "name": null,
+          "billing_name": null,
+          "billing_address": null,
+          "tax_id": null,
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737",
+          "deleted_at": null,
+          "first_user_event_at": null,
+          "avatar_url": null
+        }
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "email": "customer@example.com",
+          "name": null,
+          "created_at": "2026-01-01T00:00:00Z",
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+        }
+      },
+      {
+        "ok": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "email": "customer@example.com",
+          "name": null,
+          "created_at": "2026-01-01T00:00:00Z",
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+        }
+      }
+    ],
+    "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+  },
+  {
+    "name": "typed-validation-error",
+    "actions": [
+      {
+        "operation": "products.list",
+        "query": {
+          "page": 1,
+          "limit": 10,
+          "sorting": [
+            "-created_at"
+          ]
+        }
+      }
+    ],
+    "responses": [
+      {
+        "status": 422,
+        "body": {
+          "detail": [
+            {
+              "loc": [
+                "query",
+                "limit"
+              ],
+              "msg": "Input should be greater than 0",
+              "type": "greater_than"
+            }
+          ]
+        }
+      }
+    ],
+    "expected": [
+      {
+        "error": {
+          "kind": "http",
+          "status": 422,
+          "body": {
+            "detail": [
+              {
+                "loc": [
+                  "query",
+                  "limit"
+                ],
+                "msg": "Input should be greater than 0",
+                "type": "greater_than"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "rate-limit",
+    "actions": [
+      {
+        "operation": "customers.get",
+        "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b"
+      }
+    ],
+    "responses": [
+      {
+        "status": 429,
+        "body": {
+          "detail": "Too many requests"
+        },
+        "headers": {
+          "Retry-After": "2"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "error": {
+          "kind": "http",
+          "status": 429,
+          "retry_after": 2
+        }
+      }
+    ]
+  },
+  {
+    "name": "server-error",
+    "actions": [
+      {
+        "operation": "customers.get",
+        "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b"
+      }
+    ],
+    "responses": [
+      {
+        "status": 500,
+        "body": {
+          "detail": "Internal server error"
+        }
+      }
+    ],
+    "expected": [
+      {
+        "error": {
+          "kind": "http",
+          "status": 500
+        }
+      }
+    ]
+  },
+  {
+    "name": "timeout-override-isolation",
+    "actions": [
+      {
+        "operation": "customers.get",
+        "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+        "timeout_ms": 2000
+      },
+      {
+        "operation": "customers.get",
+        "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b"
+      }
+    ],
+    "responses": [
+      {
+        "status": 200,
+        "body": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "created_at": "2026-01-01T00:00:00Z",
+          "modified_at": null,
+          "metadata": {},
+          "email": "customer@example.com",
+          "email_verified": true,
+          "type": "individual",
+          "name": null,
+          "billing_name": null,
+          "billing_address": null,
+          "tax_id": null,
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737",
+          "deleted_at": null,
+          "first_user_event_at": null,
+          "avatar_url": null
+        },
+        "delay_ms": 600
+      },
+      {
+        "status": 200,
+        "body": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "created_at": "2026-01-01T00:00:00Z",
+          "modified_at": null,
+          "metadata": {},
+          "email": "customer@example.com",
+          "email_verified": true,
+          "type": "individual",
+          "name": null,
+          "billing_name": null,
+          "billing_address": null,
+          "tax_id": null,
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737",
+          "deleted_at": null,
+          "first_user_event_at": null,
+          "avatar_url": null
+        },
+        "delay_ms": 600
+      }
+    ],
+    "expected": [
+      {
+        "ok": {
+          "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+          "email": "customer@example.com",
+          "name": null,
+          "created_at": "2026-01-01T00:00:00Z",
+          "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+        }
+      },
+      {
+        "error": {
+          "kind": "timeout"
+        }
+      }
+    ],
+    "timeout_ms": 250
+  }
+]

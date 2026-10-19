@@ -1,0 +1,115 @@
+name: Generate Polar SDK updates
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: polar-sdk-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: blacksmith-2vcpu-ubuntu-2404
+    timeout-minutes: 60
+    env:
+      CARGO_INCREMENTAL: '0'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          submodules: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install workspace Rust toolchain
+        run: rustup show
+      - name: Install pinned generator
+        run: cargo install --locked openapi-to-rust --version 0.22.0
+      - name: Update Polar reference
+        run: |
+          cp sdkgen.lock.json "$RUNNER_TEMP/sdk-before.json"
+          git -C vendor/polar fetch --depth=1 origin main
+          git -C vendor/polar checkout --detach FETCH_HEAD
+          # Contracts verify the submodule against the parent index.
+          git add vendor/polar
+      - name: Discover, generate, and validate SDKs
+        run: cargo run --locked -p sdkgen --
+      - name: Classify API content changes
+        id: changes
+        run: cargo run --locked -p sdk-classify -- "$RUNNER_TEMP/sdk-before.json" sdkgen.lock.json
+      - name: Prepare commit message and PR body
+        id: commit-message
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          COMMIT_TYPE: ${{ steps.changes.outputs.kind }}
+          CHORE_PR_BODY: |
+            Updates the pinned `vendor/polar` submodule to upstream `main` and
+            refreshes `sdkgen.lock.json`.
+
+            API specification content hashes are unchanged.
+
+            Validation passed: compiler checks, SDK tests, API-version feature
+            matrix, formatting, Clippy, and Rust/TypeScript REST contracts.
+
+            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SDK_PR_BODY: |
+            Updates the pinned Polar reference and generated SDKs.
+
+            API content classification: `${{ steps.changes.outputs.kind }}`.
+
+            Validation passed: compiler checks, SDK tests, API-version feature
+            matrix, formatting, Clippy, and Rust/TypeScript REST contracts.
+
+            API versions, source hashes, and validation fingerprints are
+            recorded in `sdkgen.lock.json`.
+
+            Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [[ "$COMMIT_TYPE" == 'chore' ]]; then
+            echo 'message=chore(sdk): update Polar submodule' >> "$GITHUB_OUTPUT"
+            printf '%s\n' "$CHORE_PR_BODY" > "$RUNNER_TEMP/sdk-pr-body.md"
+          else
+            git diff --stat HEAD > "$RUNNER_TEMP/sdk-changes.txt"
+            git diff HEAD -- sdkgen.lock.json >> "$RUNNER_TEMP/sdk-changes.txt"
+            git ls-files --others --exclude-standard >> "$RUNNER_TEMP/sdk-changes.txt"
+            cargo run --locked -p commit-message < "$RUNNER_TEMP/sdk-changes.txt"
+            printf '%s\n' "$SDK_PR_BODY" > "$RUNNER_TEMP/sdk-pr-body.md"
+          fi
+      - name: Create or update SDK pull request
+        id: pull-request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          branch: automation/sdk-update
+          delete-branch: true
+          commit-message: ${{ steps.commit-message.outputs.message }}
+          title: ${{ steps.commit-message.outputs.message }}
+          body-path: ${{ runner.temp }}/sdk-pr-body.md
+      - name: Merge validated chore update
+        if: >-
+          steps.changes.outputs.kind == 'chore' &&
+          steps.pull-request.outputs.pull-request-number &&
+          steps.pull-request.outputs.pull-request-operation != 'closed'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pull-request.outputs.pull-request-number }}
+          PR_HEAD_SHA: ${{ steps.pull-request.outputs.pull-request-head-sha }}
+        run: |
+          # Merge only this validated head; GitHub still enforces branch protection.
+          test -n "$PR_HEAD_SHA"
+          merged=$(gh api --method PUT "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/merge" \
+            -f sha="$PR_HEAD_SHA" -f merge_method=squash --jq '.merged')
+          [[ "$merged" == true ]]
+      - name: Upload conformance reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk-generation-contracts
+          path: target/sdk-contracts/**/report.json
+          if-no-files-found: warn

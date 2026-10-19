@@ -1,0 +1,28 @@
+[package]
+name = "sdkgen"
+version = "0.0.0"
+edition = "2024"
+license.workspace = true
+publish = false
+
+[[bin]]
+name = "sdkgen"
+test = true
+doctest = false
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+handlebars = "6"
+indexmap = { version = "2", features = ["serde"] }
+prettyplease = "0.2"
+quote = "1"
+regex = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+syn = { version = "2", features = ["full", "visit-mut"] }
+tempfile = "3"
+sha2 = "0.10"
+toml_edit = "0.22"
+hmac = "0.12"
+base64 = "0.22"

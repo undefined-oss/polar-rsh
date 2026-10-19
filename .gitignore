@@ -1,0 +1,54 @@
+*
+# common files between crates and root directory
+!.gitignore
+!.gitmodules
+!.gitattributes
+!justfile
+!Cargo.toml
+!Cargo.lock
+!README.md
+!CHANGELOG.md
+!release-plz.toml
+!rustfmt.toml
+!compose.yaml
+!.cargo/
+!.cargo/config.toml
+!.config/
+!.config/nextest.toml
+!rust-toolchain.toml
+!Dockerfile
+!Dockerfile.cd
+!.dockerignore
+!scripts/
+!scripts/docker-build.sh
+!scripts/docker-smoke-test.sh
+!LICENSE-APACHE
+!LICENSE-MIT
+
+# GitHub Actions workflows
+!.github/
+!.github/workflows/
+!.github/workflows/*.yml
+
+# SDK sources and generated version data
+!apps/
+!apps/**/
+!apps/**/*.rs
+
+# Workspace development tasks and their code-generation templates.
+!tasks/
+!tasks/**/
+!tasks/**/*.rs
+!tasks/**/Cargo.toml
+!tasks/**/README.md
+!tasks/**/*.hbs
+!tasks/sdk-contracts/**/*.json
+!tasks/sdk-contracts/**/*.mjs
+
+# Pinned upstream reference for SDK contract tests.
+!vendor/
+!vendor/polar
+!sdkgen.lock.json
+!apps/**/*.json
+!apps/**/openapi-to-rust.toml
+!apps/**/REQUIRED_DEPS.toml

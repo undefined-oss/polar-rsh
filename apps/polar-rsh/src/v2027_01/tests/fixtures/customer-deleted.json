@@ -1,0 +1,22 @@
+{
+  "type": "customer.deleted",
+  "timestamp": "2026-01-01T00:00:00Z",
+  "api_version": "2027-01",
+  "data": {
+    "id": "992fae2a-2a17-4b7a-8d9e-e287cf90131b",
+    "created_at": "2026-01-01T00:00:00Z",
+    "modified_at": null,
+    "metadata": {},
+    "email": "customer@example.com",
+    "email_verified": true,
+    "type": "individual",
+    "name": null,
+    "billing_name": null,
+    "billing_address": null,
+    "tax_id": null,
+    "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737",
+    "deleted_at": null,
+    "first_user_event_at": null,
+    "avatar_url": null
+  }
+}

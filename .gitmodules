@@ -1,0 +1,3 @@
+[submodule "vendor/polar"]
+	path = vendor/polar
+	url = https://github.com/polarsource/polar.git

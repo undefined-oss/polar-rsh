@@ -1,0 +1,5 @@
+[workspace]
+# Publish only after merging a release PR.
+release_always = false
+# Verify polar-rsh with its API version features enabled.
+publish_all_features = true

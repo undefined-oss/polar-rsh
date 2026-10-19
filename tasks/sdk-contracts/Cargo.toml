@@ -1,0 +1,25 @@
+[package]
+name = "sdk-contracts"
+version = "0.0.0"
+edition = "2024"
+license.workspace = true
+publish = false
+
+[features]
+default = ["2026-04"]
+2026-04 = ["polar-rsh/2026-04"]
+2026-10 = ["polar-rsh/2026-10"]
+2027-01 = ["polar-rsh/2027-01"]
+
+[dependencies]
+polar-rsh = { path = "../../apps/polar-rsh", default-features = false }
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+percent-encoding = "2"
+reqwest = { version = "0.13", default-features = false, features = ["rustls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "io-util", "process", "time"] }
+url = "2"
+sdkgen = { path = "../sdkgen" }
+presence-rs = { version = "=0.2.0", features = ["serde"] }

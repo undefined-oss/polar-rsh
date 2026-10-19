@@ -1,0 +1,4739 @@
+{
+  "overlay": "1.1.0",
+  "info": {
+    "title": "Polar query parameters for Rust code generation",
+    "version": "1.0.0"
+  },
+  "actions": [
+    {
+      "target": "$['paths'][\"/v1/organizations/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/organizations/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Filter by slug.",
+          "title": "Slug"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/organizations/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/organizations/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/OrganizationSortProperty"
+          },
+          "default": [
+            "created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/organizations/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The product ID."
+          },
+          "title": "ProductID Filter",
+          "description": "Filter by product ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "The customer external ID."
+          },
+          "title": "ExternalCustomerID Filter",
+          "description": "Filter by customer external ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The discount ID."
+          },
+          "title": "DiscountID Filter",
+          "description": "Filter by discount ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "boolean",
+          "description": "Filter by active or inactive subscription.",
+          "deprecated": true,
+          "title": "Active"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/SubscriptionStatus"
+          },
+          "title": "Status Filter",
+          "description": "Filter by subscription status."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][7]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][7]",
+      "update": {
+        "schema": {
+          "type": "boolean",
+          "description": "Filter by subscriptions that are set to cancel at period end.",
+          "title": "Cancel At Period End"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][8]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][8]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CustomerCancellationReason"
+          },
+          "title": "CustomerCancellationReason Filter",
+          "description": "Filter by customer cancellation reason."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][8]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][9]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][9]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Filter by cancellation date (after or equal to).",
+          "title": "Canceled At After"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][10]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][10]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Filter by cancellation date (before or equal to).",
+          "title": "Canceled At Before"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][11]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][11]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Only include subscriptions started after this date.",
+          "title": "Started After"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][12]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][12]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Only include subscriptions started before this date.",
+          "title": "Started Before"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][15]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][15]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/SubscriptionSortProperty"
+          },
+          "default": [
+            "-started_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][15]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The product ID."
+          },
+          "title": "ProductID Filter",
+          "description": "Filter by product ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/SubscriptionStatus"
+          },
+          "title": "Status Filter",
+          "description": "Filter by subscription status."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "boolean",
+          "description": "Filter by subscriptions that are set to cancel at period end.",
+          "title": "Cancel At Period End"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Only include subscriptions started after this date. Must include a UTC offset.",
+          "title": "Started After"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Only include subscriptions started before this date. Must include a UTC offset.",
+          "title": "Started Before"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][7]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][7]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/SubscriptionExportColumn"
+          },
+          "description": "Columns to include in the CSV, in order. Defaults to email, started_at, product, amount, currency, status and recurring_interval.",
+          "title": "Columns"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][7]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/BenefitType"
+          },
+          "title": "BenefitType Filter",
+          "description": "Filter by benefit type."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The benefit ID."
+          },
+          "title": "Filter IDs",
+          "description": "Filter by benefit IDs."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "ExternalID Filter",
+          "description": "Filter by benefit external ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The benefit ID."
+          },
+          "title": "Exclude IDs",
+          "description": "Exclude benefits with these IDs."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "title": "Query",
+          "description": "Filter by description."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][8]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][8]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/BenefitSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/\"][\"get\"]['parameters'][8]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/{id}/grants\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/{id}/grants\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "boolean",
+          "description": "Filter by granted status. If `true`, only granted benefits will be returned. If `false`, only revoked benefits will be returned. ",
+          "title": "Is Granted"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/{id}/grants\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/{id}/grants\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/{id}/grants\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/{id}/grants\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/{id}/grants\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4"
+          },
+          "title": "MemberID Filter",
+          "description": "Filter by member."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefits/{id}/grants\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "The customer external ID."
+          },
+          "title": "ExternalCustomerID Filter",
+          "description": "Filter by customer external ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "ExternalBenefitID Filter",
+          "description": "Filter by benefit external ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4"
+          },
+          "title": "MemberID Filter",
+          "description": "Filter by member ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "The member external ID."
+          },
+          "title": "ExternalMemberID Filter",
+          "description": "Filter by member external ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "boolean",
+          "description": "Filter by granted status. If `true`, only granted benefits will be returned. If `false`, only revoked benefits will be returned. ",
+          "title": "Is Granted"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][9]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][9]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/BenefitGrantSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/benefit-grants/\"][\"get\"]['parameters'][9]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/endpoints\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/endpoints\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "description": "Filter by organization ID.",
+          "title": "Organization Id"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/endpoints\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4"
+          },
+          "description": "Filter by webhook endpoint ID.",
+          "title": "Endpoint Id"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Filter deliveries after this timestamp.",
+          "title": "Start Timestamp"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Filter deliveries before this timestamp.",
+          "title": "End Timestamp"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "boolean",
+          "description": "Filter by delivery success status.",
+          "title": "Succeeded"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Query to filter webhook deliveries.",
+          "title": "Query"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Filter by HTTP response code class (2xx, 3xx, 4xx, 5xx).",
+          "title": "Http Code Class",
+          "enum": [
+            "2xx",
+            "3xx",
+            "4xx",
+            "5xx"
+          ]
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/WebhookEventType"
+          },
+          "description": "Filter by webhook event type.",
+          "title": "Event Type"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/webhooks/deliveries\"][\"get\"]['parameters'][6]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The product ID."
+          },
+          "title": "ProductID Filter",
+          "description": "Filter by product ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "ExternalID Filter",
+          "description": "Filter by product external ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Filter by product name.",
+          "title": "Query"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "boolean",
+          "description": "Filter on archived products.",
+          "title": "Is Archived"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "boolean",
+          "description": "Filter on recurring products. If `true`, only subscriptions tiers are returned. If `false`, only one-time purchase products are returned. ",
+          "title": "Is Recurring"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The benefit ID."
+          },
+          "title": "BenefitID Filter",
+          "description": "Filter products granting specific benefit."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][7]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][7]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ProductVisibility"
+          },
+          "description": "Filter by visibility.",
+          "title": "Visibility"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][7]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][10]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][10]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ProductSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/products/\"][\"get\"]['parameters'][10]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The product ID."
+          },
+          "title": "ProductID Filter",
+          "description": "Filter by product ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ProductBillingType"
+          },
+          "title": "ProductBillingType Filter",
+          "description": "Filter by product billing type. `recurring` will filter data corresponding to subscriptions creations or renewals. `one_time` will filter data corresponding to one-time purchases."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4"
+          },
+          "title": "DiscountID Filter",
+          "description": "Filter by discount ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "The customer external ID."
+          },
+          "title": "ExternalCustomerID Filter",
+          "description": "Filter by customer external ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4"
+          },
+          "title": "CheckoutID Filter",
+          "description": "Filter by checkout ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][7]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][7]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The subscription ID."
+          },
+          "title": "SubscriptionID Filter",
+          "description": "Filter by subscription ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][7]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][8]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][8]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/OrderStatus"
+          },
+          "title": "Status Filter",
+          "description": "Filter by order status."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][8]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][9]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][9]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Only include orders created after this date",
+          "title": "Created After"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][10]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][10]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Only include orders created before this date",
+          "title": "Created Before"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][13]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][13]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/OrderSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/\"][\"get\"]['parameters'][13]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The product ID."
+          },
+          "title": "ProductID Filter",
+          "description": "Filter by product ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/OrderStatus"
+          },
+          "title": "Status Filter",
+          "description": "Filter by order status."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Only include orders created after this date. Must include a UTC offset.",
+          "title": "Created After"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Only include orders created before this date. Must include a UTC offset.",
+          "title": "Created Before"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/OrderExportColumn"
+          },
+          "description": "Columns to include in the CSV, in order. Defaults to email, created_at, product, net_amount, currency, status and invoice_number.",
+          "title": "Columns"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/orders/export\"][\"get\"]['parameters'][6]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The refund ID."
+          },
+          "title": "RefundID Filter",
+          "description": "Filter by refund ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The order ID."
+          },
+          "title": "OrderID Filter",
+          "description": "Filter by order ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The subscription ID."
+          },
+          "title": "SubscriptionID Filter",
+          "description": "Filter by subscription ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "The customer external ID."
+          },
+          "title": "ExternalCustomerID Filter",
+          "description": "Filter by customer external ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "boolean",
+          "title": "RefundStatus Filter",
+          "description": "Filter by `succeeded`."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][9]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][9]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/RefundSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/refunds/\"][\"get\"]['parameters'][9]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/disputes/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/disputes/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/disputes/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/disputes/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/disputes/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The order ID."
+          },
+          "title": "OrderID Filter",
+          "description": "Filter by order ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/disputes/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/disputes/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/disputes/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/DisputeStatus"
+          },
+          "title": "Status Filter",
+          "description": "Filter by dispute status."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/disputes/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/disputes/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/disputes/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/DisputeSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/disputes/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The product ID."
+          },
+          "title": "ProductID Filter",
+          "description": "Filter by product ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "The customer external ID."
+          },
+          "title": "ExternalCustomerID Filter",
+          "description": "Filter by customer external ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CheckoutStatus"
+          },
+          "title": "Status Filter",
+          "description": "Filter by checkout session status."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Filter by customer email.",
+          "title": "Query"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][8]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][8]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CheckoutSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkouts/\"][\"get\"]['parameters'][8]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/files/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/files/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/files/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/files/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/files/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4"
+          },
+          "title": "FileID Filter",
+          "description": "Filter by file ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/files/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The product ID."
+          },
+          "title": "ProductID Filter",
+          "description": "Filter by product ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ProductBillingType"
+          },
+          "title": "ProductBillingType Filter",
+          "description": "Filter by billing type. `recurring` will filter data corresponding to subscriptions creations or renewals. `one_time` will filter data corresponding to one-time purchases."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][7]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][7]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][7]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][8]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][8]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Metrics",
+          "description": "List of metric slugs to focus on. When provided, only the queries needed for these metrics will be executed, improving performance. If not provided, all metrics are returned."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/\"][\"get\"]['parameters'][8]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The product ID."
+          },
+          "title": "ProductID Filter",
+          "description": "Filter by product ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ProductBillingType"
+          },
+          "title": "ProductBillingType Filter",
+          "description": "Filter by billing type. `recurring` will filter data corresponding to subscriptions creations or renewals. `one_time` will filter data corresponding to one-time purchases."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][6]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][7]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][7]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][7]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][8]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][8]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Metrics",
+          "description": "List of metric slugs to include in the export. If not provided, all metrics are exported."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/export\"][\"get\"]['parameters'][8]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/dashboards\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/dashboards\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/metrics/dashboards\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/license-keys/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/license-keys/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/license-keys/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/license-keys/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/license-keys/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The benefit ID."
+          },
+          "title": "BenefitID Filter",
+          "description": "Filter by benefit ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/license-keys/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/license-keys/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/license-keys/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/LicenseKeyStatus"
+          },
+          "title": "LicenseKeyStatus Filter",
+          "description": "Filter by license key status."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/license-keys/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkout-links/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/checkout-links/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkout-links/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkout-links/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/checkout-links/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The product ID."
+          },
+          "title": "ProductID Filter",
+          "description": "Filter by product ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkout-links/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkout-links/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/checkout-links/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CheckoutLinkSortProperty"
+          },
+          "default": [
+            "created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/checkout-links/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/custom-fields/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/custom-fields/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/custom-fields/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/custom-fields/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/custom-fields/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Filter by custom field name or slug.",
+          "title": "Query"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/custom-fields/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/custom-fields/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CustomFieldType"
+          },
+          "title": "CustomFieldType Filter",
+          "description": "Filter by custom field type."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/custom-fields/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/custom-fields/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/custom-fields/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CustomFieldSortProperty"
+          },
+          "default": [
+            "slug"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/custom-fields/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/discounts/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/discounts/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/discounts/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/discounts/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/discounts/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "ExternalID Filter",
+          "description": "Filter by discount external ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/discounts/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/discounts/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/discounts/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Filter by name.",
+          "title": "Query"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/discounts/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/discounts/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/DiscountSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/discounts/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Filter by exact email.",
+          "title": "Email"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Filter by name, email, or external ID.",
+          "title": "Query"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "boolean",
+          "description": "Filter by active customers, i.e. customers with at least one trialing, active or past_due subscription.",
+          "title": "Active"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CustomerSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/export\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/export\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "description": "Filter by organization ID.",
+          "title": "Organization Id"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/export\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/{id}/members\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/{id}/members\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "$ref": "#/components/schemas/MemberRole",
+          "description": "Filter by member role.",
+          "title": "Role"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/{id}/members\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/{id}/members\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/MemberSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/{id}/members\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/external/{external_id}/members\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/external/{external_id}/members\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "$ref": "#/components/schemas/MemberRole",
+          "description": "Filter by member role.",
+          "title": "Role"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/external/{external_id}/members\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/external/{external_id}/members\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/MemberSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customers/external/{external_id}/members\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Filter by benefit description.",
+          "title": "Query"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/BenefitType"
+          },
+          "title": "BenefitType Filter",
+          "description": "Filter by benefit type."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4"
+          },
+          "title": "BenefitID Filter",
+          "description": "Filter by benefit ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4"
+          },
+          "title": "CheckoutID Filter",
+          "description": "Filter by checkout ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The order ID."
+          },
+          "title": "OrderID Filter",
+          "description": "Filter by order ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The subscription ID."
+          },
+          "title": "SubscriptionID Filter",
+          "description": "Filter by subscription ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4"
+          },
+          "title": "MemberID Filter",
+          "description": "Filter by member ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][9]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][9]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CustomerBenefitGrantSortProperty"
+          },
+          "default": [
+            "product_benefit",
+            "-granted_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/benefit-grants/\"][\"get\"]['parameters'][9]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/meters/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/meters/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The meter ID."
+          },
+          "title": "MeterID Filter",
+          "description": "Filter by meter ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/meters/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/meters/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/meters/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Filter by meter name.",
+          "title": "Query"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/meters/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/meters/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CustomerCustomerMeterSortProperty"
+          },
+          "default": [
+            "-modified_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/meters/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/seats\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/seats\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "uuid4",
+          "description": "Subscription ID",
+          "title": "Subscription Id"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/seats\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/seats\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "uuid4",
+          "description": "Order ID",
+          "title": "Order Id"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/downloadables/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/downloadables/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The benefit ID."
+          },
+          "title": "BenefitID Filter",
+          "description": "Filter by benefit ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/downloadables/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/license-keys/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/license-keys/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "uuid4",
+          "description": "The benefit ID.",
+          "title": "Benefit Id"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The product ID."
+          },
+          "title": "ProductID Filter",
+          "description": "Filter by product ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ProductBillingType"
+          },
+          "title": "ProductBillingType Filter",
+          "description": "Filter by product billing type. `recurring` will filter data corresponding to subscriptions creations or renewals. `one_time` will filter data corresponding to one-time purchases."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The subscription ID."
+          },
+          "title": "SubscriptionID Filter",
+          "description": "Filter by subscription ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Search by product or organization name.",
+          "title": "Query"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CustomerOrderSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/orders/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/subscriptions/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/subscriptions/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The product ID."
+          },
+          "title": "ProductID Filter",
+          "description": "Filter by product ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/subscriptions/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/subscriptions/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/subscriptions/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "boolean",
+          "description": "Filter by active or cancelled subscription.",
+          "title": "Active"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/subscriptions/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/subscriptions/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Search by product or organization name.",
+          "title": "Query"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/subscriptions/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/subscriptions/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CustomerSubscriptionSortProperty"
+          },
+          "default": [
+            "-started_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/subscriptions/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/wallets/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/wallets/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CustomerWalletSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-portal/wallets/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-seats\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-seats\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "uuid4",
+          "title": "Subscription Id"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-seats\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-seats\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "uuid4",
+          "title": "Order Id"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Filter events following filter clauses. JSON string following the same schema a meter filter clause. ",
+          "title": "Filter"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Filter events after this timestamp.",
+          "title": "Start Timestamp"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Filter events before this timestamp.",
+          "title": "End Timestamp"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "ExternalCustomerID Filter",
+          "description": "Filter by external customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "uuid4",
+          "title": "MeterID Filter",
+          "description": "The meter ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][7]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][7]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Name Filter",
+          "description": "Filter by event name."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][7]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][8]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][8]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/EventSource"
+          },
+          "title": "Source Filter",
+          "description": "Filter by event source."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][8]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][9]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][9]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "title": "Query",
+          "description": "Query to filter events."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][10]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][10]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "uuid4",
+          "description": "The event ID.",
+          "title": "Parent Id"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][11]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][11]",
+      "update": {
+        "schema": {
+          "type": "integer",
+          "description": "Fetch descendants up to this depth. When set: 0=root events only, 1=roots+children, etc. Max 5. When not set, returns all events.",
+          "title": "Depth",
+          "maximum": 5,
+          "minimum": 0
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][14]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][14]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/EventSortProperty"
+          },
+          "default": [
+            "-timestamp"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/\"][\"get\"]['parameters'][14]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "ExternalCustomerID Filter",
+          "description": "Filter by external customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/EventSource"
+          },
+          "title": "Source Filter",
+          "description": "Filter by event source."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "title": "Query",
+          "description": "Query to filter event names."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][7]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][7]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/EventNamesSortProperty"
+          },
+          "default": [
+            "-last_seen"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/events/names\"][\"get\"]['parameters'][7]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "ExternalCustomerID Filter",
+          "description": "Filter by external customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "title": "Query",
+          "description": "Query to filter event types by name or label."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "uuid",
+          "title": "ParentID Filter",
+          "description": "Filter by specific parent event ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "$ref": "#/components/schemas/EventSource",
+          "title": "EventSource Filter",
+          "description": "Filter by event source (system or user)."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][9]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][9]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/EventTypesSortProperty"
+          },
+          "default": [
+            "-last_seen"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/event-types/\"][\"get\"]['parameters'][9]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "ExternalID Filter",
+          "description": "Filter by meter external ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "description": "Filter by name.",
+          "title": "Query"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "boolean",
+          "description": "Filter on archived meters.",
+          "title": "Is Archived"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/MeterSortProperty"
+          },
+          "default": [
+            "name"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/{id}/quantities\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/{id}/quantities\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/{id}/quantities\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/{id}/quantities\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/{id}/quantities\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "ExternalCustomerID Filter",
+          "description": "Filter by external customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/{id}/quantities\"][\"get\"]['parameters'][6]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/{id}/quantities\"][\"get\"]['parameters'][7]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/meters/{id}/quantities\"][\"get\"]['parameters'][7]",
+      "update": {
+        "schema": {
+          "$ref": "#/components/schemas/AggregationFunction",
+          "description": "If set, will first compute the quantities per customer before aggregating them using the given function. If not set, the quantities will be aggregated across all events.",
+          "title": "Customer Aggregation Function"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "ExternalCustomerID Filter",
+          "description": "Filter by external customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The meter ID."
+          },
+          "title": "MeterID Filter",
+          "description": "Filter by meter ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "ExternalMeterID Filter",
+          "description": "Filter by meter external ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][7]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][7]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/CustomerMeterSortProperty"
+          },
+          "default": [
+            "-modified_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/customer-meters/\"][\"get\"]['parameters'][7]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][0]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "examples": [
+              "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+            ],
+            "description": "The organization ID."
+          },
+          "title": "OrganizationID Filter",
+          "description": "Filter by organization ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][0]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][1]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4"
+          },
+          "title": "CheckoutID Filter",
+          "description": "Filter by checkout ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][1]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][2]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4"
+          },
+          "title": "OrderID Filter",
+          "description": "Filter by order ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][2]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][3]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The customer ID."
+          },
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][4]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/PaymentStatus"
+          },
+          "title": "Status Filter",
+          "description": "Filter by payment status."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][4]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][5]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "Method Filter",
+          "description": "Filter by payment method."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "CustomerEmail Filter",
+          "description": "Filter by customer email."
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][9]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][9]",
+      "update": {
+        "schema": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/PaymentSortProperty"
+          },
+          "default": [
+            "-created_at"
+          ],
+          "description": "Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign `-` before the criteria name to sort by descending order.",
+          "title": "Sorting"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/payments/\"][\"get\"]['parameters'][9]",
+      "update": {
+        "style": "form",
+        "explode": true
+      }
+    }
+  ]
+}

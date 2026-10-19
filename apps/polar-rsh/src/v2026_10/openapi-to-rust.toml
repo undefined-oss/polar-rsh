@@ -1,0 +1,32 @@
+[generator]
+spec_path = "2026-10.openapi.json"
+output_dir = "generated"
+module_name = "polar"
+overlays = ["query-parameters.overlay.json"]
+bindings_metadata = "bindings.json"
+
+[generator.builders]
+enabled = true
+threshold = 0
+
+[generator.types]
+date_time = "chrono"
+uuid = "uuid"
+uri = "url"
+float_precision = "f64"
+
+[features]
+enable_async_client = true
+enable_sse_client = false
+enable_specta = false
+enable_registry = false
+
+[http_client]
+base_url = "https://api.polar.sh"
+
+[http_client.auth]
+type = "Bearer"
+header_name = "Authorization"
+
+[http_client.tracing]
+enabled = true

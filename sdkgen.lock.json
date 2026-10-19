@@ -1,0 +1,101 @@
+{
+  "format": 2,
+  "upstream_revision": "49d4c8cbbe5436ee50a3d8dc04dec7182b9886c9",
+  "versions": {
+    "2026-04": {
+      "source": "vendor/polar/docs/openapi/2026-04.openapi.json",
+      "observed_hash": "2f7fc554da96d8dc0aba69109415d9c61458eb9a15599bcb2a4771ae3d95cef2",
+      "module_path": "apps/polar-rsh/src/v2026_04",
+      "status": "validated",
+      "generated_hash": "2f7fc554da96d8dc0aba69109415d9c61458eb9a15599bcb2a4771ae3d95cef2",
+      "validated_hash": "2f7fc554da96d8dc0aba69109415d9c61458eb9a15599bcb2a4771ae3d95cef2",
+      "generator_fingerprint": "4855dd95716ffde2831151014e107344dd9da678e5a50d70e3efc8e894c594c0",
+      "validation_fingerprint": "99e4b98ff7b731b3fb82afd727f16b2080d1bea119090804ef4538d47f469c5b",
+      "files": [
+        "apps/polar-rsh/src/v2026_04/2026-04.openapi.json",
+        "apps/polar-rsh/src/v2026_04/generated/REQUIRED_DEPS.toml",
+        "apps/polar-rsh/src/v2026_04/generated/bindings.json",
+        "apps/polar-rsh/src/v2026_04/generated/client.rs",
+        "apps/polar-rsh/src/v2026_04/generated/mod.rs",
+        "apps/polar-rsh/src/v2026_04/generated/query.rs",
+        "apps/polar-rsh/src/v2026_04/generated/types.rs",
+        "apps/polar-rsh/src/v2026_04/mod.rs",
+        "apps/polar-rsh/src/v2026_04/openapi-to-rust.toml",
+        "apps/polar-rsh/src/v2026_04/query-parameters.overlay.json",
+        "apps/polar-rsh/src/v2026_04/request.rs",
+        "apps/polar-rsh/src/v2026_04/resources.rs",
+        "apps/polar-rsh/src/v2026_04/tests/fixtures/customer-deleted.json",
+        "apps/polar-rsh/src/v2026_04/tests/http.rs",
+        "apps/polar-rsh/src/v2026_04/tests/presence.rs",
+        "apps/polar-rsh/src/v2026_04/webhook_events.rs",
+        "apps/polar-rsh/src/v2026_04/webhooks.rs"
+      ]
+    },
+    "2026-10": {
+      "source": "vendor/polar/docs/openapi/2026-10.openapi.json",
+      "observed_hash": "b25626887765dcab78f9d8e6c63607651280914c7ab2c1bc22c82126434a030e",
+      "module_path": "apps/polar-rsh/src/v2026_10",
+      "status": "validated",
+      "generated_hash": "b25626887765dcab78f9d8e6c63607651280914c7ab2c1bc22c82126434a030e",
+      "validated_hash": "b25626887765dcab78f9d8e6c63607651280914c7ab2c1bc22c82126434a030e",
+      "generator_fingerprint": "4855dd95716ffde2831151014e107344dd9da678e5a50d70e3efc8e894c594c0",
+      "validation_fingerprint": "99e4b98ff7b731b3fb82afd727f16b2080d1bea119090804ef4538d47f469c5b",
+      "files": [
+        "apps/polar-rsh/src/v2026_10/2026-10.openapi.json",
+        "apps/polar-rsh/src/v2026_10/generated/REQUIRED_DEPS.toml",
+        "apps/polar-rsh/src/v2026_10/generated/bindings.json",
+        "apps/polar-rsh/src/v2026_10/generated/client.rs",
+        "apps/polar-rsh/src/v2026_10/generated/mod.rs",
+        "apps/polar-rsh/src/v2026_10/generated/query.rs",
+        "apps/polar-rsh/src/v2026_10/generated/types.rs",
+        "apps/polar-rsh/src/v2026_10/mod.rs",
+        "apps/polar-rsh/src/v2026_10/openapi-to-rust.toml",
+        "apps/polar-rsh/src/v2026_10/query-parameters.overlay.json",
+        "apps/polar-rsh/src/v2026_10/request.rs",
+        "apps/polar-rsh/src/v2026_10/resources.rs",
+        "apps/polar-rsh/src/v2026_10/tests/fixtures/customer-deleted.json",
+        "apps/polar-rsh/src/v2026_10/tests/http.rs",
+        "apps/polar-rsh/src/v2026_10/tests/presence.rs",
+        "apps/polar-rsh/src/v2026_10/webhook_events.rs",
+        "apps/polar-rsh/src/v2026_10/webhooks.rs"
+      ]
+    },
+    "2027-01": {
+      "source": "vendor/polar/docs/openapi/2027-01.openapi.json",
+      "observed_hash": "83dfddd90c15f530e356a7e9b46a025422102b2cb248dee66cd43c71ee207d10",
+      "module_path": "apps/polar-rsh/src/v2027_01",
+      "status": "validated",
+      "generated_hash": "83dfddd90c15f530e356a7e9b46a025422102b2cb248dee66cd43c71ee207d10",
+      "validated_hash": "83dfddd90c15f530e356a7e9b46a025422102b2cb248dee66cd43c71ee207d10",
+      "generator_fingerprint": "4855dd95716ffde2831151014e107344dd9da678e5a50d70e3efc8e894c594c0",
+      "validation_fingerprint": "99e4b98ff7b731b3fb82afd727f16b2080d1bea119090804ef4538d47f469c5b",
+      "files": [
+        "apps/polar-rsh/src/v2027_01/2027-01.openapi.json",
+        "apps/polar-rsh/src/v2027_01/generated/REQUIRED_DEPS.toml",
+        "apps/polar-rsh/src/v2027_01/generated/bindings.json",
+        "apps/polar-rsh/src/v2027_01/generated/client.rs",
+        "apps/polar-rsh/src/v2027_01/generated/mod.rs",
+        "apps/polar-rsh/src/v2027_01/generated/query.rs",
+        "apps/polar-rsh/src/v2027_01/generated/types.rs",
+        "apps/polar-rsh/src/v2027_01/mod.rs",
+        "apps/polar-rsh/src/v2027_01/openapi-to-rust.toml",
+        "apps/polar-rsh/src/v2027_01/query-parameters.overlay.json",
+        "apps/polar-rsh/src/v2027_01/request.rs",
+        "apps/polar-rsh/src/v2027_01/resources.rs",
+        "apps/polar-rsh/src/v2027_01/tests/fixtures/customer-deleted.json",
+        "apps/polar-rsh/src/v2027_01/tests/http.rs",
+        "apps/polar-rsh/src/v2027_01/tests/presence.rs",
+        "apps/polar-rsh/src/v2027_01/webhook_events.rs",
+        "apps/polar-rsh/src/v2027_01/webhooks.rs"
+      ]
+    }
+  },
+  "shared": [
+    "Cargo.lock",
+    "Cargo.toml",
+    "apps/polar-rsh/Cargo.toml",
+    "apps/polar-rsh/src/versions.rs",
+    "tasks/sdk-contracts/Cargo.toml",
+    "tasks/sdk-contracts/src/adapters.rs"
+  ]
+}

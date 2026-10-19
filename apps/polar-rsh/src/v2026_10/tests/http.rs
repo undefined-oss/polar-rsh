@@ -1,0 +1,290 @@
+use std::time::Duration;
+
+use polar_rsh::v2026_10::{
+    Environment, Polar, Presence, RequestError,
+    models::{CustomerUpdate, ProductSortProperty},
+    resources::{CustomersDeleteParams, ProductsListParams},
+};
+use serde_json::{Value, json};
+use tokio::{
+    io::{AsyncReadExt, AsyncWriteExt},
+    net::TcpListener,
+    sync::mpsc,
+};
+use uuid::Uuid;
+
+struct Captured {
+    path: String,
+    headers: Vec<(String, String)>,
+    body: Vec<u8>,
+}
+
+impl Captured {
+    fn header(&self, name: &str) -> &str {
+        &self.headers.iter().find(|(key, _)| key == name).unwrap().1
+    }
+}
+
+async fn server(
+    status: u16,
+    body: &'static str,
+    delay: Duration,
+) -> (url::Url, mpsc::UnboundedReceiver<Captured>, tokio::task::JoinHandle<()>) {
+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let url = format!("http://{}", listener.local_addr().unwrap()).parse().unwrap();
+    let (tx, rx) = mpsc::unbounded_channel();
+    let task = tokio::spawn(async move {
+        loop {
+            let (mut socket, _) = listener.accept().await.unwrap();
+            let tx = tx.clone();
+            tokio::spawn(async move {
+                let mut request = Vec::new();
+                let split = loop {
+                    let mut bytes = [0; 4096];
+                    let size = socket.read(&mut bytes).await.unwrap();
+                    assert!(size > 0);
+                    request.extend_from_slice(&bytes[..size]);
+                    if let Some(index) = request.windows(4).position(|w| w == b"\r\n\r\n") {
+                        break index + 4;
+                    }
+                };
+                let head = String::from_utf8(request[..split].to_vec()).unwrap();
+                let mut lines = head.lines();
+                let path = lines.next().unwrap().split_whitespace().nth(1).unwrap().to_owned();
+                let headers: Vec<_> = lines
+                    .filter_map(|line| line.split_once(':'))
+                    .map(|(name, value)| (name.to_ascii_lowercase(), value.trim().to_owned()))
+                    .collect();
+                let length: usize = headers
+                    .iter()
+                    .find(|(k, _)| k == "content-length")
+                    .map(|(_, v)| v.parse().unwrap())
+                    .unwrap_or(0);
+                while request.len() < split + length {
+                    let mut bytes = [0; 4096];
+                    let size = socket.read(&mut bytes).await.unwrap();
+                    assert!(size > 0);
+                    request.extend_from_slice(&bytes[..size]);
+                }
+                tx.send(Captured { path, headers, body: request[split..].to_vec() }).unwrap();
+                tokio::time::sleep(delay).await;
+                let response = format!(
+                    "HTTP/1.1 {status} Mock\r\nContent-Type: application/json\r\nContent-Length: \
+                     {}\r\nConnection: close\r\n\r\n{body}",
+                    body.len()
+                );
+                let _ = socket.write_all(response.as_bytes()).await;
+            });
+        }
+    });
+    (url, rx, task)
+}
+
+fn client(url: url::Url) -> Polar {
+    Polar::builder("default-token")
+        .base_url(url)
+        .http_client(reqwest::Client::builder().no_proxy().build().unwrap())
+        .build()
+        .unwrap()
+}
+
+const PAGE: &str = r#"{"items":[],"pagination":{"total_count":0,"max_page":0}}"#;
+
+#[tokio::test]
+async fn list_sends_repeated_typed_filters_and_metadata() {
+    let (url, mut received, task) = server(200, PAGE, Duration::ZERO).await;
+    let polar = client(url);
+    let id1 = Uuid::parse_str("1dbfc517-0bbf-4301-9ba8-555ca42b9737").unwrap();
+    let id2 = Uuid::parse_str("992fae2a-2a17-4b7a-8d9e-e287cf90131b").unwrap();
+    let page = polar
+        .products()
+        .list(ProductsListParams {
+            organization_id: Some(vec![id1, id2]),
+            sorting: Some(vec![ProductSortProperty::CreatedAt2, ProductSortProperty::Name]),
+            is_archived: Some(false),
+            metadata: Some(
+                serde_json::from_value(json!({"tier":["pro","team"],"active":true,"seats":[1,2]}))
+                    .unwrap(),
+            ),
+            ..Default::default()
+        })
+        .await
+        .unwrap();
+    assert!(page.items.is_empty());
+    let request = received.recv().await.unwrap();
+    let url = url::Url::parse(&format!("http://localhost{}", request.path)).unwrap();
+    assert_eq!(url.path(), "/v1/products/");
+    let values = |key: &str| {
+        url.query_pairs().filter(|(k, _)| k == key).map(|(_, v)| v.into_owned()).collect::<Vec<_>>()
+    };
+    assert_eq!(values("organization_id"), [id1.to_string(), id2.to_string()]);
+    assert_eq!(values("sorting"), ["-created_at", "name"]);
+    assert_eq!(values("is_archived"), ["false"]);
+    assert_eq!(values("metadata[tier]"), ["pro", "team"]);
+    assert_eq!(values("metadata[seats]"), ["1", "2"]);
+    assert_eq!(values("metadata[active]"), ["true"]);
+    assert_eq!(request.header("polar-version"), "2026-10");
+    assert_eq!(request.header("authorization"), "Bearer default-token");
+    task.abort();
+}
+
+#[tokio::test]
+async fn raw_query_builder_preserves_escaping_and_omits_empty_metadata_values() {
+    let (url, mut received, task) = server(200, PAGE, Duration::ZERO).await;
+    let polar = client(url);
+    let text = "a+b & c=é% /?";
+    polar
+        .raw()
+        .products_list_builder()
+        .organization_id(vec![Uuid::nil().to_string(), Uuid::from_u128(1).to_string()])
+        .sorting(vec![ProductSortProperty::CreatedAt2, ProductSortProperty::Name])
+        .query(text.to_owned())
+        .page(0)
+        .is_archived(false)
+        .metadata(
+            serde_json::from_value(json!({
+                "a[b]": text, "empty": [], "blank": "", "zero": 0, "false": false
+            }))
+            .unwrap(),
+        )
+        .send()
+        .await
+        .unwrap();
+    let request = received.recv().await.unwrap();
+    let url = url::Url::parse(&format!("http://localhost{}", request.path)).unwrap();
+    let values = |key: &str| {
+        url.query_pairs().filter(|(k, _)| k == key).map(|(_, v)| v.into_owned()).collect::<Vec<_>>()
+    };
+    assert_eq!(values("query"), [text]);
+    assert_eq!(
+        values("organization_id"),
+        [Uuid::nil().to_string(), Uuid::from_u128(1).to_string()]
+    );
+    assert_eq!(values("sorting"), ["-created_at", "name"]);
+    assert_eq!(values("page"), ["0"]);
+    assert_eq!(values("is_archived"), ["false"]);
+    assert_eq!(values("metadata[a[b]]"), [text]);
+    assert_eq!(values("metadata[blank]"), [""]);
+    assert_eq!(values("metadata[zero]"), ["0"]);
+    assert_eq!(values("metadata[false]"), ["false"]);
+    assert!(values("metadata[empty]").is_empty());
+    task.abort();
+}
+
+#[tokio::test]
+async fn required_string_and_delete_query_parameters_use_shared_encoding() {
+    let (url, mut received, task) = server(422, r#"{"detail":[]}"#, Duration::ZERO).await;
+    let polar = client(url);
+    // The raw API accepts AsRef<str> without requiring Serialize on the
+    // caller's type.
+    struct Token;
+    impl AsRef<str> for Token {
+        fn as_ref(&self) -> &str {
+            "a+b & c=é%"
+        }
+    }
+    assert!(polar.raw().customer_portal_customers_check_email_update(Token).await.is_err());
+    assert!(
+        polar
+            .customers()
+            .delete(Uuid::nil(), CustomersDeleteParams { anonymize: Some(false) })
+            .await
+            .is_err()
+    );
+    let first = received.recv().await.unwrap();
+    let second = received.recv().await.unwrap();
+    let first = url::Url::parse(&format!("http://localhost{}", first.path)).unwrap();
+    let second = url::Url::parse(&format!("http://localhost{}", second.path)).unwrap();
+    assert_eq!(first.query_pairs().collect::<Vec<_>>(), [("token".into(), Token.as_ref().into())]);
+    assert_eq!(second.query_pairs().collect::<Vec<_>>(), [("anonymize".into(), "false".into())]);
+    task.abort();
+}
+
+#[tokio::test]
+async fn empty_filters_are_omitted_and_token_override_is_isolated() {
+    let (url, mut received, task) = server(200, PAGE, Duration::ZERO).await;
+    let polar = client(url);
+    polar
+        .products()
+        .list(ProductsListParams {
+            organization_id: Some(vec![]),
+            sorting: Some(vec![]),
+            metadata: Some(serde_json::from_value(json!({})).unwrap()),
+            ..Default::default()
+        })
+        .access_token("override-token")
+        .await
+        .unwrap();
+    polar.products().list(Default::default()).await.unwrap();
+    let first = received.recv().await.unwrap();
+    let second = received.recv().await.unwrap();
+    assert_eq!(first.header("authorization"), "Bearer override-token");
+    assert_eq!(second.header("authorization"), "Bearer default-token");
+    assert!(!first.path.contains("metadata"));
+    assert!(!first.path.contains("organization_id"));
+    assert!(!first.path.contains("sorting"));
+    task.abort();
+}
+
+#[tokio::test]
+async fn update_preserves_omitted_null_and_value_on_the_wire() {
+    let (url, mut received, task) = server(422, r#"{"detail":[]}"#, Duration::ZERO).await;
+    let polar = client(url);
+    for name in [Presence::Absent, Presence::Null, Presence::Some("Ada".to_owned())] {
+        let result = polar
+            .customers()
+            .update(Uuid::nil(), CustomerUpdate { name, ..Default::default() })
+            .await;
+        assert!(matches!(result, Err(RequestError::Api(_))));
+    }
+    let omitted: Value = serde_json::from_slice(&received.recv().await.unwrap().body).unwrap();
+    let null: Value = serde_json::from_slice(&received.recv().await.unwrap().body).unwrap();
+    let value: Value = serde_json::from_slice(&received.recv().await.unwrap().body).unwrap();
+    assert_eq!(omitted, json!({}));
+    assert_eq!(null, json!({"name":null}));
+    assert_eq!(value, json!({"name":"Ada"}));
+    for original in [omitted, null, value] {
+        let parsed: CustomerUpdate = serde_json::from_value(original.clone()).unwrap();
+        assert_eq!(serde_json::to_value(parsed).unwrap(), original);
+    }
+    for (name, expected) in [
+        (Presence::Absent, json!({})),
+        (Presence::Null, json!({"name":null})),
+        (Presence::Some("Ada".to_owned()), json!({"name":"Ada"})),
+    ] {
+        let builder = polar.raw().customers_update_builder(Uuid::nil().to_string());
+        let builder = match name {
+            Presence::Absent => builder.name("Discarded".to_owned()).name_absent(),
+            Presence::Null => builder.name_null(),
+            Presence::Some(value) => builder.name(value),
+        };
+        assert!(builder.send().await.is_err());
+        let actual: Value = serde_json::from_slice(&received.recv().await.unwrap().body).unwrap();
+        assert_eq!(actual, expected);
+    }
+    task.abort();
+}
+
+#[tokio::test]
+async fn timeout_can_be_extended_for_one_request() {
+    let (url, _received, task) = server(200, PAGE, Duration::from_millis(150)).await;
+    let polar = Polar::builder("token")
+        .base_url(url)
+        .timeout(Duration::from_millis(30))
+        .http_client(reqwest::Client::builder().no_proxy().build().unwrap())
+        .build()
+        .unwrap();
+    polar.products().list(Default::default()).timeout(Duration::from_secs(5)).await.unwrap();
+    assert!(matches!(
+        polar.products().list(Default::default()).await,
+        Err(RequestError::Timeout(_))
+    ));
+    task.abort();
+}
+
+#[test]
+fn environment_urls_match_the_spec() {
+    let spec: Value = serde_json::from_str(include_str!("../2026-10.openapi.json")).unwrap();
+    assert_eq!(Environment::Production.base_url(), spec["servers"][0]["url"]);
+    assert_eq!(Environment::Sandbox.base_url(), spec["servers"][1]["url"]);
+}
