@@ -4,3 +4,7 @@ sdk-contracts = "run -p sdk-contracts --"
 
 [target.'cfg(all())']
 rustflags = ["-Znext-solver"]
+
+[target.'cfg(all(target_os = "linux", target_env = "gnu"))']
+linker = "gcc"
+rustflags = ["-C", "link-arg=-fuse-ld=mold"]

@@ -9,12 +9,12 @@ permissions:
   contents: read
 
 env:
-  CARGO_INCREMENTAL: '0'
+  CARGO_INCREMENTAL: "0"
 
 jobs:
   release:
     if: &release-condition github.repository == 'undefined-oss/polar-rsh' && github.ref == 'refs/heads/main'
-    runs-on: blacksmith-2vcpu-ubuntu-2404
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 60
     permissions:
       contents: write
@@ -26,6 +26,11 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - name: Install mold
+        uses: rui314/setup-mold@v1
+        with:
+          version: 3.0.0
+          make-default: false
       - name: Install workspace Rust toolchain
         run: rustup show
       - name: Cache Rust dependencies
@@ -48,7 +53,7 @@ jobs:
 
   release-pr:
     if: *release-condition
-    runs-on: blacksmith-2vcpu-ubuntu-2404
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     timeout-minutes: 60
     permissions:
       contents: write
@@ -62,6 +67,11 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           submodules: true
+      - name: Install mold
+        uses: rui314/setup-mold@v1
+        with:
+          version: 3.0.0
+          make-default: false
       - name: Install workspace Rust toolchain
         run: rustup show
       - name: Cache Rust dependencies
