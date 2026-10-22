@@ -6295,6 +6295,15 @@ pub enum CustomerMetersGetApiError {
 pub enum CustomerMetersListApiError {
     Status422(HTTPValidationError),
 }
+/// Typed error responses for `customer_meters:reverse_credit`. One variant per
+/// declared non-2xx response.
+#[derive(Debug, Clone)]
+pub enum CustomerMetersReverseCreditApiError {
+    Status403(NotPermitted),
+    Status404(ResourceNotFound),
+    Status409(CustomerMeterCreditNotReversible),
+    Status422(HTTPValidationError),
+}
 /// Typed error responses for `customer_portal:benefit-grants:get`. One variant
 /// per declared non-2xx response.
 #[derive(Debug, Clone)]
@@ -8417,725 +8426,6 @@ impl<'a> CheckoutsClientUpdateBuilder<'a> {
     /// Send the request through the existing flat operation method.
     pub async fn send(self) -> Result<CheckoutPublic, ApiOpError<CheckoutsClientUpdateApiError>> {
         self.client.checkouts_client_update(self.client_secret, self.request).await
-    }
-}
-#[doc = concat!("Additive request builder for `", "checkouts:create", "`.")]
-#[must_use]
-pub struct CheckoutsCreateBuilder<'a> {
-    client: &'a HttpClient,
-    request: CheckoutCreate,
-}
-impl<'a> CheckoutsCreateBuilder<'a> {
-    /// Replace the complete request body.
-    #[must_use]
-    pub fn request(mut self, request: CheckoutCreate) -> Self {
-        self.request = request;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional request-body field `", "allow_discount_codes", "`."
-    )]
-    #[must_use]
-    pub fn allow_discount_codes(mut self, allow_discount_codes: bool) -> Self {
-        self.request.allow_discount_codes = Some(allow_discount_codes);
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "allow_trial", "`.")]
-    #[must_use]
-    pub fn allow_trial(mut self, allow_trial: bool) -> Self {
-        self.request.allow_trial = Some(allow_trial);
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "amount", "`.")]
-    #[must_use]
-    pub fn amount(mut self, amount: i64) -> Self {
-        self.request.amount = presence_rs::Presence::Some(amount);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "amount", "` to JSON null."
-    )]
-    #[must_use]
-    pub fn amount_null(mut self) -> Self {
-        self.request.amount = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable request-body field `", "amount", "`.")]
-    #[must_use]
-    pub fn amount_absent(mut self) -> Self {
-        self.request.amount = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "currency", "`.")]
-    #[must_use]
-    pub fn currency(mut self, currency: PresentmentCurrency) -> Self {
-        self.request.currency = presence_rs::Presence::Some(currency);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "currency", "` to JSON null."
-    )]
-    #[must_use]
-    pub fn currency_null(mut self) -> Self {
-        self.request.currency = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable request-body field `", "currency", "`.")]
-    #[must_use]
-    pub fn currency_absent(mut self) -> Self {
-        self.request.currency = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "custom_field_data", "`.")]
-    #[must_use]
-    pub fn custom_field_data(
-        mut self,
-        custom_field_data: CheckoutProductsCreateCustomFieldData,
-    ) -> Self {
-        self.request.custom_field_data = Some(custom_field_data);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional request-body field `", "customer_billing_address", "`."
-    )]
-    #[must_use]
-    pub fn customer_billing_address(mut self, customer_billing_address: AddressInput) -> Self {
-        self.request.customer_billing_address =
-            presence_rs::Presence::Some(customer_billing_address);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "customer_billing_address",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_billing_address_null(mut self) -> Self {
-        self.request.customer_billing_address = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "customer_billing_address",
-        "`."
-    )]
-    #[must_use]
-    pub fn customer_billing_address_absent(mut self) -> Self {
-        self.request.customer_billing_address = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional request-body field `", "customer_billing_name", "`."
-    )]
-    #[must_use]
-    pub fn customer_billing_name(mut self, customer_billing_name: String) -> Self {
-        self.request.customer_billing_name = presence_rs::Presence::Some(customer_billing_name);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "customer_billing_name",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_billing_name_null(mut self) -> Self {
-        self.request.customer_billing_name = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "customer_billing_name", "`."
-    )]
-    #[must_use]
-    pub fn customer_billing_name_absent(mut self) -> Self {
-        self.request.customer_billing_name = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "customer_email", "`.")]
-    #[must_use]
-    pub fn customer_email(mut self, customer_email: String) -> Self {
-        self.request.customer_email = presence_rs::Presence::Some(customer_email);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "customer_email",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_email_null(mut self) -> Self {
-        self.request.customer_email = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "customer_email", "`."
-    )]
-    #[must_use]
-    pub fn customer_email_absent(mut self) -> Self {
-        self.request.customer_email = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "customer_id", "`.")]
-    #[must_use]
-    pub fn customer_id(mut self, customer_id: uuid::Uuid) -> Self {
-        self.request.customer_id = presence_rs::Presence::Some(customer_id);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "customer_id",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_id_null(mut self) -> Self {
-        self.request.customer_id = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "customer_id", "`."
-    )]
-    #[must_use]
-    pub fn customer_id_absent(mut self) -> Self {
-        self.request.customer_id = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional request-body field `", "customer_ip_address", "`."
-    )]
-    #[must_use]
-    pub fn customer_ip_address(mut self, customer_ip_address: String) -> Self {
-        self.request.customer_ip_address = presence_rs::Presence::Some(customer_ip_address);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "customer_ip_address",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_ip_address_null(mut self) -> Self {
-        self.request.customer_ip_address = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "customer_ip_address", "`."
-    )]
-    #[must_use]
-    pub fn customer_ip_address_absent(mut self) -> Self {
-        self.request.customer_ip_address = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "customer_metadata", "`.")]
-    #[must_use]
-    pub fn customer_metadata(
-        mut self,
-        customer_metadata: CheckoutProductsCreateCustomerMetadata,
-    ) -> Self {
-        self.request.customer_metadata = Some(customer_metadata);
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "customer_name", "`.")]
-    #[must_use]
-    pub fn customer_name(mut self, customer_name: String) -> Self {
-        self.request.customer_name = presence_rs::Presence::Some(customer_name);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "customer_name",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_name_null(mut self) -> Self {
-        self.request.customer_name = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "customer_name", "`."
-    )]
-    #[must_use]
-    pub fn customer_name_absent(mut self) -> Self {
-        self.request.customer_name = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "customer_tax_id", "`.")]
-    #[must_use]
-    pub fn customer_tax_id(mut self, customer_tax_id: String) -> Self {
-        self.request.customer_tax_id = presence_rs::Presence::Some(customer_tax_id);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "customer_tax_id",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_tax_id_null(mut self) -> Self {
-        self.request.customer_tax_id = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "customer_tax_id", "`."
-    )]
-    #[must_use]
-    pub fn customer_tax_id_absent(mut self) -> Self {
-        self.request.customer_tax_id = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "discount_id", "`.")]
-    #[must_use]
-    pub fn discount_id(mut self, discount_id: uuid::Uuid) -> Self {
-        self.request.discount_id = presence_rs::Presence::Some(discount_id);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "discount_id",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn discount_id_null(mut self) -> Self {
-        self.request.discount_id = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "discount_id", "`."
-    )]
-    #[must_use]
-    pub fn discount_id_absent(mut self) -> Self {
-        self.request.discount_id = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "embed_origin", "`.")]
-    #[must_use]
-    pub fn embed_origin(mut self, embed_origin: String) -> Self {
-        self.request.embed_origin = presence_rs::Presence::Some(embed_origin);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "embed_origin",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn embed_origin_null(mut self) -> Self {
-        self.request.embed_origin = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "embed_origin", "`."
-    )]
-    #[must_use]
-    pub fn embed_origin_absent(mut self) -> Self {
-        self.request.embed_origin = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional request-body field `", "external_customer_id", "`."
-    )]
-    #[must_use]
-    pub fn external_customer_id(mut self, external_customer_id: String) -> Self {
-        self.request.external_customer_id = presence_rs::Presence::Some(external_customer_id);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "external_customer_id",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn external_customer_id_null(mut self) -> Self {
-        self.request.external_customer_id = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "external_customer_id", "`."
-    )]
-    #[must_use]
-    pub fn external_customer_id_absent(mut self) -> Self {
-        self.request.external_customer_id = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional request-body field `", "is_business_customer", "`."
-    )]
-    #[must_use]
-    pub fn is_business_customer(mut self, is_business_customer: bool) -> Self {
-        self.request.is_business_customer = Some(is_business_customer);
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "locale", "`.")]
-    #[must_use]
-    pub fn locale(mut self, locale: String) -> Self {
-        self.request.locale = presence_rs::Presence::Some(locale);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "locale", "` to JSON null."
-    )]
-    #[must_use]
-    pub fn locale_null(mut self) -> Self {
-        self.request.locale = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable request-body field `", "locale", "`.")]
-    #[must_use]
-    pub fn locale_absent(mut self) -> Self {
-        self.request.locale = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "max_seats", "`.")]
-    #[must_use]
-    pub fn max_seats(mut self, max_seats: i64) -> Self {
-        self.request.max_seats = presence_rs::Presence::Some(max_seats);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "max_seats", "` to JSON null."
-    )]
-    #[must_use]
-    pub fn max_seats_null(mut self) -> Self {
-        self.request.max_seats = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "max_seats", "`."
-    )]
-    #[must_use]
-    pub fn max_seats_absent(mut self) -> Self {
-        self.request.max_seats = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "max_units", "`.")]
-    #[must_use]
-    pub fn max_units(mut self, max_units: i64) -> Self {
-        self.request.max_units = presence_rs::Presence::Some(max_units);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "max_units", "` to JSON null."
-    )]
-    #[must_use]
-    pub fn max_units_null(mut self) -> Self {
-        self.request.max_units = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "max_units", "`."
-    )]
-    #[must_use]
-    pub fn max_units_absent(mut self) -> Self {
-        self.request.max_units = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "metadata", "`.")]
-    #[must_use]
-    pub fn metadata(mut self, metadata: CheckoutProductsCreateMetadata) -> Self {
-        self.request.metadata = Some(metadata);
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "min_seats", "`.")]
-    #[must_use]
-    pub fn min_seats(mut self, min_seats: i64) -> Self {
-        self.request.min_seats = presence_rs::Presence::Some(min_seats);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "min_seats", "` to JSON null."
-    )]
-    #[must_use]
-    pub fn min_seats_null(mut self) -> Self {
-        self.request.min_seats = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "min_seats", "`."
-    )]
-    #[must_use]
-    pub fn min_seats_absent(mut self) -> Self {
-        self.request.min_seats = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "min_units", "`.")]
-    #[must_use]
-    pub fn min_units(mut self, min_units: i64) -> Self {
-        self.request.min_units = presence_rs::Presence::Some(min_units);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "min_units", "` to JSON null."
-    )]
-    #[must_use]
-    pub fn min_units_null(mut self) -> Self {
-        self.request.min_units = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "min_units", "`."
-    )]
-    #[must_use]
-    pub fn min_units_absent(mut self) -> Self {
-        self.request.min_units = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "prices", "`.")]
-    #[must_use]
-    pub fn prices(mut self, prices: CheckoutProductsCreatePrices) -> Self {
-        self.request.prices = presence_rs::Presence::Some(prices);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "prices", "` to JSON null."
-    )]
-    #[must_use]
-    pub fn prices_null(mut self) -> Self {
-        self.request.prices = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable request-body field `", "prices", "`.")]
-    #[must_use]
-    pub fn prices_absent(mut self) -> Self {
-        self.request.prices = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional request-body field `", "require_billing_address", "`."
-    )]
-    #[must_use]
-    pub fn require_billing_address(mut self, require_billing_address: bool) -> Self {
-        self.request.require_billing_address = Some(require_billing_address);
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "return_url", "`.")]
-    #[must_use]
-    pub fn return_url(mut self, return_url: url::Url) -> Self {
-        self.request.return_url = presence_rs::Presence::Some(return_url);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "return_url", "` to JSON null."
-    )]
-    #[must_use]
-    pub fn return_url_null(mut self) -> Self {
-        self.request.return_url = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "return_url", "`."
-    )]
-    #[must_use]
-    pub fn return_url_absent(mut self) -> Self {
-        self.request.return_url = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "seats", "`.")]
-    #[must_use]
-    pub fn seats(mut self, seats: i64) -> Self {
-        self.request.seats = presence_rs::Presence::Some(seats);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "seats", "` to JSON null."
-    )]
-    #[must_use]
-    pub fn seats_null(mut self) -> Self {
-        self.request.seats = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable request-body field `", "seats", "`.")]
-    #[must_use]
-    pub fn seats_absent(mut self) -> Self {
-        self.request.seats = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "subscription_id", "`.")]
-    #[must_use]
-    pub fn subscription_id(mut self, subscription_id: uuid::Uuid) -> Self {
-        self.request.subscription_id = presence_rs::Presence::Some(subscription_id);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "subscription_id",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn subscription_id_null(mut self) -> Self {
-        self.request.subscription_id = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "subscription_id", "`."
-    )]
-    #[must_use]
-    pub fn subscription_id_absent(mut self) -> Self {
-        self.request.subscription_id = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "success_url", "`.")]
-    #[must_use]
-    pub fn success_url(mut self, success_url: url::Url) -> Self {
-        self.request.success_url = presence_rs::Presence::Some(success_url);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "success_url",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn success_url_null(mut self) -> Self {
-        self.request.success_url = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "success_url", "`."
-    )]
-    #[must_use]
-    pub fn success_url_absent(mut self) -> Self {
-        self.request.success_url = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "trial_interval", "`.")]
-    #[must_use]
-    pub fn trial_interval(mut self, trial_interval: TrialInterval) -> Self {
-        self.request.trial_interval = presence_rs::Presence::Some(trial_interval);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "trial_interval",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn trial_interval_null(mut self) -> Self {
-        self.request.trial_interval = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "trial_interval", "`."
-    )]
-    #[must_use]
-    pub fn trial_interval_absent(mut self) -> Self {
-        self.request.trial_interval = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional request-body field `", "trial_interval_count", "`."
-    )]
-    #[must_use]
-    pub fn trial_interval_count(mut self, trial_interval_count: i64) -> Self {
-        self.request.trial_interval_count = presence_rs::Presence::Some(trial_interval_count);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "trial_interval_count",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn trial_interval_count_null(mut self) -> Self {
-        self.request.trial_interval_count = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "trial_interval_count", "`."
-    )]
-    #[must_use]
-    pub fn trial_interval_count_absent(mut self) -> Self {
-        self.request.trial_interval_count = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "units", "`.")]
-    #[must_use]
-    pub fn units(mut self, units: i64) -> Self {
-        self.request.units = presence_rs::Presence::Some(units);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "units", "` to JSON null."
-    )]
-    #[must_use]
-    pub fn units_null(mut self) -> Self {
-        self.request.units = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable request-body field `", "units", "`.")]
-    #[must_use]
-    pub fn units_absent(mut self) -> Self {
-        self.request.units = presence_rs::Presence::Absent;
-        self
-    }
-
-    /// Send the request through the existing flat operation method.
-    pub async fn send(self) -> Result<Checkout, ApiOpError<CheckoutsCreateApiError>> {
-        self.client.checkouts_create(self.request).await
     }
 }
 #[doc = concat!("Additive request builder for `", "checkouts:list", "`.")]
@@ -25409,6 +24699,135 @@ impl HttpClient {
         }
     }
 
+    /// Reverse Customer Meter Credit
+    ///
+    /// Reverse a manual credit, removing the units the customer hasn't used
+    /// yet.
+    ///
+    /// Works once per credit, within 7 days and in the current billing period.
+    /// Returns a `meter.credited` event with negative units and
+    /// `parent_id` set to the reversed credit.
+    ///
+    /// **Scopes**: `customers:write`
+    ///
+    /// `POST /v1/customer-meters/credits/{id}/reverse`
+    pub async fn customer_meters_reverse_credit(
+        &self,
+        id: impl AsRef<str>,
+    ) -> Result<MeterCreditEvent, ApiOpError<CustomerMetersReverseCreditApiError>> {
+        let request_url = format!(
+            "{}{}",
+            self.base_url,
+            format!(
+                "/v1/customer-meters/credits/{}/reverse",
+                __pct_encode_path_segment(id.as_ref())
+            )
+        );
+        let mut req = self.http_client.post(request_url);
+        req = req.header(reqwest::header::CONTENT_LENGTH, "0");
+        if let Some(api_key) = &self.api_key {
+            req = req.bearer_auth(api_key);
+        }
+        for (name, value) in &self.custom_headers {
+            if !name.eq_ignore_ascii_case("accept") {
+                req = req.header(name, value);
+            }
+        }
+        req = req.header(reqwest::header::ACCEPT, "application/json");
+        let response = req.send().await?;
+        let status = response.status();
+        let status_code = status.as_u16();
+        let headers = response.headers().clone();
+        let body_bytes =
+            __read_bounded_response_body(response, self.max_response_body_bytes).await?;
+        let raw_body = body_bytes;
+        let body_text = String::from_utf8_lossy(&raw_body).into_owned();
+        if false || status_code == 201u16 {
+            match serde_json::from_str(&body_text) {
+                Ok(body) => Ok(body),
+                Err(e) => Err(ApiOpError::Api(ApiError {
+                    status: status_code,
+                    headers,
+                    body: body_text,
+                    raw_body,
+                    typed: None,
+                    parse_error: Some(format!("failed to deserialize 2xx response body: {}", e)),
+                })),
+            }
+        } else if status.is_success() {
+            Err(ApiOpError::Api(ApiError {
+                status: status_code,
+                headers,
+                body: body_text,
+                raw_body,
+                typed: None,
+                parse_error: Some(format!(
+                    "unexpected successful status {}; generated return type selects `{}`",
+                    status_code, "201",
+                )),
+            }))
+        } else {
+            let typed: Option<CustomerMetersReverseCreditApiError>;
+            let parse_error: Option<String>;
+            match status_code {
+                403u16 => match serde_json::from_str::<NotPermitted>(&body_text) {
+                    Ok(v) => {
+                        typed = Some(CustomerMetersReverseCreditApiError::Status403(v));
+                        parse_error = None;
+                    }
+                    Err(e) => {
+                        typed = None;
+                        parse_error = Some(e.to_string());
+                    }
+                },
+                404u16 => match serde_json::from_str::<ResourceNotFound>(&body_text) {
+                    Ok(v) => {
+                        typed = Some(CustomerMetersReverseCreditApiError::Status404(v));
+                        parse_error = None;
+                    }
+                    Err(e) => {
+                        typed = None;
+                        parse_error = Some(e.to_string());
+                    }
+                },
+                409u16 => {
+                    match serde_json::from_str::<CustomerMeterCreditNotReversible>(&body_text) {
+                        Ok(v) => {
+                            typed = Some(CustomerMetersReverseCreditApiError::Status409(v));
+                            parse_error = None;
+                        }
+                        Err(e) => {
+                            typed = None;
+                            parse_error = Some(e.to_string());
+                        }
+                    }
+                }
+                422u16 => match serde_json::from_str::<HTTPValidationError>(&body_text) {
+                    Ok(v) => {
+                        typed = Some(CustomerMetersReverseCreditApiError::Status422(v));
+                        parse_error = None;
+                    }
+                    Err(e) => {
+                        typed = None;
+                        parse_error = Some(e.to_string());
+                    }
+                },
+                _ => {
+                    typed = None;
+                    parse_error = None;
+                }
+            }
+            Err(ApiOpError::Api(ApiError {
+                status: status_code,
+                headers,
+                body: body_text,
+                raw_body,
+                typed,
+                parse_error,
+            }))
+        }
+    }
+
     /// Get Benefit Grant
     ///
     /// Get a benefit grant by ID for the authenticated customer.
@@ -41263,11 +40682,6 @@ impl HttpClient {
             client_secret: client_secret.into(),
             request: Default::default(),
         }
-    }
-
-    #[doc = concat!("Start an additive builder for `", "checkouts:create", "`.")]
-    pub fn checkouts_create_builder(&self, products: Vec<String>) -> CheckoutsCreateBuilder<'_> {
-        CheckoutsCreateBuilder { client: self, request: CheckoutCreate::new(products) }
     }
 
     #[doc = concat!("Start an additive builder for `", "checkouts:list", "`.")]

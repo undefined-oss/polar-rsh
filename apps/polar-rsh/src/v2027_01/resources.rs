@@ -936,6 +936,16 @@ impl<'a> CustomerMeters<'a> {
                 .await
         })
     }
+
+    /// Reverse Customer Meter Credit
+    pub fn reverse_credit(
+        &self,
+        id: uuid::Uuid,
+    ) -> Request<MeterCreditEvent, CustomerMetersReverseCreditApiError> {
+        Request::new(self.polar, move |client| async move {
+            client.customer_meters_reverse_credit(id.to_string()).await
+        })
+    }
 }
 #[derive(Clone, Copy)]
 pub struct CustomerPortal<'a> {

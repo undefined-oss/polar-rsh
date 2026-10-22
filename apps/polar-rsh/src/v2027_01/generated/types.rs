@@ -14462,10 +14462,6 @@ pub struct OrganizationFeatureSettings {
     /// Stripe) to Polar.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub merchant_migration_enabled: Option<bool>,
-    /// If this organization can set a separate meter cycle on recurring
-    /// products (a meter interval independent of the billing interval).
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub meter_cycling_enabled: Option<bool>,
     /// If this organization can create and finalize draft orders via the API
     /// (off-session charges against a saved payment method).
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -50772,6 +50768,34 @@ pub struct CustomerMeterCreditsExternalIDCreate {
     pub units: i64,
 }
 #[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct CustomerMeterCreditNotReversible {
+    pub detail: String,
+    pub error: CustomerMeterCreditNotReversibleError,
+}
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
+pub enum CustomerMeterCreditNotReversibleError {
+    #[default]
+    #[serde(rename = "CustomerMeterCreditNotReversible")]
+    CustomerMeterCreditNotReversible,
+}
+impl CustomerMeterCreditNotReversibleError {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::CustomerMeterCreditNotReversible => "CustomerMeterCreditNotReversible",
+        }
+    }
+}
+impl ::std::fmt::Display for CustomerMeterCreditNotReversibleError {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+impl AsRef<str> for CustomerMeterCreditNotReversibleError {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct CustomerMeterCreditExternalIDConflict {
     pub detail: String,
     pub error: CustomerMeterCreditExternalIDConflictError,
@@ -58048,366 +58072,6 @@ pub struct CheckoutPublicCustomFieldData {
     #[serde(flatten)]
     pub additional_properties: std::collections::BTreeMap<String, Option<serde_json::Value>>,
 }
-/// Create a new checkout session from a product.
-///
-/// Deprecated**: Use `CheckoutProductsCreate` instead.
-///
-/// Metadata set on the checkout will be copied
-/// to the resulting order and/or subscription.
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct CheckoutProductCreate {
-    /// Whether to allow the customer to apply discount codes. If you apply a
-    /// discount through `discount_id`, it'll still be applied, but the customer
-    /// won't be able to change it.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_discount_codes: Option<bool>,
-    /// Whether to enable the trial period for the checkout session. If `false`,
-    /// the trial period will be disabled, even if the selected product has a
-    /// trial configured.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_trial: Option<bool>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub amount: presence_rs::Presence<i64>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub currency: presence_rs::Presence<PresentmentCurrency>,
-    /// Key-value object storing custom field values.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_field_data: Option<CheckoutProductCreateCustomFieldData>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_billing_address: presence_rs::Presence<AddressInput>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_billing_name: presence_rs::Presence<String>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_email: presence_rs::Presence<String>,
-    /// ID of an existing customer in the organization. The customer data will
-    /// be pre-filled in the checkout form. The resulting order will be linked
-    /// to this customer.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_id: presence_rs::Presence<uuid::Uuid>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_ip_address: presence_rs::Presence<String>,
-    /// Key-value object allowing you to store additional information that'll be
-    /// copied to the created customer.
-    ///
-    /// The key must be a string with a maximum length of **40 characters**.
-    /// The value must be either:
-    ///
-    /// A string with a maximum length of **500 characters**
-    /// An integer
-    /// A floating-point number
-    /// A boolean
-    ///
-    /// You can store up to **50 key-value pairs**.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub customer_metadata: Option<CheckoutProductCreateCustomerMetadata>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_name: presence_rs::Presence<String>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_tax_id: presence_rs::Presence<String>,
-    /// ID of the discount to apply to the checkout.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub discount_id: presence_rs::Presence<uuid::Uuid>,
-    /// If you plan to embed the checkout session, set this to the Origin of the
-    /// embedding page. It'll allow the Polar iframe to communicate with the
-    /// parent page.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub embed_origin: presence_rs::Presence<String>,
-    /// ID of the customer in your system. If a matching customer exists on
-    /// Polar, the resulting order will be linked to this customer. Otherwise, a
-    /// new customer will be created with this external ID set.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub external_customer_id: presence_rs::Presence<String>,
-    /// Whether the customer is a business or an individual. If `true`, the
-    /// customer will be required to fill their full billing address and billing
-    /// name.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub is_business_customer: Option<bool>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub locale: presence_rs::Presence<String>,
-    /// Maximum number of seats (works with seat-based pricing only)
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub max_seats: presence_rs::Presence<i64>,
-    /// Maximum number of units (works with unit-based pricing only)
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub max_units: presence_rs::Presence<i64>,
-    /// Key-value object allowing you to store additional information.
-    ///
-    /// The key must be a string with a maximum length of **40 characters**.
-    /// The value must be either:
-    ///
-    /// A string with a maximum length of **500 characters**
-    /// An integer
-    /// A floating-point number
-    /// A boolean
-    ///
-    /// You can store up to **50 key-value pairs**.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub metadata: Option<CheckoutProductCreateMetadata>,
-    /// Minimum number of seats (works with seat-based pricing only)
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub min_seats: presence_rs::Presence<i64>,
-    /// Minimum number of units (works with unit-based pricing only)
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub min_units: presence_rs::Presence<i64>,
-    /// ID of the product to checkout. First available price will be selected.
-    pub product_id: uuid::Uuid,
-    /// Whether to require the customer to fill their full billing address,
-    /// instead of just the country. Customers in the US will always be required
-    /// to fill their full address, regardless of this setting. If you preset
-    /// the billing address, this setting will be automatically set to `true`.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub require_billing_address: Option<bool>,
-    /// When set, a back button will be shown in the checkout to return to this
-    /// URL.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub return_url: presence_rs::Presence<url::Url>,
-    /// Predefined number of seats (works with seat-based pricing only)
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub seats: presence_rs::Presence<i64>,
-    /// ID of a subscription to upgrade. It must be on a free pricing. If
-    /// checkout is successful, metadata set on this checkout will be copied to
-    /// the subscription, and existing keys will be overwritten.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub subscription_id: presence_rs::Presence<uuid::Uuid>,
-    /// URL where the customer will be redirected after a successful payment.You
-    /// can add the `checkout_id={CHECKOUT_ID}` query parameter to retrieve the
-    /// checkout session id.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub success_url: presence_rs::Presence<url::Url>,
-    /// The interval unit for the trial period.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub trial_interval: presence_rs::Presence<TrialInterval>,
-    /// The number of interval units for the trial period.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub trial_interval_count: presence_rs::Presence<i64>,
-    /// Predefined number of units (works with unit-based pricing only)
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub units: presence_rs::Presence<i64>,
-}
-/// Key-value object allowing you to store additional information.
-///
-/// The key must be a string with a maximum length of **40 characters**.
-/// The value must be either:
-///
-/// A string with a maximum length of **500 characters**
-/// An integer
-/// A floating-point number
-/// A boolean
-///
-/// You can store up to **50 key-value pairs**.
-#[derive(Debug, Clone, Deserialize, Serialize, Default)]
-pub struct CheckoutProductCreateMetadata {
-    /// Additional properties matching the spec's
-    /// `additionalProperties` value schema.
-    #[serde(flatten)]
-    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
-}
-/// Key-value object allowing you to store additional information that'll be
-/// copied to the created customer.
-///
-/// The key must be a string with a maximum length of **40 characters**.
-/// The value must be either:
-///
-/// A string with a maximum length of **500 characters**
-/// An integer
-/// A floating-point number
-/// A boolean
-///
-/// You can store up to **50 key-value pairs**.
-#[derive(Debug, Clone, Deserialize, Serialize, Default)]
-pub struct CheckoutProductCreateCustomerMetadata {
-    /// Additional properties matching the spec's
-    /// `additionalProperties` value schema.
-    #[serde(flatten)]
-    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
-}
-/// Key-value object storing custom field values.
-#[derive(Debug, Clone, Deserialize, Serialize, Default)]
-pub struct CheckoutProductCreateCustomFieldData {
-    /// Additional properties matching the spec's
-    /// `additionalProperties` value schema.
-    #[serde(flatten)]
-    pub additional_properties: std::collections::BTreeMap<String, Option<serde_json::Value>>,
-}
-/// Create a new checkout session from a product price.
-///
-/// Deprecated**: Use `CheckoutProductsCreate` instead.
-///
-/// Metadata set on the checkout will be copied
-/// to the resulting order and/or subscription.
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct CheckoutPriceCreate {
-    /// Whether to allow the customer to apply discount codes. If you apply a
-    /// discount through `discount_id`, it'll still be applied, but the customer
-    /// won't be able to change it.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_discount_codes: Option<bool>,
-    /// Whether to enable the trial period for the checkout session. If `false`,
-    /// the trial period will be disabled, even if the selected product has a
-    /// trial configured.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_trial: Option<bool>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub amount: presence_rs::Presence<i64>,
-    /// Key-value object storing custom field values.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub custom_field_data: Option<CheckoutPriceCreateCustomFieldData>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_billing_address: presence_rs::Presence<AddressInput>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_billing_name: presence_rs::Presence<String>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_email: presence_rs::Presence<String>,
-    /// ID of an existing customer in the organization. The customer data will
-    /// be pre-filled in the checkout form. The resulting order will be linked
-    /// to this customer.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_id: presence_rs::Presence<uuid::Uuid>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_ip_address: presence_rs::Presence<String>,
-    /// Key-value object allowing you to store additional information that'll be
-    /// copied to the created customer.
-    ///
-    /// The key must be a string with a maximum length of **40 characters**.
-    /// The value must be either:
-    ///
-    /// A string with a maximum length of **500 characters**
-    /// An integer
-    /// A floating-point number
-    /// A boolean
-    ///
-    /// You can store up to **50 key-value pairs**.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub customer_metadata: Option<CheckoutPriceCreateCustomerMetadata>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_name: presence_rs::Presence<String>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub customer_tax_id: presence_rs::Presence<String>,
-    /// ID of the discount to apply to the checkout.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub discount_id: presence_rs::Presence<uuid::Uuid>,
-    /// If you plan to embed the checkout session, set this to the Origin of the
-    /// embedding page. It'll allow the Polar iframe to communicate with the
-    /// parent page.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub embed_origin: presence_rs::Presence<String>,
-    /// ID of the customer in your system. If a matching customer exists on
-    /// Polar, the resulting order will be linked to this customer. Otherwise, a
-    /// new customer will be created with this external ID set.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub external_customer_id: presence_rs::Presence<String>,
-    /// Whether the customer is a business or an individual. If `true`, the
-    /// customer will be required to fill their full billing address and billing
-    /// name.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub is_business_customer: Option<bool>,
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub locale: presence_rs::Presence<String>,
-    /// Maximum number of seats (works with seat-based pricing only)
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub max_seats: presence_rs::Presence<i64>,
-    /// Maximum number of units (works with unit-based pricing only)
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub max_units: presence_rs::Presence<i64>,
-    /// Key-value object allowing you to store additional information.
-    ///
-    /// The key must be a string with a maximum length of **40 characters**.
-    /// The value must be either:
-    ///
-    /// A string with a maximum length of **500 characters**
-    /// An integer
-    /// A floating-point number
-    /// A boolean
-    ///
-    /// You can store up to **50 key-value pairs**.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub metadata: Option<CheckoutPriceCreateMetadata>,
-    /// Minimum number of seats (works with seat-based pricing only)
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub min_seats: presence_rs::Presence<i64>,
-    /// Minimum number of units (works with unit-based pricing only)
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub min_units: presence_rs::Presence<i64>,
-    /// ID of the product price to checkout.
-    pub product_price_id: uuid::Uuid,
-    /// Whether to require the customer to fill their full billing address,
-    /// instead of just the country. Customers in the US will always be required
-    /// to fill their full address, regardless of this setting. If you preset
-    /// the billing address, this setting will be automatically set to `true`.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub require_billing_address: Option<bool>,
-    /// When set, a back button will be shown in the checkout to return to this
-    /// URL.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub return_url: presence_rs::Presence<url::Url>,
-    /// Predefined number of seats (works with seat-based pricing only)
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub seats: presence_rs::Presence<i64>,
-    /// ID of a subscription to upgrade. It must be on a free pricing. If
-    /// checkout is successful, metadata set on this checkout will be copied to
-    /// the subscription, and existing keys will be overwritten.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub subscription_id: presence_rs::Presence<uuid::Uuid>,
-    /// URL where the customer will be redirected after a successful payment.You
-    /// can add the `checkout_id={CHECKOUT_ID}` query parameter to retrieve the
-    /// checkout session id.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub success_url: presence_rs::Presence<url::Url>,
-    /// The interval unit for the trial period.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub trial_interval: presence_rs::Presence<TrialInterval>,
-    /// The number of interval units for the trial period.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub trial_interval_count: presence_rs::Presence<i64>,
-    /// Predefined number of units (works with unit-based pricing only)
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub units: presence_rs::Presence<i64>,
-}
-/// Key-value object allowing you to store additional information.
-///
-/// The key must be a string with a maximum length of **40 characters**.
-/// The value must be either:
-///
-/// A string with a maximum length of **500 characters**
-/// An integer
-/// A floating-point number
-/// A boolean
-///
-/// You can store up to **50 key-value pairs**.
-#[derive(Debug, Clone, Deserialize, Serialize, Default)]
-pub struct CheckoutPriceCreateMetadata {
-    /// Additional properties matching the spec's
-    /// `additionalProperties` value schema.
-    #[serde(flatten)]
-    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
-}
-/// Key-value object allowing you to store additional information that'll be
-/// copied to the created customer.
-///
-/// The key must be a string with a maximum length of **40 characters**.
-/// The value must be either:
-///
-/// A string with a maximum length of **500 characters**
-/// An integer
-/// A floating-point number
-/// A boolean
-///
-/// You can store up to **50 key-value pairs**.
-#[derive(Debug, Clone, Deserialize, Serialize, Default)]
-pub struct CheckoutPriceCreateCustomerMetadata {
-    /// Additional properties matching the spec's
-    /// `additionalProperties` value schema.
-    #[serde(flatten)]
-    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
-}
-/// Key-value object storing custom field values.
-#[derive(Debug, Clone, Deserialize, Serialize, Default)]
-pub struct CheckoutPriceCreateCustomFieldData {
-    /// Additional properties matching the spec's
-    /// `additionalProperties` value schema.
-    #[serde(flatten)]
-    pub additional_properties: std::collections::BTreeMap<String, Option<serde_json::Value>>,
-}
 #[derive(Debug, Clone)]
 pub enum CheckoutPaymentError {
     PaymentError(PaymentError),
@@ -60547,7 +60211,1238 @@ impl AsRef<str> for CheckoutCreatedEventName {
         self.as_str()
     }
 }
-pub type CheckoutCreate = CheckoutProductsCreate;
+#[derive(Debug, Clone)]
+pub enum CheckoutCreate {
+    CheckoutProductsCreate(CheckoutProductsCreate),
+    CheckoutProductsExternalCreate(CheckoutProductsExternalCreate),
+}
+impl Serialize for CheckoutCreate {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            Self::CheckoutProductsCreate(value) => serde::Serialize::serialize(value, serializer),
+            Self::CheckoutProductsExternalCreate(value) => {
+                serde::Serialize::serialize(value, serializer)
+            }
+        }
+    }
+}
+impl<'de> Deserialize<'de> for CheckoutCreate {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
+            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
+        }
+        fn json_numbers_have_same_value(
+            encoded: &serde_json::Number,
+            input: &serde_json::Number,
+        ) -> bool {
+            match (exact_json_integer(encoded), exact_json_integer(input)) {
+                (Some(encoded), Some(input)) => encoded == input,
+                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
+                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
+                }),
+                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
+                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
+                }),
+                (None, None) => encoded.as_f64() == input.as_f64(),
+            }
+        }
+        /// `nulls_may_be_absent` also accepts an input `null` that the
+        /// branch omits, as a skipped `None` does. Extra encoded
+        /// keys are allowed only by the pre-existing anyOf match.
+        fn preserves_complete_json_input(
+            encoded: &serde_json::Value,
+            input: &serde_json::Value,
+            nulls_may_be_absent: bool,
+            encoded_keys_may_be_extra: bool,
+        ) -> bool {
+            match (encoded, input) {
+                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
+                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
+                        && input.iter().all(|(key, value)| match encoded.get(key) {
+                            Some(encoded_value) => preserves_complete_json_input(
+                                encoded_value,
+                                value,
+                                nulls_may_be_absent,
+                                encoded_keys_may_be_extra,
+                            ),
+                            None => nulls_may_be_absent && value.is_null(),
+                        })
+                }
+                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
+                    encoded.len() == input.len()
+                        && encoded.iter().zip(input).all(|(encoded, input)| {
+                            preserves_complete_json_input(
+                                encoded,
+                                input,
+                                nulls_may_be_absent,
+                                encoded_keys_may_be_extra,
+                            )
+                        })
+                }
+                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
+                    json_numbers_have_same_value(encoded, input)
+                }
+                _ => encoded == input,
+            }
+        }
+        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
+        let mut matched = None;
+        let mut equivalent = None;
+        let mut equivalent_matches = 0usize;
+        if true {
+            if let Ok(candidate) = serde_json::from_value::<CheckoutProductsCreate>(input.clone()) {
+                match serde_json::to_value(&candidate) {
+                    Ok(encoded) if encoded == input => {
+                        if matched.is_some() {
+                            return Err(serde::de::Error::custom(concat!(
+                                "ambiguous oneOf value for ",
+                                stringify!(CheckoutCreate),
+                                ": more than one branch preserved the complete input",
+                            )));
+                        }
+                        matched = Some(Self::CheckoutProductsCreate(candidate));
+                    }
+                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
+                        equivalent_matches += 1;
+                        equivalent.get_or_insert(Self::CheckoutProductsCreate(candidate));
+                    }
+                    _ => {}
+                }
+            }
+        }
+        if true {
+            if let Ok(candidate) =
+                serde_json::from_value::<CheckoutProductsExternalCreate>(input.clone())
+            {
+                match serde_json::to_value(&candidate) {
+                    Ok(encoded) if encoded == input => {
+                        if matched.is_some() {
+                            return Err(serde::de::Error::custom(concat!(
+                                "ambiguous oneOf value for ",
+                                stringify!(CheckoutCreate),
+                                ": more than one branch preserved the complete input",
+                            )));
+                        }
+                        matched = Some(Self::CheckoutProductsExternalCreate(candidate));
+                    }
+                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
+                        equivalent_matches += 1;
+                        equivalent.get_or_insert(Self::CheckoutProductsExternalCreate(candidate));
+                    }
+                    _ => {}
+                }
+            }
+        }
+        if let Some(matched) = matched {
+            return Ok(matched);
+        }
+        if equivalent_matches > 1 {
+            return Err(serde::de::Error::custom(concat!(
+                "ambiguous oneOf value for ",
+                stringify!(CheckoutCreate),
+                ": more than one branch preserved an equivalent input",
+            )));
+        }
+        equivalent.ok_or_else(|| {
+            serde::de::Error::custom(concat!(
+                "no oneOf branch for ",
+                stringify!(CheckoutCreate),
+                " preserved the complete input",
+            ))
+        })
+    }
+}
+/// Create a new checkout session from a list of products,
+/// referenced by their external ID.
+/// Customers will be able to switch between those products.
+///
+/// Metadata set on the checkout will be copied
+/// to the resulting order and/or subscription.
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct CheckoutProductsExternalCreate {
+    /// Whether to allow the customer to apply discount codes. If you apply a
+    /// discount through `discount_id`, it'll still be applied, but the customer
+    /// won't be able to change it.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub allow_discount_codes: Option<bool>,
+    /// Whether to enable the trial period for the checkout session. If `false`,
+    /// the trial period will be disabled, even if the selected product has a
+    /// trial configured.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub allow_trial: Option<bool>,
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub amount: presence_rs::Presence<i64>,
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub currency: presence_rs::Presence<PresentmentCurrency>,
+    /// Key-value object storing custom field values.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub custom_field_data: Option<CheckoutProductsExternalCreateCustomFieldData>,
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub customer_billing_address: presence_rs::Presence<AddressInput>,
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub customer_billing_name: presence_rs::Presence<String>,
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub customer_email: presence_rs::Presence<String>,
+    /// ID of an existing customer in the organization. The customer data will
+    /// be pre-filled in the checkout form. The resulting order will be linked
+    /// to this customer.
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub customer_id: presence_rs::Presence<uuid::Uuid>,
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub customer_ip_address: presence_rs::Presence<String>,
+    /// Key-value object allowing you to store additional information that'll be
+    /// copied to the created customer.
+    ///
+    /// The key must be a string with a maximum length of **40 characters**.
+    /// The value must be either:
+    ///
+    /// A string with a maximum length of **500 characters**
+    /// An integer
+    /// A floating-point number
+    /// A boolean
+    ///
+    /// You can store up to **50 key-value pairs**.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub customer_metadata: Option<CheckoutProductsExternalCreateCustomerMetadata>,
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub customer_name: presence_rs::Presence<String>,
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub customer_tax_id: presence_rs::Presence<String>,
+    /// ID of the discount to apply to the checkout.
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub discount_id: presence_rs::Presence<uuid::Uuid>,
+    /// If you plan to embed the checkout session, set this to the Origin of the
+    /// embedding page. It'll allow the Polar iframe to communicate with the
+    /// parent page.
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub embed_origin: presence_rs::Presence<String>,
+    /// ID of the customer in your system. If a matching customer exists on
+    /// Polar, the resulting order will be linked to this customer. Otherwise, a
+    /// new customer will be created with this external ID set.
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub external_customer_id: presence_rs::Presence<String>,
+    /// List of product external IDs available to select at that checkout. The
+    /// first one will be selected by default. Constraint: minItems=1
+    pub external_products: Vec<String>,
+    /// Whether the customer is a business or an individual. If `true`, the
+    /// customer will be required to fill their full billing address and billing
+    /// name.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub is_business_customer: Option<bool>,
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub locale: presence_rs::Presence<String>,
+    /// Maximum number of seats (works with seat-based pricing only)
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub max_seats: presence_rs::Presence<i64>,
+    /// Maximum number of units (works with unit-based pricing only)
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub max_units: presence_rs::Presence<i64>,
+    /// Key-value object allowing you to store additional information.
+    ///
+    /// The key must be a string with a maximum length of **40 characters**.
+    /// The value must be either:
+    ///
+    /// A string with a maximum length of **500 characters**
+    /// An integer
+    /// A floating-point number
+    /// A boolean
+    ///
+    /// You can store up to **50 key-value pairs**.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<CheckoutProductsExternalCreateMetadata>,
+    /// Minimum number of seats (works with seat-based pricing only)
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub min_seats: presence_rs::Presence<i64>,
+    /// Minimum number of units (works with unit-based pricing only)
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub min_units: presence_rs::Presence<i64>,
+    /// Optional mapping of product external IDs to a list of ad-hoc prices to
+    /// create for that product. If not set, catalog prices of the product will
+    /// be used.
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub prices: presence_rs::Presence<CheckoutProductsExternalCreatePrices>,
+    /// Whether to require the customer to fill their full billing address,
+    /// instead of just the country. Customers in the US will always be required
+    /// to fill their full address, regardless of this setting. If you preset
+    /// the billing address, this setting will be automatically set to `true`.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub require_billing_address: Option<bool>,
+    /// When set, a back button will be shown in the checkout to return to this
+    /// URL.
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub return_url: presence_rs::Presence<url::Url>,
+    /// Predefined number of seats (works with seat-based pricing only)
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub seats: presence_rs::Presence<i64>,
+    /// ID of a subscription to upgrade. It must be on a free pricing. If
+    /// checkout is successful, metadata set on this checkout will be copied to
+    /// the subscription, and existing keys will be overwritten.
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub subscription_id: presence_rs::Presence<uuid::Uuid>,
+    /// URL where the customer will be redirected after a successful payment.You
+    /// can add the `checkout_id={CHECKOUT_ID}` query parameter to retrieve the
+    /// checkout session id.
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub success_url: presence_rs::Presence<url::Url>,
+    /// The interval unit for the trial period.
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub trial_interval: presence_rs::Presence<TrialInterval>,
+    /// The number of interval units for the trial period.
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub trial_interval_count: presence_rs::Presence<i64>,
+    /// Predefined number of units (works with unit-based pricing only)
+    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
+    pub units: presence_rs::Presence<i64>,
+}
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct CheckoutProductsExternalCreatePrices {
+    /// Additional properties matching the spec's
+    /// `additionalProperties` value schema.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<
+        String,
+        Vec<CheckoutProductsExternalCreatePricesAdditionalPropertyItemUnion>,
+    >,
+}
+#[derive(Debug, Clone)]
+pub enum CheckoutProductsExternalCreatePricesAdditionalPropertyItemUnion {
+    ProductPriceFixedCreate(ProductPriceFixedCreate),
+    ProductPriceCustomCreate(ProductPriceCustomCreate),
+    ProductPriceSeatBasedCreate(ProductPriceSeatBasedCreate),
+    ProductPriceUnitBasedCreate(ProductPriceUnitBasedCreate),
+    ProductPriceMeteredUnitCreate(ProductPriceMeteredUnitCreate),
+    ProductPriceMeteredTiersCreate(ProductPriceMeteredTiersCreate),
+}
+impl serde::Serialize for CheckoutProductsExternalCreatePricesAdditionalPropertyItemUnion {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            Self::ProductPriceFixedCreate(payload) => {
+                let mut value = serde_json::to_value(payload).map_err(serde::ser::Error::custom)?;
+                let object = value.as_object_mut().ok_or_else(|| {
+                    serde::ser::Error::custom(concat!(
+                        "discriminated union variant `",
+                        stringify!(ProductPriceFixedCreate),
+                        "` did not serialize as an object",
+                    ))
+                })?;
+                match object.get("amount_type") {
+                    Some(serde_json::Value::String(tag)) if matches!(tag.as_str(), "fixed") => {}
+                    Some(serde_json::Value::String(tag)) => {
+                        return Err(serde::ser::Error::custom(format!(
+                            "discriminator `{}` value `{tag}` is not valid for variant `{}`",
+                            "amount_type",
+                            stringify!(ProductPriceFixedCreate),
+                        )));
+                    }
+                    Some(_) => {
+                        return Err(serde::ser::Error::custom(concat!(
+                            "discriminator `",
+                            "amount_type",
+                            "` did not serialize as a string",
+                        )));
+                    }
+                    None => {
+                        object.insert(
+                            "amount_type".to_string(),
+                            serde_json::Value::String("fixed".to_string()),
+                        );
+                    }
+                }
+                value.serialize(serializer)
+            }
+            Self::ProductPriceCustomCreate(payload) => {
+                let mut value = serde_json::to_value(payload).map_err(serde::ser::Error::custom)?;
+                let object = value.as_object_mut().ok_or_else(|| {
+                    serde::ser::Error::custom(concat!(
+                        "discriminated union variant `",
+                        stringify!(ProductPriceCustomCreate),
+                        "` did not serialize as an object",
+                    ))
+                })?;
+                match object.get("amount_type") {
+                    Some(serde_json::Value::String(tag)) if matches!(tag.as_str(), "custom") => {}
+                    Some(serde_json::Value::String(tag)) => {
+                        return Err(serde::ser::Error::custom(format!(
+                            "discriminator `{}` value `{tag}` is not valid for variant `{}`",
+                            "amount_type",
+                            stringify!(ProductPriceCustomCreate),
+                        )));
+                    }
+                    Some(_) => {
+                        return Err(serde::ser::Error::custom(concat!(
+                            "discriminator `",
+                            "amount_type",
+                            "` did not serialize as a string",
+                        )));
+                    }
+                    None => {
+                        object.insert(
+                            "amount_type".to_string(),
+                            serde_json::Value::String("custom".to_string()),
+                        );
+                    }
+                }
+                value.serialize(serializer)
+            }
+            Self::ProductPriceSeatBasedCreate(payload) => {
+                let mut value = serde_json::to_value(payload).map_err(serde::ser::Error::custom)?;
+                let object = value.as_object_mut().ok_or_else(|| {
+                    serde::ser::Error::custom(concat!(
+                        "discriminated union variant `",
+                        stringify!(ProductPriceSeatBasedCreate),
+                        "` did not serialize as an object",
+                    ))
+                })?;
+                match object.get("amount_type") {
+                    Some(serde_json::Value::String(tag))
+                        if matches!(tag.as_str(), "seat_based") => {}
+                    Some(serde_json::Value::String(tag)) => {
+                        return Err(serde::ser::Error::custom(format!(
+                            "discriminator `{}` value `{tag}` is not valid for variant `{}`",
+                            "amount_type",
+                            stringify!(ProductPriceSeatBasedCreate),
+                        )));
+                    }
+                    Some(_) => {
+                        return Err(serde::ser::Error::custom(concat!(
+                            "discriminator `",
+                            "amount_type",
+                            "` did not serialize as a string",
+                        )));
+                    }
+                    None => {
+                        object.insert(
+                            "amount_type".to_string(),
+                            serde_json::Value::String("seat_based".to_string()),
+                        );
+                    }
+                }
+                value.serialize(serializer)
+            }
+            Self::ProductPriceUnitBasedCreate(payload) => {
+                let mut value = serde_json::to_value(payload).map_err(serde::ser::Error::custom)?;
+                let object = value.as_object_mut().ok_or_else(|| {
+                    serde::ser::Error::custom(concat!(
+                        "discriminated union variant `",
+                        stringify!(ProductPriceUnitBasedCreate),
+                        "` did not serialize as an object",
+                    ))
+                })?;
+                match object.get("amount_type") {
+                    Some(serde_json::Value::String(tag))
+                        if matches!(tag.as_str(), "unit_based") => {}
+                    Some(serde_json::Value::String(tag)) => {
+                        return Err(serde::ser::Error::custom(format!(
+                            "discriminator `{}` value `{tag}` is not valid for variant `{}`",
+                            "amount_type",
+                            stringify!(ProductPriceUnitBasedCreate),
+                        )));
+                    }
+                    Some(_) => {
+                        return Err(serde::ser::Error::custom(concat!(
+                            "discriminator `",
+                            "amount_type",
+                            "` did not serialize as a string",
+                        )));
+                    }
+                    None => {
+                        object.insert(
+                            "amount_type".to_string(),
+                            serde_json::Value::String("unit_based".to_string()),
+                        );
+                    }
+                }
+                value.serialize(serializer)
+            }
+            Self::ProductPriceMeteredUnitCreate(payload) => {
+                let mut value = serde_json::to_value(payload).map_err(serde::ser::Error::custom)?;
+                let object = value.as_object_mut().ok_or_else(|| {
+                    serde::ser::Error::custom(concat!(
+                        "discriminated union variant `",
+                        stringify!(ProductPriceMeteredUnitCreate),
+                        "` did not serialize as an object",
+                    ))
+                })?;
+                match object.get("amount_type") {
+                    Some(serde_json::Value::String(tag))
+                        if matches!(tag.as_str(), "metered_unit") => {}
+                    Some(serde_json::Value::String(tag)) => {
+                        return Err(serde::ser::Error::custom(format!(
+                            "discriminator `{}` value `{tag}` is not valid for variant `{}`",
+                            "amount_type",
+                            stringify!(ProductPriceMeteredUnitCreate),
+                        )));
+                    }
+                    Some(_) => {
+                        return Err(serde::ser::Error::custom(concat!(
+                            "discriminator `",
+                            "amount_type",
+                            "` did not serialize as a string",
+                        )));
+                    }
+                    None => {
+                        object.insert(
+                            "amount_type".to_string(),
+                            serde_json::Value::String("metered_unit".to_string()),
+                        );
+                    }
+                }
+                value.serialize(serializer)
+            }
+            Self::ProductPriceMeteredTiersCreate(payload) => {
+                let mut value = serde_json::to_value(payload).map_err(serde::ser::Error::custom)?;
+                let object = value.as_object_mut().ok_or_else(|| {
+                    serde::ser::Error::custom(concat!(
+                        "discriminated union variant `",
+                        stringify!(ProductPriceMeteredTiersCreate),
+                        "` did not serialize as an object",
+                    ))
+                })?;
+                match object.get("amount_type") {
+                    Some(serde_json::Value::String(tag))
+                        if matches!(tag.as_str(), "metered_tiers") => {}
+                    Some(serde_json::Value::String(tag)) => {
+                        return Err(serde::ser::Error::custom(format!(
+                            "discriminator `{}` value `{tag}` is not valid for variant `{}`",
+                            "amount_type",
+                            stringify!(ProductPriceMeteredTiersCreate),
+                        )));
+                    }
+                    Some(_) => {
+                        return Err(serde::ser::Error::custom(concat!(
+                            "discriminator `",
+                            "amount_type",
+                            "` did not serialize as a string",
+                        )));
+                    }
+                    None => {
+                        object.insert(
+                            "amount_type".to_string(),
+                            serde_json::Value::String("metered_tiers".to_string()),
+                        );
+                    }
+                }
+                value.serialize(serializer)
+            }
+        }
+    }
+}
+impl<'de> serde::Deserialize<'de>
+    for CheckoutProductsExternalCreatePricesAdditionalPropertyItemUnion
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = serde_json::Value::deserialize(deserializer)?;
+        let discriminator = match value.get("amount_type") {
+            Some(serde_json::Value::String(discriminator)) => Some(discriminator.as_str()),
+            Some(_) => {
+                return Err(serde::de::Error::custom(concat!(
+                    "non-string discriminator `",
+                    "amount_type",
+                    "`",
+                )));
+            }
+            None => None,
+        };
+        match discriminator {
+            Some(discriminator) => match discriminator {
+                "fixed" => {
+                    let primary_error =
+                        match serde_json::from_value::<ProductPriceFixedCreate>(value.clone()) {
+                            Ok(payload) => {
+                                return Ok(Self::ProductPriceFixedCreate(payload));
+                            }
+                            Err(error) => error,
+                        };
+                    let mut structural_match: Option<(Self, &'static str)> = None;
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceCustomCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "fixed",
+                                first_name,
+                                stringify!(ProductPriceCustomCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceCustomCreate(payload),
+                            stringify!(ProductPriceCustomCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceSeatBasedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "fixed",
+                                first_name,
+                                stringify!(ProductPriceSeatBasedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceSeatBasedCreate(payload),
+                            stringify!(ProductPriceSeatBasedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceUnitBasedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "fixed",
+                                first_name,
+                                stringify!(ProductPriceUnitBasedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceUnitBasedCreate(payload),
+                            stringify!(ProductPriceUnitBasedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceMeteredUnitCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "fixed",
+                                first_name,
+                                stringify!(ProductPriceMeteredUnitCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceMeteredUnitCreate(payload),
+                            stringify!(ProductPriceMeteredUnitCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceMeteredTiersCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "fixed",
+                                first_name,
+                                stringify!(ProductPriceMeteredTiersCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceMeteredTiersCreate(payload),
+                            stringify!(ProductPriceMeteredTiersCreate),
+                        ));
+                    }
+                    match structural_match {
+                        Some((payload, _)) => Ok(payload),
+                        None => Err(serde::de::Error::custom(primary_error)),
+                    }
+                }
+                "custom" => {
+                    let primary_error =
+                        match serde_json::from_value::<ProductPriceCustomCreate>(value.clone()) {
+                            Ok(payload) => {
+                                return Ok(Self::ProductPriceCustomCreate(payload));
+                            }
+                            Err(error) => error,
+                        };
+                    let mut structural_match: Option<(Self, &'static str)> = None;
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceFixedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "custom",
+                                first_name,
+                                stringify!(ProductPriceFixedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceFixedCreate(payload),
+                            stringify!(ProductPriceFixedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceSeatBasedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "custom",
+                                first_name,
+                                stringify!(ProductPriceSeatBasedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceSeatBasedCreate(payload),
+                            stringify!(ProductPriceSeatBasedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceUnitBasedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "custom",
+                                first_name,
+                                stringify!(ProductPriceUnitBasedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceUnitBasedCreate(payload),
+                            stringify!(ProductPriceUnitBasedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceMeteredUnitCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "custom",
+                                first_name,
+                                stringify!(ProductPriceMeteredUnitCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceMeteredUnitCreate(payload),
+                            stringify!(ProductPriceMeteredUnitCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceMeteredTiersCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "custom",
+                                first_name,
+                                stringify!(ProductPriceMeteredTiersCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceMeteredTiersCreate(payload),
+                            stringify!(ProductPriceMeteredTiersCreate),
+                        ));
+                    }
+                    match structural_match {
+                        Some((payload, _)) => Ok(payload),
+                        None => Err(serde::de::Error::custom(primary_error)),
+                    }
+                }
+                "seat_based" => {
+                    let primary_error = match serde_json::from_value::<ProductPriceSeatBasedCreate>(
+                        value.clone(),
+                    ) {
+                        Ok(payload) => {
+                            return Ok(Self::ProductPriceSeatBasedCreate(payload));
+                        }
+                        Err(error) => error,
+                    };
+                    let mut structural_match: Option<(Self, &'static str)> = None;
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceFixedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "seat_based",
+                                first_name,
+                                stringify!(ProductPriceFixedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceFixedCreate(payload),
+                            stringify!(ProductPriceFixedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceCustomCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "seat_based",
+                                first_name,
+                                stringify!(ProductPriceCustomCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceCustomCreate(payload),
+                            stringify!(ProductPriceCustomCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceUnitBasedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "seat_based",
+                                first_name,
+                                stringify!(ProductPriceUnitBasedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceUnitBasedCreate(payload),
+                            stringify!(ProductPriceUnitBasedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceMeteredUnitCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "seat_based",
+                                first_name,
+                                stringify!(ProductPriceMeteredUnitCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceMeteredUnitCreate(payload),
+                            stringify!(ProductPriceMeteredUnitCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceMeteredTiersCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "seat_based",
+                                first_name,
+                                stringify!(ProductPriceMeteredTiersCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceMeteredTiersCreate(payload),
+                            stringify!(ProductPriceMeteredTiersCreate),
+                        ));
+                    }
+                    match structural_match {
+                        Some((payload, _)) => Ok(payload),
+                        None => Err(serde::de::Error::custom(primary_error)),
+                    }
+                }
+                "unit_based" => {
+                    let primary_error = match serde_json::from_value::<ProductPriceUnitBasedCreate>(
+                        value.clone(),
+                    ) {
+                        Ok(payload) => {
+                            return Ok(Self::ProductPriceUnitBasedCreate(payload));
+                        }
+                        Err(error) => error,
+                    };
+                    let mut structural_match: Option<(Self, &'static str)> = None;
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceFixedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "unit_based",
+                                first_name,
+                                stringify!(ProductPriceFixedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceFixedCreate(payload),
+                            stringify!(ProductPriceFixedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceCustomCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "unit_based",
+                                first_name,
+                                stringify!(ProductPriceCustomCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceCustomCreate(payload),
+                            stringify!(ProductPriceCustomCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceSeatBasedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "unit_based",
+                                first_name,
+                                stringify!(ProductPriceSeatBasedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceSeatBasedCreate(payload),
+                            stringify!(ProductPriceSeatBasedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceMeteredUnitCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "unit_based",
+                                first_name,
+                                stringify!(ProductPriceMeteredUnitCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceMeteredUnitCreate(payload),
+                            stringify!(ProductPriceMeteredUnitCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceMeteredTiersCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "unit_based",
+                                first_name,
+                                stringify!(ProductPriceMeteredTiersCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceMeteredTiersCreate(payload),
+                            stringify!(ProductPriceMeteredTiersCreate),
+                        ));
+                    }
+                    match structural_match {
+                        Some((payload, _)) => Ok(payload),
+                        None => Err(serde::de::Error::custom(primary_error)),
+                    }
+                }
+                "metered_unit" => {
+                    let primary_error = match serde_json::from_value::<ProductPriceMeteredUnitCreate>(
+                        value.clone(),
+                    ) {
+                        Ok(payload) => {
+                            return Ok(Self::ProductPriceMeteredUnitCreate(payload));
+                        }
+                        Err(error) => error,
+                    };
+                    let mut structural_match: Option<(Self, &'static str)> = None;
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceFixedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "metered_unit",
+                                first_name,
+                                stringify!(ProductPriceFixedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceFixedCreate(payload),
+                            stringify!(ProductPriceFixedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceCustomCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "metered_unit",
+                                first_name,
+                                stringify!(ProductPriceCustomCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceCustomCreate(payload),
+                            stringify!(ProductPriceCustomCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceSeatBasedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "metered_unit",
+                                first_name,
+                                stringify!(ProductPriceSeatBasedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceSeatBasedCreate(payload),
+                            stringify!(ProductPriceSeatBasedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceUnitBasedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "metered_unit",
+                                first_name,
+                                stringify!(ProductPriceUnitBasedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceUnitBasedCreate(payload),
+                            stringify!(ProductPriceUnitBasedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceMeteredTiersCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "metered_unit",
+                                first_name,
+                                stringify!(ProductPriceMeteredTiersCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceMeteredTiersCreate(payload),
+                            stringify!(ProductPriceMeteredTiersCreate),
+                        ));
+                    }
+                    match structural_match {
+                        Some((payload, _)) => Ok(payload),
+                        None => Err(serde::de::Error::custom(primary_error)),
+                    }
+                }
+                "metered_tiers" => {
+                    let primary_error = match serde_json::from_value::<ProductPriceMeteredTiersCreate>(
+                        value.clone(),
+                    ) {
+                        Ok(payload) => {
+                            return Ok(Self::ProductPriceMeteredTiersCreate(payload));
+                        }
+                        Err(error) => error,
+                    };
+                    let mut structural_match: Option<(Self, &'static str)> = None;
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceFixedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "metered_tiers",
+                                first_name,
+                                stringify!(ProductPriceFixedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceFixedCreate(payload),
+                            stringify!(ProductPriceFixedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceCustomCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "metered_tiers",
+                                first_name,
+                                stringify!(ProductPriceCustomCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceCustomCreate(payload),
+                            stringify!(ProductPriceCustomCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceSeatBasedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "metered_tiers",
+                                first_name,
+                                stringify!(ProductPriceSeatBasedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceSeatBasedCreate(payload),
+                            stringify!(ProductPriceSeatBasedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceUnitBasedCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "metered_tiers",
+                                first_name,
+                                stringify!(ProductPriceUnitBasedCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceUnitBasedCreate(payload),
+                            stringify!(ProductPriceUnitBasedCreate),
+                        ));
+                    }
+                    if let Ok(payload) =
+                        serde_json::from_value::<ProductPriceMeteredUnitCreate>(value.clone())
+                    {
+                        if let Some((_, first_name)) = &structural_match {
+                            return Err(serde::de::Error::custom(format!(
+                                "discriminator `{}` value `{}` did not fit its mapped branch and \
+                                 structurally matched both `{}` and `{}`",
+                                "amount_type",
+                                "metered_tiers",
+                                first_name,
+                                stringify!(ProductPriceMeteredUnitCreate),
+                            )));
+                        }
+                        structural_match = Some((
+                            Self::ProductPriceMeteredUnitCreate(payload),
+                            stringify!(ProductPriceMeteredUnitCreate),
+                        ));
+                    }
+                    match structural_match {
+                        Some((payload, _)) => Ok(payload),
+                        None => Err(serde::de::Error::custom(primary_error)),
+                    }
+                }
+                other => Err(serde::de::Error::custom(format!(
+                    "unknown discriminator value `{other}` for `{}`",
+                    "amount_type",
+                ))),
+            },
+            None => Err(serde::de::Error::custom(concat!(
+                "missing string discriminator `",
+                "amount_type",
+                "`",
+            ))),
+        }
+    }
+}
+/// Key-value object allowing you to store additional information.
+///
+/// The key must be a string with a maximum length of **40 characters**.
+/// The value must be either:
+///
+/// A string with a maximum length of **500 characters**
+/// An integer
+/// A floating-point number
+/// A boolean
+///
+/// You can store up to **50 key-value pairs**.
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct CheckoutProductsExternalCreateMetadata {
+    /// Additional properties matching the spec's
+    /// `additionalProperties` value schema.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+/// Key-value object allowing you to store additional information that'll be
+/// copied to the created customer.
+///
+/// The key must be a string with a maximum length of **40 characters**.
+/// The value must be either:
+///
+/// A string with a maximum length of **500 characters**
+/// An integer
+/// A floating-point number
+/// A boolean
+///
+/// You can store up to **50 key-value pairs**.
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct CheckoutProductsExternalCreateCustomerMetadata {
+    /// Additional properties matching the spec's
+    /// `additionalProperties` value schema.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+/// Key-value object storing custom field values.
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct CheckoutProductsExternalCreateCustomFieldData {
+    /// Additional properties matching the spec's
+    /// `additionalProperties` value schema.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, Option<serde_json::Value>>,
+}
 /// Create a new checkout session from a list of products.
 /// Customers will be able to switch between those products.
 ///
@@ -60687,776 +61582,6 @@ pub struct CheckoutProductsCreate {
     /// Predefined number of units (works with unit-based pricing only)
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
     pub units: presence_rs::Presence<i64>,
-}
-impl CheckoutProductsCreate {
-    /// Construct this request with every required wire field.
-    pub fn new(products: Vec<String>) -> Self {
-        Self {
-            products,
-            allow_discount_codes: None,
-            allow_trial: None,
-            amount: presence_rs::Presence::Absent,
-            currency: presence_rs::Presence::Absent,
-            custom_field_data: None,
-            customer_billing_address: presence_rs::Presence::Absent,
-            customer_billing_name: presence_rs::Presence::Absent,
-            customer_email: presence_rs::Presence::Absent,
-            customer_id: presence_rs::Presence::Absent,
-            customer_ip_address: presence_rs::Presence::Absent,
-            customer_metadata: None,
-            customer_name: presence_rs::Presence::Absent,
-            customer_tax_id: presence_rs::Presence::Absent,
-            discount_id: presence_rs::Presence::Absent,
-            embed_origin: presence_rs::Presence::Absent,
-            external_customer_id: presence_rs::Presence::Absent,
-            is_business_customer: None,
-            locale: presence_rs::Presence::Absent,
-            max_seats: presence_rs::Presence::Absent,
-            max_units: presence_rs::Presence::Absent,
-            metadata: None,
-            min_seats: presence_rs::Presence::Absent,
-            min_units: presence_rs::Presence::Absent,
-            prices: presence_rs::Presence::Absent,
-            require_billing_address: None,
-            return_url: presence_rs::Presence::Absent,
-            seats: presence_rs::Presence::Absent,
-            subscription_id: presence_rs::Presence::Absent,
-            success_url: presence_rs::Presence::Absent,
-            trial_interval: presence_rs::Presence::Absent,
-            trial_interval_count: presence_rs::Presence::Absent,
-            units: presence_rs::Presence::Absent,
-        }
-    }
-
-    /// Start a dependency-free builder with every required wire field.
-    pub fn builder(products: Vec<String>) -> CheckoutProductsCreateBuilder {
-        CheckoutProductsCreateBuilder::new(products)
-    }
-}
-/// Dependency-free builder for [`#struct_name`].
-#[derive(Debug, Clone)]
-#[must_use]
-pub struct CheckoutProductsCreateBuilder {
-    value: CheckoutProductsCreate,
-}
-impl CheckoutProductsCreateBuilder {
-    /// Start a builder with every required wire field.
-    pub fn new(products: Vec<String>) -> Self {
-        Self { value: CheckoutProductsCreate::new(products) }
-    }
-
-    #[doc = concat!("Set the optional `", "allow_discount_codes", "` request field.")]
-    #[must_use]
-    pub fn allow_discount_codes(mut self, allow_discount_codes: bool) -> Self {
-        self.value.allow_discount_codes = Some(allow_discount_codes);
-        self
-    }
-
-    #[doc = concat!("Set the optional `", "allow_trial", "` request field.")]
-    #[must_use]
-    pub fn allow_trial(mut self, allow_trial: bool) -> Self {
-        self.value.allow_trial = Some(allow_trial);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "amount", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn amount(mut self, amount: i64) -> Self {
-        self.value.amount = presence_rs::Presence::Some(amount);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "amount", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn amount_null(mut self) -> Self {
-        self.value.amount = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "amount", "` request field.")]
-    #[must_use]
-    pub fn amount_absent(mut self) -> Self {
-        self.value.amount = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "currency", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn currency(mut self, currency: PresentmentCurrency) -> Self {
-        self.value.currency = presence_rs::Presence::Some(currency);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "currency", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn currency_null(mut self) -> Self {
-        self.value.currency = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "currency", "` request field.")]
-    #[must_use]
-    pub fn currency_absent(mut self) -> Self {
-        self.value.currency = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional `", "custom_field_data", "` request field.")]
-    #[must_use]
-    pub fn custom_field_data(
-        mut self,
-        custom_field_data: CheckoutProductsCreateCustomFieldData,
-    ) -> Self {
-        self.value.custom_field_data = Some(custom_field_data);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_billing_address",
-        "` request field to a value."
-    )]
-    #[must_use]
-    pub fn customer_billing_address(mut self, customer_billing_address: AddressInput) -> Self {
-        self.value.customer_billing_address = presence_rs::Presence::Some(customer_billing_address);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_billing_address",
-        "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_billing_address_null(mut self) -> Self {
-        self.value.customer_billing_address = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable `", "customer_billing_address", "` request field."
-    )]
-    #[must_use]
-    pub fn customer_billing_address_absent(mut self) -> Self {
-        self.value.customer_billing_address = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_billing_name",
-        "` request field to a value."
-    )]
-    #[must_use]
-    pub fn customer_billing_name(mut self, customer_billing_name: String) -> Self {
-        self.value.customer_billing_name = presence_rs::Presence::Some(customer_billing_name);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_billing_name",
-        "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_billing_name_null(mut self) -> Self {
-        self.value.customer_billing_name = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable `", "customer_billing_name", "` request field."
-    )]
-    #[must_use]
-    pub fn customer_billing_name_absent(mut self) -> Self {
-        self.value.customer_billing_name = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_email", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn customer_email(mut self, customer_email: String) -> Self {
-        self.value.customer_email = presence_rs::Presence::Some(customer_email);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_email", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_email_null(mut self) -> Self {
-        self.value.customer_email = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable `", "customer_email", "` request field."
-    )]
-    #[must_use]
-    pub fn customer_email_absent(mut self) -> Self {
-        self.value.customer_email = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_id", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn customer_id(mut self, customer_id: uuid::Uuid) -> Self {
-        self.value.customer_id = presence_rs::Presence::Some(customer_id);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_id", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_id_null(mut self) -> Self {
-        self.value.customer_id = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "customer_id", "` request field.")]
-    #[must_use]
-    pub fn customer_id_absent(mut self) -> Self {
-        self.value.customer_id = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_ip_address",
-        "` request field to a value."
-    )]
-    #[must_use]
-    pub fn customer_ip_address(mut self, customer_ip_address: String) -> Self {
-        self.value.customer_ip_address = presence_rs::Presence::Some(customer_ip_address);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_ip_address",
-        "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_ip_address_null(mut self) -> Self {
-        self.value.customer_ip_address = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable `", "customer_ip_address", "` request field."
-    )]
-    #[must_use]
-    pub fn customer_ip_address_absent(mut self) -> Self {
-        self.value.customer_ip_address = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional `", "customer_metadata", "` request field.")]
-    #[must_use]
-    pub fn customer_metadata(
-        mut self,
-        customer_metadata: CheckoutProductsCreateCustomerMetadata,
-    ) -> Self {
-        self.value.customer_metadata = Some(customer_metadata);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_name", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn customer_name(mut self, customer_name: String) -> Self {
-        self.value.customer_name = presence_rs::Presence::Some(customer_name);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_name", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_name_null(mut self) -> Self {
-        self.value.customer_name = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "customer_name", "` request field.")]
-    #[must_use]
-    pub fn customer_name_absent(mut self) -> Self {
-        self.value.customer_name = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_tax_id", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn customer_tax_id(mut self, customer_tax_id: String) -> Self {
-        self.value.customer_tax_id = presence_rs::Presence::Some(customer_tax_id);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "customer_tax_id", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn customer_tax_id_null(mut self) -> Self {
-        self.value.customer_tax_id = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable `", "customer_tax_id", "` request field."
-    )]
-    #[must_use]
-    pub fn customer_tax_id_absent(mut self) -> Self {
-        self.value.customer_tax_id = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "discount_id", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn discount_id(mut self, discount_id: uuid::Uuid) -> Self {
-        self.value.discount_id = presence_rs::Presence::Some(discount_id);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "discount_id", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn discount_id_null(mut self) -> Self {
-        self.value.discount_id = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "discount_id", "` request field.")]
-    #[must_use]
-    pub fn discount_id_absent(mut self) -> Self {
-        self.value.discount_id = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "embed_origin", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn embed_origin(mut self, embed_origin: String) -> Self {
-        self.value.embed_origin = presence_rs::Presence::Some(embed_origin);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "embed_origin", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn embed_origin_null(mut self) -> Self {
-        self.value.embed_origin = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "embed_origin", "` request field.")]
-    #[must_use]
-    pub fn embed_origin_absent(mut self) -> Self {
-        self.value.embed_origin = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "external_customer_id",
-        "` request field to a value."
-    )]
-    #[must_use]
-    pub fn external_customer_id(mut self, external_customer_id: String) -> Self {
-        self.value.external_customer_id = presence_rs::Presence::Some(external_customer_id);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "external_customer_id",
-        "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn external_customer_id_null(mut self) -> Self {
-        self.value.external_customer_id = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable `", "external_customer_id", "` request field."
-    )]
-    #[must_use]
-    pub fn external_customer_id_absent(mut self) -> Self {
-        self.value.external_customer_id = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional `", "is_business_customer", "` request field.")]
-    #[must_use]
-    pub fn is_business_customer(mut self, is_business_customer: bool) -> Self {
-        self.value.is_business_customer = Some(is_business_customer);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "locale", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn locale(mut self, locale: String) -> Self {
-        self.value.locale = presence_rs::Presence::Some(locale);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "locale", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn locale_null(mut self) -> Self {
-        self.value.locale = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "locale", "` request field.")]
-    #[must_use]
-    pub fn locale_absent(mut self) -> Self {
-        self.value.locale = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "max_seats", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn max_seats(mut self, max_seats: i64) -> Self {
-        self.value.max_seats = presence_rs::Presence::Some(max_seats);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "max_seats", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn max_seats_null(mut self) -> Self {
-        self.value.max_seats = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "max_seats", "` request field.")]
-    #[must_use]
-    pub fn max_seats_absent(mut self) -> Self {
-        self.value.max_seats = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "max_units", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn max_units(mut self, max_units: i64) -> Self {
-        self.value.max_units = presence_rs::Presence::Some(max_units);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "max_units", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn max_units_null(mut self) -> Self {
-        self.value.max_units = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "max_units", "` request field.")]
-    #[must_use]
-    pub fn max_units_absent(mut self) -> Self {
-        self.value.max_units = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional `", "metadata", "` request field.")]
-    #[must_use]
-    pub fn metadata(mut self, metadata: CheckoutProductsCreateMetadata) -> Self {
-        self.value.metadata = Some(metadata);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "min_seats", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn min_seats(mut self, min_seats: i64) -> Self {
-        self.value.min_seats = presence_rs::Presence::Some(min_seats);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "min_seats", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn min_seats_null(mut self) -> Self {
-        self.value.min_seats = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "min_seats", "` request field.")]
-    #[must_use]
-    pub fn min_seats_absent(mut self) -> Self {
-        self.value.min_seats = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "min_units", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn min_units(mut self, min_units: i64) -> Self {
-        self.value.min_units = presence_rs::Presence::Some(min_units);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "min_units", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn min_units_null(mut self) -> Self {
-        self.value.min_units = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "min_units", "` request field.")]
-    #[must_use]
-    pub fn min_units_absent(mut self) -> Self {
-        self.value.min_units = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "prices", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn prices(mut self, prices: CheckoutProductsCreatePrices) -> Self {
-        self.value.prices = presence_rs::Presence::Some(prices);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "prices", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn prices_null(mut self) -> Self {
-        self.value.prices = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "prices", "` request field.")]
-    #[must_use]
-    pub fn prices_absent(mut self) -> Self {
-        self.value.prices = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional `", "require_billing_address", "` request field.")]
-    #[must_use]
-    pub fn require_billing_address(mut self, require_billing_address: bool) -> Self {
-        self.value.require_billing_address = Some(require_billing_address);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "return_url", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn return_url(mut self, return_url: url::Url) -> Self {
-        self.value.return_url = presence_rs::Presence::Some(return_url);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "return_url", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn return_url_null(mut self) -> Self {
-        self.value.return_url = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "return_url", "` request field.")]
-    #[must_use]
-    pub fn return_url_absent(mut self) -> Self {
-        self.value.return_url = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "seats", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn seats(mut self, seats: i64) -> Self {
-        self.value.seats = presence_rs::Presence::Some(seats);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "seats", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn seats_null(mut self) -> Self {
-        self.value.seats = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "seats", "` request field.")]
-    #[must_use]
-    pub fn seats_absent(mut self) -> Self {
-        self.value.seats = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "subscription_id", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn subscription_id(mut self, subscription_id: uuid::Uuid) -> Self {
-        self.value.subscription_id = presence_rs::Presence::Some(subscription_id);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "subscription_id", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn subscription_id_null(mut self) -> Self {
-        self.value.subscription_id = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable `", "subscription_id", "` request field."
-    )]
-    #[must_use]
-    pub fn subscription_id_absent(mut self) -> Self {
-        self.value.subscription_id = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "success_url", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn success_url(mut self, success_url: url::Url) -> Self {
-        self.value.success_url = presence_rs::Presence::Some(success_url);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "success_url", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn success_url_null(mut self) -> Self {
-        self.value.success_url = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "success_url", "` request field.")]
-    #[must_use]
-    pub fn success_url_absent(mut self) -> Self {
-        self.value.success_url = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "trial_interval", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn trial_interval(mut self, trial_interval: TrialInterval) -> Self {
-        self.value.trial_interval = presence_rs::Presence::Some(trial_interval);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "trial_interval", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn trial_interval_null(mut self) -> Self {
-        self.value.trial_interval = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable `", "trial_interval", "` request field."
-    )]
-    #[must_use]
-    pub fn trial_interval_absent(mut self) -> Self {
-        self.value.trial_interval = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "trial_interval_count",
-        "` request field to a value."
-    )]
-    #[must_use]
-    pub fn trial_interval_count(mut self, trial_interval_count: i64) -> Self {
-        self.value.trial_interval_count = presence_rs::Presence::Some(trial_interval_count);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "trial_interval_count",
-        "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn trial_interval_count_null(mut self) -> Self {
-        self.value.trial_interval_count = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable `", "trial_interval_count", "` request field."
-    )]
-    #[must_use]
-    pub fn trial_interval_count_absent(mut self) -> Self {
-        self.value.trial_interval_count = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "units", "` request field to a value."
-    )]
-    #[must_use]
-    pub fn units(mut self, units: i64) -> Self {
-        self.value.units = presence_rs::Presence::Some(units);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable `", "units", "` request field to JSON null."
-    )]
-    #[must_use]
-    pub fn units_null(mut self) -> Self {
-        self.value.units = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!("Omit the optional nullable `", "units", "` request field.")]
-    #[must_use]
-    pub fn units_absent(mut self) -> Self {
-        self.value.units = presence_rs::Presence::Absent;
-        self
-    }
-
-    /// Finish building the request model.
-    pub fn build(self) -> CheckoutProductsCreate {
-        self.value
-    }
 }
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct CheckoutProductsCreatePrices {
