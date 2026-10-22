@@ -12,6 +12,7 @@ Run these commands from the repository root:
 rustup show
 git submodule update --init --depth 1 -- vendor/polar
 cargo install --locked openapi-to-rust --version 0.22.0
+cargo install --locked cargo-nextest
 cargo sdkgen
 ```
 
@@ -35,7 +36,7 @@ alias directly.
 | `cargo sdkgen --stage discover`             | Record specifications, scaffold version modules, and register workspace integrations                    |
 | `cargo sdkgen --api-version 2026-10`        | Generate and validate a selected API version                                                            |
 | `cargo sdkgen --check`                      | Check source tracking, freshly rendered output, and recorded validation without modifying the workspace |
-| `cargo test --locked -p sdkgen`             | Run generator unit tests                                                                                |
+| `cargo nextest run --locked -p sdkgen`      | Run generator unit tests                                                                                |
 | `cargo sdk-contracts --api-version 2026-10` | Run REST contract comparisons for a selected version                                                    |
 
 Discovery always considers every specification, including when
@@ -109,7 +110,8 @@ inputs and output leave the tracking file unchanged.
 
 The generation pipeline checks the workspace and, for versions requiring
 validation, runs generator and contract-harness tests, formatting, Clippy, SDK
-version tests, feature checks, and Rust/TypeScript REST comparisons.
+version tests, feature checks, and Rust/TypeScript REST comparisons. Rust unit
+and integration tests use nextest; documentation tests use `cargo test --doc`.
 Validation also verifies that its inputs and managed output remain unchanged
 during the run. Failed validation does not mark a version as validated.
 
@@ -124,7 +126,7 @@ Polar API credentials.
 After changing generator code or templates, run:
 
 ```sh
-cargo test --locked -p sdkgen
+cargo nextest run --locked -p sdkgen
 cargo sdkgen
 cargo sdkgen --check
 ```

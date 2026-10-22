@@ -30,9 +30,15 @@ jobs:
         run: rustup show
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
+      - name: Install nextest
+        uses: taiki-e/install-action@v2
+        with:
+          tool: nextest
       # GITHUB_TOKEN-created release PRs do not trigger ordinary PR workflows.
       - name: Test workspace before publishing
-        run: cargo test --locked --workspace --all-features
+        run: cargo nextest run --locked --workspace --all-features
+      - name: Test documentation before publishing
+        run: cargo test --doc --locked --workspace --all-features
       - name: Publish polar-rsh and its GitHub release
         uses: release-plz/action@v0.5
         with:

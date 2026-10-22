@@ -7,7 +7,7 @@ TypeScript REST services for each discovered API version:
 git submodule update --init --depth 1 -- vendor/polar
 cargo sdk-contracts --api-version 2026-04
 cargo sdk-contracts --api-version 2026-10 --case presence
-cargo test -p sdk-contracts
+cargo nextest run --locked -p sdk-contracts
 ```
 
 The equivalent root recipes are `just submodules` and `just contracts --api-version 2026-04`.

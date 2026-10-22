@@ -268,3 +268,8 @@ See the [SDK generator guide](tasks/sdkgen/README.md) for generation and validat
 commands, and the [REST contract guide](tasks/sdk-contracts/README.md) for the
 cross-language compatibility checks. The workspace toolchain is pinned in
 [`rust-toolchain.toml`](rust-toolchain.toml).
+
+Install [cargo-nextest](https://nexte.st/docs/installation/pre-built-binaries/)
+before running Rust tests. Use `just test --all-features` for unit and integration
+tests and `just test-docs --all-features` for documentation tests. GitHub Actions
+installs nextest automatically.

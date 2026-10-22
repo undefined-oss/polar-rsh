@@ -26,8 +26,12 @@ jobs:
         run: rustup show
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
+      - name: Install nextest
+        uses: taiki-e/install-action@v2
+        with:
+          tool: nextest
       - name: Test contract comparisons
-        run: cargo test --locked -p sdk-contracts
+        run: cargo nextest run --locked -p sdk-contracts
       - name: Compare REST contracts
         run: |
           for version in $(python3 -c 'import json; print(" ".join(json.load(open("sdkgen.lock.json"))["versions"]))'); do

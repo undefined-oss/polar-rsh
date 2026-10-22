@@ -602,7 +602,8 @@ pub fn run(root: &Path, args: &Cli) -> Result<()> {
         save(root, &tracking)?;
         let validated_outputs = snapshot(root, &tracking)?;
         super::checked_command(Command::new("cargo").current_dir(root).args([
-            "test",
+            "nextest",
+            "run",
             "--locked",
             "-p",
             "sdkgen",
@@ -624,7 +625,18 @@ pub fn run(root: &Path, args: &Cli) -> Result<()> {
         ]))?;
         for version in &needs_validation {
             super::checked_command(Command::new("cargo").current_dir(root).args([
+                "nextest",
+                "run",
+                "--locked",
+                "-p",
+                "polar-rsh",
+                "--no-default-features",
+                "--features",
+                version,
+            ]))?;
+            super::checked_command(Command::new("cargo").current_dir(root).args([
                 "test",
+                "--doc",
                 "--locked",
                 "-p",
                 "polar-rsh",

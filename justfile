@@ -32,9 +32,13 @@ fmt-check:
 lint *args:
     cargo clippy --workspace --all-targets --locked "$@" -- -D warnings
 
-# Run workspace tests; accepts Cargo arguments and test filters.
+# Run workspace tests with nextest; accepts nextest arguments and test filters.
 test *args:
-    cargo test --workspace --locked "$@"
+    cargo nextest run --workspace --locked "$@"
+
+# Run documentation tests; accepts Cargo arguments and test filters.
+test-docs *args:
+    cargo test --doc --workspace --locked "$@"
 
 # Regenerate the SDK; e.g. just sdkgen --api-version 2026-04.
 sdkgen *args:
@@ -57,4 +61,4 @@ contracts *args:
     cargo sdk-contracts "$@"
 
 # Run formatting, lint, tests, generation freshness, and REST contracts.
-verify api_version: fmt-check lint test sdkgen-check (contracts "--api-version" api_version)
+verify api_version: fmt-check lint test test-docs sdkgen-check (contracts "--api-version" api_version)
