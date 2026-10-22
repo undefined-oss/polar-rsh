@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1](https://github.com/undefined-oss/polar-rsh/compare/polar-rsh-v0.1.0...polar-rsh-v0.1.1) - 2026-10-22
+
+### Other
+
+- *(test)* using nextest instead of the default cargo test runner
+
 ## [0.1.0](https://github.com/undefined-oss/polar-rsh/releases/tag/polar-rsh-v0.1.0) - 2026-10-20
 
 ### Added
