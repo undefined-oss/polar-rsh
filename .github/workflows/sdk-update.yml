@@ -29,6 +29,8 @@ jobs:
           node-version: '24'
       - name: Install workspace Rust toolchain
         run: rustup show
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
       - name: Install pinned generator
         run: cargo install --locked openapi-to-rust --version 0.22.0
       - name: Update Polar reference

@@ -28,6 +28,8 @@ jobs:
           submodules: true
       - name: Install workspace Rust toolchain
         run: rustup show
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
       # GITHUB_TOKEN-created release PRs do not trigger ordinary PR workflows.
       - name: Test workspace before publishing
         run: cargo test --locked --workspace --all-features
@@ -56,6 +58,8 @@ jobs:
           submodules: true
       - name: Install workspace Rust toolchain
         run: rustup show
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
       - name: Create or update release pull request
         uses: release-plz/action@v0.5
         with:
