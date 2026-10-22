@@ -31,10 +31,10 @@ Store your Polar access token in the `POLAR_ACCESS_TOKEN` environment variable.
 
 Select the environment when building the client with `.environment(...)`:
 
-| Setting | API URL |
-| --- | --- |
-| `Environment::Sandbox` | `https://sandbox-api.polar.sh` |
-| `Environment::Production` | `https://api.polar.sh` |
+| Setting                   | API URL                        |
+| ------------------------- | ------------------------------ |
+| `Environment::Sandbox`    | `https://sandbox-api.polar.sh` |
+| `Environment::Production` | `https://api.polar.sh`         |
 
 **Production is the default**, including when you use `Polar::new(token)`.
 Use a token issued for the selected environment; sandbox and production tokens
@@ -194,11 +194,11 @@ polar-rsh = { version = "0.1", features = ["presence"] }
 Optional nullable model fields use `Presence<T>` to distinguish three JSON
 states:
 
-| Rust value | JSON body |
-| --- | --- |
-| `Presence::Absent` | Omit the field; this is the default |
-| `Presence::Null` | Send explicit `null` |
-| `Presence::Some(value)` | Send the supplied value |
+| Rust value              | JSON body                           |
+| ----------------------- | ----------------------------------- |
+| `Presence::Absent`      | Omit the field; this is the default |
+| `Presence::Null`        | Send explicit `null`                |
+| `Presence::Some(value)` | Send the supplied value             |
 
 For example, clear a customer's name while leaving other fields unspecified:
 
@@ -259,7 +259,8 @@ application to handle duplicate deliveries.
 
 This list is non-exhaustive.
 
-- [x] Generate the Rust SDK automatically.
+- [x] Generate the Rust SDK automatically using generators and patchs.
+- [ ] Generate a better Polar-sh SDK.
 - [ ] Improve the conformance test suite.
 
 ## Development

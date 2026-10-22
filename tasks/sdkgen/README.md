@@ -145,7 +145,7 @@ workflow uses its result to prepare the commit message and PR body:
 | Classification                                                       | Message and PR body                                                                   | Merge behavior                              |
 | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------- |
 | `chore`: API versions and content hashes match                       | Fixed `chore(sdk): update Polar submodule` message and standard submodule-update body | Automatically squash-merge after validation |
-| `feat`: a content hash changes or an API version is added or removed | Fixed `feat(sdk): update generated Polar SDKs` message and SDK-update body             | Leave open for review                       |
+| `feat`: a content hash changes or an API version is added or removed | Fixed `feat(sdk): update generated Polar SDKs` message and SDK-update body            | Leave open for review                       |
 
 The selected subject becomes both the commit message and PR title. Messages
 are deterministic and require no external AI service or API key.
