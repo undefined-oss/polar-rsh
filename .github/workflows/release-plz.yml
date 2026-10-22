@@ -29,7 +29,7 @@ jobs:
       - name: Install mold
         uses: rui314/setup-mold@v1
         with:
-          version: 3.0.0
+          mold-version: 3.0.0
           make-default: false
       - name: Install workspace Rust toolchain
         run: rustup show
@@ -70,7 +70,7 @@ jobs:
       - name: Install mold
         uses: rui314/setup-mold@v1
         with:
-          version: 3.0.0
+          mold-version: 3.0.0
           make-default: false
       - name: Install workspace Rust toolchain
         run: rustup show

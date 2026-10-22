@@ -276,18 +276,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "commit-message"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "regex",
- "reqwest",
- "serde",
- "serde_json",
- "tokio",
-]
-
-[[package]]
 name = "core-foundation"
 version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

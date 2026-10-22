@@ -14,12 +14,12 @@ malformed inventories fail classification.
 
 The result goes to stdout and, when `GITHUB_OUTPUT` is set, the `kind` step
 output. The SDK update workflow uses this result as `COMMIT_TYPE` to choose
-between a fixed chore message and standard submodule-update PR body, or the
-separate [commit message task](../commit-message/README.md) and SDK-update PR body.
+between `chore(sdk): update Polar submodule` with a standard submodule-update
+PR body, or `feat(sdk): update generated Polar SDKs` with an SDK-update PR body.
+Both messages are fixed and require no external AI service.
 
 After successful SDK validation, the workflow automatically squash-merges
 chore PRs based on this classification. It uses GitHub's
 merge API with the PR head SHA, so a changed head or unmet branch protection
 requirements prevent the merge. PRs with changed API content remain open for
-review regardless of the commit type Gemini chooses. A completely unchanged
-checkout creates no PR.
+review. A completely unchanged checkout creates no PR.

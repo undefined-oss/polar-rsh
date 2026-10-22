@@ -27,7 +27,7 @@ jobs:
       - name: Install mold
         uses: rui314/setup-mold@v1
         with:
-          version: 3.0.0
+          mold-version: 3.0.0
           make-default: false
       - uses: actions/setup-node@v4
         with:
@@ -57,8 +57,6 @@ jobs:
       - name: Prepare commit message and PR body
         id: commit-message
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
           COMMIT_TYPE: ${{ steps.changes.outputs.kind }}
           CHORE_PR_BODY: |
             Updates the pinned `vendor/polar` submodule to upstream `main` and
@@ -87,10 +85,7 @@ jobs:
             echo 'message=chore(sdk): update Polar submodule' >> "$GITHUB_OUTPUT"
             printf '%s\n' "$CHORE_PR_BODY" > "$RUNNER_TEMP/sdk-pr-body.md"
           else
-            git diff --stat HEAD > "$RUNNER_TEMP/sdk-changes.txt"
-            git diff HEAD -- sdkgen.lock.json >> "$RUNNER_TEMP/sdk-changes.txt"
-            git ls-files --others --exclude-standard >> "$RUNNER_TEMP/sdk-changes.txt"
-            cargo run --locked -p commit-message < "$RUNNER_TEMP/sdk-changes.txt"
+            echo 'message=feat(sdk): update generated Polar SDKs' >> "$GITHUB_OUTPUT"
             printf '%s\n' "$SDK_PR_BODY" > "$RUNNER_TEMP/sdk-pr-body.md"
           fi
       - name: Create or update SDK pull request

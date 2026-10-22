@@ -145,14 +145,10 @@ workflow uses its result to prepare the commit message and PR body:
 | Classification                                                       | Message and PR body                                                                   | Merge behavior                              |
 | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------- |
 | `chore`: API versions and content hashes match                       | Fixed `chore(sdk): update Polar submodule` message and standard submodule-update body | Automatically squash-merge after validation |
-| `feat`: a content hash changes or an API version is added or removed | AI-generated subject and SDK-update body                                              | Leave open for review                       |
+| `feat`: a content hash changes or an API version is added or removed | Fixed `feat(sdk): update generated Polar SDKs` message and SDK-update body             | Leave open for review                       |
 
-For API content changes, the [commit message task](../commit-message/README.md)
-uses AI to generate a commit subject from a bounded summary of file statistics,
-tracking changes, and new filenames. It accepts any Conventional Commit type
-except `chore`; the classification controls merge behavior independently of the
-generated subject.
-The subject becomes both the commit message and PR title.
+The selected subject becomes both the commit message and PR title. Messages
+are deterministic and require no external AI service or API key.
 
 `create-pull-request` creates or updates `automation/sdk-update`. A completely
 unchanged checkout creates no PR, and obsolete automation PRs are cleaned up.
@@ -160,11 +156,7 @@ Automatic merges require the expected PR head SHA and remain subject to GitHub
 branch protection. A blocked merge leaves the PR open and fails the merge step.
 Contract reports are uploaded even when the workflow fails.
 
-Repository configuration:
-
-- Allow GitHub Actions to create pull requests.
-- Configure credentials and model settings as described in the
-  [commit message task documentation](../commit-message/README.md).
+Allow GitHub Actions to create pull requests in the repository settings.
 
 The update workflow uses `GITHUB_TOKEN`, so ordinary PR workflows are not
 triggered by its PR creation. Validation runs before the PR step. The
