@@ -3,7 +3,7 @@ resolver = "3"
 members = ["apps/polar-rsh", "tasks/sdkgen", "tasks/sdk-contracts", "tasks/sdk-classify"]
 
 [workspace.package]
-version = "0.1.1"
+version = "0.2.0"
 repository = "https://github.com/undefined-oss/polar-rsh"
 license = "MIT OR Apache-2.0"
 
