@@ -1,6 +1,6 @@
 {
   "format": 2,
-  "upstream_revision": "2e461d7193d34822aab1ce32cfd49b2a1efbeaae",
+  "upstream_revision": "bb1bac7333eed44a6759e3f5582714b2d434d482",
   "versions": {
     "2026-04": {
       "source": "vendor/polar/docs/openapi/2026-04.openapi.json",
@@ -10,7 +10,7 @@
       "generated_hash": "4c113b242ab8f764b7caf89214d8932ea395e1dbab41d7163aadf81dc98efc65",
       "validated_hash": "4c113b242ab8f764b7caf89214d8932ea395e1dbab41d7163aadf81dc98efc65",
       "generator_fingerprint": "406e94f433dab586720bc37da179e4e4988e56382fa8295d0c6a65bac05bda7e",
-      "validation_fingerprint": "6464f60ee6268580c64edffdce3b78979615cd49d72ebf9d243125a7b97244ec",
+      "validation_fingerprint": "cd99318f982da97f4de95f922e6976dfc711ce0664b86bcd2bb0fd78598e2406",
       "files": [
         "apps/polar-rsh/src/v2026_04/2026-04.openapi.json",
         "apps/polar-rsh/src/v2026_04/generated/REQUIRED_DEPS.toml",
@@ -39,7 +39,7 @@
       "generated_hash": "98199af9f9b8ba7015d984162d2c4f892fef55af1847bfd9e19990e9bc34d428",
       "validated_hash": "98199af9f9b8ba7015d984162d2c4f892fef55af1847bfd9e19990e9bc34d428",
       "generator_fingerprint": "406e94f433dab586720bc37da179e4e4988e56382fa8295d0c6a65bac05bda7e",
-      "validation_fingerprint": "6464f60ee6268580c64edffdce3b78979615cd49d72ebf9d243125a7b97244ec",
+      "validation_fingerprint": "cd99318f982da97f4de95f922e6976dfc711ce0664b86bcd2bb0fd78598e2406",
       "files": [
         "apps/polar-rsh/src/v2026_10/2026-10.openapi.json",
         "apps/polar-rsh/src/v2026_10/generated/REQUIRED_DEPS.toml",
@@ -68,7 +68,7 @@
       "generated_hash": "2b4fd39f221ff56408f54f2bfb3b4ec18af2bfeaac77694509d6239eebacfe5e",
       "validated_hash": "2b4fd39f221ff56408f54f2bfb3b4ec18af2bfeaac77694509d6239eebacfe5e",
       "generator_fingerprint": "406e94f433dab586720bc37da179e4e4988e56382fa8295d0c6a65bac05bda7e",
-      "validation_fingerprint": "6464f60ee6268580c64edffdce3b78979615cd49d72ebf9d243125a7b97244ec",
+      "validation_fingerprint": "cd99318f982da97f4de95f922e6976dfc711ce0664b86bcd2bb0fd78598e2406",
       "files": [
         "apps/polar-rsh/src/v2027_01/2027-01.openapi.json",
         "apps/polar-rsh/src/v2027_01/generated/REQUIRED_DEPS.toml",
