@@ -1,0 +1,27 @@
+[package]
+name = "polar-sdk-playground"
+edition = "2024"
+version.workspace = true
+repository.workspace = true
+license.workspace = true
+
+[dependencies]
+jiff = {version = "0.2.38", features = ["serde"] }
+bytes = "1.12.1"
+http-body-util = "0.1.5"
+http = "1.5.0"
+http-body = "1.1.0"
+futures-util = "0.3.34"
+thiserror = "2.0.21"
+form_urlencoded = "1.2.2"
+tower = { version = "0.5.3", features = ["util"] }
+uuid = {version = "1.29.0", features = ["v4", "serde"] }
+presence-rs = { version = "0.2.0", features = ["serde"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.154" }
+derive_more = { version = "2.1.1", features = ["full"] }
+
+reqwest = { version = "0.13", default-features = false, features = ["query", "rustls", "stream"] }
+reqwest-middleware = { version = "0.5", features = ["query"] }
+
+tokio = { version = "1.54.1", features = ["io-util", "macros", "net", "parking_lot", "rt-multi-thread", "signal", "sync", "time"] }
