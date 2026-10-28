@@ -5,16 +5,17 @@ use http::{Method, Request, Response, StatusCode};
 use http_body_util::BodyExt;
 use presence_rs::Presence;
 use serde_json::{Value, json};
+use url::Url;
 
 use super::{
     OrganizationDetails, OrganizationDisputeSettingsUpdate, OrganizationFeatureSettingsUpdate,
     OrganizationSocialLink, OrganizationSocialPlatforms, OrganizationUpdate,
 };
 use crate::{
-    client::{PolarClient, PolarEnvironment, RequestBody, RequestOptions},
+    client::{AccessToken, PolarClient, PolarEnvironment, RequestBody, RequestOptions},
     error::{BuildRequestError, RequestError},
     models::common::{
-        OrganizationId,
+        OrganizationId, OrganizationName,
         enums::{CountryAlpha2Input, PresentmentCurrency, TaxBehaviorOption},
     },
 };
@@ -54,13 +55,13 @@ fn mock_transport(
 async fn complete_update_covers_the_schema_and_builds_a_patch_request() {
     let fixture = super::item_stream_tests::organization(1);
     let payload = OrganizationUpdate::new()
-        .name("Acme Updated")
-        .avatar_url("https://example.com/avatar.png")
+        .name(OrganizationName::try_from("Acme Updated").expect("valid test name"))
+        .avatar_url(Url::parse("https://example.com/avatar.png").expect("valid test URL"))
         .email("support@example.com")
-        .website("https://example.com")
+        .website(Url::parse("https://example.com/").expect("valid test URL"))
         .socials(vec![OrganizationSocialLink {
             platform: OrganizationSocialPlatforms::Github,
-            url: "https://github.com/acme".into(),
+            url: Url::parse("https://github.com/acme").expect("valid test URL"),
         }])
         .details(OrganizationDetails::new().product_description("Software"))
         .country(CountryAlpha2Input::ES)
@@ -79,10 +80,11 @@ async fn complete_update_covers_the_schema_and_builds_a_patch_request() {
         .default_presentment_currency(PresentmentCurrency::Eur)
         .default_tax_behavior(TaxBehaviorOption::Inclusive)
         .sso_enforced(false);
-    let client = PolarClient::builder("example-token")
-        .environment(PolarEnvironment::Sandbox)
-        .build_with(())
-        .unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .environment(PolarEnvironment::Sandbox)
+            .build_with(())
+            .unwrap();
     let request = client.organizations().update(id(), payload).build_request().unwrap();
     assert_eq!(request.method(), Method::PATCH);
     let data = request.into_body().collect().await.unwrap().to_bytes();
@@ -91,7 +93,7 @@ async fn complete_update_covers_the_schema_and_builds_a_patch_request() {
         value,
         json!({
             "name":"Acme Updated", "avatar_url":"https://example.com/avatar.png",
-            "email":"support@example.com", "website":"https://example.com",
+            "email":"support@example.com", "website":"https://example.com/",
             "socials":[{"platform":"github", "url":"https://github.com/acme"}],
             "details":{"product_description":"Software"}, "country":"ES",
             "feature_settings":{"member_model_enabled":false},
@@ -123,8 +125,8 @@ fn partial_payloads_preserve_omission_false_empty_arrays_and_null() {
     assert_eq!(serde_json::to_value(OrganizationUpdate::new()).unwrap(), json!({}));
     assert_eq!(serde_json::to_value(OrganizationDisputeSettingsUpdate::new()).unwrap(), json!({}));
     let mut payload = OrganizationUpdate::new()
-        .name("Old")
-        .name("New")
+        .name(OrganizationName::try_from("Old").expect("valid test name"))
+        .name(OrganizationName::try_from("New").expect("valid test name"))
         .sso_enforced(true)
         .sso_enforced(false)
         .socials(vec![])
@@ -148,40 +150,47 @@ fn partial_payloads_preserve_omission_false_empty_arrays_and_null() {
 async fn both_await_styles_return_one_organization_and_forward_partial_payloads() {
     let response = super::item_stream_tests::organization(1);
     for direct in [false, true] {
-        let client = PolarClient::builder("example-token")
-            .environment(PolarEnvironment::Sandbox)
-            .build_with(mock_transport(
-                StatusCode::OK,
-                Bytes::from(serde_json::to_vec(&response).unwrap()),
-                json!({"name":"Updated"}),
-                "Bearer example-token",
-            ))
-            .unwrap();
-        let request =
-            client.organizations().update(id(), OrganizationUpdate::new().name("Updated"));
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(PolarEnvironment::Sandbox)
+                .build_with(mock_transport(
+                    StatusCode::OK,
+                    Bytes::from(serde_json::to_vec(&response).unwrap()),
+                    json!({"name":"Updated"}),
+                    "Bearer example-token",
+                ))
+                .unwrap();
+        let request = client.organizations().update(
+            id(),
+            OrganizationUpdate::new()
+                .name(OrganizationName::try_from("Updated").expect("valid test name")),
+        );
         let organization = if direct { request.await } else { request.send().await }.unwrap();
         assert_eq!(organization.id, id());
-        assert_eq!(organization.name, "Organization 1");
+        assert_eq!(organization.name.as_ref(), "Organization 1");
     }
 }
 
 #[tokio::test]
 async fn token_override_is_forwarded_and_client_default_is_preserved() {
     let response = super::item_stream_tests::organization(1);
-    let client = PolarClient::builder("example-token")
-        .environment(PolarEnvironment::Sandbox)
-        .build_with(mock_transport(
-            StatusCode::OK,
-            Bytes::from(serde_json::to_vec(&response).unwrap()),
-            json!({}),
-            "Bearer override-token",
-        ))
-        .unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .environment(PolarEnvironment::Sandbox)
+            .build_with(mock_transport(
+                StatusCode::OK,
+                Bytes::from(serde_json::to_vec(&response).unwrap()),
+                json!({}),
+                "Bearer override-token",
+            ))
+            .unwrap();
     client
         .organizations()
         .update(id(), OrganizationUpdate::new())
         .options(RequestOptions {
-            access_token: Some("override-token".into()),
+            access_token: Some(
+                AccessToken::try_from("override-token").expect("nonempty test token"),
+            ),
             ..Default::default()
         })
         .await
@@ -200,17 +209,19 @@ async fn maps_all_declared_error_responses_and_preserves_sources() {
         (StatusCode::CONFLICT, "SSOEnforcementRequiresConnection"),
         (StatusCode::NOT_FOUND, "ResourceNotFound"),
     ] {
-        let client = PolarClient::builder("example-token")
-            .environment(PolarEnvironment::Sandbox)
-            .build_with(mock_transport(
-                status,
-                Bytes::from(
-                    serde_json::to_vec(&json!({"error":kind,"detail":"Request rejected"})).unwrap(),
-                ),
-                json!({}),
-                "Bearer example-token",
-            ))
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(PolarEnvironment::Sandbox)
+                .build_with(mock_transport(
+                    status,
+                    Bytes::from(
+                        serde_json::to_vec(&json!({"error":kind,"detail":"Request rejected"}))
+                            .unwrap(),
+                    ),
+                    json!({}),
+                    "Bearer example-token",
+                ))
+                .unwrap();
         let error =
             client.organizations().update(id(), OrganizationUpdate::new()).await.unwrap_err();
         assert!(
@@ -228,8 +239,19 @@ async fn maps_all_declared_error_responses_and_preserves_sources() {
         );
         assert_eq!(std::error::Error::source(&error).unwrap().to_string(), "Request rejected");
     }
-    let client = PolarClient::builder("example-token").environment(PolarEnvironment::Sandbox)
-        .build_with(mock_transport(StatusCode::UNPROCESSABLE_ENTITY, Bytes::from_static(br#"{"detail":[{"loc":["body","name"],"msg":"Invalid name","type":"value_error"}]}"#), json!({}), "Bearer example-token")).unwrap();
+    let client = PolarClient::builder(
+        AccessToken::try_from("example-token").expect("valid test token"),
+    )
+    .environment(PolarEnvironment::Sandbox)
+    .build_with(mock_transport(
+        StatusCode::UNPROCESSABLE_ENTITY,
+        Bytes::from_static(
+            br#"{"detail":[{"loc":["body","name"],"msg":"Invalid name","type":"value_error"}]}"#,
+        ),
+        json!({}),
+        "Bearer example-token",
+    ))
+    .unwrap();
     let error = client.organizations().update(id(), OrganizationUpdate::new()).await.unwrap_err();
     match error {
         RequestError::Validation(error) => assert_eq!(error.detail.unwrap()[0].msg, "Invalid name"),
@@ -251,15 +273,16 @@ async fn malformed_or_unknown_declared_responses_fail_decoding() {
         (StatusCode::NOT_FOUND, "not-json"),
         (StatusCode::UNPROCESSABLE_ENTITY, "not-json"),
     ] {
-        let client = PolarClient::builder("example-token")
-            .environment(PolarEnvironment::Sandbox)
-            .build_with(mock_transport(
-                status,
-                Bytes::from_static(body.as_bytes()),
-                json!({}),
-                "Bearer example-token",
-            ))
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(PolarEnvironment::Sandbox)
+                .build_with(mock_transport(
+                    status,
+                    Bytes::from_static(body.as_bytes()),
+                    json!({}),
+                    "Bearer example-token",
+                ))
+                .unwrap();
         let result = client.organizations().update(id(), OrganizationUpdate::new()).await;
         assert!(
             matches!(result, Err(RequestError::DecodeResponse(_))),
@@ -271,15 +294,16 @@ async fn malformed_or_unknown_declared_responses_fail_decoding() {
 #[tokio::test]
 async fn unexpected_status_preserves_raw_body() {
     for status in [StatusCode::CREATED, StatusCode::INTERNAL_SERVER_ERROR] {
-        let client = PolarClient::builder("example-token")
-            .environment(PolarEnvironment::Sandbox)
-            .build_with(mock_transport(
-                status,
-                Bytes::from_static(b"unexpected response"),
-                json!({}),
-                "Bearer example-token",
-            ))
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(PolarEnvironment::Sandbox)
+                .build_with(mock_transport(
+                    status,
+                    Bytes::from_static(b"unexpected response"),
+                    json!({}),
+                    "Bearer example-token",
+                ))
+                .unwrap();
         let result = client.organizations().update(id(), OrganizationUpdate::new()).await;
         assert!(
             matches!(result, Err(RequestError::UnexpectedStatus { status: actual, body }) if actual == status && body.as_ref() == b"unexpected response")
@@ -294,12 +318,17 @@ async fn construction_transport_and_body_failures_are_distinct() {
             "transport failed",
         )))
     });
-    let client = PolarClient::builder("example-token").build_with(transport).unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .build_with(transport)
+            .unwrap();
     let invalid = client
         .organizations()
         .update(id(), OrganizationUpdate::new())
         .options(RequestOptions {
-            access_token: Some("invalid\ntoken".into()),
+            access_token: Some(
+                AccessToken::try_from("invalid\ntoken").expect("nonempty test token"),
+            ),
             ..Default::default()
         })
         .await;
@@ -315,7 +344,10 @@ async fn construction_transport_and_body_failures_are_distinct() {
         }));
         Ok::<_, Infallible>(Response::new(body))
     });
-    let client = PolarClient::builder("example-token").build_with(transport).unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .build_with(transport)
+            .unwrap();
     let failed = client.organizations().update(id(), OrganizationUpdate::new()).await;
     assert!(
         matches!(failed, Err(RequestError::ReadBody(error)) if error.to_string() == "body failed")
@@ -330,7 +362,10 @@ async fn inherits_timeout_and_honors_request_override() {
         });
         let duration = if overridden { Duration::from_secs(60) } else { Duration::from_millis(10) };
         let client =
-            PolarClient::builder("example-token").timeout(duration).build_with(transport).unwrap();
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .timeout(duration)
+                .build_with(transport)
+                .unwrap();
         let request = client.organizations().update(id(), OrganizationUpdate::new());
         let result = tokio::time::timeout(Duration::from_secs(1), async {
             if overridden {

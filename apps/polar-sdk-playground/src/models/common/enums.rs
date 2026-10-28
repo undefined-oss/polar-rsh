@@ -70,13 +70,3 @@ impl AsRef<str> for SubscriptionProrationBehavior {
         self.as_str()
     }
 }
-
-#[derive(Debug, Clone, Display, Deref, From, PartialEq, Eq, Deserialize, Serialize)]
-#[serde(transparent)]
-pub struct OrganizationSlug(String);
-
-impl AsRef<str> for OrganizationSlug {
-    fn as_ref(&self) -> &str {
-        &self.0
-    }
-}

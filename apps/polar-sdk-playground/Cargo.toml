@@ -20,6 +20,7 @@ presence-rs = { version = "0.2.0", features = ["serde"] }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = { version = "1.0.154" }
 derive_more = { version = "2.1.1", features = ["full"] }
+url = { version = "2.5.8", features = ["serde"] }
 
 reqwest = { version = "0.13", default-features = false, features = ["query", "rustls", "stream"] }
 reqwest-middleware = { version = "0.5", features = ["query"] }

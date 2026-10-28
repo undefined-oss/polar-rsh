@@ -4,8 +4,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Pagination {
-    pub max_page: i64,
-    pub total_count: i64,
+    pub max_page: u64,
+    pub total_count: u64,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -28,19 +28,15 @@ impl Pagination {
 
 #[cfg(test)]
 mod tests {
-    use super::Pagination;
     use std::num::NonZeroU64;
+
+    use super::Pagination;
 
     #[test]
     fn advances_until_the_last_page() {
-        for (current, max_page, expected) in [
-            (1, 3, Some(2)),
-            (2, 3, Some(3)),
-            (3, 3, None),
-            (4, 3, None),
-            (1, 0, None),
-            (1, -1, None),
-        ] {
+        for (current, max_page, expected) in
+            [(1, 3, Some(2)), (2, 3, Some(3)), (3, 3, None), (4, 3, None), (1, 0, None)]
+        {
             let pagination = Pagination { max_page, total_count: 30 };
             let next = pagination.next_page(NonZeroU64::new(current).unwrap());
 
@@ -54,7 +50,7 @@ mod tests {
 
     #[test]
     fn total_count_does_not_affect_page_advancement() {
-        for total_count in [0, 1, 30, i64::MAX] {
+        for total_count in [0, 1, 30, u64::MAX] {
             let pagination = Pagination { max_page: 3, total_count };
 
             assert_eq!(pagination.next_page(NonZeroU64::new(1).unwrap()), NonZeroU64::new(2));
@@ -64,8 +60,8 @@ mod tests {
 
     #[test]
     fn handles_large_page_numbers_without_overflow() {
-        let pagination = Pagination { max_page: i64::MAX, total_count: 0 };
-        let last_page = i64::MAX as u64;
+        let pagination = Pagination { max_page: u64::MAX, total_count: 0 };
+        let last_page = u64::MAX;
 
         assert_eq!(
             pagination.next_page(NonZeroU64::new(last_page - 1).unwrap()),

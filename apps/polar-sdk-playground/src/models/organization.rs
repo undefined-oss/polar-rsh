@@ -1,7 +1,7 @@
 use futures_util::TryStreamExt;
 
 use crate::{
-    client::{PolarClient, RequestBody, RequestOptions},
+    client::{AccessToken, PolarClient, RequestBody, RequestOptions},
     error::{BuildRequestError, RequestError},
     models::{common::OrganizationId, pagination::ListResource},
     query::EncodeQuery,
@@ -500,9 +500,9 @@ mod list_execution_tests {
 
     use super::{ListOrganizationsParams, OrganizationSortField};
     use crate::{
-        client::{PolarClient, PolarEnvironment, RequestBody, RequestOptions},
+        client::{AccessToken, PolarClient, PolarEnvironment, RequestBody, RequestOptions},
         error::RequestError,
-        models::common::enums::OrganizationSlug,
+        models::common::{OrganizationSlug, PageLimit},
         query::Sorting,
     };
 
@@ -536,10 +536,11 @@ mod list_execution_tests {
 
     #[tokio::test]
     async fn send_decodes_an_empty_page() {
-        let client = PolarClient::builder("example-token")
-            .environment(PolarEnvironment::Sandbox)
-            .build_with(mock_transport(http::StatusCode::OK, EMPTY_PAGE, None))
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(PolarEnvironment::Sandbox)
+                .build_with(mock_transport(http::StatusCode::OK, EMPTY_PAGE, None))
+                .unwrap();
 
         let page = client.organizations().list().send().await.unwrap();
         assert!(page.items.is_empty());
@@ -549,18 +550,19 @@ mod list_execution_tests {
 
     #[tokio::test]
     async fn direct_await_decodes_an_empty_page_and_forwards_query_params() {
-        let client = PolarClient::builder("example-token")
-            .environment(PolarEnvironment::Sandbox)
-            .build_with(mock_transport(
-                http::StatusCode::OK,
-                EMPTY_PAGE,
-                Some("slug=acme+%26+sons&page=2&limit=20&sorting=-name&sorting=created_at"),
-            ))
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(PolarEnvironment::Sandbox)
+                .build_with(mock_transport(
+                    http::StatusCode::OK,
+                    EMPTY_PAGE,
+                    Some("slug=acme+%26+sons&page=2&limit=20&sorting=-name&sorting=created_at"),
+                ))
+                .unwrap();
         let params = ListOrganizationsParams {
-            slug: Some(OrganizationSlug::from("acme & sons".to_owned())),
+            slug: Some(OrganizationSlug::try_from("acme & sons").unwrap()),
             page: NonZeroU64::new(2),
-            limit: NonZeroU64::new(20),
+            limit: Some(PageLimit::try_from(20).expect("valid test limit")),
             sorting: vec![
                 (OrganizationSortField::Name, Sorting::Desc),
                 (OrganizationSortField::CreatedAt, Sorting::Asc),
@@ -577,10 +579,11 @@ mod list_execution_tests {
     async fn decodes_validation_errors() {
         let body =
             br#"{"detail":[{"loc":["query","limit"],"msg":"Invalid limit","type":"value_error"}]}"#;
-        let client = PolarClient::builder("example-token")
-            .environment(PolarEnvironment::Sandbox)
-            .build_with(mock_transport(http::StatusCode::UNPROCESSABLE_ENTITY, body, None))
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(PolarEnvironment::Sandbox)
+                .build_with(mock_transport(http::StatusCode::UNPROCESSABLE_ENTITY, body, None))
+                .unwrap();
 
         let result = client.organizations().list().await;
         match result {
@@ -601,10 +604,12 @@ mod list_execution_tests {
             (http::StatusCode::OK, b"{}".as_slice()),
             (http::StatusCode::UNPROCESSABLE_ENTITY, b"not-json".as_slice()),
         ] {
-            let client = PolarClient::builder("example-token")
-                .environment(PolarEnvironment::Sandbox)
-                .build_with(mock_transport(status, body, None))
-                .unwrap();
+            let client = PolarClient::builder(
+                AccessToken::try_from("example-token").expect("valid test token"),
+            )
+            .environment(PolarEnvironment::Sandbox)
+            .build_with(mock_transport(status, body, None))
+            .unwrap();
 
             let result = client.organizations().list().await;
             assert!(
@@ -623,10 +628,12 @@ mod list_execution_tests {
             ),
             (http::StatusCode::INTERNAL_SERVER_ERROR, b"server failure".as_slice()),
         ] {
-            let client = PolarClient::builder("example-token")
-                .environment(PolarEnvironment::Sandbox)
-                .build_with(mock_transport(expected_status, expected_body, None))
-                .unwrap();
+            let client = PolarClient::builder(
+                AccessToken::try_from("example-token").expect("valid test token"),
+            )
+            .environment(PolarEnvironment::Sandbox)
+            .build_with(mock_transport(expected_status, expected_body, None))
+            .unwrap();
 
             let result = client.organizations().list().await;
             assert!(
@@ -646,10 +653,11 @@ mod list_execution_tests {
         let transport = tower::service_fn(|_: http::Request<RequestBody>| {
             std::future::pending::<Result<http::Response<RequestBody>, Infallible>>()
         });
-        let client = PolarClient::builder("example-token")
-            .timeout(Duration::from_millis(10))
-            .build_with(transport)
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .timeout(Duration::from_millis(10))
+                .build_with(transport)
+                .unwrap();
 
         let result =
             tokio::time::timeout(Duration::from_secs(1), client.organizations().list().send())
@@ -663,10 +671,11 @@ mod list_execution_tests {
         let transport = tower::service_fn(|_: http::Request<RequestBody>| {
             std::future::pending::<Result<http::Response<RequestBody>, Infallible>>()
         });
-        let client = PolarClient::builder("example-token")
-            .timeout(Duration::from_secs(60))
-            .build_with(transport)
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .timeout(Duration::from_secs(60))
+                .build_with(transport)
+                .unwrap();
 
         let result = tokio::time::timeout(Duration::from_secs(1), async {
             client
@@ -693,13 +702,13 @@ mod list_request_tests {
 
     use super::{ListOrganizationsParams, OrganizationSortField};
     use crate::{
-        client::{PolarClient, PolarEnvironment, RequestOptions},
-        models::common::enums::OrganizationSlug,
+        client::{AccessToken, PolarClient, PolarEnvironment, RequestOptions},
+        models::common::{OrganizationSlug, PageLimit},
         query::Sorting,
     };
 
     fn client() -> PolarClient<()> {
-        PolarClient::builder("example-token")
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
             .environment(PolarEnvironment::Sandbox)
             .build_with(())
             .unwrap()
@@ -738,9 +747,9 @@ mod list_request_tests {
     fn builds_encoded_query_preserving_sorting_order() {
         let client = client();
         let params = ListOrganizationsParams {
-            slug: Some(OrganizationSlug::from("acme & sons+".to_owned())),
+            slug: Some(OrganizationSlug::try_from("acme & sons+").expect("valid test slug")),
             page: NonZeroU64::new(2),
-            limit: NonZeroU64::new(20),
+            limit: Some(PageLimit::try_from(20).expect("valid test limit")),
             sorting: vec![
                 (OrganizationSortField::Name, Sorting::Desc),
                 (OrganizationSortField::CreatedAt, Sorting::Asc),
@@ -762,7 +771,9 @@ mod list_request_tests {
             .organizations()
             .list()
             .options(RequestOptions {
-                access_token: Some("override-token".into()),
+                access_token: Some(
+                    AccessToken::try_from("override-token").expect("nonempty test token"),
+                ),
                 ..Default::default()
             })
             .build_request()
@@ -783,7 +794,9 @@ mod list_request_tests {
             .organizations()
             .list()
             .options(RequestOptions {
-                access_token: Some("invalid\ntoken".into()),
+                access_token: Some(
+                    AccessToken::try_from("invalid\ntoken").expect("nonempty test token"),
+                ),
                 ..Default::default()
             })
             .build_request();
@@ -795,9 +808,9 @@ mod list_request_tests {
     fn params_replaces_the_previous_parameter_struct() {
         let client = client();
         let first = ListOrganizationsParams {
-            slug: Some(OrganizationSlug::from("old-slug".to_owned())),
+            slug: Some(OrganizationSlug::try_from("old-slug").expect("valid test slug")),
             page: NonZeroU64::new(2),
-            limit: NonZeroU64::new(20),
+            limit: Some(PageLimit::try_from(20).expect("valid test limit")),
             sorting: vec![(OrganizationSortField::Name, Sorting::Desc)],
         };
         let second = ListOrganizationsParams { page: NonZeroU64::new(3), ..Default::default() };

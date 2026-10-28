@@ -2,6 +2,7 @@ use std::collections::BTreeSet;
 
 use http_body_util::BodyExt;
 use serde_json::{Value, json};
+use url::Url;
 
 use super::{
     OrganizationCreate, OrganizationCreateRequired, OrganizationDetails,
@@ -9,14 +10,17 @@ use super::{
     OrganizationSocialPlatforms, OrganizationSwitchingFrom,
 };
 use crate::{
-    client::PolarClient,
-    models::common::enums::{CountryAlpha2Input, PresentmentCurrency, TaxBehaviorOption},
+    client::{AccessToken, PolarClient},
+    models::common::{
+        OrganizationName, OrganizationSlug,
+        enums::{CountryAlpha2Input, PresentmentCurrency, TaxBehaviorOption},
+    },
 };
 
 fn payload() -> OrganizationCreate {
     OrganizationCreate::new(OrganizationCreateRequired {
-        name: "Acme".into(),
-        slug: "acme".to_owned().into(),
+        name: OrganizationName::try_from("Acme").expect("valid test name"),
+        slug: OrganizationSlug::try_from("acme").expect("valid test slug"),
     })
 }
 
@@ -47,13 +51,13 @@ async fn complete_payload_covers_every_create_property_and_encodes_the_expected_
         .checkout_localization_enabled(true)
         .overview_metrics(vec!["revenue".into()]);
     let payload = payload()
-        .avatar_url("https://example.com/avatar.png")
+        .avatar_url(Url::parse("https://example.com/avatar.png").expect("valid test URL"))
         .email("support@example.com")
-        .website("https://example.com")
+        .website(Url::parse("https://example.com/").expect("valid test URL"))
         .legal_entity(OrganizationLegalEntity::Company { registered_name: "Acme Ltd".into() })
         .socials(vec![OrganizationSocialLink {
             platform: OrganizationSocialPlatforms::Github,
-            url: "https://github.com/acme".into(),
+            url: Url::parse("https://github.com/acme").expect("valid test URL"),
         }])
         .details(details)
         .country(CountryAlpha2Input::ES)
@@ -72,7 +76,7 @@ async fn complete_payload_covers_every_create_property_and_encodes_the_expected_
     let expected = json!({
         "name":"Acme", "slug":"acme",
         "avatar_url":"https://example.com/avatar.png",
-        "email":"support@example.com", "website":"https://example.com",
+        "email":"support@example.com", "website":"https://example.com/",
         "legal_entity":{"type":"company", "registered_name":"Acme Ltd"},
         "socials":[{"platform":"github", "url":"https://github.com/acme"}],
         "details":{
@@ -92,7 +96,10 @@ async fn complete_payload_covers_every_create_property_and_encodes_the_expected_
         "customer_portal_settings":fixture["customer_portal_settings"],
         "default_presentment_currency":"eur", "default_tax_behavior":"inclusive"
     });
-    let client = PolarClient::builder("example-token").build_with(()).unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .build_with(())
+            .unwrap();
     let request = client.organizations().create(payload).build_request().unwrap();
     let body = request.into_body().collect().await.unwrap().to_bytes();
     let encoded: Value = serde_json::from_slice(&body).unwrap();

@@ -4,20 +4,22 @@ use bytes::Bytes;
 use http::{Method, Request, Response, StatusCode};
 use http_body_util::BodyExt;
 use serde_json::{Value, json};
+use url::Url;
 
 use super::{
     CreateOrganization, OrganizationCreate, OrganizationCreateRequired, OrganizationSocialLink,
     OrganizationSocialPlatforms,
 };
 use crate::{
-    client::{PolarClient, PolarEnvironment, RequestBody, RequestOptions},
+    client::{AccessToken, PolarClient, PolarEnvironment, RequestBody, RequestOptions},
     error::{BuildRequestError, RequestError},
+    models::common::{OrganizationName, OrganizationSlug},
 };
 
 fn payload() -> OrganizationCreate {
     OrganizationCreate::new(OrganizationCreateRequired {
-        name: "Acme".into(),
-        slug: "acme".to_owned().into(),
+        name: OrganizationName::try_from("Acme").expect("valid test name"),
+        slug: OrganizationSlug::try_from("acme").expect("valid test slug"),
     })
 }
 
@@ -54,10 +56,11 @@ fn mock_transport(
 
 #[tokio::test]
 async fn builds_minimal_and_fluent_json_payloads() {
-    let client = PolarClient::builder("example-token")
-        .environment(PolarEnvironment::Sandbox)
-        .build_with(())
-        .unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .environment(PolarEnvironment::Sandbox)
+            .build_with(())
+            .unwrap();
     for (payload, expected) in [
         (payload(), json!({"name":"Acme","slug":"acme"})),
         (
@@ -76,7 +79,7 @@ async fn builds_minimal_and_fluent_json_payloads() {
         (
             payload().socials(vec![OrganizationSocialLink {
                 platform: OrganizationSocialPlatforms::Github,
-                url: "https://github.com/acme".into(),
+                url: Url::parse("https://github.com/acme").expect("valid test URL"),
             }]),
             json!({
                 "name":"Acme", "slug":"acme",
@@ -86,11 +89,11 @@ async fn builds_minimal_and_fluent_json_payloads() {
         (
             payload()
                 .email("support@example.com")
-                .website("https://example.com")
-                .avatar_url("https://example.com/avatar.png"),
+                .website(Url::parse("https://example.com/").expect("valid test URL"))
+                .avatar_url(Url::parse("https://example.com/avatar.png").expect("valid test URL")),
             json!({
                 "name":"Acme", "slug":"acme", "email":"support@example.com",
-                "website":"https://example.com", "avatar_url":"https://example.com/avatar.png"
+                "website":"https://example.com/", "avatar_url":"https://example.com/avatar.png"
             }),
         ),
     ] {
@@ -107,10 +110,15 @@ async fn builds_minimal_and_fluent_json_payloads() {
 
 #[test]
 fn token_override_is_sensitive_and_does_not_change_the_client_default() {
-    let client = PolarClient::builder("example-token").build_with(()).unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .build_with(())
+            .unwrap();
     let request = create(&client, payload())
         .options(RequestOptions {
-            access_token: Some("override-token".into()),
+            access_token: Some(
+                AccessToken::try_from("override-token").expect("nonempty test token"),
+            ),
             ..Default::default()
         })
         .build_request()
@@ -178,7 +186,10 @@ async fn nested_settings_are_serialized_and_repeated_setters_replace_them() {
         .subscription_settings(subscriptions)
         .customer_email_settings(emails)
         .customer_portal_settings(portal);
-    let client = PolarClient::builder("example-token").build_with(()).unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .build_with(())
+            .unwrap();
     let request = create(&client, payload).build_request().unwrap();
     let body = request.into_body().collect().await.unwrap().to_bytes();
     let encoded: Value = serde_json::from_slice(&body).unwrap();
@@ -217,14 +228,15 @@ async fn nested_settings_are_serialized_and_repeated_setters_replace_them() {
 #[tokio::test]
 async fn send_decodes_one_organization_from_201() {
     let expected = super::item_stream_tests::organization(1);
-    let client = PolarClient::builder("example-token")
-        .environment(PolarEnvironment::Sandbox)
-        .build_with(mock_transport(
-            StatusCode::CREATED,
-            Bytes::from(serde_json::to_vec(&expected).unwrap()),
-            json!({"name":"Acme","slug":"acme"}),
-        ))
-        .unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .environment(PolarEnvironment::Sandbox)
+            .build_with(mock_transport(
+                StatusCode::CREATED,
+                Bytes::from(serde_json::to_vec(&expected).unwrap()),
+                json!({"name":"Acme","slug":"acme"}),
+            ))
+            .unwrap();
 
     let organization =
         create(&client, payload()).send().await.expect("201 must return one Organization");
@@ -238,14 +250,15 @@ async fn send_decodes_one_organization_from_201() {
 #[tokio::test]
 async fn direct_await_decodes_one_organization_from_201() {
     let expected = super::item_stream_tests::organization(2);
-    let client = PolarClient::builder("example-token")
-        .environment(PolarEnvironment::Sandbox)
-        .build_with(mock_transport(
-            StatusCode::CREATED,
-            Bytes::from(serde_json::to_vec(&expected).unwrap()),
-            json!({"name":"Acme","slug":"acme","email":"support@example.com"}),
-        ))
-        .unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .environment(PolarEnvironment::Sandbox)
+            .build_with(mock_transport(
+                StatusCode::CREATED,
+                Bytes::from(serde_json::to_vec(&expected).unwrap()),
+                json!({"name":"Acme","slug":"acme","email":"support@example.com"}),
+            ))
+            .unwrap();
 
     let organization = create(&client, payload().email("support@example.com"))
         .await
@@ -259,14 +272,15 @@ async fn direct_await_decodes_one_organization_from_201() {
 #[tokio::test]
 async fn invalid_created_bodies_return_decode_errors() {
     for body in [b"not-json".as_slice(), b"{}".as_slice()] {
-        let client = PolarClient::builder("example-token")
-            .environment(PolarEnvironment::Sandbox)
-            .build_with(mock_transport(
-                StatusCode::CREATED,
-                Bytes::from_static(body),
-                json!({"name":"Acme","slug":"acme"}),
-            ))
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(PolarEnvironment::Sandbox)
+                .build_with(mock_transport(
+                    StatusCode::CREATED,
+                    Bytes::from_static(body),
+                    json!({"name":"Acme","slug":"acme"}),
+                ))
+                .unwrap();
         let result = create(&client, payload()).await;
         assert!(
             matches!(&result, Err(RequestError::DecodeResponse(_))),
@@ -277,7 +291,7 @@ async fn invalid_created_bodies_return_decode_errors() {
 
 #[tokio::test]
 async fn forbidden_response_is_a_typed_create_error_with_a_source() {
-    let client = PolarClient::builder("example-token")
+    let client = PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
         .environment(PolarEnvironment::Sandbox)
         .build_with(mock_transport(
             StatusCode::FORBIDDEN,
@@ -312,14 +326,15 @@ async fn invalid_forbidden_bodies_return_decode_errors() {
         br#"{"detail":"Unavailable"}"#.as_slice(),
         br#"{"error":"CannotCreateOrganizationError","detail":null}"#.as_slice(),
     ] {
-        let client = PolarClient::builder("example-token")
-            .environment(PolarEnvironment::Sandbox)
-            .build_with(mock_transport(
-                StatusCode::FORBIDDEN,
-                Bytes::from_static(body),
-                json!({"name":"Acme","slug":"acme"}),
-            ))
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(PolarEnvironment::Sandbox)
+                .build_with(mock_transport(
+                    StatusCode::FORBIDDEN,
+                    Bytes::from_static(body),
+                    json!({"name":"Acme","slug":"acme"}),
+                ))
+                .unwrap();
         let result = create(&client, payload()).await;
         assert!(
             matches!(&result, Err(RequestError::DecodeResponse(_))),
@@ -330,13 +345,18 @@ async fn invalid_forbidden_bodies_return_decode_errors() {
 
 #[tokio::test]
 async fn validation_errors_are_typed() {
-    let client = PolarClient::builder("example-token")
-        .environment(PolarEnvironment::Sandbox)
-        .build_with(mock_transport(
-            StatusCode::UNPROCESSABLE_ENTITY,
-            Bytes::from_static(br#"{"detail":[{"loc":["body","slug"],"msg":"Invalid slug","type":"value_error"}]}"#),
-            json!({"name":"Acme","slug":"acme"}),
-        )).unwrap();
+    let client = PolarClient::builder(
+        AccessToken::try_from("example-token").expect("valid test token"),
+    )
+    .environment(PolarEnvironment::Sandbox)
+    .build_with(mock_transport(
+        StatusCode::UNPROCESSABLE_ENTITY,
+        Bytes::from_static(
+            br#"{"detail":[{"loc":["body","slug"],"msg":"Invalid slug","type":"value_error"}]}"#,
+        ),
+        json!({"name":"Acme","slug":"acme"}),
+    ))
+    .unwrap();
     let result = create(&client, payload()).await;
     match result {
         Err(RequestError::Validation(error)) => {
@@ -355,14 +375,15 @@ async fn unexpected_statuses_preserve_the_response_including_200() {
         (StatusCode::NOT_FOUND, b"missing route".as_slice()),
         (StatusCode::INTERNAL_SERVER_ERROR, b"server failure".as_slice()),
     ] {
-        let client = PolarClient::builder("example-token")
-            .environment(PolarEnvironment::Sandbox)
-            .build_with(mock_transport(
-                status,
-                Bytes::from_static(body),
-                json!({"name":"Acme","slug":"acme"}),
-            ))
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(PolarEnvironment::Sandbox)
+                .build_with(mock_transport(
+                    status,
+                    Bytes::from_static(body),
+                    json!({"name":"Acme","slug":"acme"}),
+                ))
+                .unwrap();
         let result = create(&client, payload()).await;
         assert!(
             matches!(
@@ -381,10 +402,15 @@ async fn invalid_authorization_fails_before_calling_transport() {
         #[allow(unreachable_code)]
         std::future::ready(Ok::<_, Infallible>(Response::new(RequestBody::default())))
     });
-    let client = PolarClient::builder("example-token").build_with(transport).unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .build_with(transport)
+            .unwrap();
     let result = create(&client, payload())
         .options(RequestOptions {
-            access_token: Some("invalid\ntoken".into()),
+            access_token: Some(
+                AccessToken::try_from("invalid\ntoken").expect("nonempty test token"),
+            ),
             ..Default::default()
         })
         .await;
@@ -397,10 +423,15 @@ async fn inherits_timeout_and_honors_request_override() {
         let transport = tower::service_fn(|_: Request<RequestBody>| {
             std::future::pending::<Result<Response<RequestBody>, Infallible>>()
         });
-        let client = PolarClient::builder("example-token")
-            .timeout(if overridden { Duration::from_secs(60) } else { Duration::from_millis(10) })
-            .build_with(transport)
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .timeout(if overridden {
+                    Duration::from_secs(60)
+                } else {
+                    Duration::from_millis(10)
+                })
+                .build_with(transport)
+                .unwrap();
         let request = create(&client, payload());
         let result = tokio::time::timeout(Duration::from_secs(1), async {
             if overridden {

@@ -10,7 +10,7 @@ use futures_util::StreamExt;
 use http::{Request, Response, StatusCode};
 
 use crate::{
-    client::{PolarClient, RequestBody},
+    client::{AccessToken, PolarClient, RequestBody},
     error::RequestError,
     models::common::OrganizationId,
 };
@@ -101,9 +101,10 @@ fn mock_pages(
 #[tokio::test]
 async fn yields_items_in_order_without_fetching_the_next_page_early() {
     let calls = Rc::new(Cell::new(0));
-    let client = PolarClient::builder("example-token")
-        .build_with(mock_pages(vec![page(&[1, 2], 2, 3), page(&[3], 2, 3)], calls.clone()))
-        .unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .build_with(mock_pages(vec![page(&[1, 2], 2, 3), page(&[3], 2, 3)], calls.clone()))
+            .unwrap();
     let items = client.organizations().list().items();
     futures_util::pin_mut!(items);
 
@@ -111,10 +112,10 @@ async fn yields_items_in_order_without_fetching_the_next_page_early() {
     for (id, expected_calls) in [(1, 1), (2, 1), (3, 2)] {
         let item = items.next().await.unwrap().unwrap();
         assert_eq!(item.id, OrganizationId::from(uuid::Uuid::from_u128(id)));
-        assert_eq!(item.name, format!("Organization {id}"));
+        assert_eq!(item.name.as_ref(), format!("Organization {id}"));
         assert_eq!(item.socials.len(), 1);
         assert_eq!(item.socials[0].platform, super::OrganizationSocialPlatforms::Github);
-        assert_eq!(item.socials[0].url, format!("https://github.com/organization-{id}"));
+        assert_eq!(item.socials[0].url.as_str(), format!("https://github.com/organization-{id}"));
         assert_eq!(calls.get(), expected_calls);
         tokio::task::yield_now().await;
         assert_eq!(calls.get(), expected_calls, "must not prefetch while the consumer is idle");
@@ -127,18 +128,19 @@ async fn yields_items_in_order_without_fetching_the_next_page_early() {
 #[tokio::test]
 async fn skips_empty_intermediate_pages() {
     let calls = Rc::new(Cell::new(0));
-    let client = PolarClient::builder("example-token")
-        .build_with(mock_pages(
-            vec![page(&[1], 3, 2), page(&[], 3, 2), page(&[2], 3, 2)],
-            calls.clone(),
-        ))
-        .unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .build_with(mock_pages(
+                vec![page(&[1], 3, 2), page(&[], 3, 2), page(&[2], 3, 2)],
+                calls.clone(),
+            ))
+            .unwrap();
     let items = client.organizations().list().items();
     futures_util::pin_mut!(items);
 
-    assert_eq!(items.next().await.unwrap().unwrap().name, "Organization 1");
+    assert_eq!(items.next().await.unwrap().unwrap().name.as_ref(), "Organization 1");
     assert_eq!(calls.get(), 1);
-    assert_eq!(items.next().await.unwrap().unwrap().name, "Organization 2");
+    assert_eq!(items.next().await.unwrap().unwrap().name.as_ref(), "Organization 2");
     assert_eq!(calls.get(), 3, "one next() must skip the empty page");
     assert!(items.next().await.is_none());
     assert_eq!(calls.get(), 3);
@@ -150,9 +152,10 @@ async fn entirely_empty_results_end_without_yielding_items() {
         [(vec![page(&[], 0, 0)], 1), (vec![page(&[], 2, 0), page(&[], 2, 0)], 2)]
     {
         let calls = Rc::new(Cell::new(0));
-        let client = PolarClient::builder("example-token")
-            .build_with(mock_pages(responses, calls.clone()))
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .build_with(mock_pages(responses, calls.clone()))
+                .unwrap();
         let items = client.organizations().list().items();
         futures_util::pin_mut!(items);
 
@@ -166,17 +169,18 @@ async fn entirely_empty_results_end_without_yielding_items() {
 async fn later_page_errors_are_yielded_once_then_the_stream_ends() {
     for status in [StatusCode::INTERNAL_SERVER_ERROR, StatusCode::OK] {
         let calls = Rc::new(Cell::new(0));
-        let client = PolarClient::builder("example-token")
-            .build_with(mock_pages(
-                vec![page(&[1, 2], 3, 3), (status, Bytes::from_static(b"not-json"))],
-                calls.clone(),
-            ))
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .build_with(mock_pages(
+                    vec![page(&[1, 2], 3, 3), (status, Bytes::from_static(b"not-json"))],
+                    calls.clone(),
+                ))
+                .unwrap();
         let items = client.organizations().list().items();
         futures_util::pin_mut!(items);
 
-        assert_eq!(items.next().await.unwrap().unwrap().name, "Organization 1");
-        assert_eq!(items.next().await.unwrap().unwrap().name, "Organization 2");
+        assert_eq!(items.next().await.unwrap().unwrap().name.as_ref(), "Organization 1");
+        assert_eq!(items.next().await.unwrap().unwrap().name.as_ref(), "Organization 2");
         assert_eq!(calls.get(), 1);
         let error = items.next().await.unwrap().unwrap_err();
         if status == StatusCode::OK {
@@ -197,9 +201,10 @@ async fn later_page_errors_are_yielded_once_then_the_stream_ends() {
 #[tokio::test]
 async fn dropping_early_does_not_fetch_more_pages() {
     let calls = Rc::new(Cell::new(0));
-    let client = PolarClient::builder("example-token")
-        .build_with(mock_pages(vec![page(&[1, 2], 2, 3), page(&[3], 2, 3)], calls.clone()))
-        .unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .build_with(mock_pages(vec![page(&[1, 2], 2, 3), page(&[3], 2, 3)], calls.clone()))
+            .unwrap();
 
     drop(client.organizations().list().items());
     tokio::task::yield_now().await;
@@ -208,7 +213,7 @@ async fn dropping_early_does_not_fetch_more_pages() {
     {
         let items = client.organizations().list().items();
         futures_util::pin_mut!(items);
-        assert_eq!(items.next().await.unwrap().unwrap().name, "Organization 1");
+        assert_eq!(items.next().await.unwrap().unwrap().name.as_ref(), "Organization 1");
         assert_eq!(calls.get(), 1);
     }
     tokio::task::yield_now().await;

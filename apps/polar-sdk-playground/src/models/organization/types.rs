@@ -2,14 +2,16 @@ use std::num::NonZeroU64;
 
 use presence_rs::Presence;
 use serde::{Deserialize, Serialize};
+use url::Url;
 
 use crate::{
     models::{
         common::{
-            AccountId, OrganizationId, PayoutAccountId,
+            AccountId, OrganizationId, OrganizationName, OrganizationSlug, PageLimit,
+            PayoutAccountId,
             enums::{
-                CountryAlpha2Input, OrganizationSlug, PresentmentCurrency,
-                SubscriptionProrationBehavior, TaxBehaviorOption,
+                CountryAlpha2Input, PresentmentCurrency, SubscriptionProrationBehavior,
+                TaxBehaviorOption,
             },
         },
         organization::enums::{
@@ -30,7 +32,7 @@ pub struct ListResourceOrganization {
 
 #[derive(Debug, Clone)]
 pub struct OrganizationCreateRequired {
-    pub name: String,
+    pub name: OrganizationName,
     pub slug: OrganizationSlug,
 }
 
@@ -44,19 +46,19 @@ pub enum OrganizationLegalEntity {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct OrganizationSocialLink {
     pub platform: OrganizationSocialPlatforms,
-    pub url: String,
+    pub url: Url,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct OrganizationCreate {
-    pub name: String,
+    pub name: OrganizationName,
     pub slug: OrganizationSlug,
     #[serde(default, skip_serializing_if = "Presence::is_absent")]
-    pub avatar_url: Presence<String>,
+    pub avatar_url: Presence<Url>,
     #[serde(default, skip_serializing_if = "Presence::is_absent")]
     pub email: Presence<String>,
     #[serde(default, skip_serializing_if = "Presence::is_absent")]
-    pub website: Presence<String>,
+    pub website: Presence<Url>,
     #[serde(default, skip_serializing_if = "Presence::is_absent")]
     pub subscription_settings: Presence<OrganizationSubscriptionSettings>,
     #[serde(default, skip_serializing_if = "Presence::is_absent")]
@@ -108,8 +110,8 @@ impl OrganizationCreate {
         }
     }
 
-    pub fn avatar_url(mut self, value: impl Into<String>) -> Self {
-        self.avatar_url = Presence::Some(value.into());
+    pub fn avatar_url(mut self, value: Url) -> Self {
+        self.avatar_url = Presence::Some(value);
         self
     }
 
@@ -118,8 +120,8 @@ impl OrganizationCreate {
         self
     }
 
-    pub fn website(mut self, value: impl Into<String>) -> Self {
-        self.website = Presence::Some(value.into());
+    pub fn website(mut self, value: Url) -> Self {
+        self.website = Presence::Some(value);
         self
     }
 
@@ -327,13 +329,13 @@ impl OrganizationDetails {
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 pub struct OrganizationUpdate {
     #[serde(default, skip_serializing_if = "Presence::is_absent")]
-    pub name: Presence<String>,
+    pub name: Presence<OrganizationName>,
     #[serde(default, skip_serializing_if = "Presence::is_absent")]
-    pub avatar_url: Presence<String>,
+    pub avatar_url: Presence<Url>,
     #[serde(default, skip_serializing_if = "Presence::is_absent")]
     pub email: Presence<String>,
     #[serde(default, skip_serializing_if = "Presence::is_absent")]
-    pub website: Presence<String>,
+    pub website: Presence<Url>,
     #[serde(default, skip_serializing_if = "Presence::is_absent")]
     pub socials: Presence<Vec<OrganizationSocialLink>>,
     #[serde(default, skip_serializing_if = "Presence::is_absent")]
@@ -365,13 +367,13 @@ impl OrganizationUpdate {
         Self::default()
     }
 
-    pub fn name(mut self, value: impl Into<String>) -> Self {
-        self.name = Presence::Some(value.into());
+    pub fn name(mut self, value: OrganizationName) -> Self {
+        self.name = Presence::Some(value);
         self
     }
 
-    pub fn avatar_url(mut self, value: impl Into<String>) -> Self {
-        self.avatar_url = Presence::Some(value.into());
+    pub fn avatar_url(mut self, value: Url) -> Self {
+        self.avatar_url = Presence::Some(value);
         self
     }
 
@@ -380,8 +382,8 @@ impl OrganizationUpdate {
         self
     }
 
-    pub fn website(mut self, value: impl Into<String>) -> Self {
-        self.website = Presence::Some(value.into());
+    pub fn website(mut self, value: Url) -> Self {
+        self.website = Presence::Some(value);
         self
     }
 
@@ -473,7 +475,7 @@ pub struct Organization {
     /// portal.
     pub allow_customer_updates: bool,
     /// Avatar URL shown in checkout, customer portal, emails etc.
-    pub avatar_url: Option<String>,
+    pub avatar_url: Option<Url>,
     pub capabilities: OrganizationCapabilities,
     /// Two-letter country code (ISO 3166-1 alpha-2).
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
@@ -506,7 +508,7 @@ pub struct Organization {
     /// Last modification timestamp of the object.
     pub modified_at: Option<jiff::Timestamp>,
     /// Organization name shown in checkout, customer portal, emails etc.
-    pub name: String,
+    pub name: OrganizationName,
     /// When Polar requested that the organization review and resubmit its
     /// onboarding information, if applicable.
     pub onboarding_resubmission_requested_at: Option<jiff::Timestamp>,
@@ -524,7 +526,7 @@ pub struct Organization {
     pub status: OrganizationStatus,
     pub subscription_settings: OrganizationSubscriptionSettings,
     /// Official website of the organization.
-    pub website: Option<String>,
+    pub website: Option<Url>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -663,7 +665,7 @@ pub struct OrganizationFeatureSettings {
 pub struct ListOrganizationsParams {
     pub slug: Option<OrganizationSlug>,
     pub page: Option<NonZeroU64>,
-    pub limit: Option<NonZeroU64>,
+    pub limit: Option<PageLimit>,
     pub sorting: Vec<(OrganizationSortField, Sorting)>,
 }
 
@@ -694,16 +696,17 @@ impl EncodeQuery for ListOrganizationsParams {
 #[cfg(test)]
 mod create_payload_tests {
     use serde_json::json;
+    use url::Url;
 
     use super::{
-        OrganizationCreate, OrganizationCreateRequired, OrganizationLegalEntity, OrganizationSlug,
-        OrganizationSocialLink, OrganizationSocialPlatforms, Presence,
+        OrganizationCreate, OrganizationCreateRequired, OrganizationLegalEntity, OrganizationName,
+        OrganizationSlug, OrganizationSocialLink, OrganizationSocialPlatforms, Presence,
     };
 
     fn payload() -> OrganizationCreate {
         OrganizationCreate::new(OrganizationCreateRequired {
-            name: "Acme".into(),
-            slug: OrganizationSlug::from("acme".to_owned()),
+            name: OrganizationName::try_from("Acme").expect("valid test name"),
+            slug: OrganizationSlug::try_from("acme").expect("valid test slug"),
         })
     }
 
@@ -713,7 +716,7 @@ mod create_payload_tests {
         assert_eq!(serde_json::to_value(payload()).unwrap(), expected);
 
         let decoded: OrganizationCreate = serde_json::from_value(expected).unwrap();
-        assert_eq!(decoded.name, "Acme");
+        assert_eq!(decoded.name.as_ref(), "Acme");
         assert_eq!(decoded.slug.as_ref(), "acme");
         assert!(matches!(decoded.avatar_url, Presence::Absent));
         assert!(matches!(decoded.email, Presence::Absent));
@@ -746,24 +749,50 @@ mod create_payload_tests {
     #[test]
     fn preserves_values_for_each_optional_field() {
         let payload = payload()
-            .avatar_url("https://example.com/avatar.png")
+            .avatar_url(Url::parse("https://example.com/avatar.png").expect("valid test URL"))
             .email("old@example.com")
             .email("support@example.com".to_owned())
-            .website("https://example.com");
+            .website(Url::parse("https://example.com/").expect("valid test URL"));
         let expected = json!({
             "name": "Acme", "slug": "acme",
             "avatar_url": "https://example.com/avatar.png",
             "email": "support@example.com",
-            "website": "https://example.com"
+            "website": "https://example.com/"
         });
         assert_eq!(serde_json::to_value(payload).unwrap(), expected);
 
         let decoded: OrganizationCreate = serde_json::from_value(expected).unwrap();
         assert!(
-            matches!(decoded.avatar_url, Presence::Some(value) if value == "https://example.com/avatar.png")
+            matches!(decoded.avatar_url, Presence::Some(value) if value.as_str() == "https://example.com/avatar.png")
         );
         assert!(matches!(decoded.email, Presence::Some(value) if value == "support@example.com"));
-        assert!(matches!(decoded.website, Presence::Some(value) if value == "https://example.com"));
+        assert!(
+            matches!(decoded.website, Presence::Some(value) if value.as_str() == "https://example.com/")
+        );
+    }
+
+    #[test]
+    fn url_fields_reject_invalid_values_in_payloads_and_responses() {
+        for field in ["avatar_url", "website", "socials"] {
+            for invalid in ["not a URL", "https://[invalid"] {
+                let value = if field == "socials" {
+                    json!([{"platform": "github", "url": invalid}])
+                } else {
+                    json!(invalid)
+                };
+                let mut create = json!({"name": "Acme", "slug": "acme"});
+                create[field] = value.clone();
+                assert!(serde_json::from_value::<OrganizationCreate>(create).is_err());
+
+                let mut update = json!({});
+                update[field] = value.clone();
+                assert!(serde_json::from_value::<super::OrganizationUpdate>(update).is_err());
+
+                let mut response = super::super::item_stream_tests::organization(1);
+                response[field] = value;
+                assert!(serde_json::from_value::<super::Organization>(response).is_err());
+            }
+        }
     }
 
     #[test]
@@ -796,16 +825,16 @@ mod create_payload_tests {
         let payload = payload()
             .socials(vec![OrganizationSocialLink {
                 platform: OrganizationSocialPlatforms::Other,
-                url: "https://old.example.com".into(),
+                url: Url::parse("https://old.example.com").expect("valid test URL"),
             }])
             .socials(vec![
                 OrganizationSocialLink {
                     platform: OrganizationSocialPlatforms::Github,
-                    url: "https://github.com/acme".into(),
+                    url: Url::parse("https://github.com/acme").expect("valid test URL"),
                 },
                 OrganizationSocialLink {
                     platform: OrganizationSocialPlatforms::X,
-                    url: "https://x.com/acme".into(),
+                    url: Url::parse("https://x.com/acme").expect("valid test URL"),
                 },
             ]);
         let expected = json!({
@@ -825,7 +854,7 @@ mod create_payload_tests {
         for link in [
             json!({"url":"https://github.com/acme"}),
             json!({"platform":"github"}),
-            json!({"platform":"unknown","url":"https://example.com"}),
+            json!({"platform":"unknown","url":"https://example.com/"}),
         ] {
             let result = serde_json::from_value::<OrganizationCreate>(json!({
                 "name":"Acme", "slug":"acme", "socials":[link]
@@ -895,7 +924,9 @@ mod create_payload_tests {
 
 #[cfg(test)]
 mod list_params_tests {
-    use super::{ListOrganizationsParams, NonZeroU64, OrganizationSlug, OrganizationSortField};
+    use super::{
+        ListOrganizationsParams, NonZeroU64, OrganizationSlug, OrganizationSortField, PageLimit,
+    };
     use crate::query::{EncodeQuery, Sorting};
 
     #[test]
@@ -906,9 +937,9 @@ mod list_params_tests {
     #[test]
     fn encodes_filters_pagination_and_sorting_in_priority_order() {
         let params = ListOrganizationsParams {
-            slug: Some(OrganizationSlug::from("acme".to_owned())),
+            slug: Some(OrganizationSlug::try_from("acme").expect("valid test slug")),
             page: NonZeroU64::new(2),
-            limit: NonZeroU64::new(20),
+            limit: Some(PageLimit::try_from(20).expect("valid test limit")),
             sorting: vec![
                 (OrganizationSortField::Name, Sorting::Desc),
                 (OrganizationSortField::CreatedAt, Sorting::Asc),
@@ -924,7 +955,7 @@ mod list_params_tests {
     #[test]
     fn escapes_slug_and_omits_unspecified_parameters() {
         let params = ListOrganizationsParams {
-            slug: Some(OrganizationSlug::from("acme & sons+50%?x=1".to_owned())),
+            slug: Some(OrganizationSlug::try_from("acme & sons+50%?x=1").expect("valid test slug")),
             ..Default::default()
         };
 

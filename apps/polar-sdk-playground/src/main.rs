@@ -3,7 +3,7 @@ use std::{convert::Infallible, time::Duration};
 use http::StatusCode;
 
 use crate::{
-    client::{PolarClient, RequestBody, RequestOptions},
+    client::{AccessToken, PolarClient, RequestBody, RequestOptions},
     error::RequestError,
     models::{
         common::{OrganizationId, errors::ValidationLocation},
@@ -73,16 +73,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let organization_id =
         OrganizationId::from(uuid::Uuid::parse_str("1dbfc517-0bbf-4301-9ba8-555ca42b9737")?);
 
-    let configuration_client = PolarClient::builder("example-token")
-        .environment(client::PolarEnvironment::Sandbox)
-        .build_with(())?;
+    let configuration_client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .environment(client::PolarEnvironment::Sandbox)
+            .build_with(())?;
     assert_eq!(configuration_client.default_timeout(), Duration::from_secs(5));
 
     let overridden = configuration_client
         .organizations()
         .get(organization_id)
         .options(RequestOptions {
-            access_token: Some("override-token".into()),
+            access_token: Some(
+                AccessToken::try_from("override-token").expect("nonempty test token"),
+            ),
             ..Default::default()
         })
         .build_request()?;
@@ -99,16 +102,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .organizations()
         .get(organization_id)
         .options(RequestOptions {
-            access_token: Some("invalid\ntoken".into()),
+            access_token: Some(
+                AccessToken::try_from("invalid\ntoken").expect("nonempty test token"),
+            ),
             ..Default::default()
         })
         .build_request();
     assert!(matches!(invalid, Err(_)), "a token containing a newline must be rejected");
 
     for body in [b"not-json".as_slice(), b"{}".as_slice()] {
-        let polar_client = PolarClient::builder("example-token")
-            .environment(client::PolarEnvironment::Sandbox)
-            .build_with(mock_transport(StatusCode::OK, body))?;
+        let polar_client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(client::PolarEnvironment::Sandbox)
+                .build_with(mock_transport(StatusCode::OK, body))?;
         let result = polar_client.organizations().get(organization_id).await;
 
         assert!(
@@ -118,9 +124,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let error_body = br#"{"error":"ResourceNotFound","detail":"Organization not found."}"#;
-    let polar_client = PolarClient::builder("example-token")
-        .environment(client::PolarEnvironment::Sandbox)
-        .build_with(mock_transport(StatusCode::NOT_FOUND, error_body))?;
+    let polar_client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .environment(client::PolarEnvironment::Sandbox)
+            .build_with(mock_transport(StatusCode::NOT_FOUND, error_body))?;
     let result = polar_client.organizations().get(organization_id).await;
 
     assert!(
@@ -137,9 +144,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     let error_body = b"server failure";
-    let polar_client = PolarClient::builder("example-token")
-        .environment(client::PolarEnvironment::Sandbox)
-        .build_with(mock_transport(StatusCode::INTERNAL_SERVER_ERROR, error_body))?;
+    let polar_client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .environment(client::PolarEnvironment::Sandbox)
+            .build_with(mock_transport(StatusCode::INTERNAL_SERVER_ERROR, error_body))?;
     let result = polar_client.organizations().get(organization_id).await;
     assert!(
         matches!(
@@ -157,9 +165,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         br#"{"error":"ResourceNotFound"}"#.as_slice(),
         br#"{"detail":"Organization not found."}"#.as_slice(),
     ] {
-        let polar_client = PolarClient::builder("example-token")
-            .environment(client::PolarEnvironment::Sandbox)
-            .build_with(mock_transport(StatusCode::NOT_FOUND, body))?;
+        let polar_client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(client::PolarEnvironment::Sandbox)
+                .build_with(mock_transport(StatusCode::NOT_FOUND, body))?;
         let result = polar_client.organizations().get(organization_id).await;
         assert!(
             matches!(&result, Err(RequestError::DecodeResponse(_))),
@@ -183,9 +192,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         ]
     }"#;
-    let polar_client = PolarClient::builder("example-token")
-        .environment(client::PolarEnvironment::Sandbox)
-        .build_with(mock_transport(StatusCode::UNPROCESSABLE_ENTITY, validation_body))?;
+    let polar_client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .environment(client::PolarEnvironment::Sandbox)
+            .build_with(mock_transport(StatusCode::UNPROCESSABLE_ENTITY, validation_body))?;
     let result = polar_client.organizations().get(organization_id).await;
     match &result {
         Err(RequestError::Validation(error)) => {
@@ -220,9 +230,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     for (body, has_detail) in [(br#"{"detail":[]}"#.as_slice(), true), (b"{}".as_slice(), false)] {
-        let polar_client = PolarClient::builder("example-token")
-            .environment(client::PolarEnvironment::Sandbox)
-            .build_with(mock_transport(StatusCode::UNPROCESSABLE_ENTITY, body))?;
+        let polar_client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(client::PolarEnvironment::Sandbox)
+                .build_with(mock_transport(StatusCode::UNPROCESSABLE_ENTITY, body))?;
         let result = polar_client.organizations().get(organization_id).await;
         assert!(
             matches!(
@@ -236,9 +247,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     for body in [br#"{"detail":[{"loc":["path","id"]}]}"#.as_slice(), b"not-json".as_slice()] {
-        let polar_client = PolarClient::builder("example-token")
-            .environment(client::PolarEnvironment::Sandbox)
-            .build_with(mock_transport(StatusCode::UNPROCESSABLE_ENTITY, body))?;
+        let polar_client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .environment(client::PolarEnvironment::Sandbox)
+                .build_with(mock_transport(StatusCode::UNPROCESSABLE_ENTITY, body))?;
         let result = polar_client.organizations().get(organization_id).await;
         assert!(
             matches!(&result, Err(RequestError::DecodeResponse(_))),
@@ -249,9 +261,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let pending_transport = tower::service_fn(|_: http::Request<RequestBody>| {
         std::future::pending::<Result<http::Response<RequestBody>, Infallible>>()
     });
-    let timeout_client = PolarClient::builder("example-token")
-        .timeout(Duration::from_millis(10))
-        .build_with(pending_transport.clone())?;
+    let timeout_client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .timeout(Duration::from_millis(10))
+            .build_with(pending_transport.clone())?;
     let result = tokio::time::timeout(
         Duration::from_secs(1),
         timeout_client.organizations().get(organization_id).send(),
@@ -263,9 +276,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "expected Timeout from the builder setting, got {result:?}"
     );
 
-    let timeout_client = PolarClient::builder("example-token")
-        .timeout(Duration::from_secs(60))
-        .build_with(pending_transport)?;
+    let timeout_client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .timeout(Duration::from_secs(60))
+            .build_with(pending_transport)?;
     let result = tokio::time::timeout(Duration::from_secs(1), async {
         timeout_client
             .organizations()

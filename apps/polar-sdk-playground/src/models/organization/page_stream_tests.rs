@@ -12,9 +12,9 @@ use http::{Request, Response, StatusCode};
 
 use super::{ListOrganizationsParams, OrganizationSortField};
 use crate::{
-    client::{PolarClient, PolarEnvironment, RequestBody, RequestOptions},
+    client::{AccessToken, PolarClient, PolarEnvironment, RequestBody, RequestOptions},
     error::RequestError,
-    models::common::enums::OrganizationSlug,
+    models::common::{OrganizationSlug, PageLimit},
     query::Sorting,
 };
 
@@ -46,13 +46,14 @@ fn mock_pages(
 #[tokio::test]
 async fn fetches_empty_pages_lazily_and_stops_at_the_last_page() {
     let requests = Requests::default();
-    let client = PolarClient::builder("example-token")
-        .environment(PolarEnvironment::Sandbox)
-        .build_with(mock_pages(
-            vec![(StatusCode::OK, TWO_PAGES), (StatusCode::OK, TWO_PAGES)],
-            requests.clone(),
-        ))
-        .unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .environment(PolarEnvironment::Sandbox)
+            .build_with(mock_pages(
+                vec![(StatusCode::OK, TWO_PAGES), (StatusCode::OK, TWO_PAGES)],
+                requests.clone(),
+            ))
+            .unwrap();
     let pages = client.organizations().list().pages();
     futures_util::pin_mut!(pages);
 
@@ -77,27 +78,30 @@ async fn fetches_empty_pages_lazily_and_stops_at_the_last_page() {
 #[tokio::test]
 async fn preserves_starting_page_filters_sorting_and_token_override() {
     let requests = Requests::default();
-    let client = PolarClient::builder("example-token")
-        .environment(PolarEnvironment::Sandbox)
-        .build_with(mock_pages(
-            vec![(StatusCode::OK, THREE_PAGES), (StatusCode::OK, THREE_PAGES)],
-            requests.clone(),
-        ))
-        .unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .environment(PolarEnvironment::Sandbox)
+            .build_with(mock_pages(
+                vec![(StatusCode::OK, THREE_PAGES), (StatusCode::OK, THREE_PAGES)],
+                requests.clone(),
+            ))
+            .unwrap();
     let pages = client
         .organizations()
         .list()
         .params(ListOrganizationsParams {
-            slug: Some(OrganizationSlug::from("acme & sons".to_owned())),
+            slug: Some(OrganizationSlug::try_from("acme & sons").expect("valid test slug")),
             page: NonZeroU64::new(2),
-            limit: NonZeroU64::new(20),
+            limit: Some(PageLimit::try_from(20).expect("valid test limit")),
             sorting: vec![
                 (OrganizationSortField::Name, Sorting::Desc),
                 (OrganizationSortField::CreatedAt, Sorting::Asc),
             ],
         })
         .options(RequestOptions {
-            access_token: Some("override-token".into()),
+            access_token: Some(
+                AccessToken::try_from("override-token").expect("nonempty test token"),
+            ),
             ..Default::default()
         })
         .pages();
@@ -129,12 +133,13 @@ async fn preserves_starting_page_filters_sorting_and_token_override() {
 async fn yields_a_page_error_once_and_stops_requesting() {
     for status in [StatusCode::INTERNAL_SERVER_ERROR, StatusCode::OK] {
         let requests = Requests::default();
-        let client = PolarClient::builder("example-token")
-            .build_with(mock_pages(
-                vec![(StatusCode::OK, THREE_PAGES), (status, b"not-json")],
-                requests.clone(),
-            ))
-            .unwrap();
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .build_with(mock_pages(
+                    vec![(StatusCode::OK, THREE_PAGES), (status, b"not-json")],
+                    requests.clone(),
+                ))
+                .unwrap();
         let pages = client.organizations().list().pages();
         futures_util::pin_mut!(pages);
 
@@ -173,10 +178,11 @@ async fn retains_the_timeout_override_for_later_pages() {
             }
         }
     });
-    let client = PolarClient::builder("example-token")
-        .timeout(Duration::from_secs(60))
-        .build_with(transport)
-        .unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .timeout(Duration::from_secs(60))
+            .build_with(transport)
+            .unwrap();
     let pages = client
         .organizations()
         .list()
@@ -197,12 +203,16 @@ async fn retains_the_timeout_override_for_later_pages() {
 #[tokio::test]
 async fn zero_max_page_yields_the_initial_page_then_stops() {
     let requests = Requests::default();
-    let client = PolarClient::builder("example-token")
-        .build_with(mock_pages(
-            vec![(StatusCode::OK, br#"{"items":[],"pagination":{"total_count":0,"max_page":0}}"#)],
-            requests.clone(),
-        ))
-        .unwrap();
+    let client =
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+            .build_with(mock_pages(
+                vec![(
+                    StatusCode::OK,
+                    br#"{"items":[],"pagination":{"total_count":0,"max_page":0}}"#,
+                )],
+                requests.clone(),
+            ))
+            .unwrap();
     let pages = client.organizations().list().pages();
     futures_util::pin_mut!(pages);
 

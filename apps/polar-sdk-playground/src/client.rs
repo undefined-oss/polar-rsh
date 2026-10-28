@@ -1,6 +1,12 @@
-use std::time::Duration;
+use std::{
+    fmt::{Debug, Display},
+    time::Duration,
+};
 
+use derive_more::{Deref, Eq, PartialEq};
+use serde::{Deserialize, Serialize};
 use tower::ServiceExt;
+use url::Url;
 
 use crate::{error::BuildRequestError, models::organization::Organizations};
 
@@ -12,11 +18,12 @@ pub enum PolarEnvironment {
 }
 
 impl PolarEnvironment {
-    fn base_url(&self) -> &'static str {
-        match self {
+    fn base_url(&self) -> Url {
+        let base_url = match self {
             PolarEnvironment::Production => "https://api.polar.sh",
             PolarEnvironment::Sandbox => "https://sandbox-api.polar.sh",
-        }
+        };
+        Url::parse(base_url).expect("Polar environment URLs are valid")
     }
 }
 
@@ -38,19 +45,19 @@ impl PolarVersion {
 }
 
 pub struct PolarBuilder {
-    access_token: String, // NewType ??
+    access_token: AccessToken,
     environment: PolarEnvironment,
     timeout: Duration,
-    base_url: String,
+    base_url: Url,
     base_url_overridden: bool,
 }
 
 impl PolarBuilder {
-    pub fn new(access_token: impl Into<String>) -> Self {
+    pub fn new(access_token: AccessToken) -> Self {
         let default_environment = PolarEnvironment::Production;
         Self {
-            access_token: access_token.into(),
-            base_url: default_environment.base_url().into(),
+            access_token,
+            base_url: default_environment.base_url(),
             timeout: Duration::from_secs(5),
             environment: default_environment,
             base_url_overridden: false,
@@ -70,13 +77,12 @@ impl PolarBuilder {
             return self;
         }
 
-        self.base_url = self.environment.base_url().into();
+        self.base_url = self.environment.base_url();
         self
     }
 
-    // String should be URL type and as a newtype
-    pub fn base_url(mut self, base_url: impl Into<String>) -> Self {
-        self.base_url = base_url.into();
+    pub fn base_url(mut self, base_url: Url) -> Self {
+        self.base_url = base_url;
         self.base_url_overridden = true;
         self
     }
@@ -86,9 +92,7 @@ impl PolarBuilder {
         self,
         transport: S,
     ) -> Result<PolarClient<S>, http::header::InvalidHeaderValue> {
-        let bearer_token = format!("Bearer {}", self.access_token);
-        let mut authorization_header = http::HeaderValue::from_str(&bearer_token)?;
-        authorization_header.set_sensitive(true);
+        let authorization_header = self.access_token.to_header()?;
 
         Ok(PolarClient {
             transport,
@@ -103,7 +107,7 @@ impl PolarBuilder {
 
 struct ClientConfig {
     authorization: http::HeaderValue,
-    base_url: String,
+    base_url: Url,
     timeout: Duration,
 }
 
@@ -114,7 +118,7 @@ pub struct PolarClient<S = ()> {
 }
 
 impl PolarClient<()> {
-    pub fn builder(access_token: impl Into<String>) -> PolarBuilder {
+    pub fn builder(access_token: AccessToken) -> PolarBuilder {
         PolarBuilder::new(access_token)
     }
 }
@@ -143,21 +147,22 @@ impl<ClientService> PolarClient<ClientService> {
         body: Option<bytes::Bytes>,
         options: &RequestOptions,
     ) -> Result<http::Request<RequestBody>, BuildRequestError> {
-        // Deferred trimming
-        let request_url = format!("{}/{}", self.config.base_url, path);
+        let mut base_url = self.config.base_url.clone();
+        // Treat a custom base path as a directory when resolving endpoint
+        // paths.
+        if !base_url.path().ends_with('/') {
+            base_url.set_path(&format!("{}/", base_url.path()));
+        }
+        let request_url = base_url.join(path)?;
 
         let authorization_value = if let Some(access_token) = &options.access_token {
-            let bearer_token = format!("Bearer {}", access_token);
-            let mut authorization_header =
-                http::HeaderValue::from_str(&bearer_token).map_err(http::Error::from)?;
-            authorization_header.set_sensitive(true);
-            authorization_header
+            access_token.to_header().map_err(http::Error::from)?
         } else {
             self.config.authorization.clone()
         };
 
         let mut request = http::Request::builder()
-            .uri(request_url)
+            .uri(request_url.as_str())
             .method(method)
             .header("Authorization", authorization_value)
             .header("Accept", "application/json")
@@ -179,9 +184,65 @@ impl<ClientService> PolarClient<ClientService> {
     }
 }
 
+// Custom Debug and Display to hide the value
+#[derive(Clone, Deref, PartialEq, Eq, Deserialize, Serialize)]
+pub struct AccessToken(String);
+
+#[derive(Debug, thiserror::Error, PartialEq, Eq)]
+#[error("access token can't be empty")]
+pub struct AccessTokenValidationError;
+
+impl AccessToken {
+    pub fn new_or_panic(token: &str) -> Self {
+        Self::try_new(token).unwrap()
+    }
+
+    pub fn try_new(token: &str) -> Result<Self, AccessTokenValidationError> {
+        if token.is_empty() {
+            return Err(AccessTokenValidationError);
+        }
+
+        Ok(Self(format!("Bearer {token}")))
+    }
+
+    pub fn to_header(&self) -> Result<http::HeaderValue, http::header::InvalidHeaderValue> {
+        let mut header = http::HeaderValue::from_str(&self.0)?;
+        header.set_sensitive(true);
+        Ok(header)
+    }
+}
+
+impl Display for AccessToken {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("Bearer [REDACTED]")
+    }
+}
+
+impl Debug for AccessToken {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("Bearer [REDACTED]")
+    }
+}
+
+impl TryFrom<String> for AccessToken {
+    type Error = AccessTokenValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        AccessToken::try_new(value.as_ref())
+    }
+}
+
+impl TryFrom<&str> for AccessToken {
+    type Error = AccessTokenValidationError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        AccessToken::try_new(value)
+    }
+}
+
 #[derive(Default, Clone)]
 pub struct RequestOptions {
-    pub access_token: Option<String>,
+    pub access_token: Option<AccessToken>,
     pub timeout: Option<Duration>,
 }
 
@@ -190,15 +251,73 @@ mod tests {
     use bytes::Bytes;
     use http::{Method, header};
     use http_body_util::BodyExt;
+    use url::Url;
 
-    use super::{PolarClient, PolarEnvironment, RequestOptions};
+    use super::{AccessToken, PolarClient, PolarEnvironment, RequestOptions};
     use crate::error::BuildRequestError;
 
+    #[test]
+    fn access_token_formatting_is_redacted_but_header_preserves_credentials() {
+        let token = AccessToken::try_from("example-secret").unwrap();
+        assert_eq!(format!("{token}"), "Bearer [REDACTED]");
+        assert_eq!(format!("{token:?}"), "Bearer [REDACTED]");
+        assert_eq!(format!("{token:#?}"), "Bearer [REDACTED]");
+
+        let header = token.to_header().unwrap();
+        assert_eq!(header, "Bearer example-secret");
+        assert!(header.is_sensitive());
+        assert!(!format!("{header:?}").contains("example-secret"));
+    }
+
+    #[test]
+    fn builder_rejects_invalid_authorization_from_an_access_token() {
+        let token = AccessToken::try_from("invalid\ntoken").unwrap();
+        assert!(PolarClient::builder(token).build_with(()).is_err());
+    }
+
     fn client() -> PolarClient<()> {
-        PolarClient::builder("example-token")
+        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
             .environment(PolarEnvironment::Sandbox)
             .build_with(())
             .unwrap()
+    }
+
+    #[test]
+    fn custom_base_url_preserves_path_prefix_and_encoded_query() {
+        for base in ["https://example.com/sdk%20proxy", "https://example.com/sdk%20proxy/"] {
+            let client = PolarClient::builder(
+                AccessToken::try_from("example-token").expect("valid test token"),
+            )
+            .base_url(Url::parse(base).unwrap())
+            .environment(PolarEnvironment::Sandbox)
+            .build_with(())
+            .unwrap();
+            let request = client
+                .build_request(
+                    Method::GET,
+                    "v1/organizations/?slug=acme+%26+sons&sorting=-name&sorting=created_at",
+                    None,
+                    &RequestOptions::default(),
+                )
+                .unwrap();
+            assert_eq!(request.uri().to_string(), "https://example.com/sdk%20proxy/v1/organizations/?slug=acme+%26+sons&sorting=-name&sorting=created_at");
+        }
+    }
+
+    #[test]
+    fn non_base_url_returns_a_url_build_error() {
+        let client =
+            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
+                .base_url(Url::parse("mailto:support@example.com").unwrap())
+                .build_with(())
+                .unwrap();
+        let result = client.build_request(
+            Method::GET,
+            "v1/organizations/",
+            None,
+            &RequestOptions::default(),
+        );
+        assert!(matches!(result, Err(BuildRequestError::Url(_))));
     }
 
     #[tokio::test]
@@ -249,7 +368,7 @@ mod tests {
                 "v1/organizations/",
                 Some(Bytes::from_static(b"{}")),
                 &RequestOptions {
-                    access_token: Some("override-token".into()),
+                    access_token: AccessToken::try_from("override-token").ok(),
                     ..Default::default()
                 },
             )
@@ -273,7 +392,7 @@ mod tests {
             "v1/organizations/",
             Some(Bytes::from_static(b"{}")),
             &RequestOptions {
-                access_token: Some("invalid\ntoken".into()),
+                access_token: AccessToken::try_from("invalid\ntoken").ok(),
                 ..Default::default()
             },
         );

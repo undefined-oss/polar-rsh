@@ -47,6 +47,9 @@ pub enum RequestError<TransportError> {
 
 #[derive(Debug, thiserror::Error)]
 pub enum BuildRequestError {
+    #[error("failed to construct request URL: {0}")]
+    Url(#[from] url::ParseError),
+
     #[error("failed to construct HTTP request: {0}")]
     Http(#[from] http::Error),
 
