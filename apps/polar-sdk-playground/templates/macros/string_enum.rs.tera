@@ -1,0 +1,31 @@
+{% macro declare(enum) -%}
+{% for line in enum.documentation %}/// {{ line }}
+{% endfor %}#[derive({{ enum.derives | join(sep=", ") }})]
+pub enum {{ enum.name }} {
+{% for variant in enum.variants %}
+{% for line in variant.documentation %}    /// {{ line }}
+{% endfor %}{% if variant.is_default %}    #[default]
+{% endif %}    #[serde(rename = {{ variant.wire_literal }})]
+    {{ variant.name }},
+{% endfor %}}
+
+impl {{ enum.name }} {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+{% for variant in enum.variants %}            Self::{{ variant.name }} => {{ variant.wire_literal }},
+{% endfor %}        }
+    }
+}
+
+impl ::std::fmt::Display for {{ enum.name }} {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl AsRef<str> for {{ enum.name }} {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+{%- endmacro declare %}

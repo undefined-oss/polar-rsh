@@ -34,6 +34,7 @@
 !apps/
 !apps/**/
 !apps/**/*.rs
+!apps/polar-sdk-playground/templates/**/*.tera
 
 # Workspace development tasks and their code-generation templates.
 !tasks/

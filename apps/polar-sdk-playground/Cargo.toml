@@ -22,6 +22,13 @@ serde_json = { version = "1.0.154" }
 derive_more = { version = "2.1.1", features = ["full"] }
 url = { version = "2.5.8", features = ["serde"] }
 eros = { version = "0.8.1", default-features = false }
+rrgen = "0.6.0"
+tera = "1.20.1"
+heck = "0.5.0"
+quote = "1.0.47"
+proc-macro2 = "1"
+syn = { version = "2", features = ["full"] }
+prettyplease = "0.2"
 
 reqwest = { version = "0.13", default-features = false, features = ["query", "rustls", "stream"] }
 reqwest-middleware = { version = "0.5", features = ["query"] }
