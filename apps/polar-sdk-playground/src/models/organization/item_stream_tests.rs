@@ -11,8 +11,7 @@ use http::{Request, Response, StatusCode};
 
 use crate::{
     client::{AccessToken, PolarClient, RequestBody},
-    error::RequestError,
-    models::common::OrganizationId,
+    models::{common::OrganizationId, organization::ListOrganizationsError},
 };
 
 // Synthetic responses matching the playground's current Organization model.
@@ -184,11 +183,11 @@ async fn later_page_errors_are_yielded_once_then_the_stream_ends() {
         assert_eq!(calls.get(), 1);
         let error = items.next().await.unwrap().unwrap_err();
         if status == StatusCode::OK {
-            assert!(matches!(error, RequestError::DecodeResponse(_)));
+            assert!(matches!(error, ListOrganizationsError::DecodeResponse(_)));
         } else {
             assert!(matches!(
                 error,
-                RequestError::UnexpectedStatus { status: actual, body }
+                ListOrganizationsError::UnexpectedStatus { status: actual, body }
                     if actual == status && body.as_ref() == b"not-json"
             ));
         }

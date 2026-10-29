@@ -12,8 +12,11 @@ use super::{
 };
 use crate::{
     client::{AccessToken, PolarClient, PolarEnvironment, RequestBody, RequestOptions},
-    error::{BuildRequestError, RequestError},
-    models::common::{OrganizationName, OrganizationSlug},
+    error::BuildRequestError,
+    models::{
+        common::{OrganizationName, OrganizationSlug},
+        organization::CreateOrganizationError,
+    },
 };
 
 fn payload() -> OrganizationCreate {
@@ -283,7 +286,7 @@ async fn invalid_created_bodies_return_decode_errors() {
                 .unwrap();
         let result = create(&client, payload()).await;
         assert!(
-            matches!(&result, Err(RequestError::DecodeResponse(_))),
+            matches!(&result, Err(CreateOrganizationError::DecodeResponse(_))),
             "expected DecodeResponse, got {result:?}"
         );
     }
@@ -301,7 +304,7 @@ async fn forbidden_response_is_a_typed_create_error_with_a_source() {
         .unwrap();
     let error = create(&client, payload()).await.unwrap_err();
     match &error {
-        RequestError::CannotCreateOrganization(error) => {
+        CreateOrganizationError::CannotCreateOrganization(error) => {
             assert!(matches!(
                 error.error,
                 super::CannotCreateOrganizationErrorKind::CannotCreateOrganizationError
@@ -337,7 +340,7 @@ async fn invalid_forbidden_bodies_return_decode_errors() {
                 .unwrap();
         let result = create(&client, payload()).await;
         assert!(
-            matches!(&result, Err(RequestError::DecodeResponse(_))),
+            matches!(&result, Err(CreateOrganizationError::DecodeResponse(_))),
             "expected DecodeResponse for {body:?}, got {result:?}"
         );
     }
@@ -359,7 +362,7 @@ async fn validation_errors_are_typed() {
     .unwrap();
     let result = create(&client, payload()).await;
     match result {
-        Err(RequestError::Validation(error)) => {
+        Err(CreateOrganizationError::Validation(error)) => {
             let details = error.detail.unwrap();
             assert_eq!(details.len(), 1);
             assert_eq!(details[0].msg, "Invalid slug");
@@ -387,7 +390,7 @@ async fn unexpected_statuses_preserve_the_response_including_200() {
         let result = create(&client, payload()).await;
         assert!(
             matches!(
-                &result, Err(RequestError::UnexpectedStatus { status: actual, body: actual_body })
+                &result, Err(CreateOrganizationError::UnexpectedStatus { status: actual, body: actual_body })
                     if *actual == status && actual_body.as_ref() == body
             ),
             "expected UnexpectedStatus for {status}, got {result:?}"
@@ -414,7 +417,10 @@ async fn invalid_authorization_fails_before_calling_transport() {
             ..Default::default()
         })
         .await;
-    assert!(matches!(result, Err(RequestError::BuildRequest(BuildRequestError::Http(_)))));
+    assert!(matches!(
+        result,
+        Err(CreateOrganizationError::BuildRequest(BuildRequestError::Http(_)))
+    ));
 }
 
 #[tokio::test]
@@ -447,6 +453,6 @@ async fn inherits_timeout_and_honors_request_override() {
         })
         .await
         .expect("request timeout must expire before the test deadline");
-        assert!(matches!(result, Err(RequestError::Timeout(_))));
+        assert!(matches!(result, Err(CreateOrganizationError::Timeout(_))));
     }
 }

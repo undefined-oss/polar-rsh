@@ -4,10 +4,9 @@ use http::StatusCode;
 
 use crate::{
     client::{AccessToken, PolarClient, RequestBody, RequestOptions},
-    error::RequestError,
     models::{
         common::{OrganizationId, errors::ValidationLocation},
-        organization::Organization,
+        organization::{GetOrganizationError, Organization},
         pagination::ListResource,
     },
 };
@@ -118,7 +117,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let result = polar_client.organizations().get(organization_id).await;
 
         assert!(
-            matches!(&result, Err(RequestError::DecodeResponse(_))),
+            matches!(&result, Err(GetOrganizationError::DecodeResponse(_))),
             "expected DecodeResponse for {body:?}, got {result:?}"
         );
     }
@@ -133,7 +132,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     assert!(
         matches!(
             &result,
-            Err(RequestError::NotFound(error))
+            Err(GetOrganizationError::NotFound(error))
                 if error.detail == "Organization not found."
                     && matches!(
                         &error.error,
@@ -152,7 +151,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     assert!(
         matches!(
             &result,
-            Err(RequestError::UnexpectedStatus { status, body })
+            Err(GetOrganizationError::UnexpectedStatus { status, body })
                 if *status == StatusCode::INTERNAL_SERVER_ERROR
                     && body.as_ref() == error_body
         ),
@@ -171,7 +170,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .build_with(mock_transport(StatusCode::NOT_FOUND, body))?;
         let result = polar_client.organizations().get(organization_id).await;
         assert!(
-            matches!(&result, Err(RequestError::DecodeResponse(_))),
+            matches!(&result, Err(GetOrganizationError::DecodeResponse(_))),
             "expected DecodeResponse for invalid 404 body {body:?}, got {result:?}"
         );
     }
@@ -198,7 +197,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .build_with(mock_transport(StatusCode::UNPROCESSABLE_ENTITY, validation_body))?;
     let result = polar_client.organizations().get(organization_id).await;
     match &result {
-        Err(RequestError::Validation(error)) => {
+        Err(GetOrganizationError::Validation(error)) => {
             let details = error.detail.as_ref().expect("expected validation details");
             assert_eq!(details.len(), 2);
             let first = &details[0];
@@ -238,7 +237,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         assert!(
             matches!(
                 &result,
-                Err(RequestError::Validation(error))
+                Err(GetOrganizationError::Validation(error))
                     if matches!((&error.detail, has_detail), (Some(details), true) if details.is_empty())
                         || matches!((&error.detail, has_detail), (None, false))
             ),
@@ -253,7 +252,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .build_with(mock_transport(StatusCode::UNPROCESSABLE_ENTITY, body))?;
         let result = polar_client.organizations().get(organization_id).await;
         assert!(
-            matches!(&result, Err(RequestError::DecodeResponse(_))),
+            matches!(&result, Err(GetOrganizationError::DecodeResponse(_))),
             "expected DecodeResponse for invalid 422 body {body:?}, got {result:?}"
         );
     }
@@ -272,7 +271,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .await
     .expect("the request must inherit the builder's 10 ms timeout");
     assert!(
-        matches!(&result, Err(RequestError::Timeout(_))),
+        matches!(&result, Err(GetOrganizationError::Timeout(_))),
         "expected Timeout from the builder setting, got {result:?}"
     );
 
@@ -293,7 +292,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .await
     .expect("the request's 10 ms timeout must override the builder's 60 s timeout");
     assert!(
-        matches!(&result, Err(RequestError::Timeout(_))),
+        matches!(&result, Err(GetOrganizationError::Timeout(_))),
         "expected Timeout from the request override, got {result:?}"
     );
     assert_eq!(timeout_client.default_timeout(), Duration::from_secs(60));

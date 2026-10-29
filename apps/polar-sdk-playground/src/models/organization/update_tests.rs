@@ -13,10 +13,13 @@ use super::{
 };
 use crate::{
     client::{AccessToken, PolarClient, PolarEnvironment, RequestBody, RequestOptions},
-    error::{BuildRequestError, RequestError},
-    models::common::{
-        OrganizationId, OrganizationName,
-        enums::{CountryAlpha2Input, PresentmentCurrency, TaxBehaviorOption},
+    error::BuildRequestError,
+    models::{
+        common::{
+            OrganizationId, OrganizationName,
+            enums::{CountryAlpha2Input, PresentmentCurrency, TaxBehaviorOption},
+        },
+        organization::UpdateOrganizationError,
     },
 };
 
@@ -227,13 +230,16 @@ async fn maps_all_declared_error_responses_and_preserves_sources() {
         assert!(
             matches!(
                 (kind, &error),
-                ("NotPermitted", RequestError::NotPermitted(_))
-                    | ("DisputeAutoAcceptNotEnabled", RequestError::DisputeAutoAcceptNotEnabled(_))
+                ("NotPermitted", UpdateOrganizationError::NotPermitted(_))
+                    | (
+                        "DisputeAutoAcceptNotEnabled",
+                        UpdateOrganizationError::DisputeAutoAcceptNotEnabled(_)
+                    )
                     | (
                         "SSOEnforcementRequiresConnection",
-                        RequestError::SsoEnforcementRequiresConnection(_)
+                        UpdateOrganizationError::SsoEnforcementRequiresConnection(_)
                     )
-                    | ("ResourceNotFound", RequestError::NotFound(_))
+                    | ("ResourceNotFound", UpdateOrganizationError::NotFound(_))
             ),
             "wrong mapping for {kind}: {error:?}"
         );
@@ -254,7 +260,9 @@ async fn maps_all_declared_error_responses_and_preserves_sources() {
     .unwrap();
     let error = client.organizations().update(id(), OrganizationUpdate::new()).await.unwrap_err();
     match error {
-        RequestError::Validation(error) => assert_eq!(error.detail.unwrap()[0].msg, "Invalid name"),
+        UpdateOrganizationError::Validation(error) => {
+            assert_eq!(error.detail.unwrap()[0].msg, "Invalid name")
+        }
         other => panic!("expected Validation, got {other:?}"),
     }
 }
@@ -285,7 +293,7 @@ async fn malformed_or_unknown_declared_responses_fail_decoding() {
                 .unwrap();
         let result = client.organizations().update(id(), OrganizationUpdate::new()).await;
         assert!(
-            matches!(result, Err(RequestError::DecodeResponse(_))),
+            matches!(result, Err(UpdateOrganizationError::DecodeResponse(_))),
             "expected decode error for {status}: {body}"
         );
     }
@@ -306,7 +314,7 @@ async fn unexpected_status_preserves_raw_body() {
                 .unwrap();
         let result = client.organizations().update(id(), OrganizationUpdate::new()).await;
         assert!(
-            matches!(result, Err(RequestError::UnexpectedStatus { status: actual, body }) if actual == status && body.as_ref() == b"unexpected response")
+            matches!(result, Err(UpdateOrganizationError::UnexpectedStatus { status: actual, body }) if actual == status && body.as_ref() == b"unexpected response")
         );
     }
 }
@@ -332,10 +340,13 @@ async fn construction_transport_and_body_failures_are_distinct() {
             ..Default::default()
         })
         .await;
-    assert!(matches!(invalid, Err(RequestError::BuildRequest(BuildRequestError::Http(_)))));
+    assert!(matches!(
+        invalid,
+        Err(UpdateOrganizationError::BuildRequest(BuildRequestError::Http(_)))
+    ));
     let failed = client.organizations().update(id(), OrganizationUpdate::new()).await;
     assert!(
-        matches!(failed, Err(RequestError::Transport(error)) if error.to_string() == "transport failed")
+        matches!(failed, Err(UpdateOrganizationError::Transport(error)) if error.to_string() == "transport failed")
     );
 
     let transport = tower::service_fn(|_: Request<RequestBody>| async {
@@ -350,7 +361,7 @@ async fn construction_transport_and_body_failures_are_distinct() {
             .unwrap();
     let failed = client.organizations().update(id(), OrganizationUpdate::new()).await;
     assert!(
-        matches!(failed, Err(RequestError::ReadBody(error)) if error.to_string() == "body failed")
+        matches!(failed, Err(UpdateOrganizationError::ReadBody(error)) if error.to_string() == "body failed")
     );
 }
 
@@ -381,7 +392,7 @@ async fn inherits_timeout_and_honors_request_override() {
         })
         .await
         .expect("request timeout must expire before the test deadline");
-        assert!(matches!(result, Err(RequestError::Timeout(_))));
+        assert!(matches!(result, Err(UpdateOrganizationError::Timeout(_))));
         assert_eq!(client.default_timeout(), duration);
     }
 }

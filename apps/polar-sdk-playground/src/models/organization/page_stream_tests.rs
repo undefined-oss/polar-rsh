@@ -13,8 +13,10 @@ use http::{Request, Response, StatusCode};
 use super::{ListOrganizationsParams, OrganizationSortField};
 use crate::{
     client::{AccessToken, PolarClient, PolarEnvironment, RequestBody, RequestOptions},
-    error::RequestError,
-    models::common::{OrganizationSlug, PageLimit},
+    models::{
+        common::{OrganizationSlug, PageLimit},
+        organization::ListOrganizationsError,
+    },
     query::Sorting,
 };
 
@@ -146,11 +148,11 @@ async fn yields_a_page_error_once_and_stops_requesting() {
         pages.next().await.unwrap().unwrap();
         let error = pages.next().await.unwrap().unwrap_err();
         if status == StatusCode::OK {
-            assert!(matches!(error, RequestError::DecodeResponse(_)));
+            assert!(matches!(error, ListOrganizationsError::DecodeResponse(_)));
         } else {
             assert!(matches!(
                 error,
-                RequestError::UnexpectedStatus { status: actual, body }
+                ListOrganizationsError::UnexpectedStatus { status: actual, body }
                     if actual == status && body.as_ref() == b"not-json"
             ));
         }
@@ -194,7 +196,7 @@ async fn retains_the_timeout_override_for_later_pages() {
     let result = tokio::time::timeout(Duration::from_secs(1), pages.next())
         .await
         .expect("the second page must retain the short request timeout");
-    assert!(matches!(result, Some(Err(RequestError::Timeout(_)))));
+    assert!(matches!(result, Some(Err(ListOrganizationsError::Timeout(_)))));
     assert!(pages.next().await.is_none());
     assert_eq!(calls.get(), 2);
     assert_eq!(client.default_timeout(), Duration::from_secs(60));

@@ -2,7 +2,7 @@ use futures_util::TryStreamExt;
 
 use crate::{
     client::{AccessToken, PolarClient, RequestBody, RequestOptions},
-    error::{BuildRequestError, RequestError},
+    error::{BuildRequestError, RequestFailure},
     models::{common::OrganizationId, pagination::ListResource},
     query::EncodeQuery,
 };
@@ -25,14 +25,18 @@ mod complete_create_tests;
 #[cfg(test)]
 mod update_tests;
 
+#[cfg(test)]
+mod error_tests;
+
 pub use enums::{
     OrganizationSocialPlatforms, OrganizationSortField,
     OrganizationSubscriptionSettingsProrationBehavior, OrganizationSwitchingFrom,
 };
 pub use errors::{
-    CannotCreateOrganizationError, CannotCreateOrganizationErrorKind, DisputeAutoAcceptNotEnabled,
-    DisputeAutoAcceptNotEnabledKind, SsoEnforcementRequiresConnection,
-    SsoEnforcementRequiresConnectionKind,
+    CannotCreateOrganizationError, CannotCreateOrganizationErrorKind, CreateOrganizationError,
+    DisputeAutoAcceptNotEnabled, DisputeAutoAcceptNotEnabledKind, GetOrganizationError,
+    ListOrganizationsError, SsoEnforcementRequiresConnection, SsoEnforcementRequiresConnectionKind,
+    UpdateOrganizationError,
 };
 use http_body_util::BodyExt;
 pub use types::{
@@ -112,43 +116,61 @@ where
     Body: http_body::Body<Data = bytes::Bytes>,
     Body::Error: Into<tower::BoxError>,
 {
-    async fn execute(self) -> Result<Organization, RequestError<ClientService::Error>> {
-        let request = self.build_request().map_err(RequestError::BuildRequest)?;
+    async fn execute(self) -> Result<Organization, GetOrganizationError<ClientService::Error>> {
+        let request = self.build_request().map_err(|error| {
+            GetOrganizationError::from_failure(RequestFailure::BuildRequest(error))
+        })?;
 
-        let response = self.client.send(request).await.map_err(RequestError::Transport)?;
-        let response_code = response.status();
+        let response = self.client.send(request).await.map_err(GetOrganizationError::Transport)?;
+        let result: eros::Result<_, errors::GetOrganizationErrors> = async {
+            let response_code = response.status();
 
-        let body_slice = response
-            .into_body()
-            .collect()
-            .await
-            .map_err(|error| RequestError::ReadBody(error.into()))?
-            .to_bytes();
+            let body_slice = response
+                .into_body()
+                .collect()
+                .await
+                .map_err(|error| eros::ErrorUnion::new(RequestFailure::ReadBody(error.into())))?
+                .to_bytes();
 
-        match response_code {
-            http::StatusCode::OK => {
-                serde_json::from_slice(&body_slice).map_err(RequestError::DecodeResponse)
+            match response_code {
+                http::StatusCode::OK => serde_json::from_slice(&body_slice)
+                    .map_err(|error| eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))),
+                http::StatusCode::NOT_FOUND => {
+                    let error = serde_json::from_slice::<
+                        crate::models::common::errors::ResourceNotFound,
+                    >(&body_slice)
+                    .map_err(|error| {
+                        eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
+                    })?;
+
+                    Err(eros::ErrorUnion::new(error))
+                }
+                http::StatusCode::UNPROCESSABLE_ENTITY => {
+                    let error = serde_json::from_slice::<
+                        crate::models::common::errors::HttpValidationError,
+                    >(&body_slice)
+                    .map_err(|error| {
+                        eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
+                    })?;
+
+                    Err(eros::ErrorUnion::new(error))
+                }
+                _ => Err(eros::ErrorUnion::new(RequestFailure::UnexpectedStatus {
+                    status: response_code,
+                    body: body_slice,
+                })),
             }
-            http::StatusCode::NOT_FOUND => {
-                let error =
-                    serde_json::from_slice(&body_slice).map_err(RequestError::DecodeResponse)?;
-
-                Err(RequestError::NotFound(error))
-            }
-            http::StatusCode::UNPROCESSABLE_ENTITY => {
-                let error =
-                    serde_json::from_slice(&body_slice).map_err(RequestError::DecodeResponse)?;
-
-                Err(RequestError::Validation(error))
-            }
-            _ => Err(RequestError::UnexpectedStatus { status: response_code, body: body_slice }),
         }
+        .await;
+        result.map_err(Into::into)
     }
 
-    pub async fn send(self) -> Result<Organization, RequestError<ClientService::Error>> {
+    pub async fn send(self) -> Result<Organization, GetOrganizationError<ClientService::Error>> {
         let duration = self.options.timeout.unwrap_or_else(|| self.client.default_timeout());
 
-        tokio::time::timeout(duration, self.execute()).await.map_err(RequestError::Timeout)?
+        tokio::time::timeout(duration, self.execute())
+            .await
+            .map_err(|error| GetOrganizationError::from_failure(RequestFailure::Timeout(error)))?
     }
 }
 
@@ -162,7 +184,7 @@ where
     Body::Error: Into<tower::BoxError>,
 {
     type IntoFuture = std::pin::Pin<Box<dyn std::future::Future<Output = Self::Output> + 'a>>;
-    type Output = Result<Organization, RequestError<ClientService::Error>>;
+    type Output = Result<Organization, GetOrganizationError<ClientService::Error>>;
 
     fn into_future(self) -> Self::IntoFuture {
         Box::pin(self.send())
@@ -210,39 +232,54 @@ where
 {
     async fn execute(
         self,
-    ) -> Result<ListResource<Organization>, RequestError<ClientService::Error>> {
-        let request = self.build_request().map_err(RequestError::BuildRequest)?;
+    ) -> Result<ListResource<Organization>, ListOrganizationsError<ClientService::Error>> {
+        let request = self.build_request().map_err(|error| {
+            ListOrganizationsError::from_failure(RequestFailure::BuildRequest(error))
+        })?;
 
-        let response = self.client.send(request).await.map_err(RequestError::Transport)?;
-        let response_code = response.status();
+        let response =
+            self.client.send(request).await.map_err(ListOrganizationsError::Transport)?;
+        let result: eros::Result<_, errors::ListOrganizationsErrors> = async {
+            let response_code = response.status();
 
-        let body_slice = response
-            .into_body()
-            .collect()
-            .await
-            .map_err(|error| RequestError::ReadBody(error.into()))?
-            .to_bytes();
+            let body_slice = response
+                .into_body()
+                .collect()
+                .await
+                .map_err(|error| eros::ErrorUnion::new(RequestFailure::ReadBody(error.into())))?
+                .to_bytes();
 
-        match response_code {
-            http::StatusCode::OK => {
-                serde_json::from_slice(&body_slice).map_err(RequestError::DecodeResponse)
+            match response_code {
+                http::StatusCode::OK => serde_json::from_slice(&body_slice)
+                    .map_err(|error| eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))),
+                http::StatusCode::UNPROCESSABLE_ENTITY => {
+                    let error = serde_json::from_slice::<
+                        crate::models::common::errors::HttpValidationError,
+                    >(&body_slice)
+                    .map_err(|error| {
+                        eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
+                    })?;
+
+                    Err(eros::ErrorUnion::new(error))
+                }
+                _ => Err(eros::ErrorUnion::new(RequestFailure::UnexpectedStatus {
+                    status: response_code,
+                    body: body_slice,
+                })),
             }
-            http::StatusCode::UNPROCESSABLE_ENTITY => {
-                let error =
-                    serde_json::from_slice(&body_slice).map_err(RequestError::DecodeResponse)?;
-
-                Err(RequestError::Validation(error))
-            }
-            _ => Err(RequestError::UnexpectedStatus { status: response_code, body: body_slice }),
         }
+        .await;
+        result.map_err(Into::into)
     }
 
     pub async fn send(
         self,
-    ) -> Result<ListResource<Organization>, RequestError<ClientService::Error>> {
+    ) -> Result<ListResource<Organization>, ListOrganizationsError<ClientService::Error>> {
         let duration = self.options.timeout.unwrap_or_else(|| self.client.default_timeout());
 
-        tokio::time::timeout(duration, self.execute()).await.map_err(RequestError::Timeout)?
+        tokio::time::timeout(duration, self.execute())
+            .await
+            .map_err(|error| ListOrganizationsError::from_failure(RequestFailure::Timeout(error)))?
     }
 }
 
@@ -256,7 +293,7 @@ where
     Body::Error: Into<tower::BoxError>,
 {
     type IntoFuture = std::pin::Pin<Box<dyn std::future::Future<Output = Self::Output> + 'a>>;
-    type Output = Result<ListResource<Organization>, RequestError<ClientService::Error>>;
+    type Output = Result<ListResource<Organization>, ListOrganizationsError<ClientService::Error>>;
 
     fn into_future(self) -> Self::IntoFuture {
         Box::pin(self.send())
@@ -275,7 +312,7 @@ where
     pub fn pages(
         self,
     ) -> impl futures_util::Stream<
-        Item = Result<ListResource<Organization>, RequestError<ClientService::Error>>,
+        Item = Result<ListResource<Organization>, ListOrganizationsError<ClientService::Error>>,
     > + 'a {
         futures_util::stream::try_unfold(Some(self), |state| async move {
             let Some(mut request) = state else {
@@ -303,8 +340,9 @@ where
 
     pub fn items(
         self,
-    ) -> impl futures_util::Stream<Item = Result<Organization, RequestError<ClientService::Error>>> + 'a
-    {
+    ) -> impl futures_util::Stream<
+        Item = Result<Organization, ListOrganizationsError<ClientService::Error>>,
+    > + 'a {
         self.pages()
             .map_ok(|page| futures_util::stream::iter(page.items.into_iter().map(Ok)))
             .try_flatten()
@@ -344,43 +382,61 @@ where
     Body: http_body::Body<Data = bytes::Bytes>,
     Body::Error: Into<tower::BoxError>,
 {
-    async fn execute(self) -> Result<Organization, RequestError<ClientService::Error>> {
-        let request = self.build_request().map_err(RequestError::BuildRequest)?;
+    async fn execute(self) -> Result<Organization, CreateOrganizationError<ClientService::Error>> {
+        let request = self.build_request().map_err(|error| {
+            CreateOrganizationError::from_failure(RequestFailure::BuildRequest(error))
+        })?;
 
-        let response = self.client.send(request).await.map_err(RequestError::Transport)?;
-        let response_code = response.status();
+        let response =
+            self.client.send(request).await.map_err(CreateOrganizationError::Transport)?;
+        let result: eros::Result<_, errors::CreateOrganizationErrors> = async {
+            let response_code = response.status();
 
-        let body_slice = response
-            .into_body()
-            .collect()
-            .await
-            .map_err(|error| RequestError::ReadBody(error.into()))?
-            .to_bytes();
+            let body_slice = response
+                .into_body()
+                .collect()
+                .await
+                .map_err(|error| eros::ErrorUnion::new(RequestFailure::ReadBody(error.into())))?
+                .to_bytes();
 
-        match response_code {
-            http::StatusCode::CREATED => {
-                serde_json::from_slice(&body_slice).map_err(RequestError::DecodeResponse)
+            match response_code {
+                http::StatusCode::CREATED => serde_json::from_slice(&body_slice)
+                    .map_err(|error| eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))),
+                http::StatusCode::FORBIDDEN => {
+                    let error =
+                        serde_json::from_slice::<CannotCreateOrganizationError>(&body_slice)
+                            .map_err(|error| {
+                                eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
+                            })?;
+
+                    Err(eros::ErrorUnion::new(error))
+                }
+                http::StatusCode::UNPROCESSABLE_ENTITY => {
+                    let error = serde_json::from_slice::<
+                        crate::models::common::errors::HttpValidationError,
+                    >(&body_slice)
+                    .map_err(|error| {
+                        eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
+                    })?;
+
+                    Err(eros::ErrorUnion::new(error))
+                }
+                _ => Err(eros::ErrorUnion::new(RequestFailure::UnexpectedStatus {
+                    status: response_code,
+                    body: body_slice,
+                })),
             }
-            http::StatusCode::FORBIDDEN => {
-                let error =
-                    serde_json::from_slice(&body_slice).map_err(RequestError::DecodeResponse)?;
-
-                Err(RequestError::CannotCreateOrganization(error))
-            }
-            http::StatusCode::UNPROCESSABLE_ENTITY => {
-                let error =
-                    serde_json::from_slice(&body_slice).map_err(RequestError::DecodeResponse)?;
-
-                Err(RequestError::Validation(error))
-            }
-            _ => Err(RequestError::UnexpectedStatus { status: response_code, body: body_slice }),
         }
+        .await;
+        result.map_err(Into::into)
     }
 
-    pub async fn send(self) -> Result<Organization, RequestError<ClientService::Error>> {
+    pub async fn send(self) -> Result<Organization, CreateOrganizationError<ClientService::Error>> {
         let duration = self.options.timeout.unwrap_or_else(|| self.client.default_timeout());
 
-        tokio::time::timeout(duration, self.execute()).await.map_err(RequestError::Timeout)?
+        tokio::time::timeout(duration, self.execute()).await.map_err(|error| {
+            CreateOrganizationError::from_failure(RequestFailure::Timeout(error))
+        })?
     }
 }
 
@@ -394,7 +450,7 @@ where
     Body::Error: Into<tower::BoxError>,
 {
     type IntoFuture = std::pin::Pin<Box<dyn std::future::Future<Output = Self::Output> + 'a>>;
-    type Output = Result<Organization, RequestError<ClientService::Error>>;
+    type Output = Result<Organization, CreateOrganizationError<ClientService::Error>>;
 
     fn into_future(self) -> Self::IntoFuture {
         Box::pin(self.send())
@@ -428,52 +484,76 @@ where
     Body: http_body::Body<Data = bytes::Bytes>,
     Body::Error: Into<tower::BoxError>,
 {
-    async fn execute(self) -> Result<Organization, RequestError<ClientService::Error>> {
-        let request = self.build_request().map_err(RequestError::BuildRequest)?;
-        let response = self.client.send(request).await.map_err(RequestError::Transport)?;
-        let status = response.status();
-        let body = response
-            .into_body()
-            .collect()
-            .await
-            .map_err(|error| RequestError::ReadBody(error.into()))?
-            .to_bytes();
+    async fn execute(self) -> Result<Organization, UpdateOrganizationError<ClientService::Error>> {
+        let request = self.build_request().map_err(|error| {
+            UpdateOrganizationError::from_failure(RequestFailure::BuildRequest(error))
+        })?;
+        let response =
+            self.client.send(request).await.map_err(UpdateOrganizationError::Transport)?;
+        let result: eros::Result<_, errors::UpdateOrganizationErrors> = async {
+            let status = response.status();
+            let body = response
+                .into_body()
+                .collect()
+                .await
+                .map_err(|error| eros::ErrorUnion::new(RequestFailure::ReadBody(error.into())))?
+                .to_bytes();
 
-        match status {
-            http::StatusCode::OK => {
-                serde_json::from_slice(&body).map_err(RequestError::DecodeResponse)
+            match status {
+                http::StatusCode::OK => serde_json::from_slice(&body)
+                    .map_err(|error| eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))),
+                http::StatusCode::FORBIDDEN => {
+                    let error =
+                        serde_json::from_slice::<errors::OrganizationUpdateForbidden>(&body)
+                            .map_err(|error| {
+                                eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
+                            })?;
+                    Err(match error {
+                        errors::OrganizationUpdateForbidden::NotPermitted(error) => {
+                            eros::ErrorUnion::new(error)
+                        }
+                        errors::OrganizationUpdateForbidden::DisputeAutoAcceptNotEnabled(error) => {
+                            eros::ErrorUnion::new(error)
+                        }
+                    })
+                }
+                http::StatusCode::NOT_FOUND => {
+                    let error = serde_json::from_slice::<
+                        crate::models::common::errors::ResourceNotFound,
+                    >(&body)
+                    .map_err(|error| {
+                        eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
+                    })?;
+                    Err(eros::ErrorUnion::new(error))
+                }
+                http::StatusCode::CONFLICT => {
+                    let error = serde_json::from_slice::<SsoEnforcementRequiresConnection>(&body)
+                        .map_err(|error| {
+                        eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
+                    })?;
+                    Err(eros::ErrorUnion::new(error))
+                }
+                http::StatusCode::UNPROCESSABLE_ENTITY => {
+                    let error = serde_json::from_slice::<
+                        crate::models::common::errors::HttpValidationError,
+                    >(&body)
+                    .map_err(|error| {
+                        eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
+                    })?;
+                    Err(eros::ErrorUnion::new(error))
+                }
+                _ => Err(eros::ErrorUnion::new(RequestFailure::UnexpectedStatus { status, body })),
             }
-            http::StatusCode::FORBIDDEN => {
-                let error = serde_json::from_slice::<errors::OrganizationUpdateForbidden>(&body)
-                    .map_err(RequestError::DecodeResponse)?;
-                Err(match error {
-                    errors::OrganizationUpdateForbidden::NotPermitted(error) => {
-                        RequestError::NotPermitted(error)
-                    }
-                    errors::OrganizationUpdateForbidden::DisputeAutoAcceptNotEnabled(error) => {
-                        RequestError::DisputeAutoAcceptNotEnabled(error)
-                    }
-                })
-            }
-            http::StatusCode::NOT_FOUND => {
-                let error = serde_json::from_slice(&body).map_err(RequestError::DecodeResponse)?;
-                Err(RequestError::NotFound(error))
-            }
-            http::StatusCode::CONFLICT => {
-                let error = serde_json::from_slice(&body).map_err(RequestError::DecodeResponse)?;
-                Err(RequestError::SsoEnforcementRequiresConnection(error))
-            }
-            http::StatusCode::UNPROCESSABLE_ENTITY => {
-                let error = serde_json::from_slice(&body).map_err(RequestError::DecodeResponse)?;
-                Err(RequestError::Validation(error))
-            }
-            _ => Err(RequestError::UnexpectedStatus { status, body }),
         }
+        .await;
+        result.map_err(Into::into)
     }
 
-    pub async fn send(self) -> Result<Organization, RequestError<ClientService::Error>> {
+    pub async fn send(self) -> Result<Organization, UpdateOrganizationError<ClientService::Error>> {
         let duration = self.options.timeout.unwrap_or_else(|| self.client.default_timeout());
-        tokio::time::timeout(duration, self.execute()).await.map_err(RequestError::Timeout)?
+        tokio::time::timeout(duration, self.execute()).await.map_err(|error| {
+            UpdateOrganizationError::from_failure(RequestFailure::Timeout(error))
+        })?
     }
 }
 
@@ -487,7 +567,7 @@ where
     Body::Error: Into<tower::BoxError>,
 {
     type IntoFuture = std::pin::Pin<Box<dyn std::future::Future<Output = Self::Output> + 'a>>;
-    type Output = Result<Organization, RequestError<ClientService::Error>>;
+    type Output = Result<Organization, UpdateOrganizationError<ClientService::Error>>;
 
     fn into_future(self) -> Self::IntoFuture {
         Box::pin(self.send())
@@ -501,8 +581,10 @@ mod list_execution_tests {
     use super::{ListOrganizationsParams, OrganizationSortField};
     use crate::{
         client::{AccessToken, PolarClient, PolarEnvironment, RequestBody, RequestOptions},
-        error::RequestError,
-        models::common::{OrganizationSlug, PageLimit},
+        models::{
+            common::{OrganizationSlug, PageLimit},
+            organization::ListOrganizationsError,
+        },
         query::Sorting,
     };
 
@@ -587,7 +669,7 @@ mod list_execution_tests {
 
         let result = client.organizations().list().await;
         match result {
-            Err(RequestError::Validation(error)) => {
+            Err(ListOrganizationsError::Validation(error)) => {
                 let details = error.detail.expect("expected validation details");
                 assert_eq!(details.len(), 1);
                 assert_eq!(details[0].msg, "Invalid limit");
@@ -613,7 +695,7 @@ mod list_execution_tests {
 
             let result = client.organizations().list().await;
             assert!(
-                matches!(&result, Err(RequestError::DecodeResponse(_))),
+                matches!(&result, Err(ListOrganizationsError::DecodeResponse(_))),
                 "expected DecodeResponse for {status} and {body:?}, got {result:?}"
             );
         }
@@ -639,7 +721,7 @@ mod list_execution_tests {
             assert!(
                 matches!(
                     &result,
-                    Err(RequestError::UnexpectedStatus { status, body })
+                    Err(ListOrganizationsError::UnexpectedStatus { status, body })
                         if *status == expected_status && body.as_ref() == expected_body
                 ),
                 "expected UnexpectedStatus preserving {expected_status} and its body, got \
@@ -663,7 +745,7 @@ mod list_execution_tests {
             tokio::time::timeout(Duration::from_secs(1), client.organizations().list().send())
                 .await
                 .expect("the inherited timeout must expire before the test deadline");
-        assert!(matches!(&result, Err(RequestError::Timeout(_))), "got {result:?}");
+        assert!(matches!(&result, Err(ListOrganizationsError::Timeout(_))), "got {result:?}");
     }
 
     #[tokio::test]
@@ -689,7 +771,7 @@ mod list_execution_tests {
         })
         .await
         .expect("the override must expire before the test deadline");
-        assert!(matches!(&result, Err(RequestError::Timeout(_))), "got {result:?}");
+        assert!(matches!(&result, Err(ListOrganizationsError::Timeout(_))), "got {result:?}");
         assert_eq!(client.default_timeout(), Duration::from_secs(60));
     }
 }
