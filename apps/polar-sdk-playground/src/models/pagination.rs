@@ -1,5 +1,6 @@
 use std::num::NonZeroU64;
 
+use derive_more::{Deref, Display};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -23,6 +24,73 @@ impl Pagination {
         }
 
         current.checked_add(1)
+    }
+}
+
+/// Number of items per page, between 1 and 100 inclusive.
+#[derive(Debug, Clone, Copy, Display, PartialEq, Eq, Deref, Deserialize, Serialize)]
+#[serde(try_from = "u8", into = "u8")]
+pub struct PageLimit(u8);
+
+#[derive(Debug, thiserror::Error, PartialEq, Eq)]
+#[error("page limit must be between 1 and 100 inclusive, got {0}")]
+pub struct PageLimitValidationError(pub u8);
+
+impl TryFrom<u8> for PageLimit {
+    type Error = PageLimitValidationError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        if value < 1 || value > 100 {
+            return Err(PageLimitValidationError(value));
+        }
+
+        Ok(Self(value))
+    }
+}
+
+impl From<PageLimit> for u8 {
+    fn from(value: PageLimit) -> Self {
+        value.0
+    }
+}
+
+impl Default for PageLimit {
+    fn default() -> Self {
+        Self(10)
+    }
+}
+
+#[cfg(test)]
+mod page_limit_tests {
+    use super::{PageLimit, PageLimitValidationError};
+
+    #[test]
+    fn accepts_only_limits_in_the_supported_range() {
+        for value in u8::MIN..=u8::MAX {
+            let result = PageLimit::try_from(value);
+            if (1..=100).contains(&value) {
+                let limit = result.unwrap();
+                assert_eq!(*limit, value);
+                assert_eq!(u8::from(limit), value);
+                assert_eq!(limit.to_string(), value.to_string());
+            } else {
+                assert_eq!(result, Err(PageLimitValidationError(value)));
+            }
+        }
+        assert_eq!(*PageLimit::default(), 10);
+    }
+
+    #[test]
+    fn serde_validates_limits_and_preserves_numeric_encoding() {
+        for value in [1, 10, 100] {
+            let json = serde_json::json!(value);
+            let limit: PageLimit = serde_json::from_value(json.clone()).unwrap();
+            assert_eq!(*limit, value);
+            assert_eq!(serde_json::to_value(limit).unwrap(), json);
+        }
+        for json in ["0", "101", "255", "256", "-1", "1.5", "null", "\"10\""] {
+            assert!(serde_json::from_str::<PageLimit>(json).is_err(), "accepted {json}");
+        }
     }
 }
 

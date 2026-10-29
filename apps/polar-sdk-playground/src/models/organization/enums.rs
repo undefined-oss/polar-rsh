@@ -927,30 +927,3 @@ impl AsRef<str> for OrganizationCountry {
         self.as_str()
     }
 }
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum OrganizationSortField {
-    CreatedAt,
-    Slug,
-    Name,
-    NextReviewThreshold,
-    DaysInStatus,
-}
-
-impl OrganizationSortField {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::CreatedAt => "created_at",
-            Self::Slug => "slug",
-            Self::Name => "name",
-            Self::NextReviewThreshold => "next_review_threshold",
-            Self::DaysInStatus => "days_in_status",
-        }
-    }
-}
-
-impl ::std::fmt::Display for OrganizationSortField {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}

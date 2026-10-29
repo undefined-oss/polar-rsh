@@ -14,8 +14,7 @@ use super::{ListOrganizationsParams, OrganizationSortField};
 use crate::{
     client::{AccessToken, PolarClient, PolarEnvironment, RequestBody, RequestOptions},
     models::{
-        common::{OrganizationSlug, PageLimit},
-        organization::ListOrganizationsError,
+        common::OrganizationSlug, organization::ListOrganizationsError, pagination::PageLimit,
     },
     query::Sorting,
 };

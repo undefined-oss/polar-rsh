@@ -68,7 +68,7 @@ async fn preserves_unrestricted_transport_errors_across_all_operation_interfaces
 fn union_conversion_preserves_decode_error_and_source() {
     let original = serde_json::from_slice::<Organization>(b"not-json").unwrap_err();
     let message = original.to_string();
-    let union: eros::ErrorUnion<errors::GetOrganizationErrors> =
+    let union: eros::ErrorUnion<get::GetOrganizationErrors> =
         eros::ErrorUnion::new(RequestFailure::DecodeResponse(original));
     let public: GetOrganizationError<Infallible> = union.into();
     assert_eq!(public.source().unwrap().to_string(), message);
@@ -84,7 +84,7 @@ fn union_conversion_preserves_domain_error_and_source() {
         error: CannotCreateOrganizationErrorKind::CannotCreateOrganizationError,
         detail: "Creation is unavailable".into(),
     };
-    let union: eros::ErrorUnion<errors::CreateOrganizationErrors> = eros::ErrorUnion::new(original);
+    let union: eros::ErrorUnion<create::CreateOrganizationErrors> = eros::ErrorUnion::new(original);
     let public: CreateOrganizationError<Infallible> = union.into();
     assert_eq!(public.source().unwrap().to_string(), "Creation is unavailable");
     match public {
@@ -98,7 +98,7 @@ fn union_conversion_preserves_domain_error_and_source() {
 #[test]
 fn union_conversion_preserves_unexpected_response_bytes() {
     let body = bytes::Bytes::from_static(b"raw response");
-    let union: eros::ErrorUnion<errors::ListOrganizationsErrors> =
+    let union: eros::ErrorUnion<list::ListOrganizationsErrors> =
         eros::ErrorUnion::new(RequestFailure::UnexpectedStatus {
             status: http::StatusCode::BAD_GATEWAY,
             body: body.clone(),
