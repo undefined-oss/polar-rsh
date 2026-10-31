@@ -7643,6 +7643,250 @@ impl<'a> BenefitsListBuilder<'a> {
             .await
     }
 }
+#[doc = concat!("Additive request builder for `", "checkout-links:create", "`.")]
+#[must_use]
+pub struct CheckoutLinksCreateBuilder<'a> {
+    client: &'a HttpClient,
+    request: CheckoutLinkCreateProducts,
+}
+impl<'a> CheckoutLinksCreateBuilder<'a> {
+    /// Replace the complete request body.
+    #[must_use]
+    pub fn request(mut self, request: CheckoutLinkCreateProducts) -> Self {
+        self.request = request;
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional request-body field `", "allow_discount_codes", "`."
+    )]
+    #[must_use]
+    pub fn allow_discount_codes(mut self, allow_discount_codes: bool) -> Self {
+        self.request.allow_discount_codes = Some(allow_discount_codes);
+        self
+    }
+
+    #[doc = concat!("Set the optional request-body field `", "discount_id", "`.")]
+    #[must_use]
+    pub fn discount_id(mut self, discount_id: uuid::Uuid) -> Self {
+        self.request.discount_id = presence_rs::Presence::Some(discount_id);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable request-body field `", "discount_id",
+        "` to JSON null."
+    )]
+    #[must_use]
+    pub fn discount_id_null(mut self) -> Self {
+        self.request.discount_id = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!(
+        "Omit the optional nullable request-body field `", "discount_id", "`."
+    )]
+    #[must_use]
+    pub fn discount_id_absent(mut self) -> Self {
+        self.request.discount_id = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!("Set the optional request-body field `", "label", "`.")]
+    #[must_use]
+    pub fn label(mut self, label: String) -> Self {
+        self.request.label = presence_rs::Presence::Some(label);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable request-body field `", "label", "` to JSON null."
+    )]
+    #[must_use]
+    pub fn label_null(mut self) -> Self {
+        self.request.label = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!("Omit the optional nullable request-body field `", "label", "`.")]
+    #[must_use]
+    pub fn label_absent(mut self) -> Self {
+        self.request.label = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!("Set the optional request-body field `", "metadata", "`.")]
+    #[must_use]
+    pub fn metadata(mut self, metadata: CheckoutLinkCreateProductsMetadata) -> Self {
+        self.request.metadata = Some(metadata);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional request-body field `", "require_billing_address", "`."
+    )]
+    #[must_use]
+    pub fn require_billing_address(mut self, require_billing_address: bool) -> Self {
+        self.request.require_billing_address = Some(require_billing_address);
+        self
+    }
+
+    #[doc = concat!("Set the optional request-body field `", "return_url", "`.")]
+    #[must_use]
+    pub fn return_url(mut self, return_url: url::Url) -> Self {
+        self.request.return_url = presence_rs::Presence::Some(return_url);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable request-body field `", "return_url", "` to JSON null."
+    )]
+    #[must_use]
+    pub fn return_url_null(mut self) -> Self {
+        self.request.return_url = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!(
+        "Omit the optional nullable request-body field `", "return_url", "`."
+    )]
+    #[must_use]
+    pub fn return_url_absent(mut self) -> Self {
+        self.request.return_url = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!("Set the optional request-body field `", "seats", "`.")]
+    #[must_use]
+    pub fn seats(mut self, seats: i64) -> Self {
+        self.request.seats = presence_rs::Presence::Some(seats);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable request-body field `", "seats", "` to JSON null."
+    )]
+    #[must_use]
+    pub fn seats_null(mut self) -> Self {
+        self.request.seats = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!("Omit the optional nullable request-body field `", "seats", "`.")]
+    #[must_use]
+    pub fn seats_absent(mut self) -> Self {
+        self.request.seats = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!("Set the optional request-body field `", "success_url", "`.")]
+    #[must_use]
+    pub fn success_url(mut self, success_url: url::Url) -> Self {
+        self.request.success_url = presence_rs::Presence::Some(success_url);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable request-body field `", "success_url",
+        "` to JSON null."
+    )]
+    #[must_use]
+    pub fn success_url_null(mut self) -> Self {
+        self.request.success_url = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!(
+        "Omit the optional nullable request-body field `", "success_url", "`."
+    )]
+    #[must_use]
+    pub fn success_url_absent(mut self) -> Self {
+        self.request.success_url = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!("Set the optional request-body field `", "trial_interval", "`.")]
+    #[must_use]
+    pub fn trial_interval(mut self, trial_interval: TrialInterval) -> Self {
+        self.request.trial_interval = presence_rs::Presence::Some(trial_interval);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable request-body field `", "trial_interval",
+        "` to JSON null."
+    )]
+    #[must_use]
+    pub fn trial_interval_null(mut self) -> Self {
+        self.request.trial_interval = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!(
+        "Omit the optional nullable request-body field `", "trial_interval", "`."
+    )]
+    #[must_use]
+    pub fn trial_interval_absent(mut self) -> Self {
+        self.request.trial_interval = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional request-body field `", "trial_interval_count", "`."
+    )]
+    #[must_use]
+    pub fn trial_interval_count(mut self, trial_interval_count: i64) -> Self {
+        self.request.trial_interval_count = presence_rs::Presence::Some(trial_interval_count);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable request-body field `", "trial_interval_count",
+        "` to JSON null."
+    )]
+    #[must_use]
+    pub fn trial_interval_count_null(mut self) -> Self {
+        self.request.trial_interval_count = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!(
+        "Omit the optional nullable request-body field `", "trial_interval_count", "`."
+    )]
+    #[must_use]
+    pub fn trial_interval_count_absent(mut self) -> Self {
+        self.request.trial_interval_count = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!("Set the optional request-body field `", "units", "`.")]
+    #[must_use]
+    pub fn units(mut self, units: i64) -> Self {
+        self.request.units = presence_rs::Presence::Some(units);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable request-body field `", "units", "` to JSON null."
+    )]
+    #[must_use]
+    pub fn units_null(mut self) -> Self {
+        self.request.units = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!("Omit the optional nullable request-body field `", "units", "`.")]
+    #[must_use]
+    pub fn units_absent(mut self) -> Self {
+        self.request.units = presence_rs::Presence::Absent;
+        self
+    }
+
+    /// Send the request through the existing flat operation method.
+    pub async fn send(self) -> Result<CheckoutLink, ApiOpError<CheckoutLinksCreateApiError>> {
+        self.client.checkout_links_create(self.request).await
+    }
+}
 #[doc = concat!("Additive request builder for `", "checkout-links:list", "`.")]
 #[must_use]
 pub struct CheckoutLinksListBuilder<'a> {
@@ -8351,32 +8595,6 @@ impl<'a> CheckoutsClientUpdateBuilder<'a> {
         self
     }
 
-    #[doc = concat!("Set the optional request-body field `", "product_price_id", "`.")]
-    #[must_use]
-    pub fn product_price_id(mut self, product_price_id: uuid::Uuid) -> Self {
-        self.request.product_price_id = presence_rs::Presence::Some(product_price_id);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "product_price_id",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn product_price_id_null(mut self) -> Self {
-        self.request.product_price_id = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "product_price_id", "`."
-    )]
-    #[must_use]
-    pub fn product_price_id_absent(mut self) -> Self {
-        self.request.product_price_id = presence_rs::Presence::Absent;
-        self
-    }
-
     #[doc = concat!("Set the optional request-body field `", "seats", "`.")]
     #[must_use]
     pub fn seats(mut self, seats: i64) -> Self {
@@ -8969,32 +9187,6 @@ impl<'a> CheckoutsUpdateBuilder<'a> {
     #[must_use]
     pub fn product_id_absent(mut self) -> Self {
         self.request.product_id = presence_rs::Presence::Absent;
-        self
-    }
-
-    #[doc = concat!("Set the optional request-body field `", "product_price_id", "`.")]
-    #[must_use]
-    pub fn product_price_id(mut self, product_price_id: uuid::Uuid) -> Self {
-        self.request.product_price_id = presence_rs::Presence::Some(product_price_id);
-        self
-    }
-
-    #[doc = concat!(
-        "Set the optional nullable request-body field `", "product_price_id",
-        "` to JSON null."
-    )]
-    #[must_use]
-    pub fn product_price_id_null(mut self) -> Self {
-        self.request.product_price_id = presence_rs::Presence::Null;
-        self
-    }
-
-    #[doc = concat!(
-        "Omit the optional nullable request-body field `", "product_price_id", "`."
-    )]
-    #[must_use]
-    pub fn product_price_id_absent(mut self) -> Self {
-        self.request.product_price_id = presence_rs::Presence::Absent;
         self
     }
 
@@ -22035,7 +22227,7 @@ impl HttpClient {
     /// `POST /v1/checkout-links/`
     pub async fn checkout_links_create(
         &self,
-        request: CheckoutLinkCreate,
+        request: CheckoutLinkCreateProducts,
     ) -> Result<CheckoutLink, ApiOpError<CheckoutLinksCreateApiError>> {
         let request_url = format!("{}{}", self.base_url, "/v1/checkout-links/");
         let mut req = self.http_client.post(request_url);
@@ -40649,6 +40841,18 @@ impl HttpClient {
             limit: None,
             sorting: None,
             metadata: None,
+        }
+    }
+
+    #[doc = concat!("Start an additive builder for `", "checkout-links:create", "`.")]
+    pub fn checkout_links_create_builder(
+        &self,
+        payment_processor: CheckoutLinkCreateProductsPaymentProcessor,
+        products: Vec<String>,
+    ) -> CheckoutLinksCreateBuilder<'_> {
+        CheckoutLinksCreateBuilder {
+            client: self,
+            request: CheckoutLinkCreateProducts::new(payment_processor, products),
         }
     }
 

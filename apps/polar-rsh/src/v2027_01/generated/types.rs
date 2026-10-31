@@ -13107,7 +13107,7 @@ pub struct Subscription {
     /// next period. If `null`, there is no pending update.
     pub pending_update: Option<PendingSubscriptionUpdate>,
     /// List of enabled prices for the subscription.
-    pub prices: Vec<SubscriptionPricesItemUnion>,
+    pub prices: Vec<ProductPrice>,
     pub product: Product,
     /// The ID of the subscribed product.
     pub product_id: uuid::Uuid,
@@ -13133,153 +13133,6 @@ pub struct Subscription {
     /// The number of units for unit-based subscriptions. None for non-unit
     /// subscriptions.
     pub units: Option<i64>,
-}
-#[derive(Debug, Clone)]
-pub enum SubscriptionPricesItemUnion {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for SubscriptionPricesItemUnion {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for SubscriptionPricesItemUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(SubscriptionPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(SubscriptionPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(SubscriptionPricesItemUnion),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(SubscriptionPricesItemUnion),
-                " preserved the complete input",
-            ))
-        })
-    }
 }
 /// Current consumption and spending for a subscription meter.
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -13751,6 +13604,9 @@ pub struct Product {
     pub attached_custom_fields: Vec<AttachedCustomField>,
     /// List of benefits granted by the product.
     pub benefits: Vec<Benefit>,
+    /// ID of the catalog that introduced this version of the product. None for
+    /// products not managed by declarative config.
+    pub catalog_id: Option<uuid::Uuid>,
     /// Creation timestamp of the object.
     pub created_at: chrono::DateTime<chrono::Utc>,
     /// The description of the product.
@@ -13782,7 +13638,7 @@ pub struct Product {
     /// The ID of the organization owning the product.
     pub organization_id: uuid::Uuid,
     /// List of prices for this product.
-    pub prices: Vec<ProductPricesItemUnion>,
+    pub prices: Vec<ProductPrice>,
     /// The recurring interval of the product. If `None`, the product is a
     /// one-time purchase.
     pub recurring_interval: Option<RecurringInterval>,
@@ -13795,153 +13651,6 @@ pub struct Product {
     /// The number of interval units for the trial period.
     pub trial_interval_count: Option<i64>,
     pub visibility: ProductVisibility,
-}
-#[derive(Debug, Clone)]
-pub enum ProductPricesItemUnion {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for ProductPricesItemUnion {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for ProductPricesItemUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(ProductPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(ProductPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(ProductPricesItemUnion),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(ProductPricesItemUnion),
-                " preserved the complete input",
-            ))
-        })
-    }
 }
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ListResourcePayment {
@@ -14433,17 +14142,9 @@ impl AsRef<str> for OrganizationSocialPlatforms {
 }
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct OrganizationFeatureSettings {
-    /// If this organization accepts payments from AI agents through Stripe
-    /// shared payment tokens.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub agentic_payments_enabled: Option<bool>,
     /// If this organization has checkout localization enabled
     #[serde(skip_serializing_if = "Option::is_none")]
     pub checkout_localization_enabled: Option<bool>,
-    /// If this organization has the split product navigation (Billing / Compass
-    /// / Customers) enabled in the dashboard
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub compass_enabled: Option<bool>,
     /// If this organization can manage its configuration from a declarative
     /// config document.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -15452,6 +15153,9 @@ pub struct OrderSubscription {
 }
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct OrderProduct {
+    /// ID of the catalog that introduced this version of the product. None for
+    /// products not managed by declarative config.
+    pub catalog_id: Option<uuid::Uuid>,
     /// Creation timestamp of the object.
     pub created_at: chrono::DateTime<chrono::Utc>,
     /// The description of the product.
@@ -47052,7 +46756,7 @@ pub struct CustomerSubscription {
     /// next period. If `null`, there is no pending update.
     pub pending_update: Option<PendingSubscriptionUpdate>,
     /// List of enabled prices for the subscription.
-    pub prices: Vec<CustomerSubscriptionPricesItemUnion>,
+    pub prices: Vec<ProductPrice>,
     pub product: CustomerSubscriptionProduct,
     /// The ID of the subscribed product.
     pub product_id: uuid::Uuid,
@@ -47135,7 +46839,7 @@ pub struct CustomerSubscriptionProduct {
     /// The ID of the organization owning the product.
     pub organization_id: uuid::Uuid,
     /// List of prices for this product.
-    pub prices: Vec<CustomerSubscriptionProductPricesItemUnion>,
+    pub prices: Vec<ProductPrice>,
     /// The recurring interval of the product. If `None`, the product is a
     /// one-time purchase.
     pub recurring_interval: Option<RecurringInterval>,
@@ -47148,300 +46852,6 @@ pub struct CustomerSubscriptionProduct {
     /// The number of interval units for the trial period.
     pub trial_interval_count: Option<i64>,
     pub visibility: ProductVisibility,
-}
-#[derive(Debug, Clone)]
-pub enum CustomerSubscriptionProductPricesItemUnion {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for CustomerSubscriptionProductPricesItemUnion {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for CustomerSubscriptionProductPricesItemUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CustomerSubscriptionProductPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CustomerSubscriptionProductPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(CustomerSubscriptionProductPricesItemUnion),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(CustomerSubscriptionProductPricesItemUnion),
-                " preserved the complete input",
-            ))
-        })
-    }
-}
-#[derive(Debug, Clone)]
-pub enum CustomerSubscriptionPricesItemUnion {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for CustomerSubscriptionPricesItemUnion {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for CustomerSubscriptionPricesItemUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CustomerSubscriptionPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CustomerSubscriptionPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(CustomerSubscriptionPricesItemUnion),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(CustomerSubscriptionPricesItemUnion),
-                " preserved the complete input",
-            ))
-        })
-    }
 }
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct CustomerSubscriptionMeter {
@@ -49666,7 +49076,7 @@ pub struct CustomerProduct {
     /// The ID of the organization owning the product.
     pub organization_id: uuid::Uuid,
     /// List of available prices for this product.
-    pub prices: Vec<CustomerProductPricesItemUnion>,
+    pub prices: Vec<ProductPrice>,
     /// The recurring interval of the product. If `None`, the product is a
     /// one-time purchase.
     pub recurring_interval: Option<RecurringInterval>,
@@ -49679,153 +49089,6 @@ pub struct CustomerProduct {
     /// The number of interval units for the trial period.
     pub trial_interval_count: Option<i64>,
     pub visibility: ProductVisibility,
-}
-#[derive(Debug, Clone)]
-pub enum CustomerProductPricesItemUnion {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for CustomerProductPricesItemUnion {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for CustomerProductPricesItemUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CustomerProductPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CustomerProductPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(CustomerProductPricesItemUnion),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(CustomerProductPricesItemUnion),
-                " preserved the complete input",
-            ))
-        })
-    }
 }
 /// Schema to update an order.
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
@@ -50210,7 +49473,7 @@ pub struct CustomerOrderProduct {
     /// The ID of the organization owning the product.
     pub organization_id: uuid::Uuid,
     /// List of prices for this product.
-    pub prices: Vec<CustomerOrderProductPricesItemUnion>,
+    pub prices: Vec<ProductPrice>,
     /// The recurring interval of the product. If `None`, the product is a
     /// one-time purchase.
     pub recurring_interval: Option<RecurringInterval>,
@@ -50278,153 +49541,6 @@ pub struct CustomerOrganizationFeatureSettings {
     /// Whether localization is enabled for this organization.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub checkout_localization_enabled: Option<bool>,
-}
-#[derive(Debug, Clone)]
-pub enum CustomerOrderProductPricesItemUnion {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for CustomerOrderProductPricesItemUnion {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for CustomerOrderProductPricesItemUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CustomerOrderProductPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CustomerOrderProductPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(CustomerOrderProductPricesItemUnion),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(CustomerOrderProductPricesItemUnion),
-                " preserved the complete input",
-            ))
-        })
-    }
 }
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct CustomerNotReady {
@@ -56443,10 +55559,6 @@ pub struct CheckoutUpdatePublic {
     /// list.
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
     pub product_id: presence_rs::Presence<uuid::Uuid>,
-    /// ID of the product price to checkout. Must correspond to a price present
-    /// in the checkout's product list.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub product_price_id: presence_rs::Presence<uuid::Uuid>,
     /// Number of seats for seat-based pricing.
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
     pub seats: presence_rs::Presence<i64>,
@@ -56537,10 +55649,6 @@ pub struct CheckoutUpdate {
     /// list.
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
     pub product_id: presence_rs::Presence<uuid::Uuid>,
-    /// ID of the product price to checkout. Must correspond to a price present
-    /// in the checkout's product list.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub product_price_id: presence_rs::Presence<uuid::Uuid>,
     /// Whether to require the customer to fill their full billing address,
     /// instead of just the country. Customers in the US will always be required
     /// to fill their full address, regardless of this setting. If you preset
@@ -56720,9 +55828,7 @@ pub struct CheckoutPublicConfirmed {
     /// ID of the product to checkout.
     pub product_id: Option<uuid::Uuid>,
     /// Price of the selected product.
-    pub product_price: Option<CheckoutPublicConfirmedProductPrice>,
-    /// ID of the product price to checkout.
-    pub product_price_id: Option<uuid::Uuid>,
+    pub product_price: Option<ProductPrice>,
     /// List of products available to select.
     pub products: Vec<CheckoutProduct>,
     /// Whether to require the customer to fill their full billing address,
@@ -56778,313 +55884,12 @@ impl AsRef<str> for CheckoutPublicConfirmedStatus {
         self.as_str()
     }
 }
-#[derive(Debug, Clone)]
-pub enum CheckoutPublicConfirmedProductPrice {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for CheckoutPublicConfirmedProductPrice {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for CheckoutPublicConfirmedProductPrice {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutPublicConfirmedProductPrice),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutPublicConfirmedProductPrice),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(CheckoutPublicConfirmedProductPrice),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(CheckoutPublicConfirmedProductPrice),
-                " preserved the complete input",
-            ))
-        })
-    }
-}
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct CheckoutPublicConfirmedPrices {
     /// Additional properties matching the spec's
     /// `additionalProperties` value schema.
     #[serde(flatten)]
-    pub additional_properties: std::collections::BTreeMap<
-        String,
-        Vec<CheckoutPublicConfirmedPricesAdditionalPropertyItemUnion>,
-    >,
-}
-#[derive(Debug, Clone)]
-pub enum CheckoutPublicConfirmedPricesAdditionalPropertyItemUnion {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for CheckoutPublicConfirmedPricesAdditionalPropertyItemUnion {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for CheckoutPublicConfirmedPricesAdditionalPropertyItemUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(
-                                    CheckoutPublicConfirmedPricesAdditionalPropertyItemUnion
-                                ),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(
-                                    CheckoutPublicConfirmedPricesAdditionalPropertyItemUnion
-                                ),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(CheckoutPublicConfirmedPricesAdditionalPropertyItemUnion),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(CheckoutPublicConfirmedPricesAdditionalPropertyItemUnion),
-                " preserved the complete input",
-            ))
-        })
-    }
+    pub additional_properties: std::collections::BTreeMap<String, Vec<ProductPrice>>,
 }
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct CheckoutPublicConfirmedPaymentProcessorMetadata {
@@ -57462,9 +56267,7 @@ pub struct CheckoutPublic {
     /// ID of the product to checkout.
     pub product_id: Option<uuid::Uuid>,
     /// Price of the selected product.
-    pub product_price: Option<CheckoutPublicProductPrice>,
-    /// ID of the product price to checkout.
-    pub product_price_id: Option<uuid::Uuid>,
+    pub product_price: Option<ProductPrice>,
     /// List of products available to select.
     pub products: Vec<CheckoutProduct>,
     /// Whether to require the customer to fill their full billing address,
@@ -57497,307 +56300,12 @@ pub struct CheckoutPublic {
     /// URL where the customer can access the checkout session.
     pub url: String,
 }
-#[derive(Debug, Clone)]
-pub enum CheckoutPublicProductPrice {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for CheckoutPublicProductPrice {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for CheckoutPublicProductPrice {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutPublicProductPrice),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutPublicProductPrice),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(CheckoutPublicProductPrice),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(CheckoutPublicProductPrice),
-                " preserved the complete input",
-            ))
-        })
-    }
-}
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct CheckoutPublicPrices {
     /// Additional properties matching the spec's
     /// `additionalProperties` value schema.
     #[serde(flatten)]
-    pub additional_properties:
-        std::collections::BTreeMap<String, Vec<CheckoutPublicPricesAdditionalPropertyItemUnion>>,
-}
-#[derive(Debug, Clone)]
-pub enum CheckoutPublicPricesAdditionalPropertyItemUnion {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for CheckoutPublicPricesAdditionalPropertyItemUnion {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for CheckoutPublicPricesAdditionalPropertyItemUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutPublicPricesAdditionalPropertyItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutPublicPricesAdditionalPropertyItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(CheckoutPublicPricesAdditionalPropertyItemUnion),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(CheckoutPublicPricesAdditionalPropertyItemUnion),
-                " preserved the complete input",
-            ))
-        })
-    }
+    pub additional_properties: std::collections::BTreeMap<String, Vec<ProductPrice>>,
 }
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct CheckoutPublicPaymentProcessorMetadata {
@@ -58403,147 +56911,6 @@ pub struct CheckoutLinkUpdateMetadata {
     #[serde(flatten)]
     pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
 }
-#[derive(Debug, Clone)]
-pub enum CheckoutLinkCreate {
-    CheckoutLinkCreateProductPrice(CheckoutLinkCreateProductPrice),
-    CheckoutLinkCreateProduct(CheckoutLinkCreateProduct),
-    CheckoutLinkCreateProducts(CheckoutLinkCreateProducts),
-}
-impl Serialize for CheckoutLinkCreate {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::CheckoutLinkCreateProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::CheckoutLinkCreateProduct(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::CheckoutLinkCreateProducts(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-        }
-    }
-}
-impl<'de> Deserialize<'de> for CheckoutLinkCreate {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut equivalent = None;
-        if let Ok(candidate) =
-            serde_json::from_value::<CheckoutLinkCreateProductPrice>(input.clone())
-        {
-            match serde_json::to_value(&candidate) {
-                Ok(encoded) if preserves_complete_json_input(&encoded, &input, false, true) => {
-                    return Ok(Self::CheckoutLinkCreateProductPrice(candidate));
-                }
-                Ok(encoded)
-                    if equivalent.is_none()
-                        && preserves_complete_json_input(&encoded, &input, true, false) =>
-                {
-                    equivalent = Some(Self::CheckoutLinkCreateProductPrice(candidate));
-                }
-                _ => {}
-            }
-        }
-        if let Ok(candidate) = serde_json::from_value::<CheckoutLinkCreateProduct>(input.clone()) {
-            match serde_json::to_value(&candidate) {
-                Ok(encoded) if preserves_complete_json_input(&encoded, &input, false, true) => {
-                    return Ok(Self::CheckoutLinkCreateProduct(candidate));
-                }
-                Ok(encoded)
-                    if equivalent.is_none()
-                        && preserves_complete_json_input(&encoded, &input, true, false) =>
-                {
-                    equivalent = Some(Self::CheckoutLinkCreateProduct(candidate));
-                }
-                _ => {}
-            }
-        }
-        if let Ok(candidate) = serde_json::from_value::<CheckoutLinkCreateProducts>(input.clone()) {
-            match serde_json::to_value(&candidate) {
-                Ok(encoded) if preserves_complete_json_input(&encoded, &input, false, true) => {
-                    return Ok(Self::CheckoutLinkCreateProducts(candidate));
-                }
-                Ok(encoded)
-                    if equivalent.is_none()
-                        && preserves_complete_json_input(&encoded, &input, true, false) =>
-                {
-                    equivalent = Some(Self::CheckoutLinkCreateProducts(candidate));
-                }
-                _ => {}
-            }
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no anyOf branch for ",
-                stringify!(CheckoutLinkCreate),
-                " preserved the complete input",
-            ))
-        })
-    }
-}
 /// Schema to create a new checkout link.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct CheckoutLinkCreateProducts {
@@ -58614,6 +56981,284 @@ pub struct CheckoutLinkCreateProducts {
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
     pub units: presence_rs::Presence<i64>,
 }
+impl CheckoutLinkCreateProducts {
+    /// Construct this request with every required wire field.
+    pub fn new(
+        payment_processor: CheckoutLinkCreateProductsPaymentProcessor,
+        products: Vec<String>,
+    ) -> Self {
+        Self {
+            payment_processor,
+            products,
+            allow_discount_codes: None,
+            discount_id: presence_rs::Presence::Absent,
+            label: presence_rs::Presence::Absent,
+            metadata: None,
+            require_billing_address: None,
+            return_url: presence_rs::Presence::Absent,
+            seats: presence_rs::Presence::Absent,
+            success_url: presence_rs::Presence::Absent,
+            trial_interval: presence_rs::Presence::Absent,
+            trial_interval_count: presence_rs::Presence::Absent,
+            units: presence_rs::Presence::Absent,
+        }
+    }
+
+    /// Start a dependency-free builder with every required wire field.
+    pub fn builder(
+        payment_processor: CheckoutLinkCreateProductsPaymentProcessor,
+        products: Vec<String>,
+    ) -> CheckoutLinkCreateProductsBuilder {
+        CheckoutLinkCreateProductsBuilder::new(payment_processor, products)
+    }
+}
+/// Dependency-free builder for [`#struct_name`].
+#[derive(Debug, Clone)]
+#[must_use]
+pub struct CheckoutLinkCreateProductsBuilder {
+    value: CheckoutLinkCreateProducts,
+}
+impl CheckoutLinkCreateProductsBuilder {
+    /// Start a builder with every required wire field.
+    pub fn new(
+        payment_processor: CheckoutLinkCreateProductsPaymentProcessor,
+        products: Vec<String>,
+    ) -> Self {
+        Self { value: CheckoutLinkCreateProducts::new(payment_processor, products) }
+    }
+
+    #[doc = concat!("Set the optional `", "allow_discount_codes", "` request field.")]
+    #[must_use]
+    pub fn allow_discount_codes(mut self, allow_discount_codes: bool) -> Self {
+        self.value.allow_discount_codes = Some(allow_discount_codes);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "discount_id", "` request field to a value."
+    )]
+    #[must_use]
+    pub fn discount_id(mut self, discount_id: uuid::Uuid) -> Self {
+        self.value.discount_id = presence_rs::Presence::Some(discount_id);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "discount_id", "` request field to JSON null."
+    )]
+    #[must_use]
+    pub fn discount_id_null(mut self) -> Self {
+        self.value.discount_id = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!("Omit the optional nullable `", "discount_id", "` request field.")]
+    #[must_use]
+    pub fn discount_id_absent(mut self) -> Self {
+        self.value.discount_id = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "label", "` request field to a value."
+    )]
+    #[must_use]
+    pub fn label(mut self, label: String) -> Self {
+        self.value.label = presence_rs::Presence::Some(label);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "label", "` request field to JSON null."
+    )]
+    #[must_use]
+    pub fn label_null(mut self) -> Self {
+        self.value.label = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!("Omit the optional nullable `", "label", "` request field.")]
+    #[must_use]
+    pub fn label_absent(mut self) -> Self {
+        self.value.label = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!("Set the optional `", "metadata", "` request field.")]
+    #[must_use]
+    pub fn metadata(mut self, metadata: CheckoutLinkCreateProductsMetadata) -> Self {
+        self.value.metadata = Some(metadata);
+        self
+    }
+
+    #[doc = concat!("Set the optional `", "require_billing_address", "` request field.")]
+    #[must_use]
+    pub fn require_billing_address(mut self, require_billing_address: bool) -> Self {
+        self.value.require_billing_address = Some(require_billing_address);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "return_url", "` request field to a value."
+    )]
+    #[must_use]
+    pub fn return_url(mut self, return_url: url::Url) -> Self {
+        self.value.return_url = presence_rs::Presence::Some(return_url);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "return_url", "` request field to JSON null."
+    )]
+    #[must_use]
+    pub fn return_url_null(mut self) -> Self {
+        self.value.return_url = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!("Omit the optional nullable `", "return_url", "` request field.")]
+    #[must_use]
+    pub fn return_url_absent(mut self) -> Self {
+        self.value.return_url = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "seats", "` request field to a value."
+    )]
+    #[must_use]
+    pub fn seats(mut self, seats: i64) -> Self {
+        self.value.seats = presence_rs::Presence::Some(seats);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "seats", "` request field to JSON null."
+    )]
+    #[must_use]
+    pub fn seats_null(mut self) -> Self {
+        self.value.seats = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!("Omit the optional nullable `", "seats", "` request field.")]
+    #[must_use]
+    pub fn seats_absent(mut self) -> Self {
+        self.value.seats = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "success_url", "` request field to a value."
+    )]
+    #[must_use]
+    pub fn success_url(mut self, success_url: url::Url) -> Self {
+        self.value.success_url = presence_rs::Presence::Some(success_url);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "success_url", "` request field to JSON null."
+    )]
+    #[must_use]
+    pub fn success_url_null(mut self) -> Self {
+        self.value.success_url = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!("Omit the optional nullable `", "success_url", "` request field.")]
+    #[must_use]
+    pub fn success_url_absent(mut self) -> Self {
+        self.value.success_url = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "trial_interval", "` request field to a value."
+    )]
+    #[must_use]
+    pub fn trial_interval(mut self, trial_interval: TrialInterval) -> Self {
+        self.value.trial_interval = presence_rs::Presence::Some(trial_interval);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "trial_interval", "` request field to JSON null."
+    )]
+    #[must_use]
+    pub fn trial_interval_null(mut self) -> Self {
+        self.value.trial_interval = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!(
+        "Omit the optional nullable `", "trial_interval", "` request field."
+    )]
+    #[must_use]
+    pub fn trial_interval_absent(mut self) -> Self {
+        self.value.trial_interval = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "trial_interval_count",
+        "` request field to a value."
+    )]
+    #[must_use]
+    pub fn trial_interval_count(mut self, trial_interval_count: i64) -> Self {
+        self.value.trial_interval_count = presence_rs::Presence::Some(trial_interval_count);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "trial_interval_count",
+        "` request field to JSON null."
+    )]
+    #[must_use]
+    pub fn trial_interval_count_null(mut self) -> Self {
+        self.value.trial_interval_count = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!(
+        "Omit the optional nullable `", "trial_interval_count", "` request field."
+    )]
+    #[must_use]
+    pub fn trial_interval_count_absent(mut self) -> Self {
+        self.value.trial_interval_count = presence_rs::Presence::Absent;
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "units", "` request field to a value."
+    )]
+    #[must_use]
+    pub fn units(mut self, units: i64) -> Self {
+        self.value.units = presence_rs::Presence::Some(units);
+        self
+    }
+
+    #[doc = concat!(
+        "Set the optional nullable `", "units", "` request field to JSON null."
+    )]
+    #[must_use]
+    pub fn units_null(mut self) -> Self {
+        self.value.units = presence_rs::Presence::Null;
+        self
+    }
+
+    #[doc = concat!("Omit the optional nullable `", "units", "` request field.")]
+    #[must_use]
+    pub fn units_absent(mut self) -> Self {
+        self.value.units = presence_rs::Presence::Absent;
+        self
+    }
+
+    /// Finish building the request model.
+    pub fn build(self) -> CheckoutLinkCreateProducts {
+        self.value
+    }
+}
 /// Payment processor to use. Currently only Stripe is supported.
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
 pub enum CheckoutLinkCreateProductsPaymentProcessor {
@@ -58651,230 +57296,6 @@ impl AsRef<str> for CheckoutLinkCreateProductsPaymentProcessor {
 /// You can store up to **50 key-value pairs**.
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct CheckoutLinkCreateProductsMetadata {
-    /// Additional properties matching the spec's
-    /// `additionalProperties` value schema.
-    #[serde(flatten)]
-    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
-}
-/// Schema to create a new checkout link from a a single product price.
-///
-/// Deprecated**: Use `CheckoutLinkCreateProducts` instead.
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct CheckoutLinkCreateProductPrice {
-    /// Whether to allow the customer to apply discount codes. If you apply a
-    /// discount through `discount_id`, it'll still be applied, but the customer
-    /// won't be able to change it.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_discount_codes: Option<bool>,
-    /// ID of the discount to apply to the checkout. If the discount is not
-    /// applicable anymore when opening the checkout link, it'll be ignored.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub discount_id: presence_rs::Presence<uuid::Uuid>,
-    /// Optional label to distinguish links internally
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub label: presence_rs::Presence<String>,
-    /// Key-value object allowing you to store additional information.
-    ///
-    /// The key must be a string with a maximum length of **40 characters**.
-    /// The value must be either:
-    ///
-    /// A string with a maximum length of **500 characters**
-    /// An integer
-    /// A floating-point number
-    /// A boolean
-    ///
-    /// You can store up to **50 key-value pairs**.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub metadata: Option<CheckoutLinkCreateProductPriceMetadata>,
-    /// Payment processor to use. Currently only Stripe is supported.
-    pub payment_processor: CheckoutLinkCreateProductPricePaymentProcessor,
-    pub product_price_id: uuid::Uuid,
-    /// Whether to require the customer to fill their full billing address,
-    /// instead of just the country. Customers in the US will always be required
-    /// to fill their full address, regardless of this setting.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub require_billing_address: Option<bool>,
-    /// When set, a back button will be shown in the checkout to return to this
-    /// URL.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub return_url: presence_rs::Presence<url::Url>,
-    /// Preconfigured number of seats for seat-based pricing. When set, checkout
-    /// sessions created from this link are locked to this number of seats and
-    /// the customer won't be able to change it. All products on the link must
-    /// use seat-based pricing and allow this number of seats. If the products
-    /// no longer accommodate this value when the link is opened, it'll be
-    /// ignored.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub seats: presence_rs::Presence<i64>,
-    /// URL where the customer will be redirected after a successful payment.You
-    /// can add the `checkout_id={CHECKOUT_ID}` query parameter to retrieve the
-    /// checkout session id.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub success_url: presence_rs::Presence<url::Url>,
-    /// The interval unit for the trial period.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub trial_interval: presence_rs::Presence<TrialInterval>,
-    /// The number of interval units for the trial period.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub trial_interval_count: presence_rs::Presence<i64>,
-    /// Preconfigured number of units for unit-based pricing. When set, checkout
-    /// sessions created from this link are locked to this number of units and
-    /// the customer won't be able to change it. All products on the link must
-    /// use unit-based pricing and allow this number of units. If the products
-    /// no longer accommodate this value when the link is opened, it'll be
-    /// ignored.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub units: presence_rs::Presence<i64>,
-}
-/// Payment processor to use. Currently only Stripe is supported.
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
-pub enum CheckoutLinkCreateProductPricePaymentProcessor {
-    #[default]
-    #[serde(rename = "stripe")]
-    Stripe,
-}
-impl CheckoutLinkCreateProductPricePaymentProcessor {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::Stripe => "stripe",
-        }
-    }
-}
-impl ::std::fmt::Display for CheckoutLinkCreateProductPricePaymentProcessor {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-impl AsRef<str> for CheckoutLinkCreateProductPricePaymentProcessor {
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
-}
-/// Key-value object allowing you to store additional information.
-///
-/// The key must be a string with a maximum length of **40 characters**.
-/// The value must be either:
-///
-/// A string with a maximum length of **500 characters**
-/// An integer
-/// A floating-point number
-/// A boolean
-///
-/// You can store up to **50 key-value pairs**.
-#[derive(Debug, Clone, Deserialize, Serialize, Default)]
-pub struct CheckoutLinkCreateProductPriceMetadata {
-    /// Additional properties matching the spec's
-    /// `additionalProperties` value schema.
-    #[serde(flatten)]
-    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
-}
-/// Schema to create a new checkout link from a a single product.
-///
-/// Deprecated**: Use `CheckoutLinkCreateProducts` instead.
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct CheckoutLinkCreateProduct {
-    /// Whether to allow the customer to apply discount codes. If you apply a
-    /// discount through `discount_id`, it'll still be applied, but the customer
-    /// won't be able to change it.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub allow_discount_codes: Option<bool>,
-    /// ID of the discount to apply to the checkout. If the discount is not
-    /// applicable anymore when opening the checkout link, it'll be ignored.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub discount_id: presence_rs::Presence<uuid::Uuid>,
-    /// Optional label to distinguish links internally
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub label: presence_rs::Presence<String>,
-    /// Key-value object allowing you to store additional information.
-    ///
-    /// The key must be a string with a maximum length of **40 characters**.
-    /// The value must be either:
-    ///
-    /// A string with a maximum length of **500 characters**
-    /// An integer
-    /// A floating-point number
-    /// A boolean
-    ///
-    /// You can store up to **50 key-value pairs**.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub metadata: Option<CheckoutLinkCreateProductMetadata>,
-    /// Payment processor to use. Currently only Stripe is supported.
-    pub payment_processor: CheckoutLinkCreateProductPaymentProcessor,
-    pub product_id: uuid::Uuid,
-    /// Whether to require the customer to fill their full billing address,
-    /// instead of just the country. Customers in the US will always be required
-    /// to fill their full address, regardless of this setting.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub require_billing_address: Option<bool>,
-    /// When set, a back button will be shown in the checkout to return to this
-    /// URL.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub return_url: presence_rs::Presence<url::Url>,
-    /// Preconfigured number of seats for seat-based pricing. When set, checkout
-    /// sessions created from this link are locked to this number of seats and
-    /// the customer won't be able to change it. All products on the link must
-    /// use seat-based pricing and allow this number of seats. If the products
-    /// no longer accommodate this value when the link is opened, it'll be
-    /// ignored.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub seats: presence_rs::Presence<i64>,
-    /// URL where the customer will be redirected after a successful payment.You
-    /// can add the `checkout_id={CHECKOUT_ID}` query parameter to retrieve the
-    /// checkout session id.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub success_url: presence_rs::Presence<url::Url>,
-    /// The interval unit for the trial period.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub trial_interval: presence_rs::Presence<TrialInterval>,
-    /// The number of interval units for the trial period.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub trial_interval_count: presence_rs::Presence<i64>,
-    /// Preconfigured number of units for unit-based pricing. When set, checkout
-    /// sessions created from this link are locked to this number of units and
-    /// the customer won't be able to change it. All products on the link must
-    /// use unit-based pricing and allow this number of units. If the products
-    /// no longer accommodate this value when the link is opened, it'll be
-    /// ignored.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub units: presence_rs::Presence<i64>,
-}
-/// Payment processor to use. Currently only Stripe is supported.
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
-pub enum CheckoutLinkCreateProductPaymentProcessor {
-    #[default]
-    #[serde(rename = "stripe")]
-    Stripe,
-}
-impl CheckoutLinkCreateProductPaymentProcessor {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::Stripe => "stripe",
-        }
-    }
-}
-impl ::std::fmt::Display for CheckoutLinkCreateProductPaymentProcessor {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-impl AsRef<str> for CheckoutLinkCreateProductPaymentProcessor {
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
-}
-/// Key-value object allowing you to store additional information.
-///
-/// The key must be a string with a maximum length of **40 characters**.
-/// The value must be either:
-///
-/// A string with a maximum length of **500 characters**
-/// An integer
-/// A floating-point number
-/// A boolean
-///
-/// You can store up to **50 key-value pairs**.
-#[derive(Debug, Clone, Deserialize, Serialize, Default)]
-pub struct CheckoutLinkCreateProductMetadata {
     /// Additional properties matching the spec's
     /// `additionalProperties` value schema.
     #[serde(flatten)]
@@ -58965,7 +57386,7 @@ pub struct CheckoutLinkProduct {
     /// The ID of the organization owning the product.
     pub organization_id: uuid::Uuid,
     /// List of prices for this product.
-    pub prices: Vec<CheckoutLinkProductPricesItemUnion>,
+    pub prices: Vec<ProductPrice>,
     /// The recurring interval of the product. If `None`, the product is a
     /// one-time purchase.
     pub recurring_interval: Option<RecurringInterval>,
@@ -58978,153 +57399,6 @@ pub struct CheckoutLinkProduct {
     /// The number of interval units for the trial period.
     pub trial_interval_count: Option<i64>,
     pub visibility: ProductVisibility,
-}
-#[derive(Debug, Clone)]
-pub enum CheckoutLinkProductPricesItemUnion {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for CheckoutLinkProductPricesItemUnion {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for CheckoutLinkProductPricesItemUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutLinkProductPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutLinkProductPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(CheckoutLinkProductPricesItemUnion),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(CheckoutLinkProductPricesItemUnion),
-                " preserved the complete input",
-            ))
-        })
-    }
 }
 #[derive(Debug, Clone)]
 pub enum CheckoutLinkDiscount {
@@ -62713,10 +60987,6 @@ pub struct CheckoutConfirmStripe {
     /// list.
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
     pub product_id: presence_rs::Presence<uuid::Uuid>,
-    /// ID of the product price to checkout. Must correspond to a price present
-    /// in the checkout's product list.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub product_price_id: presence_rs::Presence<uuid::Uuid>,
     /// Number of seats for seat-based pricing.
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
     pub seats: presence_rs::Presence<i64>,
@@ -62772,10 +61042,6 @@ pub struct CheckoutConfirmSharedPaymentToken {
     /// list.
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
     pub product_id: presence_rs::Presence<uuid::Uuid>,
-    /// ID of the product price to checkout. Must correspond to a price present
-    /// in the checkout's product list.
-    #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
-    pub product_price_id: presence_rs::Presence<uuid::Uuid>,
     /// Number of seats for seat-based pricing.
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
     pub seats: presence_rs::Presence<i64>,
@@ -62902,9 +61168,7 @@ pub struct Checkout {
     /// ID of the product to checkout.
     pub product_id: Option<uuid::Uuid>,
     /// Price of the selected product.
-    pub product_price: Option<CheckoutProductPrice>,
-    /// ID of the product price to checkout.
-    pub product_price_id: Option<uuid::Uuid>,
+    pub product_price: Option<ProductPrice>,
     /// List of products available to select.
     pub products: Vec<CheckoutProduct>,
     /// Whether to require the customer to fill their full billing address,
@@ -62966,607 +61230,6 @@ impl ::std::fmt::Display for TaxBehavior {
 impl AsRef<str> for TaxBehavior {
     fn as_ref(&self) -> &str {
         self.as_str()
-    }
-}
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
-pub enum CheckoutStatus {
-    #[default]
-    #[serde(rename = "open")]
-    Open,
-    #[serde(rename = "expired")]
-    Expired,
-    #[serde(rename = "confirmed")]
-    Confirmed,
-    #[serde(rename = "succeeded")]
-    Succeeded,
-    #[serde(rename = "failed")]
-    Failed,
-}
-impl CheckoutStatus {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::Open => "open",
-            Self::Expired => "expired",
-            Self::Confirmed => "confirmed",
-            Self::Succeeded => "succeeded",
-            Self::Failed => "failed",
-        }
-    }
-}
-impl ::std::fmt::Display for CheckoutStatus {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-impl AsRef<str> for CheckoutStatus {
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
-}
-#[derive(Debug, Clone)]
-pub enum CheckoutProductPrice {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for CheckoutProductPrice {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for CheckoutProductPrice {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutProductPrice),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutProductPrice),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(CheckoutProductPrice),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(CheckoutProductPrice),
-                " preserved the complete input",
-            ))
-        })
-    }
-}
-/// Product data for a checkout session.
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct CheckoutProduct {
-    /// List of benefits granted by the product.
-    pub benefits: Vec<BenefitPublic>,
-    /// Creation timestamp of the object.
-    pub created_at: chrono::DateTime<chrono::Utc>,
-    /// The description of the product.
-    pub description: Option<String>,
-    /// The ID of the object.
-    pub id: uuid::Uuid,
-    /// Whether the product is archived and no longer available.
-    pub is_archived: bool,
-    /// Whether the product is a subscription.
-    pub is_recurring: bool,
-    /// List of medias associated to the product.
-    pub medias: Vec<ProductMediaFileRead>,
-    /// The meter cycle of the product, independent of the billing interval. If
-    /// `None`, metered concerns follow the billing interval.
-    pub meter_interval: Option<RecurringInterval>,
-    /// Number of meter interval units. None when no meter cycle is set.
-    pub meter_interval_count: Option<i64>,
-    /// Last modification timestamp of the object.
-    pub modified_at: Option<chrono::DateTime<chrono::Utc>>,
-    /// The name of the product.
-    pub name: String,
-    /// The ID of the organization owning the product.
-    pub organization_id: uuid::Uuid,
-    /// List of prices for this product.
-    pub prices: Vec<CheckoutProductPricesItemUnion>,
-    /// The recurring interval of the product. If `None`, the product is a
-    /// one-time purchase.
-    pub recurring_interval: Option<RecurringInterval>,
-    /// Number of interval units of the subscription. If this is set to 1 the
-    /// charge will happen every interval (e.g. every month), if set to 2 it
-    /// will be every other month, and so on. None for one-time products.
-    pub recurring_interval_count: Option<i64>,
-    /// The interval unit for the trial period.
-    pub trial_interval: Option<TrialInterval>,
-    /// The number of interval units for the trial period.
-    pub trial_interval_count: Option<i64>,
-    pub visibility: ProductVisibility,
-}
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
-pub enum ProductVisibility {
-    #[default]
-    #[serde(rename = "draft")]
-    Draft,
-    #[serde(rename = "private")]
-    Private,
-    #[serde(rename = "public")]
-    Public,
-}
-impl ProductVisibility {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::Draft => "draft",
-            Self::Private => "private",
-            Self::Public => "public",
-        }
-    }
-}
-impl ::std::fmt::Display for ProductVisibility {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-impl AsRef<str> for ProductVisibility {
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
-}
-/// File to be used as a product media file.
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct ProductMediaFileRead {
-    pub checksum_etag: Option<String>,
-    pub checksum_sha256_base64: Option<String>,
-    pub checksum_sha256_hex: Option<String>,
-    pub created_at: chrono::DateTime<chrono::Utc>,
-    /// The ID of the object.
-    pub id: uuid::Uuid,
-    pub is_uploaded: bool,
-    pub last_modified_at: Option<chrono::DateTime<chrono::Utc>>,
-    pub mime_type: String,
-    pub name: String,
-    pub organization_id: uuid::Uuid,
-    pub path: String,
-    pub public_url: String,
-    pub service: ProductMediaFileReadService,
-    pub size: i64,
-    pub size_readable: String,
-    pub storage_version: Option<String>,
-    pub version: Option<String>,
-}
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
-pub enum ProductMediaFileReadService {
-    #[default]
-    #[serde(rename = "product_media")]
-    ProductMedia,
-}
-impl ProductMediaFileReadService {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::ProductMedia => "product_media",
-        }
-    }
-}
-impl ::std::fmt::Display for ProductMediaFileReadService {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-impl AsRef<str> for ProductMediaFileReadService {
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
-}
-#[derive(Debug, Clone)]
-pub enum CheckoutProductPricesItemUnion {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for CheckoutProductPricesItemUnion {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for CheckoutProductPricesItemUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutProductPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutProductPricesItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(CheckoutProductPricesItemUnion),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(CheckoutProductPricesItemUnion),
-                " preserved the complete input",
-            ))
-        })
-    }
-}
-#[derive(Debug, Clone, Deserialize, Serialize, Default)]
-pub struct CheckoutPrices {
-    /// Additional properties matching the spec's
-    /// `additionalProperties` value schema.
-    #[serde(flatten)]
-    pub additional_properties:
-        std::collections::BTreeMap<String, Vec<CheckoutPricesAdditionalPropertyItemUnion>>,
-}
-#[derive(Debug, Clone)]
-pub enum CheckoutPricesAdditionalPropertyItemUnion {
-    LegacyRecurringProductPrice(LegacyRecurringProductPrice),
-    ProductPrice(ProductPrice),
-}
-impl Serialize for CheckoutPricesAdditionalPropertyItemUnion {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPrice(value) => {
-                serde::Serialize::serialize(value, serializer)
-            }
-            Self::ProductPrice(value) => serde::Serialize::serialize(value, serializer),
-        }
-    }
-}
-impl<'de> Deserialize<'de> for CheckoutPricesAdditionalPropertyItemUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        fn exact_json_integer(number: &serde_json::Number) -> Option<i128> {
-            number.as_i64().map(i128::from).or_else(|| number.as_u64().map(i128::from))
-        }
-        fn json_numbers_have_same_value(
-            encoded: &serde_json::Number,
-            input: &serde_json::Number,
-        ) -> bool {
-            match (exact_json_integer(encoded), exact_json_integer(input)) {
-                (Some(encoded), Some(input)) => encoded == input,
-                (Some(encoded), None) => input.as_f64().is_some_and(|input| {
-                    input.is_finite() && input.fract() == 0.0 && input as i128 == encoded
-                }),
-                (None, Some(input)) => encoded.as_f64().is_some_and(|encoded| {
-                    encoded.is_finite() && encoded.fract() == 0.0 && encoded as i128 == input
-                }),
-                (None, None) => encoded.as_f64() == input.as_f64(),
-            }
-        }
-        /// `nulls_may_be_absent` also accepts an input `null` that the
-        /// branch omits, as a skipped `None` does. Extra encoded
-        /// keys are allowed only by the pre-existing anyOf match.
-        fn preserves_complete_json_input(
-            encoded: &serde_json::Value,
-            input: &serde_json::Value,
-            nulls_may_be_absent: bool,
-            encoded_keys_may_be_extra: bool,
-        ) -> bool {
-            match (encoded, input) {
-                (serde_json::Value::Object(encoded), serde_json::Value::Object(input)) => {
-                    (encoded_keys_may_be_extra || encoded.keys().all(|key| input.contains_key(key)))
-                        && input.iter().all(|(key, value)| match encoded.get(key) {
-                            Some(encoded_value) => preserves_complete_json_input(
-                                encoded_value,
-                                value,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            ),
-                            None => nulls_may_be_absent && value.is_null(),
-                        })
-                }
-                (serde_json::Value::Array(encoded), serde_json::Value::Array(input)) => {
-                    encoded.len() == input.len()
-                        && encoded.iter().zip(input).all(|(encoded, input)| {
-                            preserves_complete_json_input(
-                                encoded,
-                                input,
-                                nulls_may_be_absent,
-                                encoded_keys_may_be_extra,
-                            )
-                        })
-                }
-                (serde_json::Value::Number(encoded), serde_json::Value::Number(input)) => {
-                    json_numbers_have_same_value(encoded, input)
-                }
-                _ => encoded == input,
-            }
-        }
-        let input = <serde_json::Value as Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        let mut equivalent = None;
-        let mut equivalent_matches = 0usize;
-        if true {
-            if let Ok(candidate) =
-                serde_json::from_value::<LegacyRecurringProductPrice>(input.clone())
-            {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutPricesAdditionalPropertyItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::LegacyRecurringProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if true {
-            if let Ok(candidate) = serde_json::from_value::<ProductPrice>(input.clone()) {
-                match serde_json::to_value(&candidate) {
-                    Ok(encoded) if encoded == input => {
-                        if matched.is_some() {
-                            return Err(serde::de::Error::custom(concat!(
-                                "ambiguous oneOf value for ",
-                                stringify!(CheckoutPricesAdditionalPropertyItemUnion),
-                                ": more than one branch preserved the complete input",
-                            )));
-                        }
-                        matched = Some(Self::ProductPrice(candidate));
-                    }
-                    Ok(encoded) if preserves_complete_json_input(&encoded, &input, true, false) => {
-                        equivalent_matches += 1;
-                        equivalent.get_or_insert(Self::ProductPrice(candidate));
-                    }
-                    _ => {}
-                }
-            }
-        }
-        if let Some(matched) = matched {
-            return Ok(matched);
-        }
-        if equivalent_matches > 1 {
-            return Err(serde::de::Error::custom(concat!(
-                "ambiguous oneOf value for ",
-                stringify!(CheckoutPricesAdditionalPropertyItemUnion),
-                ": more than one branch preserved an equivalent input",
-            )));
-        }
-        equivalent.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no oneOf branch for ",
-                stringify!(CheckoutPricesAdditionalPropertyItemUnion),
-                " preserved the complete input",
-            ))
-        })
     }
 }
 #[derive(Debug, Clone)]
@@ -64792,6 +62455,32 @@ pub struct ProductPriceCustom {
     pub tax_behavior: Option<TaxBehaviorOption>,
 }
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
+pub enum ProductPriceSource {
+    #[default]
+    #[serde(rename = "catalog")]
+    Catalog,
+    #[serde(rename = "ad_hoc")]
+    AdHoc,
+}
+impl ProductPriceSource {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Catalog => "catalog",
+            Self::AdHoc => "ad_hoc",
+        }
+    }
+}
+impl ::std::fmt::Display for ProductPriceSource {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+impl AsRef<str> for ProductPriceSource {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
 pub enum ProductPriceCustomAmountType {
     #[default]
     #[serde(rename = "custom")]
@@ -64814,297 +62503,86 @@ impl AsRef<str> for ProductPriceCustomAmountType {
         self.as_str()
     }
 }
-#[derive(Debug, Clone)]
-pub enum LegacyRecurringProductPrice {
-    LegacyRecurringProductPriceFixed(LegacyRecurringProductPriceFixed),
-    LegacyRecurringProductPriceCustom(LegacyRecurringProductPriceCustom),
-}
-impl serde::Serialize for LegacyRecurringProductPrice {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        match self {
-            Self::LegacyRecurringProductPriceFixed(payload) => {
-                let mut value = serde_json::to_value(payload).map_err(serde::ser::Error::custom)?;
-                let object = value.as_object_mut().ok_or_else(|| {
-                    serde::ser::Error::custom(concat!(
-                        "discriminated union variant `",
-                        stringify!(LegacyRecurringProductPriceFixed),
-                        "` did not serialize as an object",
-                    ))
-                })?;
-                match object.get("amount_type") {
-                    Some(serde_json::Value::String(tag)) if matches!(tag.as_str(), "fixed") => {}
-                    Some(serde_json::Value::String(tag)) => {
-                        return Err(serde::ser::Error::custom(format!(
-                            "discriminator `{}` value `{tag}` is not valid for variant `{}`",
-                            "amount_type",
-                            stringify!(LegacyRecurringProductPriceFixed),
-                        )));
-                    }
-                    Some(_) => {
-                        return Err(serde::ser::Error::custom(concat!(
-                            "discriminator `",
-                            "amount_type",
-                            "` did not serialize as a string",
-                        )));
-                    }
-                    None => {
-                        object.insert(
-                            "amount_type".to_string(),
-                            serde_json::Value::String("fixed".to_string()),
-                        );
-                    }
-                }
-                value.serialize(serializer)
-            }
-            Self::LegacyRecurringProductPriceCustom(payload) => {
-                let mut value = serde_json::to_value(payload).map_err(serde::ser::Error::custom)?;
-                let object = value.as_object_mut().ok_or_else(|| {
-                    serde::ser::Error::custom(concat!(
-                        "discriminated union variant `",
-                        stringify!(LegacyRecurringProductPriceCustom),
-                        "` did not serialize as an object",
-                    ))
-                })?;
-                match object.get("amount_type") {
-                    Some(serde_json::Value::String(tag)) if matches!(tag.as_str(), "custom") => {}
-                    Some(serde_json::Value::String(tag)) => {
-                        return Err(serde::ser::Error::custom(format!(
-                            "discriminator `{}` value `{tag}` is not valid for variant `{}`",
-                            "amount_type",
-                            stringify!(LegacyRecurringProductPriceCustom),
-                        )));
-                    }
-                    Some(_) => {
-                        return Err(serde::ser::Error::custom(concat!(
-                            "discriminator `",
-                            "amount_type",
-                            "` did not serialize as a string",
-                        )));
-                    }
-                    None => {
-                        object.insert(
-                            "amount_type".to_string(),
-                            serde_json::Value::String("custom".to_string()),
-                        );
-                    }
-                }
-                value.serialize(serializer)
-            }
-        }
-    }
-}
-impl<'de> serde::Deserialize<'de> for LegacyRecurringProductPrice {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let value = serde_json::Value::deserialize(deserializer)?;
-        let discriminator = match value.get("amount_type") {
-            Some(serde_json::Value::String(discriminator)) => Some(discriminator.as_str()),
-            Some(_) => {
-                return Err(serde::de::Error::custom(concat!(
-                    "non-string discriminator `",
-                    "amount_type",
-                    "`",
-                )));
-            }
-            None => None,
-        };
-        match discriminator {
-            Some(discriminator) => match discriminator {
-                "fixed" => {
-                    let primary_error = match serde_json::from_value::<
-                        LegacyRecurringProductPriceFixed,
-                    >(value.clone())
-                    {
-                        Ok(payload) => {
-                            return Ok(Self::LegacyRecurringProductPriceFixed(payload));
-                        }
-                        Err(error) => error,
-                    };
-                    let mut structural_match: Option<(Self, &'static str)> = None;
-                    if let Ok(payload) =
-                        serde_json::from_value::<LegacyRecurringProductPriceCustom>(value.clone())
-                    {
-                        if let Some((_, first_name)) = &structural_match {
-                            return Err(serde::de::Error::custom(format!(
-                                "discriminator `{}` value `{}` did not fit its mapped branch and \
-                                 structurally matched both `{}` and `{}`",
-                                "amount_type",
-                                "fixed",
-                                first_name,
-                                stringify!(LegacyRecurringProductPriceCustom),
-                            )));
-                        }
-                        structural_match = Some((
-                            Self::LegacyRecurringProductPriceCustom(payload),
-                            stringify!(LegacyRecurringProductPriceCustom),
-                        ));
-                    }
-                    match structural_match {
-                        Some((payload, _)) => Ok(payload),
-                        None => Err(serde::de::Error::custom(primary_error)),
-                    }
-                }
-                "custom" => {
-                    let primary_error = match serde_json::from_value::<
-                        LegacyRecurringProductPriceCustom,
-                    >(value.clone())
-                    {
-                        Ok(payload) => {
-                            return Ok(Self::LegacyRecurringProductPriceCustom(payload));
-                        }
-                        Err(error) => error,
-                    };
-                    let mut structural_match: Option<(Self, &'static str)> = None;
-                    if let Ok(payload) =
-                        serde_json::from_value::<LegacyRecurringProductPriceFixed>(value.clone())
-                    {
-                        if let Some((_, first_name)) = &structural_match {
-                            return Err(serde::de::Error::custom(format!(
-                                "discriminator `{}` value `{}` did not fit its mapped branch and \
-                                 structurally matched both `{}` and `{}`",
-                                "amount_type",
-                                "custom",
-                                first_name,
-                                stringify!(LegacyRecurringProductPriceFixed),
-                            )));
-                        }
-                        structural_match = Some((
-                            Self::LegacyRecurringProductPriceFixed(payload),
-                            stringify!(LegacyRecurringProductPriceFixed),
-                        ));
-                    }
-                    match structural_match {
-                        Some((payload, _)) => Ok(payload),
-                        None => Err(serde::de::Error::custom(primary_error)),
-                    }
-                }
-                other => Err(serde::de::Error::custom(format!(
-                    "unknown discriminator value `{other}` for `{}`",
-                    "amount_type",
-                ))),
-            },
-            None => Err(serde::de::Error::custom(concat!(
-                "missing string discriminator `",
-                "amount_type",
-                "`",
-            ))),
-        }
-    }
-}
-/// A recurring price for a product, i.e. a subscription.
-///
-/// Deprecated**: The recurring interval should be set on the product itself.
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct LegacyRecurringProductPriceFixed {
-    pub amount_type: LegacyRecurringProductPriceFixedAmountType,
-    /// Creation timestamp of the object.
-    pub created_at: chrono::DateTime<chrono::Utc>,
-    /// The ID of the price.
-    pub id: uuid::Uuid,
-    /// Whether the price is archived and no longer available.
-    pub is_archived: bool,
-    pub legacy: bool,
-    /// Last modification timestamp of the object.
-    pub modified_at: Option<chrono::DateTime<chrono::Utc>>,
-    /// The price in cents.
-    pub price_amount: i64,
-    /// The currency in which the customer will be charged.
-    pub price_currency: String,
-    /// The ID of the product owning the price.
-    pub product_id: uuid::Uuid,
-    pub recurring_interval: RecurringInterval,
-    pub source: ProductPriceSource,
-    /// The tax behavior of the price. If null, it defaults to the
-    /// organization's default tax behavior.
-    pub tax_behavior: Option<TaxBehaviorOption>,
-    /// The type of the price.
-    pub r#type: LegacyRecurringProductPriceFixedType,
-}
-/// The type of the price.
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
-pub enum LegacyRecurringProductPriceFixedType {
+pub enum CheckoutStatus {
     #[default]
-    #[serde(rename = "recurring")]
-    Recurring,
+    #[serde(rename = "open")]
+    Open,
+    #[serde(rename = "expired")]
+    Expired,
+    #[serde(rename = "confirmed")]
+    Confirmed,
+    #[serde(rename = "succeeded")]
+    Succeeded,
+    #[serde(rename = "failed")]
+    Failed,
 }
-impl LegacyRecurringProductPriceFixedType {
+impl CheckoutStatus {
     pub fn as_str(&self) -> &'static str {
         match self {
-            Self::Recurring => "recurring",
+            Self::Open => "open",
+            Self::Expired => "expired",
+            Self::Confirmed => "confirmed",
+            Self::Succeeded => "succeeded",
+            Self::Failed => "failed",
         }
     }
 }
-impl ::std::fmt::Display for LegacyRecurringProductPriceFixedType {
+impl ::std::fmt::Display for CheckoutStatus {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(self.as_str())
     }
 }
-impl AsRef<str> for LegacyRecurringProductPriceFixedType {
+impl AsRef<str> for CheckoutStatus {
     fn as_ref(&self) -> &str {
         self.as_str()
     }
 }
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
-pub enum LegacyRecurringProductPriceFixedAmountType {
-    #[default]
-    #[serde(rename = "fixed")]
-    Fixed,
-}
-impl LegacyRecurringProductPriceFixedAmountType {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::Fixed => "fixed",
-        }
-    }
-}
-impl ::std::fmt::Display for LegacyRecurringProductPriceFixedAmountType {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-impl AsRef<str> for LegacyRecurringProductPriceFixedAmountType {
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
-}
-/// A pay-what-you-want recurring price for a product, i.e. a subscription.
-///
-/// Deprecated**: The recurring interval should be set on the product itself.
+/// Product data for a checkout session.
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct LegacyRecurringProductPriceCustom {
-    pub amount_type: LegacyRecurringProductPriceCustomAmountType,
+pub struct CheckoutProduct {
+    /// List of benefits granted by the product.
+    pub benefits: Vec<BenefitPublic>,
+    /// ID of the catalog that introduced this version of the product. None for
+    /// products not managed by declarative config.
+    pub catalog_id: Option<uuid::Uuid>,
     /// Creation timestamp of the object.
     pub created_at: chrono::DateTime<chrono::Utc>,
-    /// The ID of the price.
+    /// The description of the product.
+    pub description: Option<String>,
+    /// The ID of the object.
     pub id: uuid::Uuid,
-    /// Whether the price is archived and no longer available.
+    /// Whether the product is archived and no longer available.
     pub is_archived: bool,
-    pub legacy: bool,
-    /// The maximum amount the customer can pay.
-    pub maximum_amount: Option<i64>,
-    /// The minimum amount the customer can pay. If 0, the price is 'free or pay
-    /// what you want'.
-    pub minimum_amount: i64,
+    /// Whether the product is a subscription.
+    pub is_recurring: bool,
+    /// List of medias associated to the product.
+    pub medias: Vec<ProductMediaFileRead>,
+    /// The meter cycle of the product, independent of the billing interval. If
+    /// `None`, metered concerns follow the billing interval.
+    pub meter_interval: Option<RecurringInterval>,
+    /// Number of meter interval units. None when no meter cycle is set.
+    pub meter_interval_count: Option<i64>,
     /// Last modification timestamp of the object.
     pub modified_at: Option<chrono::DateTime<chrono::Utc>>,
-    /// The initial amount shown to the customer.
-    pub preset_amount: Option<i64>,
-    /// The currency in which the customer will be charged.
-    pub price_currency: String,
-    /// The ID of the product owning the price.
-    pub product_id: uuid::Uuid,
-    pub recurring_interval: RecurringInterval,
-    pub source: ProductPriceSource,
-    /// The tax behavior of the price. If null, it defaults to the
-    /// organization's default tax behavior.
-    pub tax_behavior: Option<TaxBehaviorOption>,
-    /// The type of the price.
-    pub r#type: LegacyRecurringProductPriceCustomType,
+    /// The name of the product.
+    pub name: String,
+    /// The ID of the organization owning the product.
+    pub organization_id: uuid::Uuid,
+    /// List of prices for this product.
+    pub prices: Vec<ProductPrice>,
+    /// The recurring interval of the product. If `None`, the product is a
+    /// one-time purchase.
+    pub recurring_interval: Option<RecurringInterval>,
+    /// Number of interval units of the subscription. If this is set to 1 the
+    /// charge will happen every interval (e.g. every month), if set to 2 it
+    /// will be every other month, and so on. None for one-time products.
+    pub recurring_interval_count: Option<i64>,
+    /// The interval unit for the trial period.
+    pub trial_interval: Option<TrialInterval>,
+    /// The number of interval units for the trial period.
+    pub trial_interval_count: Option<i64>,
+    pub visibility: ProductVisibility,
 }
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
 pub enum RecurringInterval {
@@ -65139,77 +62617,85 @@ impl AsRef<str> for RecurringInterval {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
-pub enum ProductPriceSource {
+pub enum ProductVisibility {
     #[default]
-    #[serde(rename = "catalog")]
-    Catalog,
-    #[serde(rename = "ad_hoc")]
-    AdHoc,
+    #[serde(rename = "draft")]
+    Draft,
+    #[serde(rename = "private")]
+    Private,
+    #[serde(rename = "public")]
+    Public,
 }
-impl ProductPriceSource {
+impl ProductVisibility {
     pub fn as_str(&self) -> &'static str {
         match self {
-            Self::Catalog => "catalog",
-            Self::AdHoc => "ad_hoc",
+            Self::Draft => "draft",
+            Self::Private => "private",
+            Self::Public => "public",
         }
     }
 }
-impl ::std::fmt::Display for ProductPriceSource {
+impl ::std::fmt::Display for ProductVisibility {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(self.as_str())
     }
 }
-impl AsRef<str> for ProductPriceSource {
+impl AsRef<str> for ProductVisibility {
     fn as_ref(&self) -> &str {
         self.as_str()
     }
 }
-/// The type of the price.
+/// File to be used as a product media file.
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ProductMediaFileRead {
+    pub checksum_etag: Option<String>,
+    pub checksum_sha256_base64: Option<String>,
+    pub checksum_sha256_hex: Option<String>,
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    /// The ID of the object.
+    pub id: uuid::Uuid,
+    pub is_uploaded: bool,
+    pub last_modified_at: Option<chrono::DateTime<chrono::Utc>>,
+    pub mime_type: String,
+    pub name: String,
+    pub organization_id: uuid::Uuid,
+    pub path: String,
+    pub public_url: String,
+    pub service: ProductMediaFileReadService,
+    pub size: i64,
+    pub size_readable: String,
+    pub storage_version: Option<String>,
+    pub version: Option<String>,
+}
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
-pub enum LegacyRecurringProductPriceCustomType {
+pub enum ProductMediaFileReadService {
     #[default]
-    #[serde(rename = "recurring")]
-    Recurring,
+    #[serde(rename = "product_media")]
+    ProductMedia,
 }
-impl LegacyRecurringProductPriceCustomType {
+impl ProductMediaFileReadService {
     pub fn as_str(&self) -> &'static str {
         match self {
-            Self::Recurring => "recurring",
+            Self::ProductMedia => "product_media",
         }
     }
 }
-impl ::std::fmt::Display for LegacyRecurringProductPriceCustomType {
+impl ::std::fmt::Display for ProductMediaFileReadService {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(self.as_str())
     }
 }
-impl AsRef<str> for LegacyRecurringProductPriceCustomType {
+impl AsRef<str> for ProductMediaFileReadService {
     fn as_ref(&self) -> &str {
         self.as_str()
     }
 }
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
-pub enum LegacyRecurringProductPriceCustomAmountType {
-    #[default]
-    #[serde(rename = "custom")]
-    Custom,
-}
-impl LegacyRecurringProductPriceCustomAmountType {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::Custom => "custom",
-        }
-    }
-}
-impl ::std::fmt::Display for LegacyRecurringProductPriceCustomAmountType {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-impl AsRef<str> for LegacyRecurringProductPriceCustomAmountType {
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct CheckoutPrices {
+    /// Additional properties matching the spec's
+    /// `additionalProperties` value schema.
+    #[serde(flatten)]
+    pub additional_properties: std::collections::BTreeMap<String, Vec<ProductPrice>>,
 }
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct CheckoutPaymentProcessorMetadata {
@@ -84050,32 +81536,6 @@ impl ::std::fmt::Display for ProductBillingType {
     }
 }
 impl AsRef<str> for ProductBillingType {
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
-}
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
-pub enum ProductPriceType {
-    #[default]
-    #[serde(rename = "one_time")]
-    OneTime,
-    #[serde(rename = "recurring")]
-    Recurring,
-}
-impl ProductPriceType {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::OneTime => "one_time",
-            Self::Recurring => "recurring",
-        }
-    }
-}
-impl ::std::fmt::Display for ProductPriceType {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-impl AsRef<str> for ProductPriceType {
     fn as_ref(&self) -> &str {
         self.as_str()
     }

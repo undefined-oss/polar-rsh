@@ -2384,6 +2384,1244 @@
       "operation": null
     },
     {
+      "path": "client::CheckoutLinksCreateBuilder",
+      "name": "CheckoutLinksCreateBuilder",
+      "kind": "struct",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "< 'a >",
+      "impl_generics": null,
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [
+        {
+          "name": "client",
+          "index": 0,
+          "public": false,
+          "wire_name": null,
+          "rust_type": "& 'a HttpClient",
+          "attributes": []
+        },
+        {
+          "name": "request",
+          "index": 1,
+          "public": false,
+          "wire_name": null,
+          "rust_type": "CheckoutLinkCreateProducts",
+          "attributes": []
+        }
+      ],
+      "variants": [],
+      "signature": null,
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::allow_discount_codes",
+      "name": "allow_discount_codes",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn allow_discount_codes (mut self , allow_discount_codes : bool) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "allow_discount_codes",
+            "rust_type": "bool"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::discount_id",
+      "name": "discount_id",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn discount_id (mut self , discount_id : uuid :: Uuid) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "discount_id",
+            "rust_type": "uuid :: Uuid"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::discount_id_absent",
+      "name": "discount_id_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn discount_id_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::discount_id_null",
+      "name": "discount_id_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn discount_id_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::label",
+      "name": "label",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn label (mut self , label : String) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "label",
+            "rust_type": "String"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::label_absent",
+      "name": "label_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn label_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::label_null",
+      "name": "label_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn label_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::metadata",
+      "name": "metadata",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn metadata (mut self , metadata : CheckoutLinkCreateProductsMetadata) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "metadata",
+            "rust_type": "CheckoutLinkCreateProductsMetadata"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::request",
+      "name": "request",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn request (mut self , request : CheckoutLinkCreateProducts) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "request",
+            "rust_type": "CheckoutLinkCreateProducts"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::require_billing_address",
+      "name": "require_billing_address",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn require_billing_address (mut self , require_billing_address : bool) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "require_billing_address",
+            "rust_type": "bool"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::return_url",
+      "name": "return_url",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn return_url (mut self , return_url : url :: Url) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "return_url",
+            "rust_type": "url :: Url"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::return_url_absent",
+      "name": "return_url_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn return_url_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::return_url_null",
+      "name": "return_url_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn return_url_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::seats",
+      "name": "seats",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn seats (mut self , seats : i64) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "seats",
+            "rust_type": "i64"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::seats_absent",
+      "name": "seats_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn seats_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::seats_null",
+      "name": "seats_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn seats_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::send",
+      "name": "send",
+      "kind": "method",
+      "attributes": [],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "async fn send (self) -> Result < CheckoutLink , ApiOpError < CheckoutLinksCreateApiError > >",
+        "asynchronous": true,
+        "receiver": "self",
+        "arguments": [],
+        "return_type": "Result < CheckoutLink , ApiOpError < CheckoutLinksCreateApiError > >",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::success_url",
+      "name": "success_url",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn success_url (mut self , success_url : url :: Url) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "success_url",
+            "rust_type": "url :: Url"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::success_url_absent",
+      "name": "success_url_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn success_url_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::success_url_null",
+      "name": "success_url_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn success_url_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::trial_interval",
+      "name": "trial_interval",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn trial_interval (mut self , trial_interval : TrialInterval) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "trial_interval",
+            "rust_type": "TrialInterval"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::trial_interval_absent",
+      "name": "trial_interval_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn trial_interval_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::trial_interval_count",
+      "name": "trial_interval_count",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn trial_interval_count (mut self , trial_interval_count : i64) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "trial_interval_count",
+            "rust_type": "i64"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::trial_interval_count_absent",
+      "name": "trial_interval_count_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn trial_interval_count_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::trial_interval_count_null",
+      "name": "trial_interval_count_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn trial_interval_count_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::trial_interval_null",
+      "name": "trial_interval_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn trial_interval_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::units",
+      "name": "units",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn units (mut self , units : i64) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "units",
+            "rust_type": "i64"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::units_absent",
+      "name": "units_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn units_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::CheckoutLinksCreateBuilder::units_null",
+      "name": "units_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "< 'a >",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn units_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
       "path": "client::CheckoutLinksDeleteApiError",
       "name": "CheckoutLinksDeleteApiError",
       "kind": "enum",
@@ -6449,140 +7687,6 @@
       }
     },
     {
-      "path": "client::CheckoutsClientUpdateBuilder::product_price_id",
-      "name": "product_price_id",
-      "kind": "method",
-      "attributes": [
-        "# [must_use]"
-      ],
-      "generics": "",
-      "impl_generics": "< 'a >",
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [],
-      "signature": {
-        "rust": "fn product_price_id (mut self , product_price_id : uuid :: Uuid) -> Self",
-        "asynchronous": false,
-        "receiver": "mut self",
-        "arguments": [
-          {
-            "name": "product_price_id",
-            "rust_type": "uuid :: Uuid"
-          }
-        ],
-        "return_type": "Self",
-        "generics": ""
-      },
-      "operation": {
-        "operation_id": "checkouts:client_update",
-        "source_json_pointer": "/paths/~1v1~1checkouts~1client~1{client_secret}/patch",
-        "source_method": "PATCH",
-        "source_path": "/v1/checkouts/client/{client_secret}",
-        "source_operation_id": "checkouts:client_update",
-        "webhook": false,
-        "response_statuses": [
-          "200"
-        ],
-        "response_excluded_statuses": [
-          "403",
-          "404",
-          "409",
-          "410",
-          "422"
-        ],
-        "response_media_type": "application/json",
-        "response_kind": "json",
-        "consumption": "buffered"
-      }
-    },
-    {
-      "path": "client::CheckoutsClientUpdateBuilder::product_price_id_absent",
-      "name": "product_price_id_absent",
-      "kind": "method",
-      "attributes": [
-        "# [must_use]"
-      ],
-      "generics": "",
-      "impl_generics": "< 'a >",
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [],
-      "signature": {
-        "rust": "fn product_price_id_absent (mut self) -> Self",
-        "asynchronous": false,
-        "receiver": "mut self",
-        "arguments": [],
-        "return_type": "Self",
-        "generics": ""
-      },
-      "operation": {
-        "operation_id": "checkouts:client_update",
-        "source_json_pointer": "/paths/~1v1~1checkouts~1client~1{client_secret}/patch",
-        "source_method": "PATCH",
-        "source_path": "/v1/checkouts/client/{client_secret}",
-        "source_operation_id": "checkouts:client_update",
-        "webhook": false,
-        "response_statuses": [
-          "200"
-        ],
-        "response_excluded_statuses": [
-          "403",
-          "404",
-          "409",
-          "410",
-          "422"
-        ],
-        "response_media_type": "application/json",
-        "response_kind": "json",
-        "consumption": "buffered"
-      }
-    },
-    {
-      "path": "client::CheckoutsClientUpdateBuilder::product_price_id_null",
-      "name": "product_price_id_null",
-      "kind": "method",
-      "attributes": [
-        "# [must_use]"
-      ],
-      "generics": "",
-      "impl_generics": "< 'a >",
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [],
-      "signature": {
-        "rust": "fn product_price_id_null (mut self) -> Self",
-        "asynchronous": false,
-        "receiver": "mut self",
-        "arguments": [],
-        "return_type": "Self",
-        "generics": ""
-      },
-      "operation": {
-        "operation_id": "checkouts:client_update",
-        "source_json_pointer": "/paths/~1v1~1checkouts~1client~1{client_secret}/patch",
-        "source_method": "PATCH",
-        "source_path": "/v1/checkouts/client/{client_secret}",
-        "source_operation_id": "checkouts:client_update",
-        "webhook": false,
-        "response_statuses": [
-          "200"
-        ],
-        "response_excluded_statuses": [
-          "403",
-          "404",
-          "409",
-          "410",
-          "422"
-        ],
-        "response_media_type": "application/json",
-        "response_kind": "json",
-        "consumption": "buffered"
-      }
-    },
-    {
       "path": "client::CheckoutsClientUpdateBuilder::request",
       "name": "request",
       "kind": "method",
@@ -9831,134 +10935,6 @@
       "variants": [],
       "signature": {
         "rust": "fn product_id_null (mut self) -> Self",
-        "asynchronous": false,
-        "receiver": "mut self",
-        "arguments": [],
-        "return_type": "Self",
-        "generics": ""
-      },
-      "operation": {
-        "operation_id": "checkouts:update",
-        "source_json_pointer": "/paths/~1v1~1checkouts~1{id}/patch",
-        "source_method": "PATCH",
-        "source_path": "/v1/checkouts/{id}",
-        "source_operation_id": "checkouts:update",
-        "webhook": false,
-        "response_statuses": [
-          "200"
-        ],
-        "response_excluded_statuses": [
-          "403",
-          "404",
-          "422"
-        ],
-        "response_media_type": "application/json",
-        "response_kind": "json",
-        "consumption": "buffered"
-      }
-    },
-    {
-      "path": "client::CheckoutsUpdateBuilder::product_price_id",
-      "name": "product_price_id",
-      "kind": "method",
-      "attributes": [
-        "# [must_use]"
-      ],
-      "generics": "",
-      "impl_generics": "< 'a >",
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [],
-      "signature": {
-        "rust": "fn product_price_id (mut self , product_price_id : uuid :: Uuid) -> Self",
-        "asynchronous": false,
-        "receiver": "mut self",
-        "arguments": [
-          {
-            "name": "product_price_id",
-            "rust_type": "uuid :: Uuid"
-          }
-        ],
-        "return_type": "Self",
-        "generics": ""
-      },
-      "operation": {
-        "operation_id": "checkouts:update",
-        "source_json_pointer": "/paths/~1v1~1checkouts~1{id}/patch",
-        "source_method": "PATCH",
-        "source_path": "/v1/checkouts/{id}",
-        "source_operation_id": "checkouts:update",
-        "webhook": false,
-        "response_statuses": [
-          "200"
-        ],
-        "response_excluded_statuses": [
-          "403",
-          "404",
-          "422"
-        ],
-        "response_media_type": "application/json",
-        "response_kind": "json",
-        "consumption": "buffered"
-      }
-    },
-    {
-      "path": "client::CheckoutsUpdateBuilder::product_price_id_absent",
-      "name": "product_price_id_absent",
-      "kind": "method",
-      "attributes": [
-        "# [must_use]"
-      ],
-      "generics": "",
-      "impl_generics": "< 'a >",
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [],
-      "signature": {
-        "rust": "fn product_price_id_absent (mut self) -> Self",
-        "asynchronous": false,
-        "receiver": "mut self",
-        "arguments": [],
-        "return_type": "Self",
-        "generics": ""
-      },
-      "operation": {
-        "operation_id": "checkouts:update",
-        "source_json_pointer": "/paths/~1v1~1checkouts~1{id}/patch",
-        "source_method": "PATCH",
-        "source_path": "/v1/checkouts/{id}",
-        "source_operation_id": "checkouts:update",
-        "webhook": false,
-        "response_statuses": [
-          "200"
-        ],
-        "response_excluded_statuses": [
-          "403",
-          "404",
-          "422"
-        ],
-        "response_media_type": "application/json",
-        "response_kind": "json",
-        "consumption": "buffered"
-      }
-    },
-    {
-      "path": "client::CheckoutsUpdateBuilder::product_price_id_null",
-      "name": "product_price_id_null",
-      "kind": "method",
-      "attributes": [
-        "# [must_use]"
-      ],
-      "generics": "",
-      "impl_generics": "< 'a >",
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [],
-      "signature": {
-        "rust": "fn product_price_id_null (mut self) -> Self",
         "asynchronous": false,
         "receiver": "mut self",
         "arguments": [],
@@ -39185,16 +40161,62 @@
       "fields": [],
       "variants": [],
       "signature": {
-        "rust": "async fn checkout_links_create (& self , request : CheckoutLinkCreate) -> Result < CheckoutLink , ApiOpError < CheckoutLinksCreateApiError > >",
+        "rust": "async fn checkout_links_create (& self , request : CheckoutLinkCreateProducts) -> Result < CheckoutLink , ApiOpError < CheckoutLinksCreateApiError > >",
         "asynchronous": true,
         "receiver": "& self",
         "arguments": [
           {
             "name": "request",
-            "rust_type": "CheckoutLinkCreate"
+            "rust_type": "CheckoutLinkCreateProducts"
           }
         ],
         "return_type": "Result < CheckoutLink , ApiOpError < CheckoutLinksCreateApiError > >",
+        "generics": ""
+      },
+      "operation": {
+        "operation_id": "checkout-links:create",
+        "source_json_pointer": "/paths/~1v1~1checkout-links~1/post",
+        "source_method": "POST",
+        "source_path": "/v1/checkout-links/",
+        "source_operation_id": "checkout-links:create",
+        "webhook": false,
+        "response_statuses": [
+          "201"
+        ],
+        "response_excluded_statuses": [
+          "422"
+        ],
+        "response_media_type": "application/json",
+        "response_kind": "json",
+        "consumption": "buffered"
+      }
+    },
+    {
+      "path": "client::HttpClient::checkout_links_create_builder",
+      "name": "checkout_links_create_builder",
+      "kind": "method",
+      "attributes": [],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn checkout_links_create_builder (& self , payment_processor : CheckoutLinkCreateProductsPaymentProcessor , products : Vec < String >) -> CheckoutLinksCreateBuilder < '_ >",
+        "asynchronous": false,
+        "receiver": "& self",
+        "arguments": [
+          {
+            "name": "payment_processor",
+            "rust_type": "CheckoutLinkCreateProductsPaymentProcessor"
+          },
+          {
+            "name": "products",
+            "rust_type": "Vec < String >"
+          }
+        ],
+        "return_type": "CheckoutLinksCreateBuilder < '_ >",
         "generics": ""
       },
       "operation": {
@@ -114856,20 +115878,12 @@
           "index": 47,
           "public": true,
           "wire_name": "product_price",
-          "rust_type": "Option < CheckoutProductPrice >",
-          "attributes": []
-        },
-        {
-          "name": "product_price_id",
-          "index": 48,
-          "public": true,
-          "wire_name": "product_price_id",
-          "rust_type": "Option < uuid :: Uuid >",
+          "rust_type": "Option < ProductPrice >",
           "attributes": []
         },
         {
           "name": "products",
-          "index": 49,
+          "index": 48,
           "public": true,
           "wire_name": "products",
           "rust_type": "Vec < CheckoutProduct >",
@@ -114877,7 +115891,7 @@
         },
         {
           "name": "require_billing_address",
-          "index": 50,
+          "index": 49,
           "public": true,
           "wire_name": "require_billing_address",
           "rust_type": "bool",
@@ -114885,7 +115899,7 @@
         },
         {
           "name": "return_url",
-          "index": 51,
+          "index": 50,
           "public": true,
           "wire_name": "return_url",
           "rust_type": "Option < String >",
@@ -114893,7 +115907,7 @@
         },
         {
           "name": "seats",
-          "index": 52,
+          "index": 51,
           "public": true,
           "wire_name": "seats",
           "rust_type": "presence_rs :: Presence < i64 >",
@@ -114903,7 +115917,7 @@
         },
         {
           "name": "status",
-          "index": 53,
+          "index": 52,
           "public": true,
           "wire_name": "status",
           "rust_type": "CheckoutStatus",
@@ -114911,7 +115925,7 @@
         },
         {
           "name": "subscription_id",
-          "index": 54,
+          "index": 53,
           "public": true,
           "wire_name": "subscription_id",
           "rust_type": "Option < uuid :: Uuid >",
@@ -114919,7 +115933,7 @@
         },
         {
           "name": "success_url",
-          "index": 55,
+          "index": 54,
           "public": true,
           "wire_name": "success_url",
           "rust_type": "String",
@@ -114927,7 +115941,7 @@
         },
         {
           "name": "tax_amount",
-          "index": 56,
+          "index": 55,
           "public": true,
           "wire_name": "tax_amount",
           "rust_type": "Option < i64 >",
@@ -114935,7 +115949,7 @@
         },
         {
           "name": "tax_behavior",
-          "index": 57,
+          "index": 56,
           "public": true,
           "wire_name": "tax_behavior",
           "rust_type": "Option < TaxBehavior >",
@@ -114943,7 +115957,7 @@
         },
         {
           "name": "total_amount",
-          "index": 58,
+          "index": 57,
           "public": true,
           "wire_name": "total_amount",
           "rust_type": "i64",
@@ -114951,7 +115965,7 @@
         },
         {
           "name": "trial_end",
-          "index": 59,
+          "index": 58,
           "public": true,
           "wire_name": "trial_end",
           "rust_type": "Option < chrono :: DateTime < chrono :: Utc > >",
@@ -114959,7 +115973,7 @@
         },
         {
           "name": "trial_interval",
-          "index": 60,
+          "index": 59,
           "public": true,
           "wire_name": "trial_interval",
           "rust_type": "Option < TrialInterval >",
@@ -114967,7 +115981,7 @@
         },
         {
           "name": "trial_interval_count",
-          "index": 61,
+          "index": 60,
           "public": true,
           "wire_name": "trial_interval_count",
           "rust_type": "Option < i64 >",
@@ -114975,7 +115989,7 @@
         },
         {
           "name": "units",
-          "index": 62,
+          "index": 61,
           "public": true,
           "wire_name": "units",
           "rust_type": "Option < i64 >",
@@ -114983,7 +115997,7 @@
         },
         {
           "name": "url",
-          "index": 63,
+          "index": 62,
           "public": true,
           "wire_name": "url",
           "rust_type": "String",
@@ -115249,18 +116263,8 @@
           ]
         },
         {
-          "name": "product_price_id",
-          "index": 13,
-          "public": true,
-          "wire_name": "product_price_id",
-          "rust_type": "presence_rs :: Presence < uuid :: Uuid >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
           "name": "seats",
-          "index": 14,
+          "index": 13,
           "public": true,
           "wire_name": "seats",
           "rust_type": "presence_rs :: Presence < i64 >",
@@ -115270,7 +116274,7 @@
         },
         {
           "name": "shared_payment_token_id",
-          "index": 15,
+          "index": 14,
           "public": true,
           "wire_name": "shared_payment_token_id",
           "rust_type": "String",
@@ -115278,7 +116282,7 @@
         },
         {
           "name": "units",
-          "index": 16,
+          "index": 15,
           "public": true,
           "wire_name": "units",
           "rust_type": "presence_rs :: Presence < i64 >",
@@ -115471,18 +116475,8 @@
           ]
         },
         {
-          "name": "product_price_id",
-          "index": 14,
-          "public": true,
-          "wire_name": "product_price_id",
-          "rust_type": "presence_rs :: Presence < uuid :: Uuid >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
           "name": "seats",
-          "index": 15,
+          "index": 14,
           "public": true,
           "wire_name": "seats",
           "rust_type": "presence_rs :: Presence < i64 >",
@@ -115492,7 +116486,7 @@
         },
         {
           "name": "units",
-          "index": 16,
+          "index": 15,
           "public": true,
           "wire_name": "units",
           "rust_type": "presence_rs :: Presence < i64 >",
@@ -116631,502 +117625,6 @@
       "operation": null
     },
     {
-      "path": "types::CheckoutLinkCreate",
-      "name": "CheckoutLinkCreate",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "CheckoutLinkCreateProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "CheckoutLinkCreateProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "CheckoutLinkCreateProduct",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "CheckoutLinkCreateProduct",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "CheckoutLinkCreateProducts",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "CheckoutLinkCreateProducts",
-              "attributes": []
-            }
-          ]
-        }
-      ],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutLinkCreateProduct",
-      "name": "CheckoutLinkCreateProduct",
-      "kind": "struct",
-      "attributes": [
-        "# [derive (Debug , Clone , Deserialize , Serialize)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [
-        {
-          "name": "allow_discount_codes",
-          "index": 0,
-          "public": true,
-          "wire_name": "allow_discount_codes",
-          "rust_type": "Option < bool >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"Option::is_none\")]"
-          ]
-        },
-        {
-          "name": "discount_id",
-          "index": 1,
-          "public": true,
-          "wire_name": "discount_id",
-          "rust_type": "presence_rs :: Presence < uuid :: Uuid >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "label",
-          "index": 2,
-          "public": true,
-          "wire_name": "label",
-          "rust_type": "presence_rs :: Presence < String >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "metadata",
-          "index": 3,
-          "public": true,
-          "wire_name": "metadata",
-          "rust_type": "Option < CheckoutLinkCreateProductMetadata >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"Option::is_none\")]"
-          ]
-        },
-        {
-          "name": "payment_processor",
-          "index": 4,
-          "public": true,
-          "wire_name": "payment_processor",
-          "rust_type": "CheckoutLinkCreateProductPaymentProcessor",
-          "attributes": []
-        },
-        {
-          "name": "product_id",
-          "index": 5,
-          "public": true,
-          "wire_name": "product_id",
-          "rust_type": "uuid :: Uuid",
-          "attributes": []
-        },
-        {
-          "name": "require_billing_address",
-          "index": 6,
-          "public": true,
-          "wire_name": "require_billing_address",
-          "rust_type": "Option < bool >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"Option::is_none\")]"
-          ]
-        },
-        {
-          "name": "return_url",
-          "index": 7,
-          "public": true,
-          "wire_name": "return_url",
-          "rust_type": "presence_rs :: Presence < url :: Url >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "seats",
-          "index": 8,
-          "public": true,
-          "wire_name": "seats",
-          "rust_type": "presence_rs :: Presence < i64 >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "success_url",
-          "index": 9,
-          "public": true,
-          "wire_name": "success_url",
-          "rust_type": "presence_rs :: Presence < url :: Url >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "trial_interval",
-          "index": 10,
-          "public": true,
-          "wire_name": "trial_interval",
-          "rust_type": "presence_rs :: Presence < TrialInterval >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "trial_interval_count",
-          "index": 11,
-          "public": true,
-          "wire_name": "trial_interval_count",
-          "rust_type": "presence_rs :: Presence < i64 >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "units",
-          "index": 12,
-          "public": true,
-          "wire_name": "units",
-          "rust_type": "presence_rs :: Presence < i64 >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        }
-      ],
-      "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutLinkCreateProductMetadata",
-      "name": "CheckoutLinkCreateProductMetadata",
-      "kind": "struct",
-      "attributes": [
-        "# [derive (Debug , Clone , Deserialize , Serialize , Default)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [
-        {
-          "name": "additional_properties",
-          "index": 0,
-          "public": true,
-          "wire_name": null,
-          "rust_type": "std :: collections :: BTreeMap < String , serde_json :: Value >",
-          "attributes": [
-            "# [serde (flatten)]"
-          ]
-        }
-      ],
-      "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutLinkCreateProductPaymentProcessor",
-      "name": "CheckoutLinkCreateProductPaymentProcessor",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone , PartialEq , Eq , Deserialize , Serialize , Default)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "Stripe",
-          "wire_name": "stripe",
-          "attributes": [
-            "# [default]",
-            "# [serde (rename = \"stripe\")]"
-          ],
-          "fields": []
-        }
-      ],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutLinkCreateProductPaymentProcessor::as_str",
-      "name": "as_str",
-      "kind": "method",
-      "attributes": [],
-      "generics": "",
-      "impl_generics": "",
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [],
-      "signature": {
-        "rust": "fn as_str (& self) -> & 'static str",
-        "asynchronous": false,
-        "receiver": "& self",
-        "arguments": [],
-        "return_type": "& 'static str",
-        "generics": ""
-      },
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutLinkCreateProductPrice",
-      "name": "CheckoutLinkCreateProductPrice",
-      "kind": "struct",
-      "attributes": [
-        "# [derive (Debug , Clone , Deserialize , Serialize)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [
-        {
-          "name": "allow_discount_codes",
-          "index": 0,
-          "public": true,
-          "wire_name": "allow_discount_codes",
-          "rust_type": "Option < bool >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"Option::is_none\")]"
-          ]
-        },
-        {
-          "name": "discount_id",
-          "index": 1,
-          "public": true,
-          "wire_name": "discount_id",
-          "rust_type": "presence_rs :: Presence < uuid :: Uuid >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "label",
-          "index": 2,
-          "public": true,
-          "wire_name": "label",
-          "rust_type": "presence_rs :: Presence < String >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "metadata",
-          "index": 3,
-          "public": true,
-          "wire_name": "metadata",
-          "rust_type": "Option < CheckoutLinkCreateProductPriceMetadata >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"Option::is_none\")]"
-          ]
-        },
-        {
-          "name": "payment_processor",
-          "index": 4,
-          "public": true,
-          "wire_name": "payment_processor",
-          "rust_type": "CheckoutLinkCreateProductPricePaymentProcessor",
-          "attributes": []
-        },
-        {
-          "name": "product_price_id",
-          "index": 5,
-          "public": true,
-          "wire_name": "product_price_id",
-          "rust_type": "uuid :: Uuid",
-          "attributes": []
-        },
-        {
-          "name": "require_billing_address",
-          "index": 6,
-          "public": true,
-          "wire_name": "require_billing_address",
-          "rust_type": "Option < bool >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"Option::is_none\")]"
-          ]
-        },
-        {
-          "name": "return_url",
-          "index": 7,
-          "public": true,
-          "wire_name": "return_url",
-          "rust_type": "presence_rs :: Presence < url :: Url >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "seats",
-          "index": 8,
-          "public": true,
-          "wire_name": "seats",
-          "rust_type": "presence_rs :: Presence < i64 >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "success_url",
-          "index": 9,
-          "public": true,
-          "wire_name": "success_url",
-          "rust_type": "presence_rs :: Presence < url :: Url >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "trial_interval",
-          "index": 10,
-          "public": true,
-          "wire_name": "trial_interval",
-          "rust_type": "presence_rs :: Presence < TrialInterval >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "trial_interval_count",
-          "index": 11,
-          "public": true,
-          "wire_name": "trial_interval_count",
-          "rust_type": "presence_rs :: Presence < i64 >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
-          "name": "units",
-          "index": 12,
-          "public": true,
-          "wire_name": "units",
-          "rust_type": "presence_rs :: Presence < i64 >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        }
-      ],
-      "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutLinkCreateProductPriceMetadata",
-      "name": "CheckoutLinkCreateProductPriceMetadata",
-      "kind": "struct",
-      "attributes": [
-        "# [derive (Debug , Clone , Deserialize , Serialize , Default)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [
-        {
-          "name": "additional_properties",
-          "index": 0,
-          "public": true,
-          "wire_name": null,
-          "rust_type": "std :: collections :: BTreeMap < String , serde_json :: Value >",
-          "attributes": [
-            "# [serde (flatten)]"
-          ]
-        }
-      ],
-      "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutLinkCreateProductPricePaymentProcessor",
-      "name": "CheckoutLinkCreateProductPricePaymentProcessor",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone , PartialEq , Eq , Deserialize , Serialize , Default)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "Stripe",
-          "wire_name": "stripe",
-          "attributes": [
-            "# [default]",
-            "# [serde (rename = \"stripe\")]"
-          ],
-          "fields": []
-        }
-      ],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutLinkCreateProductPricePaymentProcessor::as_str",
-      "name": "as_str",
-      "kind": "method",
-      "attributes": [],
-      "generics": "",
-      "impl_generics": "",
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [],
-      "signature": {
-        "rust": "fn as_str (& self) -> & 'static str",
-        "asynchronous": false,
-        "receiver": "& self",
-        "arguments": [],
-        "return_type": "& 'static str",
-        "generics": ""
-      },
-      "operation": null
-    },
-    {
       "path": "types::CheckoutLinkCreateProducts",
       "name": "CheckoutLinkCreateProducts",
       "kind": "struct",
@@ -117267,6 +117765,819 @@
       ],
       "variants": [],
       "signature": null,
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProducts::builder",
+      "name": "builder",
+      "kind": "method",
+      "attributes": [],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn builder (payment_processor : CheckoutLinkCreateProductsPaymentProcessor , products : Vec < String >) -> CheckoutLinkCreateProductsBuilder",
+        "asynchronous": false,
+        "receiver": null,
+        "arguments": [
+          {
+            "name": "payment_processor",
+            "rust_type": "CheckoutLinkCreateProductsPaymentProcessor"
+          },
+          {
+            "name": "products",
+            "rust_type": "Vec < String >"
+          }
+        ],
+        "return_type": "CheckoutLinkCreateProductsBuilder",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProducts::new",
+      "name": "new",
+      "kind": "method",
+      "attributes": [],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn new (payment_processor : CheckoutLinkCreateProductsPaymentProcessor , products : Vec < String >) -> Self",
+        "asynchronous": false,
+        "receiver": null,
+        "arguments": [
+          {
+            "name": "payment_processor",
+            "rust_type": "CheckoutLinkCreateProductsPaymentProcessor"
+          },
+          {
+            "name": "products",
+            "rust_type": "Vec < String >"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder",
+      "name": "CheckoutLinkCreateProductsBuilder",
+      "kind": "struct",
+      "attributes": [
+        "# [derive (Debug , Clone)]",
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": null,
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [
+        {
+          "name": "value",
+          "index": 0,
+          "public": false,
+          "wire_name": null,
+          "rust_type": "CheckoutLinkCreateProducts",
+          "attributes": []
+        }
+      ],
+      "variants": [],
+      "signature": null,
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::allow_discount_codes",
+      "name": "allow_discount_codes",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn allow_discount_codes (mut self , allow_discount_codes : bool) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "allow_discount_codes",
+            "rust_type": "bool"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::build",
+      "name": "build",
+      "kind": "method",
+      "attributes": [],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn build (self) -> CheckoutLinkCreateProducts",
+        "asynchronous": false,
+        "receiver": "self",
+        "arguments": [],
+        "return_type": "CheckoutLinkCreateProducts",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::discount_id",
+      "name": "discount_id",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn discount_id (mut self , discount_id : uuid :: Uuid) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "discount_id",
+            "rust_type": "uuid :: Uuid"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::discount_id_absent",
+      "name": "discount_id_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn discount_id_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::discount_id_null",
+      "name": "discount_id_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn discount_id_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::label",
+      "name": "label",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn label (mut self , label : String) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "label",
+            "rust_type": "String"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::label_absent",
+      "name": "label_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn label_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::label_null",
+      "name": "label_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn label_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::metadata",
+      "name": "metadata",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn metadata (mut self , metadata : CheckoutLinkCreateProductsMetadata) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "metadata",
+            "rust_type": "CheckoutLinkCreateProductsMetadata"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::new",
+      "name": "new",
+      "kind": "method",
+      "attributes": [],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn new (payment_processor : CheckoutLinkCreateProductsPaymentProcessor , products : Vec < String >) -> Self",
+        "asynchronous": false,
+        "receiver": null,
+        "arguments": [
+          {
+            "name": "payment_processor",
+            "rust_type": "CheckoutLinkCreateProductsPaymentProcessor"
+          },
+          {
+            "name": "products",
+            "rust_type": "Vec < String >"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::require_billing_address",
+      "name": "require_billing_address",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn require_billing_address (mut self , require_billing_address : bool) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "require_billing_address",
+            "rust_type": "bool"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::return_url",
+      "name": "return_url",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn return_url (mut self , return_url : url :: Url) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "return_url",
+            "rust_type": "url :: Url"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::return_url_absent",
+      "name": "return_url_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn return_url_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::return_url_null",
+      "name": "return_url_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn return_url_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::seats",
+      "name": "seats",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn seats (mut self , seats : i64) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "seats",
+            "rust_type": "i64"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::seats_absent",
+      "name": "seats_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn seats_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::seats_null",
+      "name": "seats_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn seats_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::success_url",
+      "name": "success_url",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn success_url (mut self , success_url : url :: Url) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "success_url",
+            "rust_type": "url :: Url"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::success_url_absent",
+      "name": "success_url_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn success_url_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::success_url_null",
+      "name": "success_url_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn success_url_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::trial_interval",
+      "name": "trial_interval",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn trial_interval (mut self , trial_interval : TrialInterval) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "trial_interval",
+            "rust_type": "TrialInterval"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::trial_interval_absent",
+      "name": "trial_interval_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn trial_interval_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::trial_interval_count",
+      "name": "trial_interval_count",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn trial_interval_count (mut self , trial_interval_count : i64) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "trial_interval_count",
+            "rust_type": "i64"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::trial_interval_count_absent",
+      "name": "trial_interval_count_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn trial_interval_count_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::trial_interval_count_null",
+      "name": "trial_interval_count_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn trial_interval_count_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::trial_interval_null",
+      "name": "trial_interval_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn trial_interval_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::units",
+      "name": "units",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn units (mut self , units : i64) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [
+          {
+            "name": "units",
+            "rust_type": "i64"
+          }
+        ],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::units_absent",
+      "name": "units_absent",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn units_absent (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
+      "operation": null
+    },
+    {
+      "path": "types::CheckoutLinkCreateProductsBuilder::units_null",
+      "name": "units_null",
+      "kind": "method",
+      "attributes": [
+        "# [must_use]"
+      ],
+      "generics": "",
+      "impl_generics": "",
+      "impl_trait": null,
+      "rust_type": null,
+      "fields": [],
+      "variants": [],
+      "signature": {
+        "rust": "fn units_null (mut self) -> Self",
+        "asynchronous": false,
+        "receiver": "mut self",
+        "arguments": [],
+        "return_type": "Self",
+        "generics": ""
+      },
       "operation": null
     },
     {
@@ -117541,7 +118852,7 @@
           "index": 13,
           "public": true,
           "wire_name": "prices",
-          "rust_type": "Vec < CheckoutLinkProductPricesItemUnion >",
+          "rust_type": "Vec < ProductPrice >",
           "attributes": []
         },
         {
@@ -117586,53 +118897,6 @@
         }
       ],
       "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutLinkProductPricesItemUnion",
-      "name": "CheckoutLinkProductPricesItemUnion",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
       "signature": null,
       "operation": null
     },
@@ -118155,60 +119419,13 @@
           "index": 0,
           "public": true,
           "wire_name": null,
-          "rust_type": "std :: collections :: BTreeMap < String , Vec < CheckoutPricesAdditionalPropertyItemUnion > >",
+          "rust_type": "std :: collections :: BTreeMap < String , Vec < ProductPrice > >",
           "attributes": [
             "# [serde (flatten)]"
           ]
         }
       ],
       "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutPricesAdditionalPropertyItemUnion",
-      "name": "CheckoutPricesAdditionalPropertyItemUnion",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
       "signature": null,
       "operation": null
     },
@@ -118233,8 +119450,16 @@
           "attributes": []
         },
         {
-          "name": "created_at",
+          "name": "catalog_id",
           "index": 1,
+          "public": true,
+          "wire_name": "catalog_id",
+          "rust_type": "Option < uuid :: Uuid >",
+          "attributes": []
+        },
+        {
+          "name": "created_at",
+          "index": 2,
           "public": true,
           "wire_name": "created_at",
           "rust_type": "chrono :: DateTime < chrono :: Utc >",
@@ -118242,7 +119467,7 @@
         },
         {
           "name": "description",
-          "index": 2,
+          "index": 3,
           "public": true,
           "wire_name": "description",
           "rust_type": "Option < String >",
@@ -118250,7 +119475,7 @@
         },
         {
           "name": "id",
-          "index": 3,
+          "index": 4,
           "public": true,
           "wire_name": "id",
           "rust_type": "uuid :: Uuid",
@@ -118258,7 +119483,7 @@
         },
         {
           "name": "is_archived",
-          "index": 4,
+          "index": 5,
           "public": true,
           "wire_name": "is_archived",
           "rust_type": "bool",
@@ -118266,7 +119491,7 @@
         },
         {
           "name": "is_recurring",
-          "index": 5,
+          "index": 6,
           "public": true,
           "wire_name": "is_recurring",
           "rust_type": "bool",
@@ -118274,7 +119499,7 @@
         },
         {
           "name": "medias",
-          "index": 6,
+          "index": 7,
           "public": true,
           "wire_name": "medias",
           "rust_type": "Vec < ProductMediaFileRead >",
@@ -118282,7 +119507,7 @@
         },
         {
           "name": "meter_interval",
-          "index": 7,
+          "index": 8,
           "public": true,
           "wire_name": "meter_interval",
           "rust_type": "Option < RecurringInterval >",
@@ -118290,7 +119515,7 @@
         },
         {
           "name": "meter_interval_count",
-          "index": 8,
+          "index": 9,
           "public": true,
           "wire_name": "meter_interval_count",
           "rust_type": "Option < i64 >",
@@ -118298,7 +119523,7 @@
         },
         {
           "name": "modified_at",
-          "index": 9,
+          "index": 10,
           "public": true,
           "wire_name": "modified_at",
           "rust_type": "Option < chrono :: DateTime < chrono :: Utc > >",
@@ -118306,7 +119531,7 @@
         },
         {
           "name": "name",
-          "index": 10,
+          "index": 11,
           "public": true,
           "wire_name": "name",
           "rust_type": "String",
@@ -118314,7 +119539,7 @@
         },
         {
           "name": "organization_id",
-          "index": 11,
+          "index": 12,
           "public": true,
           "wire_name": "organization_id",
           "rust_type": "uuid :: Uuid",
@@ -118322,15 +119547,15 @@
         },
         {
           "name": "prices",
-          "index": 12,
+          "index": 13,
           "public": true,
           "wire_name": "prices",
-          "rust_type": "Vec < CheckoutProductPricesItemUnion >",
+          "rust_type": "Vec < ProductPrice >",
           "attributes": []
         },
         {
           "name": "recurring_interval",
-          "index": 13,
+          "index": 14,
           "public": true,
           "wire_name": "recurring_interval",
           "rust_type": "Option < RecurringInterval >",
@@ -118338,7 +119563,7 @@
         },
         {
           "name": "recurring_interval_count",
-          "index": 14,
+          "index": 15,
           "public": true,
           "wire_name": "recurring_interval_count",
           "rust_type": "Option < i64 >",
@@ -118346,7 +119571,7 @@
         },
         {
           "name": "trial_interval",
-          "index": 15,
+          "index": 16,
           "public": true,
           "wire_name": "trial_interval",
           "rust_type": "Option < TrialInterval >",
@@ -118354,7 +119579,7 @@
         },
         {
           "name": "trial_interval_count",
-          "index": 16,
+          "index": 17,
           "public": true,
           "wire_name": "trial_interval_count",
           "rust_type": "Option < i64 >",
@@ -118362,7 +119587,7 @@
         },
         {
           "name": "visibility",
-          "index": 17,
+          "index": 18,
           "public": true,
           "wire_name": "visibility",
           "rust_type": "ProductVisibility",
@@ -118370,100 +119595,6 @@
         }
       ],
       "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutProductPrice",
-      "name": "CheckoutProductPrice",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutProductPricesItemUnion",
-      "name": "CheckoutProductPricesItemUnion",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
       "signature": null,
       "operation": null
     },
@@ -119972,20 +121103,12 @@
           "index": 45,
           "public": true,
           "wire_name": "product_price",
-          "rust_type": "Option < CheckoutPublicProductPrice >",
-          "attributes": []
-        },
-        {
-          "name": "product_price_id",
-          "index": 46,
-          "public": true,
-          "wire_name": "product_price_id",
-          "rust_type": "Option < uuid :: Uuid >",
+          "rust_type": "Option < ProductPrice >",
           "attributes": []
         },
         {
           "name": "products",
-          "index": 47,
+          "index": 46,
           "public": true,
           "wire_name": "products",
           "rust_type": "Vec < CheckoutProduct >",
@@ -119993,7 +121116,7 @@
         },
         {
           "name": "require_billing_address",
-          "index": 48,
+          "index": 47,
           "public": true,
           "wire_name": "require_billing_address",
           "rust_type": "bool",
@@ -120001,7 +121124,7 @@
         },
         {
           "name": "return_url",
-          "index": 49,
+          "index": 48,
           "public": true,
           "wire_name": "return_url",
           "rust_type": "Option < String >",
@@ -120009,7 +121132,7 @@
         },
         {
           "name": "seats",
-          "index": 50,
+          "index": 49,
           "public": true,
           "wire_name": "seats",
           "rust_type": "presence_rs :: Presence < i64 >",
@@ -120019,7 +121142,7 @@
         },
         {
           "name": "status",
-          "index": 51,
+          "index": 50,
           "public": true,
           "wire_name": "status",
           "rust_type": "CheckoutStatus",
@@ -120027,7 +121150,7 @@
         },
         {
           "name": "success_url",
-          "index": 52,
+          "index": 51,
           "public": true,
           "wire_name": "success_url",
           "rust_type": "String",
@@ -120035,7 +121158,7 @@
         },
         {
           "name": "tax_amount",
-          "index": 53,
+          "index": 52,
           "public": true,
           "wire_name": "tax_amount",
           "rust_type": "Option < i64 >",
@@ -120043,7 +121166,7 @@
         },
         {
           "name": "tax_behavior",
-          "index": 54,
+          "index": 53,
           "public": true,
           "wire_name": "tax_behavior",
           "rust_type": "Option < TaxBehavior >",
@@ -120051,7 +121174,7 @@
         },
         {
           "name": "total_amount",
-          "index": 55,
+          "index": 54,
           "public": true,
           "wire_name": "total_amount",
           "rust_type": "i64",
@@ -120059,7 +121182,7 @@
         },
         {
           "name": "trial_end",
-          "index": 56,
+          "index": 55,
           "public": true,
           "wire_name": "trial_end",
           "rust_type": "Option < chrono :: DateTime < chrono :: Utc > >",
@@ -120067,7 +121190,7 @@
         },
         {
           "name": "units",
-          "index": 57,
+          "index": 56,
           "public": true,
           "wire_name": "units",
           "rust_type": "Option < i64 >",
@@ -120075,7 +121198,7 @@
         },
         {
           "name": "url",
-          "index": 58,
+          "index": 57,
           "public": true,
           "wire_name": "url",
           "rust_type": "String",
@@ -120479,20 +121602,12 @@
           "index": 46,
           "public": true,
           "wire_name": "product_price",
-          "rust_type": "Option < CheckoutPublicConfirmedProductPrice >",
-          "attributes": []
-        },
-        {
-          "name": "product_price_id",
-          "index": 47,
-          "public": true,
-          "wire_name": "product_price_id",
-          "rust_type": "Option < uuid :: Uuid >",
+          "rust_type": "Option < ProductPrice >",
           "attributes": []
         },
         {
           "name": "products",
-          "index": 48,
+          "index": 47,
           "public": true,
           "wire_name": "products",
           "rust_type": "Vec < CheckoutProduct >",
@@ -120500,7 +121615,7 @@
         },
         {
           "name": "require_billing_address",
-          "index": 49,
+          "index": 48,
           "public": true,
           "wire_name": "require_billing_address",
           "rust_type": "bool",
@@ -120508,7 +121623,7 @@
         },
         {
           "name": "return_url",
-          "index": 50,
+          "index": 49,
           "public": true,
           "wire_name": "return_url",
           "rust_type": "Option < String >",
@@ -120516,7 +121631,7 @@
         },
         {
           "name": "seats",
-          "index": 51,
+          "index": 50,
           "public": true,
           "wire_name": "seats",
           "rust_type": "presence_rs :: Presence < i64 >",
@@ -120526,7 +121641,7 @@
         },
         {
           "name": "status",
-          "index": 52,
+          "index": 51,
           "public": true,
           "wire_name": "status",
           "rust_type": "CheckoutPublicConfirmedStatus",
@@ -120534,7 +121649,7 @@
         },
         {
           "name": "success_url",
-          "index": 53,
+          "index": 52,
           "public": true,
           "wire_name": "success_url",
           "rust_type": "String",
@@ -120542,7 +121657,7 @@
         },
         {
           "name": "tax_amount",
-          "index": 54,
+          "index": 53,
           "public": true,
           "wire_name": "tax_amount",
           "rust_type": "Option < i64 >",
@@ -120550,7 +121665,7 @@
         },
         {
           "name": "tax_behavior",
-          "index": 55,
+          "index": 54,
           "public": true,
           "wire_name": "tax_behavior",
           "rust_type": "Option < TaxBehavior >",
@@ -120558,7 +121673,7 @@
         },
         {
           "name": "total_amount",
-          "index": 56,
+          "index": 55,
           "public": true,
           "wire_name": "total_amount",
           "rust_type": "i64",
@@ -120566,7 +121681,7 @@
         },
         {
           "name": "trial_end",
-          "index": 57,
+          "index": 56,
           "public": true,
           "wire_name": "trial_end",
           "rust_type": "Option < chrono :: DateTime < chrono :: Utc > >",
@@ -120574,7 +121689,7 @@
         },
         {
           "name": "units",
-          "index": 58,
+          "index": 57,
           "public": true,
           "wire_name": "units",
           "rust_type": "Option < i64 >",
@@ -120582,7 +121697,7 @@
         },
         {
           "name": "url",
-          "index": 59,
+          "index": 58,
           "public": true,
           "wire_name": "url",
           "rust_type": "String",
@@ -120741,107 +121856,13 @@
           "index": 0,
           "public": true,
           "wire_name": null,
-          "rust_type": "std :: collections :: BTreeMap < String , Vec < CheckoutPublicConfirmedPricesAdditionalPropertyItemUnion > >",
+          "rust_type": "std :: collections :: BTreeMap < String , Vec < ProductPrice > >",
           "attributes": [
             "# [serde (flatten)]"
           ]
         }
       ],
       "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutPublicConfirmedPricesAdditionalPropertyItemUnion",
-      "name": "CheckoutPublicConfirmedPricesAdditionalPropertyItemUnion",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutPublicConfirmedProductPrice",
-      "name": "CheckoutPublicConfirmedProductPrice",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
       "signature": null,
       "operation": null
     },
@@ -121040,107 +122061,13 @@
           "index": 0,
           "public": true,
           "wire_name": null,
-          "rust_type": "std :: collections :: BTreeMap < String , Vec < CheckoutPublicPricesAdditionalPropertyItemUnion > >",
+          "rust_type": "std :: collections :: BTreeMap < String , Vec < ProductPrice > >",
           "attributes": [
             "# [serde (flatten)]"
           ]
         }
       ],
       "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutPublicPricesAdditionalPropertyItemUnion",
-      "name": "CheckoutPublicPricesAdditionalPropertyItemUnion",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CheckoutPublicProductPrice",
-      "name": "CheckoutPublicProductPrice",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
       "signature": null,
       "operation": null
     },
@@ -121503,18 +122430,8 @@
           ]
         },
         {
-          "name": "product_price_id",
-          "index": 18,
-          "public": true,
-          "wire_name": "product_price_id",
-          "rust_type": "presence_rs :: Presence < uuid :: Uuid >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
           "name": "require_billing_address",
-          "index": 19,
+          "index": 18,
           "public": true,
           "wire_name": "require_billing_address",
           "rust_type": "presence_rs :: Presence < bool >",
@@ -121524,7 +122441,7 @@
         },
         {
           "name": "return_url",
-          "index": 20,
+          "index": 19,
           "public": true,
           "wire_name": "return_url",
           "rust_type": "presence_rs :: Presence < url :: Url >",
@@ -121534,7 +122451,7 @@
         },
         {
           "name": "seats",
-          "index": 21,
+          "index": 20,
           "public": true,
           "wire_name": "seats",
           "rust_type": "presence_rs :: Presence < i64 >",
@@ -121544,7 +122461,7 @@
         },
         {
           "name": "success_url",
-          "index": 22,
+          "index": 21,
           "public": true,
           "wire_name": "success_url",
           "rust_type": "presence_rs :: Presence < url :: Url >",
@@ -121554,7 +122471,7 @@
         },
         {
           "name": "trial_interval",
-          "index": 23,
+          "index": 22,
           "public": true,
           "wire_name": "trial_interval",
           "rust_type": "presence_rs :: Presence < TrialInterval >",
@@ -121564,7 +122481,7 @@
         },
         {
           "name": "trial_interval_count",
-          "index": 24,
+          "index": 23,
           "public": true,
           "wire_name": "trial_interval_count",
           "rust_type": "presence_rs :: Presence < i64 >",
@@ -121574,7 +122491,7 @@
         },
         {
           "name": "units",
-          "index": 25,
+          "index": 24,
           "public": true,
           "wire_name": "units",
           "rust_type": "presence_rs :: Presence < i64 >",
@@ -121811,18 +122728,8 @@
           ]
         },
         {
-          "name": "product_price_id",
-          "index": 13,
-          "public": true,
-          "wire_name": "product_price_id",
-          "rust_type": "presence_rs :: Presence < uuid :: Uuid >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"presence_rs::Presence::is_absent\" , default)]"
-          ]
-        },
-        {
           "name": "seats",
-          "index": 14,
+          "index": 13,
           "public": true,
           "wire_name": "seats",
           "rust_type": "presence_rs :: Presence < i64 >",
@@ -121832,7 +122739,7 @@
         },
         {
           "name": "units",
-          "index": 15,
+          "index": 14,
           "public": true,
           "wire_name": "units",
           "rust_type": "presence_rs :: Presence < i64 >",
@@ -134192,7 +135099,7 @@
           "index": 13,
           "public": true,
           "wire_name": "prices",
-          "rust_type": "Vec < CustomerOrderProductPricesItemUnion >",
+          "rust_type": "Vec < ProductPrice >",
           "attributes": []
         },
         {
@@ -134237,53 +135144,6 @@
         }
       ],
       "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CustomerOrderProductPricesItemUnion",
-      "name": "CustomerOrderProductPricesItemUnion",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
       "signature": null,
       "operation": null
     },
@@ -136571,7 +137431,7 @@
           "index": 12,
           "public": true,
           "wire_name": "prices",
-          "rust_type": "Vec < CustomerProductPricesItemUnion >",
+          "rust_type": "Vec < ProductPrice >",
           "attributes": []
         },
         {
@@ -136616,53 +137476,6 @@
         }
       ],
       "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CustomerProductPricesItemUnion",
-      "name": "CustomerProductPricesItemUnion",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
       "signature": null,
       "operation": null
     },
@@ -138695,7 +139508,7 @@
           "index": 23,
           "public": true,
           "wire_name": "prices",
-          "rust_type": "Vec < CustomerSubscriptionPricesItemUnion >",
+          "rust_type": "Vec < ProductPrice >",
           "attributes": []
         },
         {
@@ -139008,53 +139821,6 @@
       "operation": null
     },
     {
-      "path": "types::CustomerSubscriptionPricesItemUnion",
-      "name": "CustomerSubscriptionPricesItemUnion",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
-      "signature": null,
-      "operation": null
-    },
-    {
       "path": "types::CustomerSubscriptionProduct",
       "name": "CustomerSubscriptionProduct",
       "kind": "struct",
@@ -139175,7 +139941,7 @@
           "index": 13,
           "public": true,
           "wire_name": "prices",
-          "rust_type": "Vec < CustomerSubscriptionProductPricesItemUnion >",
+          "rust_type": "Vec < ProductPrice >",
           "attributes": []
         },
         {
@@ -139220,53 +139986,6 @@
         }
       ],
       "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::CustomerSubscriptionProductPricesItemUnion",
-      "name": "CustomerSubscriptionProductPricesItemUnion",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
       "signature": null,
       "operation": null
     },
@@ -148901,499 +149620,6 @@
     },
     {
       "path": "types::LegacyOrganizationStatus::as_str",
-      "name": "as_str",
-      "kind": "method",
-      "attributes": [],
-      "generics": "",
-      "impl_generics": "",
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [],
-      "signature": {
-        "rust": "fn as_str (& self) -> & 'static str",
-        "asynchronous": false,
-        "receiver": "& self",
-        "arguments": [],
-        "return_type": "& 'static str",
-        "generics": ""
-      },
-      "operation": null
-    },
-    {
-      "path": "types::LegacyRecurringProductPrice",
-      "name": "LegacyRecurringProductPrice",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPriceFixed",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPriceFixed",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "LegacyRecurringProductPriceCustom",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPriceCustom",
-              "attributes": []
-            }
-          ]
-        }
-      ],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::LegacyRecurringProductPriceCustom",
-      "name": "LegacyRecurringProductPriceCustom",
-      "kind": "struct",
-      "attributes": [
-        "# [derive (Debug , Clone , Deserialize , Serialize)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [
-        {
-          "name": "amount_type",
-          "index": 0,
-          "public": true,
-          "wire_name": "amount_type",
-          "rust_type": "LegacyRecurringProductPriceCustomAmountType",
-          "attributes": []
-        },
-        {
-          "name": "created_at",
-          "index": 1,
-          "public": true,
-          "wire_name": "created_at",
-          "rust_type": "chrono :: DateTime < chrono :: Utc >",
-          "attributes": []
-        },
-        {
-          "name": "id",
-          "index": 2,
-          "public": true,
-          "wire_name": "id",
-          "rust_type": "uuid :: Uuid",
-          "attributes": []
-        },
-        {
-          "name": "is_archived",
-          "index": 3,
-          "public": true,
-          "wire_name": "is_archived",
-          "rust_type": "bool",
-          "attributes": []
-        },
-        {
-          "name": "legacy",
-          "index": 4,
-          "public": true,
-          "wire_name": "legacy",
-          "rust_type": "bool",
-          "attributes": []
-        },
-        {
-          "name": "maximum_amount",
-          "index": 5,
-          "public": true,
-          "wire_name": "maximum_amount",
-          "rust_type": "Option < i64 >",
-          "attributes": []
-        },
-        {
-          "name": "minimum_amount",
-          "index": 6,
-          "public": true,
-          "wire_name": "minimum_amount",
-          "rust_type": "i64",
-          "attributes": []
-        },
-        {
-          "name": "modified_at",
-          "index": 7,
-          "public": true,
-          "wire_name": "modified_at",
-          "rust_type": "Option < chrono :: DateTime < chrono :: Utc > >",
-          "attributes": []
-        },
-        {
-          "name": "preset_amount",
-          "index": 8,
-          "public": true,
-          "wire_name": "preset_amount",
-          "rust_type": "Option < i64 >",
-          "attributes": []
-        },
-        {
-          "name": "price_currency",
-          "index": 9,
-          "public": true,
-          "wire_name": "price_currency",
-          "rust_type": "String",
-          "attributes": []
-        },
-        {
-          "name": "product_id",
-          "index": 10,
-          "public": true,
-          "wire_name": "product_id",
-          "rust_type": "uuid :: Uuid",
-          "attributes": []
-        },
-        {
-          "name": "recurring_interval",
-          "index": 11,
-          "public": true,
-          "wire_name": "recurring_interval",
-          "rust_type": "RecurringInterval",
-          "attributes": []
-        },
-        {
-          "name": "source",
-          "index": 12,
-          "public": true,
-          "wire_name": "source",
-          "rust_type": "ProductPriceSource",
-          "attributes": []
-        },
-        {
-          "name": "tax_behavior",
-          "index": 13,
-          "public": true,
-          "wire_name": "tax_behavior",
-          "rust_type": "Option < TaxBehaviorOption >",
-          "attributes": []
-        },
-        {
-          "name": "r#type",
-          "index": 14,
-          "public": true,
-          "wire_name": "type",
-          "rust_type": "LegacyRecurringProductPriceCustomType",
-          "attributes": []
-        }
-      ],
-      "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::LegacyRecurringProductPriceCustomAmountType",
-      "name": "LegacyRecurringProductPriceCustomAmountType",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone , PartialEq , Eq , Deserialize , Serialize , Default)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "Custom",
-          "wire_name": "custom",
-          "attributes": [
-            "# [default]",
-            "# [serde (rename = \"custom\")]"
-          ],
-          "fields": []
-        }
-      ],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::LegacyRecurringProductPriceCustomAmountType::as_str",
-      "name": "as_str",
-      "kind": "method",
-      "attributes": [],
-      "generics": "",
-      "impl_generics": "",
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [],
-      "signature": {
-        "rust": "fn as_str (& self) -> & 'static str",
-        "asynchronous": false,
-        "receiver": "& self",
-        "arguments": [],
-        "return_type": "& 'static str",
-        "generics": ""
-      },
-      "operation": null
-    },
-    {
-      "path": "types::LegacyRecurringProductPriceCustomType",
-      "name": "LegacyRecurringProductPriceCustomType",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone , PartialEq , Eq , Deserialize , Serialize , Default)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "Recurring",
-          "wire_name": "recurring",
-          "attributes": [
-            "# [default]",
-            "# [serde (rename = \"recurring\")]"
-          ],
-          "fields": []
-        }
-      ],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::LegacyRecurringProductPriceCustomType::as_str",
-      "name": "as_str",
-      "kind": "method",
-      "attributes": [],
-      "generics": "",
-      "impl_generics": "",
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [],
-      "signature": {
-        "rust": "fn as_str (& self) -> & 'static str",
-        "asynchronous": false,
-        "receiver": "& self",
-        "arguments": [],
-        "return_type": "& 'static str",
-        "generics": ""
-      },
-      "operation": null
-    },
-    {
-      "path": "types::LegacyRecurringProductPriceFixed",
-      "name": "LegacyRecurringProductPriceFixed",
-      "kind": "struct",
-      "attributes": [
-        "# [derive (Debug , Clone , Deserialize , Serialize)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [
-        {
-          "name": "amount_type",
-          "index": 0,
-          "public": true,
-          "wire_name": "amount_type",
-          "rust_type": "LegacyRecurringProductPriceFixedAmountType",
-          "attributes": []
-        },
-        {
-          "name": "created_at",
-          "index": 1,
-          "public": true,
-          "wire_name": "created_at",
-          "rust_type": "chrono :: DateTime < chrono :: Utc >",
-          "attributes": []
-        },
-        {
-          "name": "id",
-          "index": 2,
-          "public": true,
-          "wire_name": "id",
-          "rust_type": "uuid :: Uuid",
-          "attributes": []
-        },
-        {
-          "name": "is_archived",
-          "index": 3,
-          "public": true,
-          "wire_name": "is_archived",
-          "rust_type": "bool",
-          "attributes": []
-        },
-        {
-          "name": "legacy",
-          "index": 4,
-          "public": true,
-          "wire_name": "legacy",
-          "rust_type": "bool",
-          "attributes": []
-        },
-        {
-          "name": "modified_at",
-          "index": 5,
-          "public": true,
-          "wire_name": "modified_at",
-          "rust_type": "Option < chrono :: DateTime < chrono :: Utc > >",
-          "attributes": []
-        },
-        {
-          "name": "price_amount",
-          "index": 6,
-          "public": true,
-          "wire_name": "price_amount",
-          "rust_type": "i64",
-          "attributes": []
-        },
-        {
-          "name": "price_currency",
-          "index": 7,
-          "public": true,
-          "wire_name": "price_currency",
-          "rust_type": "String",
-          "attributes": []
-        },
-        {
-          "name": "product_id",
-          "index": 8,
-          "public": true,
-          "wire_name": "product_id",
-          "rust_type": "uuid :: Uuid",
-          "attributes": []
-        },
-        {
-          "name": "recurring_interval",
-          "index": 9,
-          "public": true,
-          "wire_name": "recurring_interval",
-          "rust_type": "RecurringInterval",
-          "attributes": []
-        },
-        {
-          "name": "source",
-          "index": 10,
-          "public": true,
-          "wire_name": "source",
-          "rust_type": "ProductPriceSource",
-          "attributes": []
-        },
-        {
-          "name": "tax_behavior",
-          "index": 11,
-          "public": true,
-          "wire_name": "tax_behavior",
-          "rust_type": "Option < TaxBehaviorOption >",
-          "attributes": []
-        },
-        {
-          "name": "r#type",
-          "index": 12,
-          "public": true,
-          "wire_name": "type",
-          "rust_type": "LegacyRecurringProductPriceFixedType",
-          "attributes": []
-        }
-      ],
-      "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::LegacyRecurringProductPriceFixedAmountType",
-      "name": "LegacyRecurringProductPriceFixedAmountType",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone , PartialEq , Eq , Deserialize , Serialize , Default)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "Fixed",
-          "wire_name": "fixed",
-          "attributes": [
-            "# [default]",
-            "# [serde (rename = \"fixed\")]"
-          ],
-          "fields": []
-        }
-      ],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::LegacyRecurringProductPriceFixedAmountType::as_str",
-      "name": "as_str",
-      "kind": "method",
-      "attributes": [],
-      "generics": "",
-      "impl_generics": "",
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [],
-      "signature": {
-        "rust": "fn as_str (& self) -> & 'static str",
-        "asynchronous": false,
-        "receiver": "& self",
-        "arguments": [],
-        "return_type": "& 'static str",
-        "generics": ""
-      },
-      "operation": null
-    },
-    {
-      "path": "types::LegacyRecurringProductPriceFixedType",
-      "name": "LegacyRecurringProductPriceFixedType",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone , PartialEq , Eq , Deserialize , Serialize , Default)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "Recurring",
-          "wire_name": "recurring",
-          "attributes": [
-            "# [default]",
-            "# [serde (rename = \"recurring\")]"
-          ],
-          "fields": []
-        }
-      ],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::LegacyRecurringProductPriceFixedType::as_str",
       "name": "as_str",
       "kind": "method",
       "attributes": [],
@@ -167841,8 +168067,16 @@
       "rust_type": null,
       "fields": [
         {
-          "name": "created_at",
+          "name": "catalog_id",
           "index": 0,
+          "public": true,
+          "wire_name": "catalog_id",
+          "rust_type": "Option < uuid :: Uuid >",
+          "attributes": []
+        },
+        {
+          "name": "created_at",
+          "index": 1,
           "public": true,
           "wire_name": "created_at",
           "rust_type": "chrono :: DateTime < chrono :: Utc >",
@@ -167850,7 +168084,7 @@
         },
         {
           "name": "description",
-          "index": 1,
+          "index": 2,
           "public": true,
           "wire_name": "description",
           "rust_type": "Option < String >",
@@ -167858,7 +168092,7 @@
         },
         {
           "name": "id",
-          "index": 2,
+          "index": 3,
           "public": true,
           "wire_name": "id",
           "rust_type": "uuid :: Uuid",
@@ -167866,7 +168100,7 @@
         },
         {
           "name": "is_archived",
-          "index": 3,
+          "index": 4,
           "public": true,
           "wire_name": "is_archived",
           "rust_type": "bool",
@@ -167874,7 +168108,7 @@
         },
         {
           "name": "is_recurring",
-          "index": 4,
+          "index": 5,
           "public": true,
           "wire_name": "is_recurring",
           "rust_type": "bool",
@@ -167882,7 +168116,7 @@
         },
         {
           "name": "metadata",
-          "index": 5,
+          "index": 6,
           "public": true,
           "wire_name": "metadata",
           "rust_type": "MetadataOutputType",
@@ -167890,7 +168124,7 @@
         },
         {
           "name": "meter_interval",
-          "index": 6,
+          "index": 7,
           "public": true,
           "wire_name": "meter_interval",
           "rust_type": "Option < RecurringInterval >",
@@ -167898,7 +168132,7 @@
         },
         {
           "name": "meter_interval_count",
-          "index": 7,
+          "index": 8,
           "public": true,
           "wire_name": "meter_interval_count",
           "rust_type": "Option < i64 >",
@@ -167906,7 +168140,7 @@
         },
         {
           "name": "modified_at",
-          "index": 8,
+          "index": 9,
           "public": true,
           "wire_name": "modified_at",
           "rust_type": "Option < chrono :: DateTime < chrono :: Utc > >",
@@ -167914,7 +168148,7 @@
         },
         {
           "name": "name",
-          "index": 9,
+          "index": 10,
           "public": true,
           "wire_name": "name",
           "rust_type": "String",
@@ -167922,7 +168156,7 @@
         },
         {
           "name": "organization_id",
-          "index": 10,
+          "index": 11,
           "public": true,
           "wire_name": "organization_id",
           "rust_type": "uuid :: Uuid",
@@ -167930,7 +168164,7 @@
         },
         {
           "name": "recurring_interval",
-          "index": 11,
+          "index": 12,
           "public": true,
           "wire_name": "recurring_interval",
           "rust_type": "Option < RecurringInterval >",
@@ -167938,7 +168172,7 @@
         },
         {
           "name": "recurring_interval_count",
-          "index": 12,
+          "index": 13,
           "public": true,
           "wire_name": "recurring_interval_count",
           "rust_type": "Option < i64 >",
@@ -167946,7 +168180,7 @@
         },
         {
           "name": "trial_interval",
-          "index": 13,
+          "index": 14,
           "public": true,
           "wire_name": "trial_interval",
           "rust_type": "Option < TrialInterval >",
@@ -167954,7 +168188,7 @@
         },
         {
           "name": "trial_interval_count",
-          "index": 14,
+          "index": 15,
           "public": true,
           "wire_name": "trial_interval_count",
           "rust_type": "Option < i64 >",
@@ -167962,7 +168196,7 @@
         },
         {
           "name": "visibility",
-          "index": 15,
+          "index": 16,
           "public": true,
           "wire_name": "visibility",
           "rust_type": "ProductVisibility",
@@ -175955,18 +176189,8 @@
       "rust_type": null,
       "fields": [
         {
-          "name": "agentic_payments_enabled",
-          "index": 0,
-          "public": true,
-          "wire_name": "agentic_payments_enabled",
-          "rust_type": "Option < bool >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"Option::is_none\")]"
-          ]
-        },
-        {
           "name": "checkout_localization_enabled",
-          "index": 1,
+          "index": 0,
           "public": true,
           "wire_name": "checkout_localization_enabled",
           "rust_type": "Option < bool >",
@@ -175975,18 +176199,8 @@
           ]
         },
         {
-          "name": "compass_enabled",
-          "index": 2,
-          "public": true,
-          "wire_name": "compass_enabled",
-          "rust_type": "Option < bool >",
-          "attributes": [
-            "# [serde (skip_serializing_if = \"Option::is_none\")]"
-          ]
-        },
-        {
           "name": "config_as_code_enabled",
-          "index": 3,
+          "index": 1,
           "public": true,
           "wire_name": "config_as_code_enabled",
           "rust_type": "Option < bool >",
@@ -175996,7 +176210,7 @@
         },
         {
           "name": "dispute_auto_accept_enabled",
-          "index": 4,
+          "index": 2,
           "public": true,
           "wire_name": "dispute_auto_accept_enabled",
           "rust_type": "Option < bool >",
@@ -176006,7 +176220,7 @@
         },
         {
           "name": "disputes_enabled",
-          "index": 5,
+          "index": 3,
           "public": true,
           "wire_name": "disputes_enabled",
           "rust_type": "Option < bool >",
@@ -176016,7 +176230,7 @@
         },
         {
           "name": "issue_funding_enabled",
-          "index": 6,
+          "index": 4,
           "public": true,
           "wire_name": "issue_funding_enabled",
           "rust_type": "Option < bool >",
@@ -176026,7 +176240,7 @@
         },
         {
           "name": "merchant_migration_enabled",
-          "index": 7,
+          "index": 5,
           "public": true,
           "wire_name": "merchant_migration_enabled",
           "rust_type": "Option < bool >",
@@ -176036,7 +176250,7 @@
         },
         {
           "name": "off_session_charges_enabled",
-          "index": 8,
+          "index": 6,
           "public": true,
           "wire_name": "off_session_charges_enabled",
           "rust_type": "Option < bool >",
@@ -176046,7 +176260,7 @@
         },
         {
           "name": "overview_metrics",
-          "index": 9,
+          "index": 7,
           "public": true,
           "wire_name": "overview_metrics",
           "rust_type": "presence_rs :: Presence < Vec < String > >",
@@ -176056,7 +176270,7 @@
         },
         {
           "name": "preview_access_enabled",
-          "index": 10,
+          "index": 8,
           "public": true,
           "wire_name": "preview_access_enabled",
           "rust_type": "Option < bool >",
@@ -176066,7 +176280,7 @@
         },
         {
           "name": "reset_proration_behavior_enabled",
-          "index": 11,
+          "index": 9,
           "public": true,
           "wire_name": "reset_proration_behavior_enabled",
           "rust_type": "Option < bool >",
@@ -176076,7 +176290,7 @@
         },
         {
           "name": "slack_benefit_enabled",
-          "index": 12,
+          "index": 10,
           "public": true,
           "wire_name": "slack_benefit_enabled",
           "rust_type": "Option < bool >",
@@ -176086,7 +176300,7 @@
         },
         {
           "name": "sso_enabled",
-          "index": 13,
+          "index": 11,
           "public": true,
           "wire_name": "sso_enabled",
           "rust_type": "Option < bool >",
@@ -176096,7 +176310,7 @@
         },
         {
           "name": "wallets_enabled",
-          "index": 14,
+          "index": 12,
           "public": true,
           "wire_name": "wallets_enabled",
           "rust_type": "Option < bool >",
@@ -181894,8 +182108,16 @@
           "attributes": []
         },
         {
-          "name": "created_at",
+          "name": "catalog_id",
           "index": 2,
+          "public": true,
+          "wire_name": "catalog_id",
+          "rust_type": "Option < uuid :: Uuid >",
+          "attributes": []
+        },
+        {
+          "name": "created_at",
+          "index": 3,
           "public": true,
           "wire_name": "created_at",
           "rust_type": "chrono :: DateTime < chrono :: Utc >",
@@ -181903,7 +182125,7 @@
         },
         {
           "name": "description",
-          "index": 3,
+          "index": 4,
           "public": true,
           "wire_name": "description",
           "rust_type": "Option < String >",
@@ -181911,7 +182133,7 @@
         },
         {
           "name": "external_id",
-          "index": 4,
+          "index": 5,
           "public": true,
           "wire_name": "external_id",
           "rust_type": "Option < String >",
@@ -181919,7 +182141,7 @@
         },
         {
           "name": "id",
-          "index": 5,
+          "index": 6,
           "public": true,
           "wire_name": "id",
           "rust_type": "uuid :: Uuid",
@@ -181927,7 +182149,7 @@
         },
         {
           "name": "is_archived",
-          "index": 6,
+          "index": 7,
           "public": true,
           "wire_name": "is_archived",
           "rust_type": "bool",
@@ -181935,7 +182157,7 @@
         },
         {
           "name": "is_deletable",
-          "index": 7,
+          "index": 8,
           "public": true,
           "wire_name": "is_deletable",
           "rust_type": "bool",
@@ -181943,7 +182165,7 @@
         },
         {
           "name": "is_recurring",
-          "index": 8,
+          "index": 9,
           "public": true,
           "wire_name": "is_recurring",
           "rust_type": "bool",
@@ -181951,7 +182173,7 @@
         },
         {
           "name": "medias",
-          "index": 9,
+          "index": 10,
           "public": true,
           "wire_name": "medias",
           "rust_type": "Vec < ProductMediaFileRead >",
@@ -181959,7 +182181,7 @@
         },
         {
           "name": "metadata",
-          "index": 10,
+          "index": 11,
           "public": true,
           "wire_name": "metadata",
           "rust_type": "MetadataOutputType",
@@ -181967,7 +182189,7 @@
         },
         {
           "name": "meter_interval",
-          "index": 11,
+          "index": 12,
           "public": true,
           "wire_name": "meter_interval",
           "rust_type": "Option < RecurringInterval >",
@@ -181975,7 +182197,7 @@
         },
         {
           "name": "meter_interval_count",
-          "index": 12,
+          "index": 13,
           "public": true,
           "wire_name": "meter_interval_count",
           "rust_type": "Option < i64 >",
@@ -181983,7 +182205,7 @@
         },
         {
           "name": "modified_at",
-          "index": 13,
+          "index": 14,
           "public": true,
           "wire_name": "modified_at",
           "rust_type": "Option < chrono :: DateTime < chrono :: Utc > >",
@@ -181991,7 +182213,7 @@
         },
         {
           "name": "name",
-          "index": 14,
+          "index": 15,
           "public": true,
           "wire_name": "name",
           "rust_type": "String",
@@ -181999,7 +182221,7 @@
         },
         {
           "name": "organization_id",
-          "index": 15,
+          "index": 16,
           "public": true,
           "wire_name": "organization_id",
           "rust_type": "uuid :: Uuid",
@@ -182007,15 +182229,15 @@
         },
         {
           "name": "prices",
-          "index": 16,
+          "index": 17,
           "public": true,
           "wire_name": "prices",
-          "rust_type": "Vec < ProductPricesItemUnion >",
+          "rust_type": "Vec < ProductPrice >",
           "attributes": []
         },
         {
           "name": "recurring_interval",
-          "index": 17,
+          "index": 18,
           "public": true,
           "wire_name": "recurring_interval",
           "rust_type": "Option < RecurringInterval >",
@@ -182023,7 +182245,7 @@
         },
         {
           "name": "recurring_interval_count",
-          "index": 18,
+          "index": 19,
           "public": true,
           "wire_name": "recurring_interval_count",
           "rust_type": "Option < i64 >",
@@ -182031,7 +182253,7 @@
         },
         {
           "name": "trial_interval",
-          "index": 19,
+          "index": 20,
           "public": true,
           "wire_name": "trial_interval",
           "rust_type": "Option < TrialInterval >",
@@ -182039,7 +182261,7 @@
         },
         {
           "name": "trial_interval_count",
-          "index": 20,
+          "index": 21,
           "public": true,
           "wire_name": "trial_interval_count",
           "rust_type": "Option < i64 >",
@@ -182047,7 +182269,7 @@
         },
         {
           "name": "visibility",
-          "index": 21,
+          "index": 22,
           "public": true,
           "wire_name": "visibility",
           "rust_type": "ProductVisibility",
@@ -184787,61 +185009,6 @@
       "operation": null
     },
     {
-      "path": "types::ProductPriceType",
-      "name": "ProductPriceType",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone , PartialEq , Eq , Deserialize , Serialize , Default)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "OneTime",
-          "wire_name": "one_time",
-          "attributes": [
-            "# [default]",
-            "# [serde (rename = \"one_time\")]"
-          ],
-          "fields": []
-        },
-        {
-          "name": "Recurring",
-          "wire_name": "recurring",
-          "attributes": [
-            "# [serde (rename = \"recurring\")]"
-          ],
-          "fields": []
-        }
-      ],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::ProductPriceType::as_str",
-      "name": "as_str",
-      "kind": "method",
-      "attributes": [],
-      "generics": "",
-      "impl_generics": "",
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [],
-      "signature": {
-        "rust": "fn as_str (& self) -> & 'static str",
-        "asynchronous": false,
-        "receiver": "& self",
-        "arguments": [],
-        "return_type": "& 'static str",
-        "generics": ""
-      },
-      "operation": null
-    },
-    {
       "path": "types::ProductPriceUnitBased",
       "name": "ProductPriceUnitBased",
       "kind": "struct",
@@ -185234,53 +185401,6 @@
         }
       ],
       "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::ProductPricesItemUnion",
-      "name": "ProductPricesItemUnion",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
       "signature": null,
       "operation": null
     },
@@ -189363,7 +189483,7 @@
           "index": 27,
           "public": true,
           "wire_name": "prices",
-          "rust_type": "Vec < SubscriptionPricesItemUnion >",
+          "rust_type": "Vec < ProductPrice >",
           "attributes": []
         },
         {
@@ -192575,53 +192695,6 @@
         }
       ],
       "variants": [],
-      "signature": null,
-      "operation": null
-    },
-    {
-      "path": "types::SubscriptionPricesItemUnion",
-      "name": "SubscriptionPricesItemUnion",
-      "kind": "enum",
-      "attributes": [
-        "# [derive (Debug , Clone)]"
-      ],
-      "generics": "",
-      "impl_generics": null,
-      "impl_trait": null,
-      "rust_type": null,
-      "fields": [],
-      "variants": [
-        {
-          "name": "LegacyRecurringProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "LegacyRecurringProductPrice",
-              "attributes": []
-            }
-          ]
-        },
-        {
-          "name": "ProductPrice",
-          "wire_name": null,
-          "attributes": [],
-          "fields": [
-            {
-              "name": null,
-              "index": 0,
-              "public": true,
-              "wire_name": null,
-              "rust_type": "ProductPrice",
-              "attributes": []
-            }
-          ]
-        }
-      ],
       "signature": null,
       "operation": null
     },
