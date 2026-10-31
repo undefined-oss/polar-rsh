@@ -695,7 +695,7 @@ impl<'a> CheckoutLinks<'a> {
     /// Create Checkout Link
     pub fn create(
         &self,
-        request: CheckoutLinkCreate,
+        request: CheckoutLinkCreateProducts,
     ) -> Request<CheckoutLink, CheckoutLinksCreateApiError> {
         Request::new(self.polar, move |client| async move {
             client.checkout_links_create(request).await
