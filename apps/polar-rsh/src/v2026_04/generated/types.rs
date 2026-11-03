@@ -13444,6 +13444,10 @@ pub enum RefundReason {
     SatisfactionGuarantee,
     #[serde(rename = "dispute_prevention")]
     DisputePrevention,
+    #[serde(rename = "tax_refund")]
+    TaxRefund,
+    #[serde(rename = "vat_reverse_charge_correction")]
+    VatReverseChargeCorrection,
     #[serde(rename = "other")]
     Other,
 }
@@ -13456,6 +13460,8 @@ impl RefundReason {
             Self::ServiceDisruption => "service_disruption",
             Self::SatisfactionGuarantee => "satisfaction_guarantee",
             Self::DisputePrevention => "dispute_prevention",
+            Self::TaxRefund => "tax_refund",
+            Self::VatReverseChargeCorrection => "vat_reverse_charge_correction",
             Self::Other => "other",
         }
     }
@@ -18407,13 +18413,16 @@ pub struct EventMetadataOutput {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct LLMMetadata {
     /// The number of LLM cached tokens that were used for the event.
+    /// Constraint: minimum=-9007199254740991, maximum=9007199254740991
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cached_input_tokens: Option<i64>,
     /// The number of LLM input tokens used for the event.
+    /// Constraint: minimum=-9007199254740991, maximum=9007199254740991
     pub input_tokens: i64,
     /// The model used for the event.
     pub model: String,
     /// The number of LLM output tokens used for the event.
+    /// Constraint: minimum=-9007199254740991, maximum=9007199254740991
     pub output_tokens: i64,
     /// The LLM prompt used for the event.
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
@@ -18422,6 +18431,7 @@ pub struct LLMMetadata {
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
     pub response: presence_rs::Presence<String>,
     /// The total number of LLM tokens used for the event.
+    /// Constraint: minimum=-9007199254740991, maximum=9007199254740991
     pub total_tokens: i64,
     /// The vendor of the event.
     pub vendor: String,
@@ -18429,9 +18439,6 @@ pub struct LLMMetadata {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct CostMetadataOutput {
     /// The amount in cents.
-    /// Constraint:
-    /// pattern=`^(?!^[-+.]*$)[+-]?0*(?:\d{0,5}|(?=[\d.]{1,18}0*$)\d{0,5}\.\d{0,
-    /// 12}0*$)`
     pub amount: String,
     /// The currency. Currently, only `usd` is supported.
     /// Constraint: pattern=`usd`
@@ -45174,7 +45181,6 @@ pub struct DisputeCustomer {
     pub tax_id: Option<(String, TaxIDFormat)>,
     pub r#type: CustomerType,
 }
-/// Schema to update a discount.
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
 pub struct DiscountUpdate {
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
@@ -45568,7 +45574,6 @@ pub struct DiscountPercentageCreateMetadata {
     #[serde(flatten)]
     pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
 }
-/// Schema to create a fixed amount discount.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct DiscountFixedCreate {
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
@@ -63604,7 +63609,6 @@ pub struct ProductPriceMeteredUnit {
     /// organization's default tax behavior.
     pub tax_behavior: Option<TaxBehaviorOption>,
     /// The price per unit in cents.
-    /// Constraint: pattern=`^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$`
     pub unit_amount: String,
 }
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]
@@ -63680,7 +63684,6 @@ pub struct Tiers {
 pub struct Tier {
     #[serde(skip_serializing_if = "presence_rs::Presence::is_absent", default)]
     pub bound: presence_rs::Presence<i64>,
-    /// Constraint: pattern=`^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$`
     pub unit_amount: String,
 }
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize, Default)]

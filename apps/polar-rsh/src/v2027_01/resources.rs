@@ -414,6 +414,7 @@ pub struct RefundsListParams {
 pub struct SubscriptionsExportParams {
     pub organization_id: Option<Vec<uuid::Uuid>>,
     pub product_id: Option<Vec<uuid::Uuid>>,
+    pub external_product_id: Option<Vec<String>>,
     pub status: Option<Vec<SubscriptionStatus>>,
     pub cancel_at_period_end: Option<bool>,
     pub started_after: Option<chrono::DateTime<chrono::Utc>>,
@@ -425,6 +426,7 @@ pub struct SubscriptionsExportParams {
 pub struct SubscriptionsListParams {
     pub organization_id: Option<Vec<uuid::Uuid>>,
     pub product_id: Option<Vec<uuid::Uuid>>,
+    pub external_product_id: Option<Vec<String>>,
     pub customer_id: Option<Vec<uuid::Uuid>>,
     pub external_customer_id: Option<Vec<String>>,
     pub discount_id: Option<Vec<uuid::Uuid>>,
@@ -695,7 +697,7 @@ impl<'a> CheckoutLinks<'a> {
     /// Create Checkout Link
     pub fn create(
         &self,
-        request: CheckoutLinkCreate,
+        request: CheckoutLinkCreateProducts,
     ) -> Request<CheckoutLink, CheckoutLinksCreateApiError> {
         Request::new(self.polar, move |client| async move {
             client.checkout_links_create(request).await
@@ -2972,6 +2974,7 @@ impl<'a> Subscriptions<'a> {
                 .subscriptions_export(
                     params.organization_id.map(|v| v.into_iter().map(|v| v.to_string()).collect()),
                     params.product_id.map(|v| v.into_iter().map(|v| v.to_string()).collect()),
+                    params.external_product_id,
                     params.status,
                     params.cancel_at_period_end,
                     params.started_after.map(|v| v.to_rfc3339()),
@@ -3000,6 +3003,7 @@ impl<'a> Subscriptions<'a> {
                 .subscriptions_list(
                     params.organization_id.map(|v| v.into_iter().map(|v| v.to_string()).collect()),
                     params.product_id.map(|v| v.into_iter().map(|v| v.to_string()).collect()),
+                    params.external_product_id,
                     params.customer_id.map(|v| v.into_iter().map(|v| v.to_string()).collect()),
                     params.external_customer_id,
                     params.discount_id.map(|v| v.into_iter().map(|v| v.to_string()).collect()),

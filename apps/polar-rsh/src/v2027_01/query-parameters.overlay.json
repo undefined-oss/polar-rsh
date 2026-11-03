@@ -111,12 +111,10 @@
         "schema": {
           "type": "array",
           "items": {
-            "type": "string",
-            "format": "uuid4",
-            "description": "The customer ID."
+            "type": "string"
           },
-          "title": "CustomerID Filter",
-          "description": "Filter by customer ID."
+          "title": "ExternalProductID Filter",
+          "description": "Filter by product external ID."
         }
       }
     },
@@ -138,10 +136,11 @@
           "type": "array",
           "items": {
             "type": "string",
-            "description": "The customer external ID."
+            "format": "uuid4",
+            "description": "The customer ID."
           },
-          "title": "ExternalCustomerID Filter",
-          "description": "Filter by customer external ID."
+          "title": "CustomerID Filter",
+          "description": "Filter by customer ID."
         }
       }
     },
@@ -163,11 +162,10 @@
           "type": "array",
           "items": {
             "type": "string",
-            "format": "uuid4",
-            "description": "The discount ID."
+            "description": "The customer external ID."
           },
-          "title": "DiscountID Filter",
-          "description": "Filter by discount ID."
+          "title": "ExternalCustomerID Filter",
+          "description": "Filter by customer external ID."
         }
       }
     },
@@ -186,11 +184,22 @@
       "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][5]",
       "update": {
         "schema": {
-          "type": "boolean",
-          "description": "Filter by active or inactive subscription.",
-          "deprecated": true,
-          "title": "Active"
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid4",
+            "description": "The discount ID."
+          },
+          "title": "DiscountID Filter",
+          "description": "Filter by discount ID."
         }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][5]",
+      "update": {
+        "style": "form",
+        "explode": true
       }
     },
     {
@@ -199,6 +208,21 @@
     },
     {
       "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "boolean",
+          "description": "Filter by active or inactive subscription.",
+          "deprecated": true,
+          "title": "Active"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][7]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][7]",
       "update": {
         "schema": {
           "type": "array",
@@ -211,18 +235,18 @@
       }
     },
     {
-      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][6]",
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][7]",
       "update": {
         "style": "form",
         "explode": true
       }
     },
     {
-      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][7]['schema']",
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][8]['schema']",
       "remove": true
     },
     {
-      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][7]",
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][8]",
       "update": {
         "schema": {
           "type": "boolean",
@@ -232,11 +256,11 @@
       }
     },
     {
-      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][8]['schema']",
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][9]['schema']",
       "remove": true
     },
     {
-      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][8]",
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][9]",
       "update": {
         "schema": {
           "type": "array",
@@ -249,25 +273,10 @@
       }
     },
     {
-      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][8]",
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][9]",
       "update": {
         "style": "form",
         "explode": true
-      }
-    },
-    {
-      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][9]['schema']",
-      "remove": true
-    },
-    {
-      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][9]",
-      "update": {
-        "schema": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Filter by cancellation date (after or equal to).",
-          "title": "Canceled At After"
-        }
       }
     },
     {
@@ -280,8 +289,8 @@
         "schema": {
           "type": "string",
           "format": "date-time",
-          "description": "Filter by cancellation date (before or equal to).",
-          "title": "Canceled At Before"
+          "description": "Filter by cancellation date (after or equal to).",
+          "title": "Canceled At After"
         }
       }
     },
@@ -295,8 +304,8 @@
         "schema": {
           "type": "string",
           "format": "date-time",
-          "description": "Only include subscriptions started after this date.",
-          "title": "Started After"
+          "description": "Filter by cancellation date (before or equal to).",
+          "title": "Canceled At Before"
         }
       }
     },
@@ -310,17 +319,32 @@
         "schema": {
           "type": "string",
           "format": "date-time",
+          "description": "Only include subscriptions started after this date.",
+          "title": "Started After"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][13]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][13]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
           "description": "Only include subscriptions started before this date.",
           "title": "Started Before"
         }
       }
     },
     {
-      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][15]['schema']",
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][16]['schema']",
       "remove": true
     },
     {
-      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][15]",
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][16]",
       "update": {
         "schema": {
           "type": "array",
@@ -336,7 +360,7 @@
       }
     },
     {
-      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][15]",
+      "target": "$['paths'][\"/v1/subscriptions/\"][\"get\"]['parameters'][16]",
       "update": {
         "style": "form",
         "explode": true
@@ -407,10 +431,10 @@
         "schema": {
           "type": "array",
           "items": {
-            "$ref": "#/components/schemas/SubscriptionStatus"
+            "type": "string"
           },
-          "title": "Status Filter",
-          "description": "Filter by subscription status."
+          "title": "ExternalProductID Filter",
+          "description": "Filter by product external ID."
         }
       }
     },
@@ -429,10 +453,20 @@
       "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][3]",
       "update": {
         "schema": {
-          "type": "boolean",
-          "description": "Filter by subscriptions that are set to cancel at period end.",
-          "title": "Cancel At Period End"
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/SubscriptionStatus"
+          },
+          "title": "Status Filter",
+          "description": "Filter by subscription status."
         }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][3]",
+      "update": {
+        "style": "form",
+        "explode": true
       }
     },
     {
@@ -443,10 +477,9 @@
       "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][4]",
       "update": {
         "schema": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Only include subscriptions started after this date. Must include a UTC offset.",
-          "title": "Started After"
+          "type": "boolean",
+          "description": "Filter by subscriptions that are set to cancel at period end.",
+          "title": "Cancel At Period End"
         }
       }
     },
@@ -460,17 +493,32 @@
         "schema": {
           "type": "string",
           "format": "date-time",
+          "description": "Only include subscriptions started after this date. Must include a UTC offset.",
+          "title": "Started After"
+        }
+      }
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][6]['schema']",
+      "remove": true
+    },
+    {
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][6]",
+      "update": {
+        "schema": {
+          "type": "string",
+          "format": "date-time",
           "description": "Only include subscriptions started before this date. Must include a UTC offset.",
           "title": "Started Before"
         }
       }
     },
     {
-      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][7]['schema']",
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][8]['schema']",
       "remove": true
     },
     {
-      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][7]",
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][8]",
       "update": {
         "schema": {
           "type": "array",
@@ -483,7 +531,7 @@
       }
     },
     {
-      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][7]",
+      "target": "$['paths'][\"/v1/subscriptions/export\"][\"get\"]['parameters'][8]",
       "update": {
         "style": "form",
         "explode": true

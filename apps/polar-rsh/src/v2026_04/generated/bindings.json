@@ -192420,6 +192420,22 @@
           "fields": []
         },
         {
+          "name": "TaxRefund",
+          "wire_name": "tax_refund",
+          "attributes": [
+            "# [serde (rename = \"tax_refund\")]"
+          ],
+          "fields": []
+        },
+        {
+          "name": "VatReverseChargeCorrection",
+          "wire_name": "vat_reverse_charge_correction",
+          "attributes": [
+            "# [serde (rename = \"vat_reverse_charge_correction\")]"
+          ],
+          "fields": []
+        },
+        {
           "name": "Other",
           "wire_name": "other",
           "attributes": [
