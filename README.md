@@ -26,7 +26,7 @@ features:
 
 ```toml
 [dependencies]
-polar-rsh = { version = "0.2", features = ["2026-10"] }
+polar-rsh = { version = "0.3", features = ["2026-10"] }
 ```
 
 The feature `2026-10` exposes `polar_rsh::v2026_10`. Multiple versions can coexist,

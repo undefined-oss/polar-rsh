@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0](https://github.com/undefined-oss/polar-rsh/compare/polar-rsh-v0.2.0...polar-rsh-v0.3.0) - 2026-11-03
+
+### Added
+
+- feat!(sdk): New Polar SDKs generator. ([#9](https://github.com/undefined-oss/polar-rsh/pull/9))
+
 ## [0.2.0](https://github.com/undefined-oss/polar-rsh/compare/polar-rsh-v0.1.1...polar-rsh-v0.2.0) - 2026-10-22
 
 ### Added
