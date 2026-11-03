@@ -1,0 +1,118 @@
+//! Module declarations for the model files emitted by the current generation.
+
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    path::{Component, Path, PathBuf},
+};
+
+use quote::quote;
+
+use super::resource::{Resource, resource_tokens};
+
+pub fn generate_modules(
+    staging_dir: &Path,
+    root: &str,
+    files: &BTreeSet<String>,
+    mut resources: BTreeMap<String, Resource>,
+) -> Result<(), rrgen::Error> {
+    let mut modules: BTreeMap<PathBuf, BTreeSet<String>> = BTreeMap::new();
+    let mut declarations = BTreeMap::new();
+    syn::parse_str::<syn::Ident>(root)
+        .map_err(|cause| rrgen::Error::Message(format!("invalid module root: {cause}")))?;
+    modules.insert(PathBuf::from(root), BTreeSet::new());
+    for file in files {
+        let path = Path::new(file);
+        if !path.starts_with(root)
+            || path.extension().and_then(|value| value.to_str()) != Some("rs")
+            || path.file_name().and_then(|value| value.to_str()) == Some("mod.rs")
+            || !path.components().all(|part| matches!(part, Component::Normal(_)))
+        {
+            return Err(rrgen::Error::Message(format!("invalid model module file: {file}")));
+        }
+        let mut child = path.to_path_buf();
+        let mut name = path.file_stem().unwrap().to_str().unwrap().to_owned();
+        while let Some(parent) = child.parent() {
+            if parent.as_os_str().is_empty() {
+                break;
+            }
+            let key = (parent.to_path_buf(), name.clone());
+            if declarations.insert(key, child.clone()).is_some_and(|previous| previous != child) {
+                return Err(rrgen::Error::Message(format!("conflicting module paths for {name}")));
+            }
+            modules.entry(parent.to_path_buf()).or_default().insert(name);
+            if parent == Path::new(root) {
+                break;
+            }
+            name = parent.file_name().unwrap().to_str().unwrap().to_owned();
+            child = parent.to_path_buf();
+        }
+    }
+    let mut tera = tera::Tera::default();
+    tera.autoescape_on(vec![]);
+    let generator = rrgen::RRgen::with_working_dir(staging_dir).add_template_engine(tera);
+    if let Some(module) = resources.keys().find(|module| {
+        !modules.keys().any(|directory| directory.with_extension("rs") == Path::new(module))
+    }) {
+        return Err(rrgen::Error::Message(format!("resource has no domain modules: {module}")));
+    }
+    let resource_names: BTreeMap<_, _> = resources
+        .iter()
+        .map(|(path, resource)| (PathBuf::from(path), resource.name.clone()))
+        .collect();
+    for (directory, names) in modules {
+        let module_path = directory.with_extension("rs");
+        let resource =
+            resources.remove(module_path.to_str().unwrap()).map(resource_tokens).transpose()?;
+        let names = names
+            .iter()
+            .map(|name| syn::parse_str::<syn::Ident>(name))
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|cause| rrgen::Error::Message(format!("invalid module name: {cause}")))?;
+        let exports: Vec<_> = names
+            .iter()
+            .filter(|name| directory != Path::new(root) && *name != "serde_helpers")
+            .map(|name| {
+                let child = directory.join(name.to_string()).with_extension("rs");
+                if let Some(resource) = resource_names.get(&child) {
+                    let resource = syn::parse_str::<syn::Ident>(resource)?;
+                    // Child resources own their operation names; exporting
+                    // their modules with a glob makes
+                    // get/list/update ambiguous here.
+                    Ok(quote!(pub use self::#name::#resource;))
+                } else {
+                    Ok(quote!(pub use self::#name::*;))
+                }
+            })
+            .collect::<Result<_, syn::Error>>()
+            .map_err(|cause| rrgen::Error::Message(format!("invalid resource export: {cause}")))?;
+        let file = syn::parse2(quote! {
+            #(pub mod #names;)*
+            #(#exports)*
+            #resource
+        })
+        .map_err(|cause| rrgen::Error::Message(format!("invalid module declarations: {cause}")))?;
+        generator.generate(
+            include_str!("../../templates/modules.rs.tera"),
+            &serde_json::json!({
+                "module_path": serde_json::to_string(&module_path)?,
+                "declarations": super::format_rust(file),
+            }),
+        )?;
+        let old_module = staging_dir.join(&directory).join("mod.rs");
+        if old_module.is_file() {
+            std::fs::remove_file(old_module)?;
+        }
+        if resource.is_some() {
+            let old_resource = staging_dir.join(&directory).join("resource.rs");
+            if old_resource.is_file() {
+                std::fs::remove_file(old_resource)?;
+            }
+        }
+    }
+    Ok(())
+}
+
+pub fn generate_library(staging_dir: &Path) -> Result<rrgen::GenResult, rrgen::Error> {
+    rrgen::RRgen::with_working_dir(staging_dir)
+        .generate(include_str!("../../templates/lib.rs.tera"), &serde_json::json!({}))
+}

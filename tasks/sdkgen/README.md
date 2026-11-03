@@ -1,7 +1,7 @@
 # SDK generator
 
 `sdkgen` discovers Polar's versioned OpenAPI specifications, generates Rust SDK
-modules inside `polar-rsh`, and validates them against the pinned Polar reference. It is an
+modules inside `polar-rsh`, from the pinned Polar reference and runs Rust validation. It is an
 unpublished workspace task.
 
 ## Setup
@@ -11,19 +11,16 @@ Run these commands from the repository root:
 ```sh
 rustup show
 git submodule update --init --depth 1 -- vendor/polar
-cargo install --locked openapi-to-rust --version 0.22.0
 cargo install --locked cargo-nextest
 cargo sdkgen
 ```
 
 Use the Rust toolchain in [`rust-toolchain.toml`](../../rust-toolchain.toml),
-including its `rustfmt` and Clippy components. Generation requires exactly
-`openapi-to-rust 0.22.0`. REST contract validation also requires Node.js 24 or
-newer and permission to open local HTTP sockets.
+including its `rustfmt` and Clippy components. The generator is built into this
+Cargo task; Node.js and local HTTP servers are not required.
 
-The `vendor/polar` checkout must be clean and match the submodule commit in the
-parent Git index. After switching branches, run the submodule update command
-again to restore that branch's reference.
+The `vendor/polar` checkout must be clean. After switching branches, run the
+submodule update command again to restore that branch's pinned reference.
 
 ## Commands
 
@@ -37,7 +34,6 @@ alias directly.
 | `cargo sdkgen --api-version 2026-10`        | Generate and validate a selected API version                                                            |
 | `cargo sdkgen --check`                      | Check source tracking, freshly rendered output, and recorded validation without modifying the workspace |
 | `cargo nextest run --locked -p sdkgen`      | Run generator unit tests                                                                                |
-| `cargo sdk-contracts --api-version 2026-10` | Run REST contract comparisons for a selected version                                                    |
 
 Discovery always considers every specification, including when
 `--api-version` limits generation and validation. `--check` requires current
@@ -45,8 +41,8 @@ validation records for all tracked versions; run `cargo sdkgen` when those
 records are stale.
 
 The root [`justfile`](../../justfile) provides corresponding recipes:
-`just submodules`, `just install-generator`, `just sdk-discover`,
-`just sdk-generate`, `just sdkgen-check`, and `just contracts --api-version 2026-10`.
+`just submodules`, `just sdk-discover`,
+`just sdk-generate`, `just sdkgen-check`, and `just verify`.
 
 ## Inputs and generated files
 
@@ -57,34 +53,42 @@ inside `polar-rsh`.
 | Path                                                                 | Role                                                                             |
 | -------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | `vendor/polar/docs/openapi/`                                         | Pinned source specifications                                                     |
-| [`templates/version/`](templates/version/)                           | Client wrappers, webhook verification, and tests                                 |
-| [`templates/resources.rs.hbs`](templates/resources.rs.hbs)           | Resource accessors and request methods                                           |
-| [`templates/webhook_events.rs.hbs`](templates/webhook_events.rs.hbs) | Typed webhook event dispatch                                                     |
-| [`templates/query.rs`](templates/query.rs)                           | Shared query encoder                                                             |
-| `apps/polar-rsh/src/vYYYY_MM/`                                       | Generated module, source specification copy, query overlay, and binding metadata |
+| [`src/openapi/`](src/openapi/)                                     | OpenAPI conversion into typed template inputs                                    |
+| [`src/templates/`](src/templates/)                                 | Rust syntax fragments and template rendering                                    |
+| [`templates/`](templates/)                                         | Tera templates for clients, models, operations, queries, and webhooks             |
+| `apps/polar-rsh/src/vYYYY_MM/`                             | Generated Rust modules and JSON mapping/deferred-generation reports              |
 | [`sdkgen.lock.json`](../../sdkgen.lock.json)                         | Source inventory and generation/validation state                                 |
 
-Discovery exposes API-version features and modules in `polar-rsh`, and adds
-contract-test adapters. For example, API `2026-10` is available through the `2026-10` feature and
+Discovery exposes API-version features and modules in `polar-rsh`. For example, API `2026-10` is available through the `2026-10` feature and
 `polar_rsh::v2026_10` module.
 
 `polar-rsh` is the only published package. All version
 modules ship inside it; only enabled versions are compiled. Runtime dependencies
 are maintained centrally in `apps/polar-rsh/Cargo.toml`. Discovery wires the
-optional dependencies and version-specific test targets into each version feature.
+optional dependencies into each version feature. The old backend’s generated
+test targets are removed during discovery.
 
 Edit templates or generator code to change generated SDK behavior. Generation
 renders selected modules in temporary directories, formats the output, and
 compares it with managed files before applying changes. It restores modified or
-missing managed files and removes obsolete managed output. Unmanaged files are
-preserved. A missing tracked source specification fails discovery.
+missing managed files and removes obsolete model files. Each version directly
+contains `mod.rs`, `client.rs`, `error.rs`, `query.rs`, `path.rs`, `models.rs`,
+the `models/` tree, and JSON generation reports. Migration removes the old
+`generated/` directory and legacy wrappers, specification copies, overlays, and
+generated tests. Unknown sibling files are preserved. A missing tracked source specification fails discovery.
 
 ## Generation and tracking
 
-OpenAPI specifications, binding metadata, and tracking records use typed Serde
-models. Generation normalizes query schemas, runs `openapi-to-rust`, and applies
-Rust syntax transformations for resource methods, query encoding, and optional
-nullable fields.
+The native generator was copied from `apps/polar-sdk-playground`, including its
+OpenAPI conversion modules, Rust syntax fragments, and Tera templates. The
+playground’s handwritten client/models and snapshot tests remain in the
+playground. `sdkgen` has no snapshot fixtures or `insta` dependency.
+
+Generation parses specifications with `oas3`, renders into temporary directories,
+and rewrites Rust paths into the API-version namespace so multiple versions can
+coexist. JSON reports describe resolved types and generated, deferred, or
+excluded operations. Invalid enum defaults outside the allowed values are
+omitted rather than generating an invalid `Default` implementation.
 
 The query encoder omits nulls and empty collections while preserving false,
 zero, and empty strings. Optional nullable JSON body fields use
@@ -92,36 +96,37 @@ zero, and empty strings. Optional nullable JSON body fields use
 Webhook dispatch uses typed event payloads.
 
 `sdkgen.lock.json` records the upstream revision, source paths, API versions,
-managed file paths, and these source-content hashes:
+and these BLAKE3 source-content hashes (format 3). Generated-file lists and
+output hashes are not stored in the lockfile:
 
 | Field            | Meaning                                               |
 | ---------------- | ----------------------------------------------------- |
-| `observed_hash`  | SHA-256 of the discovered specification's exact bytes |
+| `observed_hash`  | BLAKE3 of the discovered specification's exact bytes |
 | `generated_hash` | Source hash used for successful generation            |
 | `validated_hash` | Source hash that passed validation                    |
 
 Each version has a `pending`, `generated`, or `validated` status. Generator and
-validation fingerprints record the relevant tooling inputs. Changes to source
-specifications, templates, dependencies, contract fixtures, or the upstream pin
+validation fingerprints use BLAKE3 to record the relevant tooling inputs.
+Legacy format 1 and 2 lockfiles are migrated on discovery; their SHA-256
+generation and validation records are cleared and require a fresh run. Changes to source
+specifications, templates, dependencies, or the upstream pin
 can require generation or validation again. Successful runs with unchanged
 inputs and output leave the tracking file unchanged.
 
 ## Validation
 
-The generation pipeline checks the workspace and, for versions requiring
-validation, runs generator and contract-harness tests, formatting, Clippy, SDK
-version tests, feature checks, and Rust/TypeScript REST comparisons. Rust unit
+The generation pipeline checks the SDK and development tasks (the experimental
+playground is excluded) and, for versions requiring
+validation, runs generator and classification tests, formatting, Clippy, SDK
+version tests, and feature checks. Rust unit
 and integration tests use nextest; documentation tests use `cargo test --doc`.
 Validation also verifies that its inputs and managed output remain unchanged
 during the run. Failed validation does not mark a version as validated.
 
-The REST suite runs 18 scenarios per API version against local HTTP servers.
-It compares the generated Rust SDK with Polar's TypeScript services from the
-pinned submodule. Reports are written to
-`target/sdk-contracts/<version>/report.json`. See the
-[contract task documentation](../sdk-contracts/README.md) for coverage and limits.
-SDK tests also exercise webhook signatures locally. These checks need no live
-Polar API credentials.
+API conformance testing is deferred. A `validated` tracking record means the
+Rust checks above passed; it does not establish API or cross-SDK conformance.
+The tracking schema is unchanged. Changes to the validation pipeline invalidate
+previous fingerprints and require the retained checks to pass again.
 
 After changing generator code or templates, run:
 
@@ -154,14 +159,11 @@ are deterministic and require no external AI service or API key.
 unchanged checkout creates no PR, and obsolete automation PRs are cleaned up.
 Automatic merges require the expected PR head SHA and remain subject to GitHub
 branch protection. A blocked merge leaves the PR open and fails the merge step.
-Contract reports are uploaded even when the workflow fails.
 
 Allow GitHub Actions to create pull requests in the repository settings.
 
 The update workflow uses `GITHUB_TOKEN`, so ordinary PR workflows are not
-triggered by its PR creation. Validation runs before the PR step. The
-[REST contract workflow](../../.github/workflows/sdk-contracts.yml) also runs
-on ordinary pull requests and pushes to `main`.
+triggered by its PR creation. Validation runs before the PR step.
 
 ## Releases
 

@@ -1,0 +1,21 @@
+to: path.rs
+---
+use percent_encoding::{AsciiSet, NON_ALPHANUMERIC, PercentEncode, utf8_percent_encode};
+use url::Url;
+
+const PATH_SEGMENT: &AsciiSet = &NON_ALPHANUMERIC.remove(b'-').remove(b'_').remove(b'~');
+
+pub(crate) fn encode_segment(value: &str) -> PercentEncode<'_> {
+    utf8_percent_encode(value, PATH_SEGMENT)
+}
+
+pub(crate) fn join(base_url: &Url, path: &str) -> Result<String, url::ParseError> {
+    let mut base_url = base_url.clone();
+    if !base_url.path().ends_with('/') {
+        base_url.set_path(&format!("{}/", base_url.path()));
+    }
+    let base_url = base_url.join("./")?;
+    // The generated path is already encoded. Parsing it as a URL again would
+    // normalize encoded dot segments belonging to parameter values.
+    Ok(format!("{base_url}{path}"))
+}

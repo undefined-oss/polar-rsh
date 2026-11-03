@@ -1,0 +1,11 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+///A value supplied as text or an integer.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
+pub enum TextOrInteger {
+    ///A textual value.
+    Text(String),
+    Integer(i64),
+}

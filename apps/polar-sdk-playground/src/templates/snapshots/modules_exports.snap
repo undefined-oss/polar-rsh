@@ -1,0 +1,24 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+// models.rs
+pub mod common;
+pub mod organizations;
+pub mod pagination;
+
+
+// models/common.rs
+pub mod ids;
+pub mod serde_helpers;
+
+pub use self::ids::*;
+
+
+// models/organizations.rs
+pub mod enums;
+pub mod newtypes;
+pub mod types;
+
+pub use self::enums::*;
+pub use self::newtypes::*;
+pub use self::types::*;

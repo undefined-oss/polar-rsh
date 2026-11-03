@@ -1,0 +1,39 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+// Generated models.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[derive(Default)]
+pub struct CustomerUpdate {
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub name: Option<String>,
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub external_id: presence_rs::Presence<String>,
+    #[serde(flatten, default)]
+    pub additional_properties: std::collections::BTreeMap<String, serde_json::Value>,
+}
+
+impl CustomerUpdate {
+    pub fn new() -> Self {
+        Self::default()
+    }
+    pub fn name(mut self, value: impl Into<String>) -> Self {
+        self.name = Some(value.into());
+        self
+    }
+    pub fn external_id(mut self, value: impl Into<String>) -> Self {
+        self.external_id = presence_rs::Presence::Some(value.into());
+        self
+    }
+    pub fn additional_properties(
+        mut self,
+        value: std::collections::BTreeMap<String, serde_json::Value>,
+    ) -> Self {
+        self.additional_properties = value;
+        self
+    }
+}

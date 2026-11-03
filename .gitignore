@@ -34,6 +34,10 @@
 !apps/
 !apps/**/
 !apps/**/*.rs
+!apps/polar-sdk-playground/templates/**/*.tera
+!apps/polar-sdk-playground/src/templates/snapshots/*.snap
+!apps/polar-sdk-playground/src/generator/snapshots/*.snap
+apps/polar-sdk-playground/generated/
 
 # Workspace development tasks and their code-generation templates.
 !tasks/
@@ -41,11 +45,9 @@
 !tasks/**/*.rs
 !tasks/**/Cargo.toml
 !tasks/**/README.md
-!tasks/**/*.hbs
-!tasks/sdk-contracts/**/*.json
-!tasks/sdk-contracts/**/*.mjs
+!tasks/**/*.tera
 
-# Pinned upstream reference for SDK contract tests.
+# Pinned upstream API specifications.
 !vendor/
 !vendor/polar
 !sdkgen.lock.json

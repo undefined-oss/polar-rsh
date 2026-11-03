@@ -1,0 +1,25 @@
+{% macro declare(id) -%}
+{% for line in id.documentation %}/// {{ line }}
+{% endfor %}#[derive(
+    Debug,
+    Clone,
+    Copy,
+    Display,
+    Eq,
+    From,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    Deref,
+    Hash,
+    Deserialize,
+    Serialize,
+)]
+pub struct {{ id.name }}(uuid::Uuid);
+
+impl ::std::default::Default for {{ id.name }} {
+    fn default() -> Self {
+        Self(uuid::Uuid::new_v4())
+    }
+}
+{%- endmacro declare %}

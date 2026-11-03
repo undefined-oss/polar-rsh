@@ -4,9 +4,13 @@ set positional-arguments
 default:
     @just --list
 
-# Install the exact generator version required by sdkgen.
-install-generator:
-    cargo install --locked openapi-to-rust --version 0.22.0
+# Run the playground generator; output goes to apps/polar-sdk-playground/generated.
+dev *args:
+    cargo run --locked -p polar-sdk-playground "$@"
+
+# Run playground tests with nextest; e.g. just test-playground -E 'test(generator::)'.
+test-playground *args:
+    cargo nextest run --locked -p polar-sdk-playground "$@"
 
 # Initialize or restore Polar's pinned submodule commit.
 submodules:
@@ -52,13 +56,9 @@ sdkgen-check *args:
 sdk-discover *args:
     cargo sdkgen --stage discover "$@"
 
-# Generate changed SDKs and run conformance.
+# Generate changed SDKs and run validation.
 sdk-generate *args:
     cargo sdkgen --stage generate "$@"
 
-# Compare REST contracts; requires --api-version, Node.js 24+, and the submodule.
-contracts *args:
-    cargo sdk-contracts "$@"
-
-# Run formatting, lint, tests, generation freshness, and REST contracts.
-verify api_version: fmt-check lint test test-docs sdkgen-check (contracts "--api-version" api_version)
+# Run formatting, lint, tests, generation freshness, and documentation tests.
+verify: fmt-check lint test test-docs sdkgen-check

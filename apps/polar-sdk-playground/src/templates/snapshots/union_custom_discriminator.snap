@@ -1,0 +1,57 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+#[derive(Debug, Clone, serde::Serialize)]
+#[serde(untagged)]
+pub enum MeterAggregation {
+    Count(crate::models::meters::types::CountAggregation),
+    ///An aggregation over a property.
+    Property(crate::models::meters::types::PropertyAggregation),
+}
+
+impl<'de> serde::Deserialize<'de> for MeterAggregation {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <serde_json::Value as serde::Deserialize>::deserialize(
+            deserializer,
+        )?;
+        let tag = value
+            .get("func")
+            .and_then(serde_json::Value::as_str)
+            .ok_or_else(|| serde::de::Error::custom(
+                concat!(
+                    "missing or non-string discriminator ", "func", " for ",
+                    "MeterAggregation"
+                ),
+            ))?
+            .to_owned();
+        match tag.as_str() {
+            "count" => {
+                serde_json::from_value::<
+                    crate::models::meters::types::CountAggregation,
+                >(value)
+                    .map(Self::Count)
+                    .map_err(serde::de::Error::custom)
+            }
+            "avg" | "max" | "min" | "sum" => {
+                serde_json::from_value::<
+                    crate::models::meters::types::PropertyAggregation,
+                >(value)
+                    .map(Self::Property)
+                    .map_err(serde::de::Error::custom)
+            }
+            _ => {
+                Err(
+                    serde::de::Error::custom(
+                        format!(
+                            "unknown {} discriminator {:?} for {}", "func", tag,
+                            "MeterAggregation"
+                        ),
+                    ),
+                )
+            }
+        }
+    }
+}

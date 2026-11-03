@@ -1,0 +1,502 @@
+/// An incoming webhook payload.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(tag = "type", deny_unknown_fields)]
+pub enum WebhookPayload {
+    /// Sent when a new checkout is created.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "checkout.created")]
+    CheckoutCreated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::checkouts::types::Checkout>,
+    },
+    /// Sent when a checkout is updated.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "checkout.updated")]
+    CheckoutUpdated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::checkouts::types::Checkout>,
+    },
+    /// Sent when a checkout expires.
+    ///
+    /// This event fires when a checkout reaches its expiration time without
+    /// being completed. Developers can use this to send reminder emails or
+    /// track checkout abandonment.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "checkout.expired")]
+    CheckoutExpired {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::checkouts::types::Checkout>,
+    },
+    /// Sent when a new customer is created.
+    ///
+    /// A customer can be created:
+    ///
+    /// * After a successful checkout.
+    /// * Programmatically via the API.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "customer.created")]
+    CustomerCreated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::common::unions::Customer>,
+    },
+    /// Sent when a customer is updated.
+    ///
+    /// This event is fired when the customer details are updated.
+    ///
+    /// If you want to be notified when a customer subscription or benefit state
+    /// changes, you should listen to the `customer_state_changed` event.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "customer.updated")]
+    CustomerUpdated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::common::unions::Customer>,
+    },
+    /// Sent when a customer is deleted.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "customer.deleted")]
+    CustomerDeleted {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::common::unions::Customer>,
+    },
+    /// Sent when a customer state has changed.
+    ///
+    /// It's triggered when:
+    ///
+    /// * Customer is created, updated or deleted.
+    /// * A subscription is created or updated.
+    /// * A benefit is granted or revoked.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "customer.state_changed")]
+    CustomerStateChanged {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::customers::unions::CustomerState>,
+    },
+    /// Sent when a new customer seat is assigned.
+    ///
+    /// This event is triggered when a seat is assigned to a customer by the
+    /// organization. The customer will receive an invitation email to claim
+    /// the seat.
+    #[serde(rename = "customer_seat.assigned")]
+    CustomerSeatAssigned {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::common::types::CustomerSeat>,
+    },
+    /// Sent when a customer seat is claimed.
+    ///
+    /// This event is triggered when a customer accepts the seat invitation and
+    /// claims their access.
+    #[serde(rename = "customer_seat.claimed")]
+    CustomerSeatClaimed {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::common::types::CustomerSeat>,
+    },
+    /// Sent when a customer seat is revoked.
+    ///
+    /// This event is triggered when access to a seat is revoked, either
+    /// manually by the organization or automatically when a subscription is
+    /// canceled.
+    #[serde(rename = "customer_seat.revoked")]
+    CustomerSeatRevoked {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::common::types::CustomerSeat>,
+    },
+    /// Sent when a new member is created.
+    ///
+    /// A member represents an individual within a customer (team).
+    /// This event is triggered when a member is added to a customer,
+    /// either programmatically via the API or when an owner is automatically
+    /// created for a new customer.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "member.created")]
+    MemberCreated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::common::types::Member>,
+    },
+    /// Sent when a member is updated.
+    ///
+    /// This event is triggered when member details are updated,
+    /// such as their name or role within the customer.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "member.updated")]
+    MemberUpdated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::common::types::Member>,
+    },
+    /// Sent when a member is deleted.
+    ///
+    /// This event is triggered when a member is removed from a customer.
+    /// Any active seats assigned to the member will be automatically revoked.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "member.deleted")]
+    MemberDeleted {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::common::types::Member>,
+    },
+    /// Sent when a new order is created.
+    ///
+    /// A new order is created when:
+    ///
+    /// * A customer purchases a one-time product. In this case,
+    ///   `billing_reason` is set to `purchase`.
+    /// * A customer starts a subscription. In this case, `billing_reason` is
+    ///   set to `subscription_create`.
+    /// * A subscription is renewed. In this case, `billing_reason` is set to
+    ///   `subscription_cycle`.
+    /// * A subscription is upgraded or downgraded with an immediate proration
+    ///   invoice. In this case, `billing_reason` is set to
+    ///   `subscription_update`.
+    ///
+    /// > [!WARNING]
+    /// > The order might not be paid yet, so the `status` field might be
+    /// > `pending`.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "order.created")]
+    OrderCreated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::orders::types::Order>,
+    },
+    /// Sent when an order is updated.
+    ///
+    /// An order is updated when:
+    ///
+    /// * Its status changes, e.g. from `pending` to `paid`.
+    /// * It's refunded, partially or fully.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "order.updated")]
+    OrderUpdated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::orders::types::Order>,
+    },
+    /// Sent when an order is paid.
+    ///
+    /// When you receive this event, the order is fully processed and payment
+    /// has been received.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "order.paid")]
+    OrderPaid {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::orders::types::Order>,
+    },
+    /// Sent when an order is fully or partially refunded.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "order.refunded")]
+    OrderRefunded {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::orders::types::Order>,
+    },
+    /// Sent when a new subscription is created.
+    ///
+    /// When this event occurs, the subscription `status` might not be `active`
+    /// yet, as we can still have to wait for the first payment to be processed.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "subscription.created")]
+    SubscriptionCreated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::subscriptions::types::Subscription>,
+    },
+    /// Sent when a subscription is updated. This event fires for all changes to
+    /// the subscription, including renewals.
+    ///
+    /// If you want more specific events, you can listen to
+    /// `subscription.active`, `subscription.canceled`, `subscription.past_due`,
+    /// and `subscription.revoked`.
+    ///
+    /// To listen specifically for renewals, listen to `subscription.cycled`.
+    ///
+    /// **Discord & Slack support:** On cancellation, past due, and revocation.
+    /// Renewals are skipped.
+    #[serde(rename = "subscription.updated")]
+    SubscriptionUpdated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::subscriptions::types::Subscription>,
+    },
+    /// Sent when a subscription becomes active,
+    /// whether because it's a new paid subscription or because payment was
+    /// recovered.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "subscription.active")]
+    SubscriptionActive {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::subscriptions::types::Subscription>,
+    },
+    /// Sent when a subscription is canceled.
+    /// Customers might still have access until the end of the current period.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "subscription.canceled")]
+    SubscriptionCanceled {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::subscriptions::types::Subscription>,
+    },
+    /// Sent when a customer revokes a pending cancellation.
+    ///
+    /// When a customer cancels with "at period end", they retain access until
+    /// the subscription would renew. During this time, they can change
+    /// their mind and undo the cancellation. This event is triggered when
+    /// they do so.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "subscription.uncanceled")]
+    SubscriptionUncanceled {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::subscriptions::types::Subscription>,
+    },
+    /// Sent when a subscription enters a new billing period.
+    ///
+    /// The payload carries the new `current_period_start` and
+    /// `current_period_end`. It fires when the period rolls over, before
+    /// the renewal order exists and regardless of whether the renewal
+    /// payment succeeds — listen to `order.paid` if you need the payment.
+    ///
+    /// A trial converting to a paid subscription starts a new period, so it
+    /// fires there too. Read `status` to tell the two apart.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "subscription.cycled")]
+    SubscriptionCycled {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::subscriptions::types::Subscription>,
+    },
+    /// Sent when a subscription is revoked and the user loses access
+    /// immediately. Happens when the subscription is canceled or payment
+    /// retries are exhausted (status becomes `unpaid`).
+    ///
+    /// For payment failures that can still be recovered, see
+    /// `subscription.past_due`.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "subscription.revoked")]
+    SubscriptionRevoked {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::subscriptions::types::Subscription>,
+    },
+    /// Sent when a subscription payment fails and the subscription enters
+    /// `past_due` status.
+    ///
+    /// This is a recoverable state - the customer can update their payment
+    /// method to restore the subscription. Benefits may be revoked
+    /// depending on the organization's grace period settings.
+    ///
+    /// If payment retries are exhausted, a `subscription.revoked` event will be
+    /// sent.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "subscription.past_due")]
+    SubscriptionPastDue {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::subscriptions::types::Subscription>,
+    },
+    /// Sent when a subscription is paused and the customer temporarily loses
+    /// access.
+    ///
+    /// No order is created while paused. The subscription resumes either on its
+    /// scheduled resume date or when resumed manually, starting a new billing
+    /// period.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "subscription.paused")]
+    SubscriptionPaused {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::subscriptions::types::Subscription>,
+    },
+    /// Sent when a paused subscription resumes, restoring the customer's
+    /// access.
+    ///
+    /// Resuming starts a new billing period and charges the customer
+    /// immediately.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "subscription.resumed")]
+    SubscriptionResumed {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::subscriptions::types::Subscription>,
+    },
+    /// Sent when Polar takes over billing of a subscription migrated from
+    /// another provider.
+    ///
+    /// This fires at cutover, once the subscription is live on Polar.
+    /// `provider` and `provider_subscription_id` identify the subscription
+    /// on the billing provider so you can correlate the two.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "subscription.migrated")]
+    SubscriptionMigrated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::subscriptions::types::Subscription>,
+        /// The billing provider the subscription was migrated from.
+        provider: String,
+        /// The identifier of the subscription on the billing provider.
+        provider_subscription_id: String,
+    },
+    /// Sent when a refund is created regardless of status.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "refund.created")]
+    RefundCreated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::refunds::types::Refund>,
+    },
+    /// Sent when a refund is updated.
+    ///
+    /// **Discord & Slack support:** Full
+    #[serde(rename = "refund.updated")]
+    RefundUpdated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::refunds::types::Refund>,
+    },
+    /// Sent when a new product is created.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "product.created")]
+    ProductCreated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::common::types::Product>,
+    },
+    /// Sent when a product is updated.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "product.updated")]
+    ProductUpdated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::common::types::Product>,
+    },
+    /// Sent when a new discount is created.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "discount.created")]
+    DiscountCreated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::discounts::unions::Discount>,
+    },
+    /// Sent when a discount is updated.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "discount.updated")]
+    DiscountUpdated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::discounts::unions::Discount>,
+    },
+    /// Sent when a discount is deleted.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "discount.deleted")]
+    DiscountDeleted {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::discounts::unions::Discount>,
+    },
+    /// Sent when a organization is updated.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "organization.updated")]
+    OrganizationUpdated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::organizations::types::Organization>,
+    },
+    /// Sent when a new benefit is created.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "benefit.created")]
+    BenefitCreated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::common::unions::Benefit>,
+    },
+    /// Sent when a benefit is updated.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "benefit.updated")]
+    BenefitUpdated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::common::unions::Benefit>,
+    },
+    /// Sent when a new benefit grant is created.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "benefit_grant.created")]
+    BenefitGrantCreated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::webhooks::unions::BenefitGrantWebhook>,
+    },
+    /// Sent when a benefit grant is updated.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "benefit_grant.updated")]
+    BenefitGrantUpdated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::webhooks::unions::BenefitGrantWebhook>,
+    },
+    /// Sent when a benefit grant is cycled,
+    /// meaning the related subscription has been renewed for another period.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "benefit_grant.cycled")]
+    BenefitGrantCycled {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::webhooks::unions::BenefitGrantWebhook>,
+    },
+    /// Sent when a benefit grant is revoked.
+    ///
+    /// **Discord & Slack support:** Basic
+    #[serde(rename = "benefit_grant.revoked")]
+    BenefitGrantRevoked {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        data: Box<crate::v2026_10::models::webhooks::unions::BenefitGrantWebhook>,
+    },
+}

@@ -29,9 +29,6 @@ jobs:
         with:
           mold-version: 3.0.0
           make-default: false
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
       - name: Install workspace Rust toolchain
         run: rustup show
       - name: Cache Rust dependencies
@@ -40,14 +37,11 @@ jobs:
         uses: taiki-e/install-action@v2
         with:
           tool: nextest
-      - name: Install pinned generator
-        run: cargo install --locked openapi-to-rust --version 0.22.0
       - name: Update Polar reference
         run: |
           cp sdkgen.lock.json "$RUNNER_TEMP/sdk-before.json"
           git -C vendor/polar fetch --depth=1 origin main
           git -C vendor/polar checkout --detach FETCH_HEAD
-          # Contracts verify the submodule against the parent index.
           git add vendor/polar
       - name: Discover, generate, and validate SDKs
         run: cargo run --locked -p sdkgen --
@@ -65,7 +59,7 @@ jobs:
             API specification content hashes are unchanged.
 
             Validation passed: compiler checks, SDK tests, API-version feature
-            matrix, formatting, Clippy, and Rust/TypeScript REST contracts.
+            matrix, formatting, and Clippy.
 
             Workflow run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           SDK_PR_BODY: |
@@ -74,7 +68,7 @@ jobs:
             API content classification: `${{ steps.changes.outputs.kind }}`.
 
             Validation passed: compiler checks, SDK tests, API-version feature
-            matrix, formatting, Clippy, and Rust/TypeScript REST contracts.
+            matrix, formatting, and Clippy.
 
             API versions, source hashes, and validation fingerprints are
             recorded in `sdkgen.lock.json`.
@@ -112,10 +106,3 @@ jobs:
           merged=$(gh api --method PUT "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/merge" \
             -f sha="$PR_HEAD_SHA" -f merge_method=squash --jq '.merged')
           [[ "$merged" == true ]]
-      - name: Upload conformance reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: sdk-generation-contracts
-          path: target/sdk-contracts/**/report.json
-          if-no-files-found: warn

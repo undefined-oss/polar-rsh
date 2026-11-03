@@ -1,273 +1,294 @@
 # polar-rsh
 
-An async Rust SDK for [Polar](https://polar.sh). It aims to stay as close as
-possible to Polar's official [TypeScript](https://polar.sh/docs/integrate/sdk/typescript)
-and [Python](https://polar.sh/docs/integrate/sdk/python) SDKs in resource
-organization, API behavior, and version selection, while using Rust's types and
-async request patterns.
+An async Rust SDK for [Polar](https://polar.sh), generated from the pinned
+versioned OpenAPI specifications. The SDK is under active development; the
+native generator introduces a new Tower-based client API.
 
 > [!IMPORTANT]
 > **Beta:** the SDK is under active development. Its Rust API may change between
-> releases. Compatibility checks compare selected REST scenarios with the official
-> TypeScript SDK; they do not establish complete parity with either official SDK.
+> releases. API conformance testing is currently deferred; complete parity with
+> Polar's official TypeScript and Python SDKs has not been established.
 
-## Installation
+## Goals
+
+- Use Rust's type system to make invalid data unrepresentable wherever possible,
+  with branded IDs, constrained value types, and validation at construction.
+- Stay client agnostic: bring your own HTTP client compatible with `tower` and
+  `http`, and control its transport configuration and middleware.
+
+## Installation and API versions
 
 > [!IMPORTANT]
 > No API version is enabled by default.
 
-Choose an API version explicitly. For a published `0.1` release, add:
+Add the SDK to your `Cargo.toml` and explicitly enable one or more API-version
+features:
 
 ```toml
 [dependencies]
-polar-rsh = { version = "0.1", features = ["2026-10"] }
-tokio = { version = "1", features = ["macros", "rt-multi-thread", "time"] }
+polar-rsh = { version = "0.2", features = ["2026-10"] }
 ```
 
-The examples below use API `2026-10` and a Tokio runtime with time enabled.
-Store your Polar access token in the `POLAR_ACCESS_TOKEN` environment variable.
+The feature `2026-10` exposes `polar_rsh::v2026_10`. Multiple versions can coexist,
+and each client sends its corresponding `Polar-Version` header. Use models and
+operations from the same version module as the client.
 
-## Choose sandbox or production
+## Client and transport
 
-Select the environment when building the client with `.environment(...)`:
-
-| Setting                   | API URL                        |
-| ------------------------- | ------------------------------ |
-| `Environment::Sandbox`    | `https://sandbox-api.polar.sh` |
-| `Environment::Production` | `https://api.polar.sh`         |
-
-**Production is the default**, including when you use `Polar::new(token)`.
-Use a token issued for the selected environment; sandbox and production tokens
-are separate. The API-version Cargo feature selects the API schema, while
-`.environment(...)` selects the server.
-
-The quick start below uses sandbox. Change `Environment::Sandbox` to
-`Environment::Production` and supply your production token to use production.
-
-## Quick start
+The client builder is transport agnostic: bring your own HTTP client compatible
+with the `tower` and `http` crates. Supply a cloneable `tower::Service` that receives
+`http::Request<RequestBody>` and returns an `http::Response` whose body implements
+`http_body::Body<Data = bytes::Bytes>`, with body errors convertible to
+`tower::BoxError`. `RequestBody` is `http_body_util::Full<bytes::Bytes>`.
+The client keeps the service's concrete error type in operation errors.
 
 ```rust
-use polar_rsh::v2026_10::{Environment, Polar, resources::ProductsListParams};
+use polar_rsh::v2026_10::client::{AccessToken, PolarClient, PolarEnvironment};
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let polar = Polar::builder(std::env::var("POLAR_ACCESS_TOKEN")?)
-        .environment(Environment::Sandbox)
-        .build()?;
-
-    let page = polar
-        .products()
-        .list(ProductsListParams {
-            limit: Some(20),
-            is_archived: Some(false),
-            ..Default::default()
-        })
-        .await?;
-
-    for product in page.items {
-        println!("{}: {}", product.id, product.name);
-    }
-
-    Ok(())
-}
+// `()` is only a placeholder and cannot send requests; replace it with your transport.
+let client = PolarClient::builder(AccessToken::try_new("your-token")?)
+    .environment(PolarEnvironment::Sandbox)
+    .build_with(())?;
+# Ok::<(), Box<dyn std::error::Error>>(())
 ```
 
-Resource methods expose typed models and parameters through the selected
-version's `models` and `resources` modules. Optional method arguments are grouped
-in `*Params` structs; required arguments are passed directly.
+Production is the default. Configure `.base_url(...)` for a custom endpoint and
+`.timeout(...)` for the default operation deadline. The default deadline is five
+seconds, including response-body collection. Authentication can be omitted by
+passing `None` to the builder.
 
-## API version features
+Resource accessors are available on the client. For example, with a compatible
+transport, list products using `client.products().list().params(parameters).await`.
+Parameter and error types live under `models::products`, including
+`ProductsListParams` and `ProductsListError`. Requests can also be executed with
+`.send().await`.
 
-All supported API versions are bundled as modules in the `polar-rsh` crate.
-Only the versions enabled through features are compiled.
+Use `.options(RequestOptions { access_token, timeout })` to override authentication
+or the timeout for a single operation. Transport configuration and any automatic
+retry policy belong to the supplied Tower service.
 
-The Cargo feature name is the API version. For example, `2026-10` enables
-`polar_rsh::v2026_10`.
+## Models, queries, and pagination
 
-Each client sends the corresponding `Polar-Version` header. The crate release
-version, such as `0.1`, is separate from the Polar API version.
+Models are organized by resource under `models`. UUID identifiers use the `uuid`
+crate internally: resource-specific newtypes wrap `uuid::Uuid` to act as branded
+IDs, preventing unrelated identifier types from being mixed. Event variants are
+the exception: they currently all share the same `EventId` brand.
 
-You can enable multiple API versions in one application:
-
-```toml
-polar-rsh = { version = "0.1", features = ["2026-04", "2026-10"] }
-```
+To construct an ID from a UUID string, add `uuid = "1"` to your application's
+dependencies, parse the UUID, and convert it into the appropriate ID type:
 
 ```rust
-use polar_rsh::{v2026_04, v2026_10};
+use polar_rsh::v2026_10::models::common::ids::{CustomerId, ProductId};
+use uuid::Uuid;
 
-fn versioned_clients(token: &str) -> Result<(), Box<dyn std::error::Error>> {
-    let _april = v2026_04::Polar::new(token)?;
-    let _october = v2026_10::Polar::new(token)?;
-    Ok(())
-}
+let customer_id = CustomerId::from(Uuid::parse_str(
+    "550e8400-e29b-41d4-a716-446655440000",
+)?);
+let product_id = ProductId::from(Uuid::parse_str(
+    "550e8400-e29b-41d4-a716-446655440001",
+)?);
+
+// Both wrap UUIDs, but their types are distinct:
+// let wrong_id: CustomerId = product_id; // Does not compile.
+let id_text = customer_id.to_string();
 ```
 
-Use models and parameter types from the same version module as the client.
+For example, `client.customers().get(customer_id)` accepts a `CustomerId`, while
+passing `product_id` to that operation is a compile-time error. The brand checks
+the ID's type; it does not verify that the resource exists on the server.
 
-## Request options
+Date/time properties use `jiff` instead of `chrono`. A follow-up PR will introduce
+feature flags to choose between `jiff` and `chrono`; that choice is not available
+yet. URL properties use the `url` crate's `url::Url` type, with validated wrappers
+where the schema adds constraints.
 
-Set a client-wide timeout on the builder and override it for individual requests:
+Constrained scalar values use dedicated newtypes that wrap the underlying Rust
+type. For example, strings with minimum or maximum lengths wrap `String`, and
+numbers with minimum or maximum values wrap their numeric type. These wrappers
+validate values during construction and deserialization, rejecting values outside
+the schema's constraints. Fixed-length tuples encode their length in the Rust
+tuple type; constrained elements can themselves use validated wrappers.
 
 ```rust
-use std::time::Duration;
-use polar_rsh::v2026_10::{Environment, Polar, resources::ProductsListParams};
+use polar_rsh::v2026_10::models::{
+    customers::CustomerIndividualName,
+    pagination::PageLimit,
+};
 
-async fn sandbox_products() -> Result<(), Box<dyn std::error::Error>> {
-    let polar = Polar::builder(std::env::var("POLAR_ACCESS_TOKEN")?)
-        .environment(Environment::Sandbox)
-        .timeout(Duration::from_secs(30))
-        .build()?;
+// Customer names allow at most 256 characters.
+let name = CustomerIndividualName::try_new("Ada Lovelace")?;
+assert!(CustomerIndividualName::try_new("a".repeat(257)).is_err());
 
-    let page = polar
-        .products()
-        .list(ProductsListParams::default())
-        .timeout(Duration::from_secs(60))
-        .await?;
+// Page limits must be between 1 and 100 inclusive.
+let limit = PageLimit::try_from(25_u8)?;
+assert!(PageLimit::try_from(0_u8).is_err());
+assert!(PageLimit::try_from(101_u8).is_err());
 
-    println!("{} products", page.items.len());
-    Ok(())
-}
+// Extract the underlying values when needed.
+let name_text: String = name.into_inner();
+let page_size: u8 = limit.into();
 ```
 
-Requests are lazy: an HTTP call starts when you `.await` the request or call
-`.send().await`. The default deadline is five seconds, including reading the
-response body. Per-request `.timeout(...)`, `.access_token(...)`, and
-`.options(RequestOptions { ... })` apply to that request only.
+Pass these wrappers directly to typed fields and setters, such as `.name(name)`
+or `ProductsListParams { limit: Some(limit), ..Default::default() }`, before
+consuming them to extract their underlying values.
 
-The builder also supports an organization ID, a custom base URL, a custom
-`reqwest::Client`, and tracing configuration. A custom transport's timeout
-remains an independent limit. `polar.raw()` exposes the generated low-level
-client and bypasses the resource wrapper's deadline and per-request options.
-
-Timeouts return `RequestError::Timeout`; API and transport failures are exposed
-through `RequestError::Api`, preserving the generated operation error type.
-Automatic retries are not configured.
-
-## Pagination
-
-List methods return one page. Request subsequent pages explicitly using the
-response's pagination information:
+Pass query parameters through the operation's typed parameter struct using
+`.params(...)`; the SDK encodes them into the request URL automatically. For
+example, inside an async function with a client configured with a compatible
+transport:
 
 ```rust
-use polar_rsh::v2026_10::{Polar, resources::ProductsListParams};
+use polar_rsh::v2026_10::models::products::ProductsListParams;
 
-async fn list_all_products(polar: &Polar) -> Result<(), Box<dyn std::error::Error>> {
-    let mut page_number = 1;
-    loop {
-        let page = polar
-            .products()
-            .list(ProductsListParams {
-                page: Some(page_number),
-                limit: Some(20),
-                ..Default::default()
-            })
-            .await?;
+let parameters = ProductsListParams {
+    query: Some("subscription".to_owned()),
+    is_archived: Some(false),
+    ..Default::default()
+};
 
-        for product in page.items {
-            println!("{}: {}", product.id, product.name);
-        }
-        if page_number >= page.pagination.max_page {
-            break;
-        }
-        page_number += 1;
-    }
-    Ok(())
-}
+let products = client.products().list().params(parameters).await?;
 ```
 
-Pagination fields depend on the endpoint. Array filters use vectors, including
-for a single value. UUIDs, timestamps, and URLs use `uuid::Uuid`,
-`chrono::DateTime<chrono::Utc>`, and `url::Url` respectively.
+Array filters use vectors, even when filtering on a single value.
+Pagination query parameters are typed. For example, `ProductsListParams::page`
+is an `Option<std::num::NonZeroU64>`: the unsigned integer cannot represent
+negative values, and the nonzero type also excludes zero. Use
+`page: std::num::NonZeroU64::new(1)` for the first page; `NonZeroU64::new(0)`
+returns `None`, which would omit the query parameter. The `limit` field uses
+`Option<PageLimit>` to enforce the inclusive range 1–100.
 
-## Optional and nullable fields
+Unsigned integer types represent values that cannot be below zero; nonzero
+unsigned types additionally require a strictly positive value. These types
+express numeric constraints directly instead of accepting arbitrary signed
+integers.
 
-The `presence` feature re-exports the `presence-rs` crate as
-`polar_rsh::presence_rs` and its `Presence` type as `polar_rsh::Presence`.
-Every API-version feature enables `presence` automatically. It can also be
-enabled independently:
+List operations support `.pages()` and `.items()` streams as well as fetching
+one page directly. Query encoding omits absent values and empty collections while
+preserving false, zero metadata values, and empty strings.
 
-```toml
-polar-rsh = { version = "0.1", features = ["presence"] }
-```
+### Sorting
 
-Optional nullable model fields use `Presence<T>` to distinguish three JSON
-states:
-
-| Rust value              | JSON body                           |
-| ----------------------- | ----------------------------------- |
-| `Presence::Absent`      | Omit the field; this is the default |
-| `Presence::Null`        | Send explicit `null`                |
-| `Presence::Some(value)` | Send the supplied value             |
-
-For example, clear a customer's name while leaving other fields unspecified:
+The `sorting` field is a vector of `(property, Sorting)` pairs. Use the endpoint's
+property enum, such as `ProductSortProperty`, with `Sorting::Asc` or
+`Sorting::Desc`. Multiple criteria are applied in vector order: the first is the
+primary sort, and subsequent criteria break ties.
 
 ```rust
-use polar_rsh::{Presence, v2026_10::{Polar, models::CustomerUpdate}};
+use polar_rsh::v2026_10::{
+    models::products::{ProductSortProperty, ProductsListParams},
+    query::Sorting,
+};
 
-async fn clear_customer_name(
-    polar: &Polar,
-    customer_id: &str,
-) -> Result<(), Box<dyn std::error::Error>> {
-    let customer = polar
-        .customers()
-        .update(
-            customer_id.parse()?,
-            CustomerUpdate {
-                name: Presence::Null,
-                ..Default::default()
-            },
-        )
-        .await?;
+let parameters = ProductsListParams {
+    sorting: vec![
+        (ProductSortProperty::Name, Sorting::Asc),
+        (ProductSortProperty::CreatedAt, Sorting::Desc),
+    ],
+    ..Default::default()
+};
 
-    println!("Updated customer: {customer:?}");
-    Ok(())
-}
+let products = client.products().list().params(parameters).await?;
 ```
 
-Use `Presence::Some("Ada".to_owned())` to set the name. Ordinary optional fields
-and required nullable fields use `Option<T>`. Query encoding omits nulls and
-empty collections while preserving `false`, `0`, and empty strings.
+This sorts by name ascending, then by creation time descending for matching
+names. The SDK encodes the criteria as
+`sorting=name&sorting=-created_at`; do not add the `-` prefix yourself.
+Product sorting also supports `PriceAmountType` and `PriceAmount`. Other
+endpoints expose their own sort-property enums. An empty `sorting` vector omits
+the parameter and leaves ordering to the API's default.
+
+## Creating request bodies
+
+Pass a typed body directly to operations such as `.create(body)` and
+`.update(id, body)`. The SDK serializes it as JSON; you do not need to construct
+JSON strings or HTTP request bodies yourself.
+
+For models with required fields, call `Model::new(ModelRequired { ... })`, then
+chain setters for optional fields. The constructor initializes omitted optional
+fields to `None` or `Presence::Absent`. Validated scalar wrappers expose
+`try_new(...)`, which returns an error when the value violates schema constraints.
+
+For example, create an individual customer using an organization access token:
+
+```rust
+use polar_rsh::v2026_10::models::customers::{
+    CustomerCreate, CustomerIndividualCreate, CustomerIndividualCreateRequired,
+    CustomerIndividualName,
+};
+
+let body = CustomerIndividualCreate::new(CustomerIndividualCreateRequired {
+    email: "ada@example.com".to_owned(),
+})
+.name(CustomerIndividualName::try_new("Ada Lovelace")?)
+.external_id("customer-123");
+
+let customer = client
+    .customers()
+    .create(CustomerCreate::CustomerIndividualCreate(body))
+    .await?;
+```
+
+`CustomerCreate` selects the individual or team payload variant. Without an
+organization access token, also set `.organization_id(...)` on the body with an
+`OrganizationId`. As with the query examples, these calls belong inside an async
+function using a client configured with a compatible transport.
+
+Models with no required fields, such as `CustomerUpdate`, can start from
+`Default::default()` or `new()`. Their public fields also support struct literals.
+Optional nullable body fields use `presence_rs::Presence<T>`:
+
+| Value                   | JSON behavior      |
+| ----------------------- | ------------------ |
+| `Presence::Absent`      | Omit the field     |
+| `Presence::Null`        | Send explicit null |
+| `Presence::Some(value)` | Send the value     |
+
+The `presence` feature re-exports `polar_rsh::Presence` and
+`polar_rsh::presence_rs`. Every API-version feature enables it automatically;
+it can also be enabled independently.
+
+For example, given an existing customer's `CustomerId` in `customer_id`, clear
+their name while leaving other fields unspecified:
+
+```rust
+use polar_rsh::{Presence, v2026_10::models::customers::CustomerUpdate};
+
+let body = CustomerUpdate {
+    name: Presence::Null,
+    ..Default::default()
+};
+
+let updated = client.customers().update(customer_id, body).await?;
+```
+
+Optional-field setters supply a value; to send explicit JSON `null`, assign `Presence::Null`
+to the public field. Leaving a field as `Presence::Absent` omits it entirely.
 
 ## Webhooks
 
-The selected API module exposes `webhooks::validate_event(body, headers, secret)`.
-Pass the original request bytes and a `reqwest::header::HeaderMap`; the verifier
-checks the signature before returning a typed `WebhookEvent`.
-
-If your application imports `reqwest` headers directly, add
-`reqwest = { version = "0.13", default-features = false }` to its dependencies.
-
-```rust
-use polar_rsh::v2026_10::webhooks::{self, WebhookError, WebhookEvent};
-use reqwest::header::HeaderMap;
-
-fn verify_webhook(
-    body: &[u8],
-    headers: &HeaderMap,
-    secret: &str,
-) -> Result<WebhookEvent, WebhookError> {
-    webhooks::validate_event(body, headers, secret)
-}
-```
-
-Use the webhook signing secret for verification. Keep the raw body intact until
-verification completes, and track processed `webhook-id` values in your
-application to handle duplicate deliveries.
+Webhook types and verification live under `models::webhooks`.
+`verification::validate_event(body, headers, secret)` accepts the original body
+bytes and an `http::HeaderMap`, verifies the signature, and returns a typed
+`events::WebhookPayload`. Keep the raw body intact until verification completes.
+Track processed webhook IDs in your application to handle duplicate deliveries.
 
 ## Roadmap
 
 This list is non-exhaustive.
 
-- [x] Generate the Rust SDK automatically using generators and patchs.
-- [ ] Generate a better Polar-sh SDK.
+- [x] Generate the Rust SDK automatically using generators and patches.
+- [x] Generate a better Polar-sh SDK.
+- [ ] Add chrono conditional compilation.
+- [ ] Improve serde deserialization for complex union types.
+- [ ] Add test generation for testing.
 - [ ] Improve the conformance test suite.
 
 ## Development
 
 See the [SDK generator guide](tasks/sdkgen/README.md) for generation and validation
-commands, and the [REST contract guide](tasks/sdk-contracts/README.md) for the
-cross-language compatibility checks. The workspace toolchain is pinned in
+commands. API conformance testing is deferred; current validation covers
+generation, Rust tests, formatting, linting, and feature compilation. The workspace toolchain is pinned in
 [`rust-toolchain.toml`](rust-toolchain.toml).
 
 Install [cargo-nextest](https://nexte.st/docs/installation/pre-built-binaries/)

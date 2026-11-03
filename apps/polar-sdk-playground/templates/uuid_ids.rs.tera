@@ -1,0 +1,9 @@
+{% import "macros/uuid_id.rs.tera" as uuid_id -%}
+to: models/common/ids.rs
+---
+// Generated UUID IDs. Edit the playground templates to change these definitions.
+use derive_more::{Debug, Deref, Display, Eq, From, PartialEq};
+use serde::{Deserialize, Serialize};
+{% for id in ids %}
+{{ uuid_id::declare(id=id) }}
+{% endfor %}

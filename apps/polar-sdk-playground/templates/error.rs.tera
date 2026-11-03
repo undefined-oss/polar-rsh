@@ -1,0 +1,58 @@
+to: error.rs
+---
+/// Shared non-transport failures used to compose operation-specific errors.
+/// Transport errors retain their concrete type in the operation error instead.
+#[derive(Debug, thiserror::Error)]
+pub(crate) enum RequestFailure {
+    /// Request URL, headers, or body could not be constructed.
+    #[error("failed to build request: {0}")]
+    BuildRequest(#[source] BuildRequestError),
+
+    /// Collecting the response body failed.
+    #[error("failed to read response body: {0}")]
+    ReadBody(#[source] tower::BoxError),
+
+    /// The response body could not be decoded into the expected JSON type.
+    #[error("failed to decode response: {0}")]
+    DecodeResponse(#[source] serde_json::Error),
+
+    /// A documented error status without a response schema.
+    #[error("HTTP error status: {status}")]
+    HttpStatus {
+        status: http::StatusCode,
+        /// Original response bytes, retained without JSON decoding.
+        body: bytes::Bytes,
+    },
+
+    /// The operation received a status it does not handle explicitly.
+    #[error("unexpected HTTP status: {status}")]
+    UnexpectedStatus {
+        status: http::StatusCode,
+        /// Original response bytes, retained without JSON decoding.
+        body: bytes::Bytes,
+    },
+
+    /// The effective operation timeout elapsed.
+    #[error("request timed out")]
+    Timeout(#[source] tokio::time::error::Elapsed),
+}
+
+/// Failure while preparing an HTTP request, before sending it through a transport.
+#[derive(Debug, thiserror::Error)]
+pub enum BuildRequestError {
+    /// The operation URL could not be constructed from the configured base URL.
+    #[error("failed to construct request URL: {0}")]
+    Url(#[from] url::ParseError),
+
+    /// HTTP request construction failed, including invalid header values.
+    #[error("failed to construct HTTP request: {0}")]
+    Http(#[from] http::Error),
+
+    /// Serializing the request body as JSON failed.
+    #[error("failed to serialize request body: {0}")]
+    Serialize(#[from] serde_json::Error),
+
+    /// Serializing the request body as form data failed.
+    #[error("failed to serialize form body: {0}")]
+    SerializeForm(#[from] serde_urlencoded::ser::Error),
+}

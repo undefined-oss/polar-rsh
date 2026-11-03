@@ -1,0 +1,63 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub enum CheckoutStatus {
+    #[serde(rename = "confirmed")]
+    Confirmed,
+}
+
+impl CheckoutStatus {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Confirmed => "confirmed",
+        }
+    }
+}
+
+impl ::std::fmt::Display for CheckoutStatus {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl AsRef<str> for CheckoutStatus {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+
+/// The subscription's status.
+#[derive(Debug, Clone, Copy, Deserialize, Serialize, Default)]
+pub enum SubscriptionStatus {
+    #[default]
+    #[serde(rename = "active")]
+    Active,
+    /// Payment is overdue.
+    /// A retry may follow.
+    #[serde(rename = "past_due")]
+    PastDue,
+}
+
+impl SubscriptionStatus {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Active => "active",
+            Self::PastDue => "past_due",
+        }
+    }
+}
+
+impl ::std::fmt::Display for SubscriptionStatus {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl AsRef<str> for SubscriptionStatus {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}

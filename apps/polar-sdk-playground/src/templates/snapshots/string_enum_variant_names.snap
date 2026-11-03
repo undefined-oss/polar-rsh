@@ -1,0 +1,45 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub enum WireValue {
+    #[serde(rename = "Etc/GMT+1")]
+    EtcGmtPlus1,
+    #[serde(rename = "Etc/GMT-1")]
+    EtcGmtMinus1,
+    #[serde(rename = "self")]
+    SelfValue,
+    #[serde(rename = "123")]
+    Value123,
+    #[serde(rename = "with\"quote")]
+    WithQuote,
+    #[serde(rename = "line\nbreak")]
+    LineBreak,
+}
+
+impl WireValue {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::EtcGmtPlus1 => "Etc/GMT+1",
+            Self::EtcGmtMinus1 => "Etc/GMT-1",
+            Self::SelfValue => "self",
+            Self::Value123 => "123",
+            Self::WithQuote => "with\"quote",
+            Self::LineBreak => "line\nbreak",
+        }
+    }
+}
+
+impl ::std::fmt::Display for WireValue {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl AsRef<str> for WireValue {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}

@@ -1,0 +1,17 @@
+use serde::Deserialize;
+pub(crate) fn deserialize_optional_value<'de, D, T>(deserializer: D) -> Result<Option<T>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+    T: Deserialize<'de>,
+{
+    T::deserialize(deserializer).map(Some)
+}
+pub(crate) fn deserialize_required_nullable<'de, D, T>(
+    deserializer: D,
+) -> Result<Option<T>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+    T: Deserialize<'de>,
+{
+    Option::<T>::deserialize(deserializer)
+}

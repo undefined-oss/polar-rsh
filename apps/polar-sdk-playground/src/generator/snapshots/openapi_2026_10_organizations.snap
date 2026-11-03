@@ -1,0 +1,87 @@
+---
+source: apps/polar-sdk-playground/src/generator.rs
+input_file: apps/polar-sdk-playground/src/2026-10.openapi.json
+---
+pub mod create;
+pub mod enums;
+pub mod get;
+pub mod list_organizations;
+pub mod newtypes;
+pub mod types;
+pub mod unions;
+pub mod update;
+
+pub use self::create::*;
+pub use self::enums::*;
+pub use self::get::*;
+pub use self::list_organizations::*;
+pub use self::newtypes::*;
+pub use self::types::*;
+pub use self::unions::*;
+pub use self::update::*;
+
+pub struct Organizations<'a, ClientService> {
+    client: &'a crate::client::PolarClient<ClientService>,
+}
+
+impl<'a, ClientService> Organizations<'a, ClientService> {
+    pub(crate) fn new(client: &'a crate::client::PolarClient<ClientService>) -> Self {
+        Self { client }
+    }
+    ///Create an organization.
+    ///
+    ///**Scopes**: `organizations:write`
+    pub fn create(
+        &self,
+        payload: crate::models::organizations::types::OrganizationCreate,
+    ) -> crate::models::organizations::OrganizationsCreate<'a, ClientService> {
+        crate::models::organizations::OrganizationsCreate {
+            client: self.client,
+            options: crate::client::RequestOptions::default(),
+            payload: payload,
+        }
+    }
+    ///Get an organization by ID.
+    ///
+    ///**Scopes**: `organizations:read` `organizations:write`
+    pub fn get(
+        &self,
+        id: crate::models::common::ids::OrganizationId,
+    ) -> crate::models::organizations::OrganizationsGet<'a, ClientService> {
+        crate::models::organizations::OrganizationsGet {
+            client: self.client,
+            options: crate::client::RequestOptions::default(),
+            id: id,
+        }
+    }
+    ///List organizations.
+    ///
+    ///**Scopes**: `organizations:read` `organizations:write`
+    pub fn list_organizations(
+        &self,
+    ) -> crate::models::organizations::OrganizationsListOrganizations<
+        'a,
+        ClientService,
+    > {
+        crate::models::organizations::OrganizationsListOrganizations {
+            client: self.client,
+            options: crate::client::RequestOptions::default(),
+            params: None,
+        }
+    }
+    ///Update an organization.
+    ///
+    ///**Scopes**: `organizations:write`
+    pub fn update(
+        &self,
+        id: crate::models::common::ids::OrganizationId,
+        payload: crate::models::organizations::types::OrganizationUpdate,
+    ) -> crate::models::organizations::OrganizationsUpdate<'a, ClientService> {
+        crate::models::organizations::OrganizationsUpdate {
+            client: self.client,
+            options: crate::client::RequestOptions::default(),
+            id: id,
+            payload: payload,
+        }
+    }
+}

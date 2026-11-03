@@ -1,0 +1,19 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+// Generated models.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct Confirmation {
+    pub status: monostate::MustBe!("confirmed"),
+    pub confirmed: monostate::MustBe!(true),
+}
+
+impl Confirmation {
+    pub fn new() -> Self {
+        Self {
+            status: Default::default(),
+            confirmed: Default::default(),
+        }
+    }
+}

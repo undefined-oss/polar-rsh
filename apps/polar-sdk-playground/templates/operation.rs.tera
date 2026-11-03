@@ -1,0 +1,7 @@
+to: {{ module_path }}
+---
+use http_body_util::BodyExt;
+use crate::client::{PolarClient, RequestBody, RequestOptions};
+use crate::error::{BuildRequestError, RequestFailure};
+
+{{ declarations }}

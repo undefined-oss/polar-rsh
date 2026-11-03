@@ -1,0 +1,57 @@
+use std::num::NonZeroU64;
+
+use derive_more::{Deref, Display};
+use serde::{Deserialize, Serialize};
+/// Page counts returned by a paginated API operation.
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Pagination {
+    /// Last available page number. Zero indicates that no pages are available.
+    pub max_page: u64,
+    /// Total number of matching items across all pages.
+    pub total_count: u64,
+}
+/// A page of items and the server's pagination metadata.
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct ListResource<T> {
+    /// Items on this page.
+    pub items: Vec<T>,
+    pub pagination: Pagination,
+}
+impl Pagination {
+    /// Return the next page, or `None` at or beyond `max_page`.
+    pub fn next_page(&self, current: NonZeroU64) -> Option<NonZeroU64> {
+        if current.get() >= self.max_page {
+            return None;
+        }
+        current.checked_add(1)
+    }
+}
+/// Number of items per page, between 1 and 100 inclusive.
+/// Defaults to 10.
+#[derive(Debug, Clone, Copy, Display, PartialEq, Eq, Deref, Deserialize, Serialize)]
+#[serde(try_from = "u8", into = "u8")]
+pub struct PageLimit(u8);
+/// A requested page limit fell outside the supported inclusive range.
+#[derive(Debug, thiserror::Error, PartialEq, Eq)]
+#[error("page limit must be between 1 and 100 inclusive, got {0}")]
+pub struct PageLimitValidationError(pub u8);
+impl TryFrom<u8> for PageLimit {
+    type Error = PageLimitValidationError;
+
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
+        if !(1..=100).contains(&value) {
+            return Err(PageLimitValidationError(value));
+        }
+        Ok(Self(value))
+    }
+}
+impl From<PageLimit> for u8 {
+    fn from(value: PageLimit) -> Self {
+        value.0
+    }
+}
+impl Default for PageLimit {
+    fn default() -> Self {
+        Self(10)
+    }
+}

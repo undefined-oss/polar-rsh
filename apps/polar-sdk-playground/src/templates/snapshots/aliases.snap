@@ -1,0 +1,12 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+pub type Count = u64;
+
+pub type Metadata = std::collections::BTreeMap<String, serde_json::Value>;
+
+///A count, or null when unavailable.
+pub type NullableCount = Option<u64>;
+
+///Tags attached to a resource.
+pub type Tags = Vec<String>;

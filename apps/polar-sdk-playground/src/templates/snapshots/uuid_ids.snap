@@ -1,0 +1,54 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+use derive_more::{Debug, Deref, Display, Eq, From, PartialEq};
+use serde::{Deserialize, Serialize};
+
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    Display,
+    Eq,
+    From,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    Deref,
+    Hash,
+    Deserialize,
+    Serialize,
+)]
+pub struct CustomerId(uuid::Uuid);
+
+impl ::std::default::Default for CustomerId {
+    fn default() -> Self {
+        Self(uuid::Uuid::new_v4())
+    }
+}
+
+/// The organization's identifier.
+///
+/// Used across resources.
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    Display,
+    Eq,
+    From,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    Deref,
+    Hash,
+    Deserialize,
+    Serialize,
+)]
+pub struct OrganizationId(uuid::Uuid);
+
+impl ::std::default::Default for OrganizationId {
+    fn default() -> Self {
+        Self(uuid::Uuid::new_v4())
+    }
+}

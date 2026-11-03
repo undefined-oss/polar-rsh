@@ -1,0 +1,325 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+use http_body_util::BodyExt;
+use crate::client::{PolarClient, RequestBody, RequestOptions};
+use crate::error::{BuildRequestError, RequestFailure};
+
+#[derive(Debug, Clone, Default)]
+pub struct ListCustomersParams {
+    pub page: Option<std::num::NonZeroU64>,
+    pub limit: Option<crate::models::pagination::PageLimit>,
+    pub emails: Vec<String>,
+    #[deprecated]
+    pub active: Option<bool>,
+    pub metadata: std::collections::BTreeMap<
+        String,
+        crate::models::common::unions::MetadataValue,
+    >,
+    ///Sort customers by one or more fields.
+    pub sorting: Vec<
+        (crate::models::customers::enums::CustomerSortField, crate::query::Sorting),
+    >,
+}
+
+impl crate::query::EncodeQuery for ListCustomersParams {
+    fn scalar_params(&self) -> Vec<(&'static str, String)> {
+        let mut params = Vec::new();
+        if let Some(value) = &self.page {
+            params.push(("page", value.to_string()));
+        }
+        if let Some(value) = &self.limit {
+            params.push(("limit", value.to_string()));
+        }
+        for value in &self.emails {
+            params.push(("email", value.to_string()));
+        }
+        if let Some(value) = &self.active {
+            params.push(("active", value.to_string()));
+        }
+        params
+    }
+    fn sorting_values(&self) -> Vec<String> {
+        self.sorting
+            .iter()
+            .map(|(field, direction)| direction.encode(field.as_str()))
+            .collect()
+    }
+    fn metadata_params(&self) -> Vec<(String, Vec<String>)> {
+        self.metadata
+            .iter()
+            .map(|(key, value)| {
+                let values = match value {
+                    crate::models::common::unions::MetadataValue::String(values) => {
+                        vec![values.to_string()]
+                    }
+                    crate::models::common::unions::MetadataValue::Strings(values) => {
+                        values.iter().map(ToString::to_string).collect()
+                    }
+                };
+                (key.clone(), values)
+            })
+            .collect()
+    }
+}
+
+#[derive(Debug, thiserror::Error)]
+pub enum ListCustomersError<TransportError> {
+    #[error("HTTP transport failed: {0}")]
+    Transport(#[source] TransportError),
+    #[error("failed to build request: {0}")]
+    BuildRequest(#[source] crate::error::BuildRequestError),
+    #[error("failed to read response body: {0}")]
+    ReadBody(#[source] tower::BoxError),
+    #[error("failed to decode response: {0}")]
+    DecodeResponse(#[source] serde_json::Error),
+    /// A documented error status without a response schema.
+    #[error("HTTP error status: {status}")]
+    HttpStatus { status: http::StatusCode, body: bytes::Bytes },
+    #[error("unexpected HTTP status: {status}")]
+    UnexpectedStatus { status: http::StatusCode, body: bytes::Bytes },
+    #[error("request timed out")]
+    Timeout(#[source] tokio::time::error::Elapsed),
+}
+
+pub(super) type ListCustomersErrors = (crate::error::RequestFailure,);
+
+impl<T> From<eros::ErrorUnion<ListCustomersErrors>> for ListCustomersError<T> {
+    fn from(error: eros::ErrorUnion<ListCustomersErrors>) -> Self {
+        match error.into_enum() {
+            eros::E1::A(error) => {
+                match error {
+                    crate::error::RequestFailure::BuildRequest(error) => {
+                        Self::BuildRequest(error)
+                    }
+                    crate::error::RequestFailure::ReadBody(error) => {
+                        Self::ReadBody(error)
+                    }
+                    crate::error::RequestFailure::DecodeResponse(error) => {
+                        Self::DecodeResponse(error)
+                    }
+                    crate::error::RequestFailure::HttpStatus { status, body } => {
+                        Self::HttpStatus { status, body }
+                    }
+                    crate::error::RequestFailure::UnexpectedStatus { status, body } => {
+                        Self::UnexpectedStatus {
+                            status,
+                            body,
+                        }
+                    }
+                    crate::error::RequestFailure::Timeout(error) => Self::Timeout(error),
+                }
+            }
+        }
+    }
+}
+
+impl<T> ListCustomersError<T> {
+    pub(super) fn from_failure(error: crate::error::RequestFailure) -> Self {
+        let union: eros::ErrorUnion<ListCustomersErrors> = eros::ErrorUnion::new(error);
+        union.into()
+    }
+}
+
+pub struct ListCustomers<'a, ClientService> {
+    pub(super) client: &'a PolarClient<ClientService>,
+    pub(super) organization_id: crate::models::common::OrganizationId,
+    pub(super) params: Option<ListCustomersParams>,
+    pub(super) options: RequestOptions,
+}
+
+impl<'a, ClientService> ListCustomers<'a, ClientService> {
+    pub(crate) fn build_request(
+        &self,
+    ) -> Result<http::Request<RequestBody>, BuildRequestError> {
+        let query_params = self
+            .params
+            .as_ref()
+            .map_or_else(String::new, crate::query::EncodeQuery::encode_query);
+        let mut path = format!("v1/organizations/{}/customers", self.organization_id);
+        if !query_params.is_empty() {
+            path.push_str(format!("?{query_params}").as_ref());
+        }
+        self.client.build_request(http::Method::GET, &path, None, &self.options)
+    }
+    pub fn options(mut self, options: RequestOptions) -> Self {
+        self.options = options;
+        self
+    }
+    pub fn params(mut self, params: ListCustomersParams) -> Self {
+        self.params = Some(params);
+        self
+    }
+}
+
+impl<'a, ClientService, Body> ListCustomers<'a, ClientService>
+where
+    ClientService: tower::Service<
+            http::Request<RequestBody>,
+            Response = http::Response<Body>,
+        > + Clone,
+    Body: http_body::Body<Data = bytes::Bytes>,
+    Body::Error: Into<tower::BoxError>,
+{
+    async fn execute(
+        self,
+    ) -> Result<
+        crate::models::pagination::ListResource<
+            crate::models::customers::types::Customer,
+        >,
+        ListCustomersError<ClientService::Error>,
+    > {
+        let request = self
+            .build_request()
+            .map_err(|error| ListCustomersError::from_failure(
+                RequestFailure::BuildRequest(error),
+            ))?;
+        let response = self
+            .client
+            .send(request)
+            .await
+            .map_err(ListCustomersError::Transport)?;
+        let result: eros::Result<_, ListCustomersErrors> = async {
+            let response_code = response.status();
+            let body_slice = response
+                .into_body()
+                .collect()
+                .await
+                .map_err(|error| eros::ErrorUnion::new(
+                    RequestFailure::ReadBody(error.into()),
+                ))?
+                .to_bytes();
+            match response_code {
+                http::StatusCode::OK => {
+                    serde_json::from_slice::<
+                        crate::models::pagination::ListResource<
+                            crate::models::customers::types::Customer,
+                        >,
+                    >(&body_slice)
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))
+                }
+                _ => {
+                    Err(
+                        eros::ErrorUnion::new(RequestFailure::UnexpectedStatus {
+                            status: response_code,
+                            body: body_slice,
+                        }),
+                    )
+                }
+            }
+        }
+            .await;
+        result.map_err(Into::into)
+    }
+    pub async fn send(
+        self,
+    ) -> Result<
+        crate::models::pagination::ListResource<
+            crate::models::customers::types::Customer,
+        >,
+        ListCustomersError<ClientService::Error>,
+    > {
+        let duration = self
+            .options
+            .timeout
+            .unwrap_or_else(|| self.client.default_timeout());
+        tokio::time::timeout(duration, self.execute())
+            .await
+            .map_err(|error| ListCustomersError::from_failure(
+                RequestFailure::Timeout(error),
+            ))?
+    }
+}
+
+impl<'a, ClientService, Body> std::future::IntoFuture
+for ListCustomers<'a, ClientService>
+where
+    ClientService: tower::Service<
+            http::Request<RequestBody>,
+            Response = http::Response<Body>,
+        > + Clone + 'a,
+    ClientService::Future: 'a,
+    ClientService::Error: 'a,
+    Body: http_body::Body<Data = bytes::Bytes> + 'a,
+    Body::Error: Into<tower::BoxError>,
+{
+    type Output = Result<
+        crate::models::pagination::ListResource<
+            crate::models::customers::types::Customer,
+        >,
+        ListCustomersError<ClientService::Error>,
+    >;
+    type IntoFuture = std::pin::Pin<
+        Box<dyn std::future::Future<Output = Self::Output> + 'a>,
+    >;
+    fn into_future(self) -> Self::IntoFuture {
+        Box::pin(self.send())
+    }
+}
+
+impl<'a, ClientService, Body> ListCustomers<'a, ClientService>
+where
+    ClientService: tower::Service<
+            http::Request<RequestBody>,
+            Response = http::Response<Body>,
+        > + Clone + 'a,
+    ClientService::Future: 'a,
+    ClientService::Error: 'a,
+    Body: http_body::Body<Data = bytes::Bytes> + 'a,
+    Body::Error: Into<tower::BoxError>,
+{
+    pub fn pages(
+        self,
+    ) -> impl futures_util::Stream<
+        Item = Result<
+            crate::models::pagination::ListResource<
+                crate::models::customers::types::Customer,
+            >,
+            ListCustomersError<ClientService::Error>,
+        >,
+    > + 'a {
+        futures_util::stream::try_unfold(
+            Some(self),
+            |state| async move {
+                let Some(mut request) = state else {
+                    return Ok(None);
+                };
+                let mut params = request.params.take().unwrap_or_default();
+                let current = params.page.unwrap_or(std::num::NonZeroU64::MIN);
+                params.page = Some(current);
+                let client = request.client;
+                let options = request.options.clone();
+                let organization_id = request.organization_id.clone();
+                let response = request.params(params.clone()).send().await?;
+                let next = response
+                    .pagination
+                    .next_page(current)
+                    .map(|page| {
+                        params.page = Some(page);
+                        Self {
+                            client,
+                            options,
+                            params: Some(params),
+                            organization_id,
+                        }
+                    });
+                Ok(Some((response, next)))
+            },
+        )
+    }
+    pub fn items(
+        self,
+    ) -> impl futures_util::Stream<
+        Item = Result<
+            crate::models::customers::types::Customer,
+            ListCustomersError<ClientService::Error>,
+        >,
+    > + 'a {
+        use futures_util::TryStreamExt;
+        self.pages()
+            .map_ok(|page| futures_util::stream::iter(page.items.into_iter().map(Ok)))
+            .try_flatten()
+    }
+}

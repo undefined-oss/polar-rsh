@@ -1,0 +1,27 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+// Generated models.
+#[derive(Debug, Clone)]
+pub struct NotFoundRequired {
+    pub detail: String,
+}
+
+///The requested resource does not exist.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+#[derive(thiserror::Error)]
+#[error("{self:?}")]
+pub struct NotFound {
+    pub error: monostate::MustBe!("not_found"),
+    pub detail: String,
+}
+
+impl NotFound {
+    pub fn new(required: NotFoundRequired) -> Self {
+        Self {
+            error: Default::default(),
+            detail: required.detail,
+        }
+    }
+}

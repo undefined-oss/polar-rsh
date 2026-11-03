@@ -1,0 +1,134 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Copy,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref
+)]
+#[serde(transparent)]
+pub struct Ratio(f64);
+
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum RatioValidationError {
+    #[error("must be finite")]
+    NotFinite,
+    #[error("must be at least 0")]
+    BelowMinimum,
+    #[error("must be less than 1")]
+    AboveMaximum,
+}
+
+impl Ratio {
+    /// Validate a value.
+    pub fn try_new(value: f64) -> Result<Self, RatioValidationError> {
+        Self::try_from(value)
+    }
+    /// Take the underlying value.
+    pub fn into_inner(self) -> f64 {
+        self.0
+    }
+}
+
+impl TryFrom<f64> for Ratio {
+    type Error = RatioValidationError;
+    fn try_from(value: f64) -> Result<Self, Self::Error> {
+        if !value.is_finite() {
+            return Err(RatioValidationError::NotFinite);
+        }
+        if value < 0f64 {
+            return Err(RatioValidationError::BelowMinimum);
+        }
+        if value >= 1f64 {
+            return Err(RatioValidationError::AboveMaximum);
+        }
+        Ok(Self(value))
+    }
+}
+
+impl From<Ratio> for f64 {
+    fn from(value: Ratio) -> Self {
+        value.0
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for Ratio {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <f64 as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Copy,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref
+)]
+#[serde(transparent)]
+pub struct Weight(f64);
+
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum WeightValidationError {
+    #[error("must be finite")]
+    NotFinite,
+    #[error("must be greater than 0")]
+    BelowMinimum,
+    #[error("must be at most 100")]
+    AboveMaximum,
+}
+
+impl Weight {
+    /// Validate a value.
+    pub fn try_new(value: f64) -> Result<Self, WeightValidationError> {
+        Self::try_from(value)
+    }
+    /// Take the underlying value.
+    pub fn into_inner(self) -> f64 {
+        self.0
+    }
+}
+
+impl TryFrom<f64> for Weight {
+    type Error = WeightValidationError;
+    fn try_from(value: f64) -> Result<Self, Self::Error> {
+        if !value.is_finite() {
+            return Err(WeightValidationError::NotFinite);
+        }
+        if value <= 0f64 {
+            return Err(WeightValidationError::BelowMinimum);
+        }
+        if value > 100f64 {
+            return Err(WeightValidationError::AboveMaximum);
+        }
+        Ok(Self(value))
+    }
+}
+
+impl From<Weight> for f64 {
+    fn from(value: Weight) -> Self {
+        value.0
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for Weight {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <f64 as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
