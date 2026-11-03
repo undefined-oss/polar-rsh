@@ -1,8 +1,0 @@
-[package]
-name = "polar-sdk-generator"
-edition = "2024"
-version.workspace = true
-repository.workspace = true
-license.workspace = true
-
-[dependencies]

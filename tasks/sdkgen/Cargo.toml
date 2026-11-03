@@ -12,17 +12,20 @@ doctest = false
 
 [dependencies]
 anyhow = "1"
+blake3 = "1.8.7"
 clap = { version = "4", features = ["derive"] }
-handlebars = "6"
-indexmap = { version = "2", features = ["serde"] }
 prettyplease = "0.2"
 quote = "1"
-regex = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
 syn = { version = "2", features = ["full", "visit-mut"] }
 tempfile = "3"
-sha2 = "0.10"
 toml_edit = "0.22"
-hmac = "0.12"
-base64 = "0.22"
+heck = "0.5.0"
+oas3 = { version = "0.22.0", features = ["preserve-order"] }
+proc-macro2 = "1"
+rrgen = "0.6.0"
+tera = "1.20.1"
+thiserror = "2"
+http = "1"
+url = "2"

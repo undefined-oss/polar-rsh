@@ -1,0 +1,141 @@
+use std::time::{SystemTime, UNIX_EPOCH};
+
+use base64::{
+    Engine, alphabet,
+    engine::{DecodePaddingMode, GeneralPurpose, GeneralPurposeConfig},
+};
+use hmac::{Hmac, KeyInit, Mac};
+use http::HeaderMap;
+use sha2::Sha256;
+
+use super::events::WebhookPayload;
+const TIMESTAMP_TOLERANCE_SECONDS: u64 = 300;
+const BASE64: GeneralPurpose = GeneralPurpose::new(
+    &alphabet::STANDARD,
+    GeneralPurposeConfig::new().with_decode_padding_mode(DecodePaddingMode::Indifferent),
+);
+/// A webhook could not be authenticated or decoded.
+#[derive(Debug, thiserror::Error)]
+pub enum WebhookError {
+    #[error(transparent)]
+    Verification(#[from] WebhookVerificationError),
+    #[error("invalid webhook payload: {0}")]
+    Payload(#[from] serde_json::Error),
+}
+/// The request failed webhook signature or timestamp verification.
+#[derive(Debug, thiserror::Error)]
+pub enum WebhookVerificationError {
+    #[error("webhook secret must not be empty")]
+    EmptySecret,
+    #[error("missing {0} header")]
+    MissingHeader(&'static str),
+    #[error("invalid or repeated {0} header")]
+    InvalidHeader(&'static str),
+    #[error("webhook timestamp must be an integer Unix timestamp")]
+    InvalidTimestamp,
+    #[error("webhook timestamp is too old")]
+    TimestampTooOld,
+    #[error("webhook timestamp is too far in the future")]
+    TimestampTooNew,
+    #[error("no matching webhook signature")]
+    InvalidSignature,
+    #[error("system clock is before the Unix epoch")]
+    InvalidClock,
+}
+/// Verify the signature and timestamp, then parse the event.
+///
+/// Pass the unmodified request body and the endpoint's signing secret.
+pub fn validate_event(
+    body: &[u8],
+    headers: &HeaderMap,
+    secret: &str,
+) -> Result<WebhookPayload, WebhookError> {
+    verify_signature(body, headers, secret)?;
+    Ok(serde_json::from_slice(body)?)
+}
+/// Verify HMAC-SHA256 over the raw body with a five-minute timestamp tolerance.
+/// Accepts Polar's original raw secret and Standard Webhooks' base64-encoded
+/// key.
+///
+/// Requires one of each `webhook-id`, `webhook-timestamp`, and
+/// `webhook-signature` header. The timestamp must be integer Unix seconds;
+/// signature candidates are space-separated `v1,<base64>` values.
+pub fn verify_signature(
+    body: &[u8],
+    headers: &HeaderMap,
+    secret: &str,
+) -> Result<(), WebhookVerificationError> {
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_err(|_| WebhookVerificationError::InvalidClock)?
+        .as_secs();
+    verify_signature_at(body, headers, secret, now)
+}
+fn verify_signature_at(
+    body: &[u8],
+    headers: &HeaderMap,
+    secret: &str,
+    now: u64,
+) -> Result<(), WebhookVerificationError> {
+    if secret.is_empty() {
+        return Err(WebhookVerificationError::EmptySecret);
+    }
+    let id = required_header(headers, "webhook-id")?;
+    let timestamp_header = required_header(headers, "webhook-timestamp")?;
+    let signatures = required_header(headers, "webhook-signature")?;
+    if !timestamp_header.bytes().all(|byte| byte.is_ascii_digit()) {
+        return Err(WebhookVerificationError::InvalidTimestamp);
+    }
+    let timestamp: u64 =
+        timestamp_header.parse().map_err(|_| WebhookVerificationError::InvalidTimestamp)?;
+    if timestamp.abs_diff(now) > TIMESTAMP_TOLERANCE_SECONDS {
+        return Err(if timestamp < now {
+            WebhookVerificationError::TimestampTooOld
+        } else {
+            WebhookVerificationError::TimestampTooNew
+        });
+    }
+    let sign = |key: &[u8]| {
+        let mut mac = Hmac::<Sha256>::new_from_slice(key).expect("HMAC accepts keys of any length");
+        mac.update(id.as_bytes());
+        mac.update(b".");
+        mac.update(timestamp_header.as_bytes());
+        mac.update(b".");
+        mac.update(body);
+        mac
+    };
+    let raw_mac = sign(secret.as_bytes());
+    let decoded_mac = BASE64
+        .decode(secret.strip_prefix("whsec_").unwrap_or(secret))
+        .ok()
+        .filter(|key| !key.is_empty())
+        .map(|key| sign(&key));
+    for entry in signatures.split_ascii_whitespace() {
+        let Some(signature) = entry.strip_prefix("v1,") else { continue };
+        let mut decoded = [0u8; 32];
+        if BASE64.decode_slice(signature, &mut decoded) != Ok(decoded.len()) {
+            continue;
+        }
+        if raw_mac.clone().verify_slice(&decoded).is_ok()
+            || decoded_mac.as_ref().is_some_and(|mac| mac.clone().verify_slice(&decoded).is_ok())
+        {
+            return Ok(());
+        }
+    }
+    Err(WebhookVerificationError::InvalidSignature)
+}
+fn required_header<'a>(
+    headers: &'a HeaderMap,
+    name: &'static str,
+) -> Result<&'a str, WebhookVerificationError> {
+    let mut values = headers.get_all(name).iter();
+    let value = values.next().ok_or(WebhookVerificationError::MissingHeader(name))?;
+    if values.next().is_some() {
+        return Err(WebhookVerificationError::InvalidHeader(name));
+    }
+    value
+        .to_str()
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+        .ok_or(WebhookVerificationError::InvalidHeader(name))
+}

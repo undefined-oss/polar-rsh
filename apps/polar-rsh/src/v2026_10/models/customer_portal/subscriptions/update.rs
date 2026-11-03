@@ -1,0 +1,373 @@
+use http_body_util::BodyExt;
+
+use crate::v2026_10::{
+    client::{PolarClient, RequestBody, RequestOptions},
+    error::{BuildRequestError, RequestFailure},
+};
+#[derive(Debug, thiserror::Error)]
+pub enum CustomerPortalSubscriptionsUpdateError<TransportError> {
+    #[error("HTTP transport failed: {0}")]
+    Transport(#[source] TransportError),
+    #[error("failed to build request: {0}")]
+    BuildRequest(#[source] crate::v2026_10::error::BuildRequestError),
+    #[error("failed to read response body: {0}")]
+    ReadBody(#[source] tower::BoxError),
+    #[error("failed to decode response: {0}")]
+    DecodeResponse(#[source] serde_json::Error),
+    /// A documented error status without a response schema.
+    #[error("HTTP error status: {status}")]
+    HttpStatus { status: http::StatusCode, body: bytes::Bytes },
+    #[error("unexpected HTTP status: {status}")]
+    UnexpectedStatus { status: http::StatusCode, body: bytes::Bytes },
+    #[error("request timed out")]
+    Timeout(#[source] tokio::time::error::Elapsed),
+    /// Payment required to apply the subscription update.
+    #[error("{message}: {0}", message = "Payment required to apply the subscription update.")]
+    PaymentFailed(#[source] crate::v2026_10::models::common::types::PaymentFailed),
+    /// Customer subscription is already canceled or will be at the end of the
+    /// period, the user lacks billing permissions, or pausing/resuming is not
+    /// enabled for the organization.
+    #[error(
+        "{message}: {0}",
+        message = "Customer subscription is already canceled or will be at the end of the period, \
+                   the user lacks billing permissions, or pausing/resuming is not enabled for the \
+                   organization."
+    )]
+    AlreadyCanceledSubscription(
+        #[source] crate::v2026_10::models::subscriptions::types::AlreadyCanceledSubscription,
+    ),
+    /// Customer subscription is already canceled or will be at the end of the
+    /// period, the user lacks billing permissions, or pausing/resuming is not
+    /// enabled for the organization.
+    #[error(
+        "{message}: {0}",
+        message = "Customer subscription is already canceled or will be at the end of the period, \
+                   the user lacks billing permissions, or pausing/resuming is not enabled for the \
+                   organization."
+    )]
+    PauseResumeNotAllowed(
+        #[source] crate::v2026_10::models::subscriptions::types::PauseResumeNotAllowed,
+    ),
+    /// Customer subscription is already canceled or will be at the end of the
+    /// period, the user lacks billing permissions, or pausing/resuming is not
+    /// enabled for the organization.
+    #[error(
+        "{message}: {0}",
+        message = "Customer subscription is already canceled or will be at the end of the period, \
+                   the user lacks billing permissions, or pausing/resuming is not enabled for the \
+                   organization."
+    )]
+    UpdateSubscriptionPlanNotAllowed(
+        #[source] crate::v2026_10::models::subscriptions::types::UpdateSubscriptionPlanNotAllowed,
+    ),
+    /// Customer subscription is already canceled or will be at the end of the
+    /// period, the user lacks billing permissions, or pausing/resuming is not
+    /// enabled for the organization.
+    #[error(
+        "{message}: {0}",
+        message = "Customer subscription is already canceled or will be at the end of the period, \
+                   the user lacks billing permissions, or pausing/resuming is not enabled for the \
+                   organization."
+    )]
+    UpdateSubscriptionSeatsNotAllowed(
+        #[source] crate::v2026_10::models::subscriptions::types::UpdateSubscriptionSeatsNotAllowed,
+    ),
+    /// Customer subscription is already canceled or will be at the end of the
+    /// period, the user lacks billing permissions, or pausing/resuming is not
+    /// enabled for the organization.
+    #[error(
+        "{message}: {0}",
+        message = "Customer subscription is already canceled or will be at the end of the period, \
+                   the user lacks billing permissions, or pausing/resuming is not enabled for the \
+                   organization."
+    )]
+    UpdateSubscriptionUnitsNotAllowed(
+        #[source] crate::v2026_10::models::subscriptions::types::UpdateSubscriptionUnitsNotAllowed,
+    ),
+    /// Customer subscription was not found.
+    #[error("{message}: {0}", message = "Customer subscription was not found.")]
+    ResourceNotFound(#[source] crate::v2026_10::models::common::types::ResourceNotFound),
+    /// The subscription has no payment method to charge, or is not scheduled to
+    /// be canceled.
+    #[error(
+        "{message}: {0}",
+        message = "The subscription has no payment method to charge, or is not scheduled to be \
+                   canceled."
+    )]
+    PaymentMethodRequired(
+        #[source] crate::v2026_10::models::subscriptions::types::PaymentMethodRequired,
+    ),
+    /// The subscription has no payment method to charge, or is not scheduled to
+    /// be canceled.
+    #[error(
+        "{message}: {0}",
+        message = "The subscription has no payment method to charge, or is not scheduled to be \
+                   canceled."
+    )]
+    SubscriptionNotScheduledToCancel(
+        #[source] crate::v2026_10::models::subscriptions::types::SubscriptionNotScheduledToCancel,
+    ),
+    /// Validation Error
+    #[error("{message}: {0}", message = "Validation Error")]
+    HttpValidationError(#[source] crate::v2026_10::models::common::types::HttpValidationError),
+}
+pub(super) type CustomerPortalSubscriptionsUpdateErrors = (
+    crate::v2026_10::error::RequestFailure,
+    crate::v2026_10::models::common::types::PaymentFailed,
+    crate::v2026_10::models::subscriptions::types::AlreadyCanceledSubscription,
+    crate::v2026_10::models::subscriptions::types::PauseResumeNotAllowed,
+    crate::v2026_10::models::subscriptions::types::UpdateSubscriptionPlanNotAllowed,
+    crate::v2026_10::models::subscriptions::types::UpdateSubscriptionSeatsNotAllowed,
+    crate::v2026_10::models::subscriptions::types::UpdateSubscriptionUnitsNotAllowed,
+    crate::v2026_10::models::common::types::ResourceNotFound,
+    crate::v2026_10::models::subscriptions::types::PaymentMethodRequired,
+    crate::v2026_10::models::subscriptions::types::SubscriptionNotScheduledToCancel,
+    crate::v2026_10::models::common::types::HttpValidationError,
+);
+impl<T> From<eros::ErrorUnion<CustomerPortalSubscriptionsUpdateErrors>>
+    for CustomerPortalSubscriptionsUpdateError<T>
+{
+    fn from(error: eros::ErrorUnion<CustomerPortalSubscriptionsUpdateErrors>) -> Self {
+        match error.into_enum() {
+            eros::E11::A(error) => match error {
+                crate::v2026_10::error::RequestFailure::BuildRequest(error) => {
+                    Self::BuildRequest(error)
+                }
+                crate::v2026_10::error::RequestFailure::ReadBody(error) => Self::ReadBody(error),
+                crate::v2026_10::error::RequestFailure::DecodeResponse(error) => {
+                    Self::DecodeResponse(error)
+                }
+                crate::v2026_10::error::RequestFailure::HttpStatus { status, body } => {
+                    Self::HttpStatus { status, body }
+                }
+                crate::v2026_10::error::RequestFailure::UnexpectedStatus { status, body } => {
+                    Self::UnexpectedStatus { status, body }
+                }
+                crate::v2026_10::error::RequestFailure::Timeout(error) => Self::Timeout(error),
+            },
+            eros::E11::B(error) => Self::PaymentFailed(error),
+            eros::E11::C(error) => Self::AlreadyCanceledSubscription(error),
+            eros::E11::D(error) => Self::PauseResumeNotAllowed(error),
+            eros::E11::E(error) => Self::UpdateSubscriptionPlanNotAllowed(error),
+            eros::E11::F(error) => Self::UpdateSubscriptionSeatsNotAllowed(error),
+            eros::E11::G(error) => Self::UpdateSubscriptionUnitsNotAllowed(error),
+            eros::E11::H(error) => Self::ResourceNotFound(error),
+            eros::E11::I(error) => Self::PaymentMethodRequired(error),
+            eros::E11::J(error) => Self::SubscriptionNotScheduledToCancel(error),
+            eros::E11::K(error) => Self::HttpValidationError(error),
+        }
+    }
+}
+impl<T> CustomerPortalSubscriptionsUpdateError<T> {
+    pub(super) fn from_failure(error: crate::v2026_10::error::RequestFailure) -> Self {
+        let union: eros::ErrorUnion<CustomerPortalSubscriptionsUpdateErrors> =
+            eros::ErrorUnion::new(error);
+        union.into()
+    }
+}
+/// Update a subscription of the authenticated customer.
+///
+/// **Scopes**: `customer_portal:write`
+pub struct CustomerPortalSubscriptionsUpdate<'a, ClientService> {
+    pub(super) client: &'a PolarClient<ClientService>,
+    pub(super) id: crate::v2026_10::models::common::ids::SubscriptionId,
+    pub(super) payload: crate::v2026_10::models::subscriptions::unions::CustomerSubscriptionUpdate,
+    pub(super) options: RequestOptions,
+}
+impl<'a, ClientService> CustomerPortalSubscriptionsUpdate<'a, ClientService> {
+    pub(crate) fn build_request(&self) -> Result<http::Request<RequestBody>, BuildRequestError> {
+        let path = format!("v1/customer-portal/subscriptions/{}", self.id);
+        let body = serde_json::to_vec(&self.payload)?;
+        self.client.build_request(http::Method::PATCH, &path, Some(body.into()), &self.options)
+    }
+
+    pub fn options(mut self, options: RequestOptions) -> Self {
+        self.options = options;
+        self
+    }
+}
+impl<'a, ClientService, Body> CustomerPortalSubscriptionsUpdate<'a, ClientService>
+where
+    ClientService:
+        tower::Service<http::Request<RequestBody>, Response = http::Response<Body>> + Clone,
+    Body: http_body::Body<Data = bytes::Bytes>,
+    Body::Error: Into<tower::BoxError>,
+{
+    async fn execute(
+        self,
+    ) -> Result<
+        crate::v2026_10::models::common::types::CustomerSubscription,
+        CustomerPortalSubscriptionsUpdateError<ClientService::Error>,
+    > {
+        let request = self.build_request().map_err(|error| {
+            CustomerPortalSubscriptionsUpdateError::from_failure(RequestFailure::BuildRequest(
+                error,
+            ))
+        })?;
+        let response = self
+            .client
+            .send(request)
+            .await
+            .map_err(CustomerPortalSubscriptionsUpdateError::Transport)?;
+        let result: eros::Result<_, CustomerPortalSubscriptionsUpdateErrors> = async {
+            let response_code = response.status();
+            let body_slice = response
+                .into_body()
+                .collect()
+                .await
+                .map_err(|error| eros::ErrorUnion::new(
+                    RequestFailure::ReadBody(error.into()),
+                ))?
+                .to_bytes();
+            match response_code {
+                http::StatusCode::OK => {
+                    serde_json::from_slice::<
+                        crate::v2026_10::models::common::types::CustomerSubscription,
+                    >(&body_slice)
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))
+                }
+                http::StatusCode::PAYMENT_REQUIRED => {
+                    let error = serde_json::from_slice::<
+                        crate::v2026_10::models::common::types::PaymentFailed,
+                    >(&body_slice)
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))?;
+                    Err(eros::ErrorUnion::new(error))
+                }
+                http::StatusCode::FORBIDDEN => {
+                    #[derive(serde::Deserialize)]
+                    #[serde(untagged)]
+                    enum ResponseError {
+                        Payload0(
+                            crate::v2026_10::models::subscriptions::types::AlreadyCanceledSubscription,
+                        ),
+                        Payload1(
+                            crate::v2026_10::models::subscriptions::types::PauseResumeNotAllowed,
+                        ),
+                        Payload2(
+                            crate::v2026_10::models::subscriptions::types::UpdateSubscriptionPlanNotAllowed,
+                        ),
+                        Payload3(
+                            crate::v2026_10::models::subscriptions::types::UpdateSubscriptionSeatsNotAllowed,
+                        ),
+                        Payload4(
+                            crate::v2026_10::models::subscriptions::types::UpdateSubscriptionUnitsNotAllowed,
+                        ),
+                    }
+                    let error = serde_json::from_slice::<ResponseError>(&body_slice)
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))?;
+                    Err(
+                        match error {
+                            ResponseError::Payload0(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                            ResponseError::Payload1(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                            ResponseError::Payload2(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                            ResponseError::Payload3(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                            ResponseError::Payload4(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                        },
+                    )
+                }
+                http::StatusCode::NOT_FOUND => {
+                    let error = serde_json::from_slice::<
+                        crate::v2026_10::models::common::types::ResourceNotFound,
+                    >(&body_slice)
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))?;
+                    Err(eros::ErrorUnion::new(error))
+                }
+                http::StatusCode::CONFLICT => {
+                    #[derive(serde::Deserialize)]
+                    #[serde(untagged)]
+                    enum ResponseError {
+                        Payload0(
+                            crate::v2026_10::models::subscriptions::types::PaymentMethodRequired,
+                        ),
+                        Payload1(
+                            crate::v2026_10::models::subscriptions::types::SubscriptionNotScheduledToCancel,
+                        ),
+                    }
+                    let error = serde_json::from_slice::<ResponseError>(&body_slice)
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))?;
+                    Err(
+                        match error {
+                            ResponseError::Payload0(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                            ResponseError::Payload1(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                        },
+                    )
+                }
+                http::StatusCode::UNPROCESSABLE_ENTITY => {
+                    let error = serde_json::from_slice::<
+                        crate::v2026_10::models::common::types::HttpValidationError,
+                    >(&body_slice)
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))?;
+                    Err(eros::ErrorUnion::new(error))
+                }
+                _ => {
+                    Err(
+                        eros::ErrorUnion::new(RequestFailure::UnexpectedStatus {
+                            status: response_code,
+                            body: body_slice,
+                        }),
+                    )
+                }
+            }
+        }
+            .await;
+        result.map_err(Into::into)
+    }
+
+    pub async fn send(
+        self,
+    ) -> Result<
+        crate::v2026_10::models::common::types::CustomerSubscription,
+        CustomerPortalSubscriptionsUpdateError<ClientService::Error>,
+    > {
+        let duration = self.options.timeout.unwrap_or_else(|| self.client.default_timeout());
+        tokio::time::timeout(duration, self.execute()).await.map_err(|error| {
+            CustomerPortalSubscriptionsUpdateError::from_failure(RequestFailure::Timeout(error))
+        })?
+    }
+}
+impl<'a, ClientService, Body> std::future::IntoFuture
+    for CustomerPortalSubscriptionsUpdate<'a, ClientService>
+where
+    ClientService:
+        tower::Service<http::Request<RequestBody>, Response = http::Response<Body>> + Clone + 'a,
+    ClientService::Future: 'a,
+    ClientService::Error: 'a,
+    Body: http_body::Body<Data = bytes::Bytes> + 'a,
+    Body::Error: Into<tower::BoxError>,
+{
+    type IntoFuture = std::pin::Pin<Box<dyn std::future::Future<Output = Self::Output> + 'a>>;
+    type Output = Result<
+        crate::v2026_10::models::common::types::CustomerSubscription,
+        CustomerPortalSubscriptionsUpdateError<ClientService::Error>,
+    >;
+
+    fn into_future(self) -> Self::IntoFuture {
+        Box::pin(self.send())
+    }
+}

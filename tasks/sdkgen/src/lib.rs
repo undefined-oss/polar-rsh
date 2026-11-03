@@ -1,3 +1,6 @@
-//! Shared JSON formats used by the SDK development tasks.
+//! SDK generation and tracking formats.
 
+pub mod generator;
+pub mod openapi;
+pub mod templates;
 pub mod tracking;

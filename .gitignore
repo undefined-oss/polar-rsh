@@ -45,11 +45,9 @@ apps/polar-sdk-playground/generated/
 !tasks/**/*.rs
 !tasks/**/Cargo.toml
 !tasks/**/README.md
-!tasks/**/*.hbs
-!tasks/sdk-contracts/**/*.json
-!tasks/sdk-contracts/**/*.mjs
+!tasks/**/*.tera
 
-# Pinned upstream reference for SDK contract tests.
+# Pinned upstream API specifications.
 !vendor/
 !vendor/polar
 !sdkgen.lock.json

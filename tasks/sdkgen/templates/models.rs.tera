@@ -1,0 +1,4 @@
+to: {{ module_path }}
+---
+// Generated models.
+{{ declarations }}

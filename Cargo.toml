@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["apps/polar-rsh", "tasks/sdkgen", "tasks/sdk-contracts", "tasks/sdk-classify", "apps/polar-sdk-generator", "apps/polar-sdk-playground"]
+members = ["apps/polar-rsh", "tasks/sdkgen", "tasks/sdk-classify", "apps/polar-sdk-playground"]
 
 [workspace.package]
 version = "0.2.0"

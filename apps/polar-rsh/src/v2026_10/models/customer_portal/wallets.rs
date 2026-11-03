@@ -1,0 +1,44 @@
+pub mod get;
+pub mod list;
+pub use self::{get::*, list::*};
+pub struct CustomerPortalWallets<'a, ClientService> {
+    client: &'a crate::v2026_10::client::PolarClient<ClientService>,
+}
+impl<'a, ClientService> CustomerPortalWallets<'a, ClientService> {
+    pub(crate) fn new(client: &'a crate::v2026_10::client::PolarClient<ClientService>) -> Self {
+        Self { client }
+    }
+
+    /// Get a wallet by ID for the authenticated customer.
+    ///
+    /// **Scopes**: `customer_portal:read` `customer_portal:write`
+    pub fn get(
+        &self,
+        id: crate::v2026_10::models::common::ids::WalletId,
+    ) -> crate::v2026_10::models::customer_portal::wallets::CustomerPortalWalletsGet<
+        'a,
+        ClientService,
+    > {
+        crate::v2026_10::models::customer_portal::wallets::CustomerPortalWalletsGet {
+            client: self.client,
+            options: crate::v2026_10::client::RequestOptions::default(),
+            id,
+        }
+    }
+
+    /// List wallets of the authenticated customer.
+    ///
+    /// **Scopes**: `customer_portal:read` `customer_portal:write`
+    pub fn list(
+        &self,
+    ) -> crate::v2026_10::models::customer_portal::wallets::CustomerPortalWalletsList<
+        'a,
+        ClientService,
+    > {
+        crate::v2026_10::models::customer_portal::wallets::CustomerPortalWalletsList {
+            client: self.client,
+            options: crate::v2026_10::client::RequestOptions::default(),
+            params: None,
+        }
+    }
+}
