@@ -3,3 +3,7 @@
 release_always = false
 # Verify polar-rsh with its API version features enabled.
 publish_all_features = true
+
+[[package]]
+name = "polar-sdk-playground"
+release = false
