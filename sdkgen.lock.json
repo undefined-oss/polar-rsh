@@ -6,31 +6,31 @@
       "source": "vendor/polar/docs/openapi/2026-04.openapi.json",
       "observed_hash": "38502c3a9e0344ad5b6dead18ce5436007dfc65fc3506b3af5973321234ec649",
       "module_path": "apps/polar-rsh/src/v2026_04",
-      "status": "generated",
+      "status": "validated",
       "generated_hash": "38502c3a9e0344ad5b6dead18ce5436007dfc65fc3506b3af5973321234ec649",
-      "validated_hash": null,
+      "validated_hash": "38502c3a9e0344ad5b6dead18ce5436007dfc65fc3506b3af5973321234ec649",
       "generator_fingerprint": "1c9220fb40d3f2a3707e4cff60dbe7327be68b4a8f7195d5f2ee4b75a43a923e",
-      "validation_fingerprint": null
+      "validation_fingerprint": "d1058f96a21169c50888c7466e158f0a444369ffb44df7abbd29aeb5ba6b6dac"
     },
     "2026-10": {
       "source": "vendor/polar/docs/openapi/2026-10.openapi.json",
       "observed_hash": "2f3a8eb679b052a1169f8e559aafc728cd5a5bf0398c3964e55cb18031543238",
       "module_path": "apps/polar-rsh/src/v2026_10",
-      "status": "generated",
+      "status": "validated",
       "generated_hash": "2f3a8eb679b052a1169f8e559aafc728cd5a5bf0398c3964e55cb18031543238",
-      "validated_hash": null,
+      "validated_hash": "2f3a8eb679b052a1169f8e559aafc728cd5a5bf0398c3964e55cb18031543238",
       "generator_fingerprint": "1c9220fb40d3f2a3707e4cff60dbe7327be68b4a8f7195d5f2ee4b75a43a923e",
-      "validation_fingerprint": null
+      "validation_fingerprint": "d1058f96a21169c50888c7466e158f0a444369ffb44df7abbd29aeb5ba6b6dac"
     },
     "2027-01": {
       "source": "vendor/polar/docs/openapi/2027-01.openapi.json",
       "observed_hash": "a2cfa3c494ecd1ee9866ed8fe5ef32ef912ea70a1d7addaa28ebe18f33001417",
       "module_path": "apps/polar-rsh/src/v2027_01",
-      "status": "generated",
+      "status": "validated",
       "generated_hash": "a2cfa3c494ecd1ee9866ed8fe5ef32ef912ea70a1d7addaa28ebe18f33001417",
-      "validated_hash": null,
+      "validated_hash": "a2cfa3c494ecd1ee9866ed8fe5ef32ef912ea70a1d7addaa28ebe18f33001417",
       "generator_fingerprint": "1c9220fb40d3f2a3707e4cff60dbe7327be68b4a8f7195d5f2ee4b75a43a923e",
-      "validation_fingerprint": null
+      "validation_fingerprint": "d1058f96a21169c50888c7466e158f0a444369ffb44df7abbd29aeb5ba6b6dac"
     }
   }
 }

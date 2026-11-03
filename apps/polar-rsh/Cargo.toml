@@ -2,6 +2,7 @@
 name = "polar-rsh"
 version.workspace = true
 edition = "2024"
+rust-version = "1.85"
 description = "Async Rust SDK for Polar with selectable API versions"
 repository.workspace = true
 license.workspace = true

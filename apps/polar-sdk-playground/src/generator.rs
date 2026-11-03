@@ -279,59 +279,21 @@ mod tests {
     }
 
     #[test]
-    fn client_servers_and_resource_accessors() {
-        assert_snapshot("openapi_2026_10_client", "client.rs");
-    }
-
-    #[test]
-    fn organization_resource_and_scopes() {
-        assert_snapshot("openapi_2026_10_organizations", "models/organizations.rs");
-    }
-
-    #[test]
-    fn organization_models() {
-        assert_snapshot("openapi_2026_10_organization_models", "models/organizations/types.rs");
-    }
-
-    #[test]
-    fn organization_bounded_scalars() {
-        assert_snapshot(
-            "openapi_2026_10_organization_newtypes",
-            "models/organizations/newtypes.rs",
-        );
-    }
-
-    #[test]
-    fn organization_enums_and_sort_fields() {
-        assert_snapshot("openapi_2026_10_organization_enums", "models/organizations/enums.rs");
-    }
-
-    #[test]
-    fn organization_create_operation() {
-        assert_snapshot("openapi_2026_10_organization_create", "models/organizations/create.rs");
-    }
-
-    #[test]
-    fn organization_pagination() {
-        assert_snapshot(
-            "openapi_2026_10_organization_list",
-            "models/organizations/list_organizations.rs",
-        );
-    }
-
-    #[test]
-    fn oauth_form_operation() {
-        assert_snapshot("openapi_2026_10_oauth_token", "models/oauth2/oauth2_request_token.rs");
-    }
-
-    #[test]
-    fn discount_union_resolution() {
-        assert_snapshot("openapi_2026_10_discount_unions", "models/discounts/unions.rs");
-    }
-
-    #[test]
-    fn webhook_discovery_and_boxed_payloads() {
-        assert_snapshot("openapi_2026_10_webhook_events", "models/webhooks/events.rs");
+    fn generated_sdk_snapshots() {
+        for (name, path) in [
+            ("openapi_2026_10_client", "client.rs"),
+            ("openapi_2026_10_organizations", "models/organizations.rs"),
+            ("openapi_2026_10_organization_models", "models/organizations/types.rs"),
+            ("openapi_2026_10_organization_newtypes", "models/organizations/newtypes.rs"),
+            ("openapi_2026_10_organization_enums", "models/organizations/enums.rs"),
+            ("openapi_2026_10_organization_create", "models/organizations/create.rs"),
+            ("openapi_2026_10_organization_list", "models/organizations/list_organizations.rs"),
+            ("openapi_2026_10_oauth_token", "models/oauth2/oauth2_request_token.rs"),
+            ("openapi_2026_10_discount_unions", "models/discounts/unions.rs"),
+            ("openapi_2026_10_webhook_events", "models/webhooks/events.rs"),
+        ] {
+            assert_snapshot(name, path);
+        }
     }
 
     #[test]
