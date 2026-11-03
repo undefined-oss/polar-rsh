@@ -9,13 +9,11 @@ use super::ConversionError;
 
 pub struct SchemaDomains {
     pub active: BTreeMap<String, BTreeSet<String>>,
-    pub excluded: BTreeSet<String>,
 }
 
 pub fn schema_domains(spec: &oas3::Spec) -> Result<SchemaDomains, ConversionError> {
     let document = serde_json::to_value(spec).map_err(|cause| fail(cause.to_string()))?;
     let mut usage = BTreeMap::new();
-    let mut excluded_usage = BTreeMap::new();
     for (path, item) in spec.paths.iter().flatten() {
         for (method, operation) in item.methods() {
             let group = operation
@@ -33,15 +31,20 @@ pub fn schema_domains(spec: &oas3::Spec) -> Result<SchemaDomains, ConversionErro
             let parameters =
                 serde_json::to_value(&item.parameters).map_err(|cause| fail(cause.to_string()))?;
             let mut visited = BTreeSet::new();
-            let target = if domain == "webhooks" { &mut excluded_usage } else { &mut usage };
-            visit(&operation, &document, &domain, &mut visited, target)?;
-            visit(&parameters, &document, &domain, &mut visited, target)?;
+            visit(&operation, &document, &domain, &mut visited, &mut usage)?;
+            visit(&parameters, &document, &domain, &mut visited, &mut usage)?;
         }
     }
     if let Some(webhooks) = document.get("webhooks") {
-        visit(webhooks, &document, "webhooks", &mut BTreeSet::new(), &mut excluded_usage)?;
+        let mut webhook_usage = BTreeMap::new();
+        visit(webhooks, &document, "webhooks", &mut BTreeSet::new(), &mut webhook_usage)?;
+        // Webhook envelopes belong to webhooks; their data reuses the owning
+        // API domain's models instead of moving those models to common.
+        for (schema, domains) in webhook_usage {
+            usage.entry(schema).or_insert(domains);
+        }
     }
-    Ok(SchemaDomains { active: usage, excluded: excluded_usage.into_keys().collect() })
+    Ok(SchemaDomains { active: usage })
 }
 
 fn visit(

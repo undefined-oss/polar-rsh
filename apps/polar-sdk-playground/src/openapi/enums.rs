@@ -25,11 +25,6 @@ pub fn collect_enums(
     let mut modules: BTreeMap<String, Vec<StringEnum>> = BTreeMap::new();
     let mut type_paths = BTreeMap::new();
     for (name, schema) in spec.components.iter().flat_map(|components| &components.schemas) {
-        // Webhook-only types are deferred; webhook references do not make an
-        // otherwise domain-local enum common.
-        if !usage.active.contains_key(name) && usage.excluded.contains(name) {
-            continue;
-        }
         let error = |message: String| ConversionError::InvalidEnum { name: name.clone(), message };
         let resolved = schema.resolve(spec).map_err(|cause| error(cause.to_string()))?;
         let Schema::Object(resolved) = resolved else { continue };

@@ -22,6 +22,7 @@ pub mod serde_helpers;
 pub mod string_enums;
 pub mod unions;
 pub mod uuid_ids;
+pub mod webhooks;
 
 fn format_rust_file(path: &std::path::Path) -> Result<(), rrgen::Error> {
     let source = std::fs::read_to_string(path)?;

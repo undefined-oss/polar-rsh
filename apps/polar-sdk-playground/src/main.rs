@@ -15,7 +15,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let client = openapi::ClientInput::try_from(&spec)?;
     let page_limit = openapi::pagination::page_limit_config(&spec)?;
     let enums = openapi::enums::collect_enums(&spec, &document)?;
-    let ids = openapi::uuid_ids::collect_uuid_ids(&spec, &document)?;
+    let ids = openapi::uuid_ids::collect_uuid_ids(&document)?;
     let newtypes = openapi::newtypes::collect_newtypes(&spec, &document, &enums)?;
     let mut model_catalog =
         openapi::models::collect_models(&spec, &document, &enums, &ids, &newtypes)?;
@@ -161,6 +161,14 @@ fn main() -> Result<(), Box<dyn Error>> {
         {
             fs::remove_file(&path)?;
         }
+    }
+    if model_catalog
+        .unions
+        .get("models/webhooks/events.rs")
+        .is_some_and(|unions| unions.iter().any(|union| union.name == "WebhookPayload"))
+    {
+        templates::webhooks::generate_verification(&output_dir)?;
+        model_files.insert("models/webhooks/verification.rs".into());
     }
     for (module_path, definitions) in model_catalog.unions {
         templates::unions::generate_unions(&output_dir, &module_path, definitions)?;

@@ -20,6 +20,7 @@ pub(super) struct UnionSchema {
     pub nullable: bool,
     pub schema: Value,
     pub keyword: &'static str,
+    pub boxed_fields: BTreeSet<String>,
 }
 
 pub(super) fn collect(
@@ -42,6 +43,7 @@ pub(super) fn collect(
     }
     collect_requests(spec, document, &mut unions)?;
     collect_responses(spec, document, &mut unions)?;
+    super::webhooks::collect(document, &mut unions)?;
     let mut names = BTreeSet::new();
     for definition in unions.values() {
         if !names.insert(&definition.type_path) {
@@ -76,9 +78,6 @@ fn collect_requests(
             else {
                 continue;
             };
-            if group.split('.').next() == Some("webhooks") {
-                continue;
-            }
             let location = format!("#/paths/{}/{}", escape(path), method);
             let operation = document.pointer(location.strip_prefix('#').unwrap()).unwrap();
             let customer_portal = operation
@@ -142,9 +141,6 @@ fn collect_responses(
             else {
                 continue;
             };
-            if group.split('.').next() == Some("webhooks") {
-                continue;
-            }
             let location =
                 format!("#/paths/{}/{}", escape(path), format!("{method:?}").to_lowercase());
             let operation = document.pointer(location.strip_prefix('#').unwrap()).unwrap();
@@ -220,6 +216,7 @@ fn visit(
                         nullable,
                         schema: schema.clone(),
                         keyword,
+                        boxed_fields: BTreeSet::new(),
                     },
                 );
             }
@@ -357,6 +354,13 @@ pub(super) fn resolve(
                 if model.additional_properties.is_none() {
                     dependencies.extend(model_dependencies);
                     model.fields.retain(|field| field.wire_name != property);
+                    for field in &mut model.fields {
+                        if definition.boxed_fields.contains(&field.wire_name) {
+                            let ty: syn::Type = syn::parse_str(&field.rust_type)
+                                .map_err(|cause| fail(&cause.to_string()))?;
+                            field.rust_type = quote::quote!(Box<#ty>).to_string();
+                        }
+                    }
                     Some(model.fields)
                 } else {
                     None
@@ -367,7 +371,16 @@ pub(super) fn resolve(
         } else {
             None
         };
-        variants.push(Variant { name, rust_type: ty.nested(), tags, fields });
+        if !definition.boxed_fields.is_empty() && fields.is_none() {
+            return Err(fail("boxed event data requires a tagged object variant"));
+        }
+        variants.push(Variant {
+            name,
+            description: branch.get("description").and_then(Value::as_str).map(str::to_owned),
+            rust_type: ty.nested(),
+            tags,
+            fields,
+        });
     }
     Ok((
         Union {

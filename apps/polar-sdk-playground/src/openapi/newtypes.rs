@@ -37,9 +37,6 @@ pub fn collect_newtypes(
         .ok_or_else(|| fail("missing component schemas".into()))?;
     let mut candidates = BTreeMap::new();
     for (name, schema) in schemas {
-        if !usage.active.contains_key(name) && usage.excluded.contains(name) {
-            continue;
-        }
         let domain = usage
             .active
             .get(name)

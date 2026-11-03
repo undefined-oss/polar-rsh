@@ -71,10 +71,6 @@ pub fn collect_operations(
                         ))
                     },
                 )?;
-            if group.split('.').next() == Some("webhooks") {
-                catalog.excluded.insert(location);
-                continue;
-            }
             let value = document.pointer(location.strip_prefix('#').unwrap()).unwrap();
             let resolved =
                 resolve(path, &method, group, value, &location, document, models, ids, enums);
@@ -99,6 +95,7 @@ pub fn collect_operations(
                         | "ids"
                         | "serde_helpers"
                         | "newtypes"
+                        | "verification"
                         | "mod"
                 )
             {

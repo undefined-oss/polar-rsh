@@ -20,11 +20,8 @@ pub struct UuidCatalog {
     pub type_paths: BTreeMap<String, String>,
 }
 
-pub fn collect_uuid_ids(
-    spec: &oas3::Spec,
-    document: &serde_json::Value,
-) -> Result<UuidCatalog, ConversionError> {
-    let scan = scan::discover(spec, document)?;
+pub fn collect_uuid_ids(document: &serde_json::Value) -> Result<UuidCatalog, ConversionError> {
+    let scan = scan::discover(document)?;
     let owners = resolve_owners(&scan);
     let mut definitions: BTreeMap<String, Vec<&Occurrence>> = BTreeMap::new();
     let mut type_paths = BTreeMap::new();

@@ -26,16 +26,12 @@ pub(super) struct Scan {
     visited: BTreeSet<String>,
 }
 
-pub(super) fn discover(spec: &oas3::Spec, document: &Value) -> Result<Scan, ConversionError> {
+pub(super) fn discover(document: &Value) -> Result<Scan, ConversionError> {
     // Preserve schema keywords that oas3 does not model, including
     // propertyNames.
-    let usage = super::super::domains::schema_domains(spec)?;
     let mut scan = Scan::default();
     if let Some(schemas) = document.pointer("/components/schemas").and_then(Value::as_object) {
         for (name, schema) in schemas {
-            if !usage.active.contains_key(name) && usage.excluded.contains(name) {
-                continue;
-            }
             let location = format!("#/components/schemas/{}", escape(name));
             scan.schema(schema, &location, name, "", None, None);
         }
@@ -45,13 +41,6 @@ pub(super) fn discover(spec: &oas3::Spec, document: &Value) -> Result<Scan, Conv
             let parent = format!("#/paths/{}", escape(path));
             for method in ["get", "post", "put", "patch", "delete", "head", "options", "trace"] {
                 let Some(operation) = item.get(method) else { continue };
-                if operation
-                    .get("x-speakeasy-group")
-                    .and_then(Value::as_str)
-                    .is_some_and(|group| group.split('.').next() == Some("webhooks"))
-                {
-                    continue;
-                }
                 let location = format!("{parent}/{method}");
                 let owner = operation
                     .get("operationId")

@@ -18,6 +18,7 @@ pub struct Union {
 
 pub struct Variant {
     pub name: String,
+    pub description: Option<String>,
     pub rust_type: String,
     pub tags: Vec<String>,
     /// Payload fields excluding a fixed discriminator, when available.
@@ -34,6 +35,7 @@ struct UnionFragment {
 
 struct VariantFragment {
     name: syn::Ident,
+    docs: Vec<String>,
     ty: syn::Type,
     tags: Vec<String>,
     fields: Option<TokenStream>,
@@ -41,7 +43,8 @@ struct VariantFragment {
 
 impl ToTokens for VariantFragment {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let Self { name, ty, .. } = self;
+        let Self { name, ty, docs, .. } = self;
+        tokens.extend(quote!(#(#[doc = #docs])*));
         if let Some(fields) = &self.fields {
             let tag = &self.tags[0];
             tokens.extend(quote! {
@@ -170,6 +173,7 @@ pub fn generate_unions(
                     let ty: syn::Type = syn::parse_str(&variant.rust_type).map_err(syntax_error)?;
                     Ok(VariantFragment {
                         name: syn::parse_str(&variant.name).map_err(syntax_error)?,
+                        docs: super::documentation_lines(variant.description.as_deref()),
                         ty,
                         tags: variant.tags,
                         fields: if tagged {

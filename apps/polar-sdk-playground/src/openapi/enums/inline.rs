@@ -22,9 +22,6 @@ pub(super) fn collect(
         })?;
     let mut collector = Collector { schemas, catalog };
     for (name, schema) in schemas {
-        if !usage.active.contains_key(name) && usage.excluded.contains(name) {
-            continue;
-        }
         let domain = usage
             .active
             .get(name)
@@ -61,9 +58,6 @@ fn collect_parameters(
                 continue;
             };
             let domain = group.split('.').next().unwrap().to_snake_case();
-            if domain == "webhooks" {
-                continue;
-            }
             let operation_name = operation
                 .get("operationId")
                 .and_then(Value::as_str)

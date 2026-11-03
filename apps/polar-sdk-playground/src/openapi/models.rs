@@ -13,6 +13,7 @@ use crate::templates::{
 
 mod types;
 mod unions;
+mod webhooks;
 use types::Resolver;
 
 pub struct ModelCatalog {
@@ -39,9 +40,6 @@ pub fn collect_models(
     let mut destinations = BTreeMap::new();
     let mut type_paths = BTreeMap::new();
     for name in schemas.keys() {
-        if !usage.active.contains_key(name) && usage.excluded.contains(name) {
-            continue;
-        }
         let domain = usage
             .active
             .get(name)
