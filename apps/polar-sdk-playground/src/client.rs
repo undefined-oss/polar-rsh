@@ -45,7 +45,7 @@ impl PolarVersion {
 }
 
 pub struct PolarBuilder {
-    access_token: AccessToken,
+    access_token: Option<AccessToken>,
     environment: PolarEnvironment,
     timeout: Duration,
     base_url: Url,
@@ -53,10 +53,11 @@ pub struct PolarBuilder {
 }
 
 impl PolarBuilder {
-    pub fn new(access_token: AccessToken) -> Self {
+    /// Pass `None` for no default authentication.
+    pub fn new(access_token: impl Into<Option<AccessToken>>) -> Self {
         let default_environment = PolarEnvironment::Production;
         Self {
-            access_token,
+            access_token: access_token.into(),
             base_url: default_environment.base_url(),
             timeout: Duration::from_secs(5),
             environment: default_environment,
@@ -92,7 +93,8 @@ impl PolarBuilder {
         self,
         transport: S,
     ) -> Result<PolarClient<S>, http::header::InvalidHeaderValue> {
-        let authorization_header = self.access_token.to_header()?;
+        let authorization_header =
+            self.access_token.as_ref().map(AccessToken::to_header).transpose()?;
 
         Ok(PolarClient {
             transport,
@@ -106,7 +108,7 @@ impl PolarBuilder {
 }
 
 struct ClientConfig {
-    authorization: http::HeaderValue,
+    authorization: Option<http::HeaderValue>,
     base_url: Url,
     timeout: Duration,
 }
@@ -118,7 +120,8 @@ pub struct PolarClient<S = ()> {
 }
 
 impl PolarClient<()> {
-    pub fn builder(access_token: AccessToken) -> PolarBuilder {
+    /// Pass `None` to omit the default bearer credential.
+    pub fn builder(access_token: impl Into<Option<AccessToken>>) -> PolarBuilder {
         PolarBuilder::new(access_token)
     }
 }
@@ -156,7 +159,7 @@ impl<ClientService> PolarClient<ClientService> {
         let request_url = base_url.join(path)?;
 
         let authorization_value = if let Some(access_token) = &options.access_token {
-            access_token.to_header().map_err(http::Error::from)?
+            Some(access_token.to_header().map_err(http::Error::from)?)
         } else {
             self.config.authorization.clone()
         };
@@ -164,9 +167,12 @@ impl<ClientService> PolarClient<ClientService> {
         let mut request = http::Request::builder()
             .uri(request_url.as_str())
             .method(method)
-            .header("Authorization", authorization_value)
             .header("Accept", "application/json")
             .header("Polar-Version", PolarVersion::V2026_10.version());
+
+        if let Some(authorization_value) = authorization_value {
+            request = request.header(http::header::AUTHORIZATION, authorization_value);
+        }
 
         if body.is_some() {
             request = request.header(http::header::CONTENT_TYPE, "application/json");
@@ -242,6 +248,8 @@ impl TryFrom<&str> for AccessToken {
 
 #[derive(Default, Clone)]
 pub struct RequestOptions {
+    /// Bearer credential for this operation. `None` inherits the client
+    /// setting.
     pub access_token: Option<AccessToken>,
     pub timeout: Option<Duration>,
 }
