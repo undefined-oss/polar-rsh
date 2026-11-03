@@ -1,4 +1,4 @@
-//! Shared operations with typed paths and JSON responses.
+//! Shared operations with typed paths and response bodies.
 
 use std::path::{Component, Path};
 
@@ -7,21 +7,47 @@ use quote::ToTokens;
 use super::operation_errors::ApiError;
 
 mod fragments;
+mod status_code;
 
 pub struct OperationDefinition {
     pub name: String,
     pub description: Option<String>,
     pub path: String,
     pub parameters: Vec<PathParameter>,
-    pub response_type: String,
-    pub success_status: u16,
+    pub query: Option<super::operation_query::QueryConfig>,
+    pub successes: Vec<SuccessResponse>,
     pub errors: Vec<ErrorResponse>,
+    pub untyped_errors: Vec<u16>,
+}
+
+pub struct SuccessResponse {
+    pub status: u16,
+    pub description: Option<String>,
+    pub body: ResponseBody,
+}
+
+pub enum ResponseBody {
+    Json(String),
+    Bytes { media_type: String },
+    Empty,
+}
+
+pub enum PayloadMethod {
+    Post,
+    Patch,
+    Put,
+}
+
+pub struct RequestPayload {
+    pub rust_type: String,
+    pub required: bool,
 }
 
 pub struct PathParameter {
     pub name: String,
     pub rust_name: String,
     pub rust_type: String,
+    pub percent_encode: bool,
 }
 
 pub struct ErrorResponse {
@@ -50,13 +76,13 @@ pub(super) fn generate_operation(
     tera.autoescape_on(vec![]);
     rrgen::RRgen::with_working_dir(staging_dir).add_template_engine(tera).generate(
         include_str!("../../templates/operation.rs.tera"),
-        &serde_json::json!({"module_path": serde_json::to_string(module_path)?, "declarations": prettyplease::unparse(&file)}),
+        &serde_json::json!({"module_path": serde_json::to_string(module_path)?, "declarations": super::format_rust(file)}),
     )
 }
 
 pub(super) enum Request {
-    Get,
-    Post(String),
-    Patch(String),
+    Bodyless(super::bodyless_operation::BodylessMethod),
+    Json { method: PayloadMethod, payload: RequestPayload },
+    Form { method: PayloadMethod, payload: RequestPayload },
     List(super::list_operation::ListConfig),
 }

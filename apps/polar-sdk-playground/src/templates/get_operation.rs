@@ -13,6 +13,6 @@ pub fn generate_get_operation(
         staging_dir,
         module_path,
         definition,
-        super::operation::Request::Get,
+        super::operation::Request::Bodyless(super::bodyless_operation::BodylessMethod::Get),
     )
 }

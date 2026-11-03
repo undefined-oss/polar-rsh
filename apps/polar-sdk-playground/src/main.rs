@@ -1,301 +1,234 @@
-use std::{convert::Infallible, time::Duration};
-
-use http::StatusCode;
-
-use crate::{
-    client::{AccessToken, PolarClient, RequestBody, RequestOptions},
-    models::{
-        common::{OrganizationId, errors::ValidationLocation},
-        organization::{GetOrganizationError, Organization},
-        pagination::ListResource,
-    },
-};
+use std::{collections::BTreeSet, error::Error, fs, path::Path};
 
 mod client;
 mod error;
 mod models;
+mod openapi;
 mod query;
 mod templates;
 
-fn mock_transport(
-    status: StatusCode,
-    body: &'static [u8],
-) -> impl tower::Service<
-    http::Request<RequestBody>,
-    Response = http::Response<RequestBody>,
-    Error = Infallible,
-> + Clone {
-    tower::service_fn(move |request: http::Request<RequestBody>| async move {
-        assert_eq!(request.method(), &http::Method::GET);
-        assert_eq!(
-            request.uri().to_string(),
-            "https://sandbox-api.polar.sh/v1/organizations/1dbfc517-0bbf-4301-9ba8-555ca42b9737"
-        );
-        assert_eq!(
-            request.headers().get("Authorization").unwrap().to_str().unwrap(),
-            "Bearer example-token"
-        );
-        assert!(request.headers().get("Authorization").unwrap().is_sensitive());
-        assert_eq!(request.headers().get("Accept").unwrap().to_str().unwrap(), "application/json");
-        assert_eq!(request.headers().get("Polar-Version").unwrap().to_str().unwrap(), "2026-10");
-        let mut response = http::Response::new(RequestBody::new(bytes::Bytes::from_static(body)));
-        *response.status_mut() = status;
-        Ok::<_, Infallible>(response)
-    })
-}
-
-#[tokio::main(flavor = "current_thread")]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let page: ListResource<Organization> = serde_json::from_str(
-        r#"{
-            "items": [],
-            "pagination": {"total_count": 0, "max_page": 0}
-        }"#,
-    )?;
-    assert!(page.items.is_empty());
-    assert_eq!(page.pagination.total_count, 0);
-    assert_eq!(page.pagination.max_page, 0);
-
-    for body in [
-        r#"{"items":[]}"#,
-        r#"{"pagination":{"total_count":0,"max_page":0}}"#,
-        r#"{"items":[],"pagination":{"total_count":0}}"#,
-        r#"{"items":[],"pagination":{"max_page":0}}"#,
-    ] {
-        let result = serde_json::from_str::<ListResource<Organization>>(body);
-        assert!(
-            matches!(&result, Err(error) if error.is_data()),
-            "expected a missing required field error for {body}, got {result:?}"
-        );
-    }
-
-    let organization_id =
-        OrganizationId::from(uuid::Uuid::parse_str("1dbfc517-0bbf-4301-9ba8-555ca42b9737")?);
-
-    let configuration_client =
-        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
-            .environment(client::PolarEnvironment::Sandbox)
-            .build_with(())?;
-    assert_eq!(configuration_client.default_timeout(), Duration::from_secs(5));
-
-    let overridden = configuration_client
-        .organizations()
-        .get(organization_id)
-        .options(RequestOptions {
-            access_token: Some(
-                AccessToken::try_from("override-token").expect("nonempty test token"),
-            ),
-            ..Default::default()
-        })
-        .build_request()?;
-    let authorization = overridden.headers().get("Authorization").unwrap();
-    assert_eq!(authorization.to_str()?, "Bearer override-token");
-    assert!(authorization.is_sensitive());
-
-    let ordinary = configuration_client.organizations().get(organization_id).build_request()?;
-    let authorization = ordinary.headers().get("Authorization").unwrap();
-    assert_eq!(authorization.to_str()?, "Bearer example-token");
-    assert!(authorization.is_sensitive());
-
-    let invalid = configuration_client
-        .organizations()
-        .get(organization_id)
-        .options(RequestOptions {
-            access_token: Some(
-                AccessToken::try_from("invalid\ntoken").expect("nonempty test token"),
-            ),
-            ..Default::default()
-        })
-        .build_request();
-    assert!(matches!(invalid, Err(_)), "a token containing a newline must be rejected");
-
-    for body in [b"not-json".as_slice(), b"{}".as_slice()] {
-        let polar_client =
-            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
-                .environment(client::PolarEnvironment::Sandbox)
-                .build_with(mock_transport(StatusCode::OK, body))?;
-        let result = polar_client.organizations().get(organization_id).await;
-
-        assert!(
-            matches!(&result, Err(GetOrganizationError::DecodeResponse(_))),
-            "expected DecodeResponse for {body:?}, got {result:?}"
-        );
-    }
-
-    let error_body = br#"{"error":"ResourceNotFound","detail":"Organization not found."}"#;
-    let polar_client =
-        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
-            .environment(client::PolarEnvironment::Sandbox)
-            .build_with(mock_transport(StatusCode::NOT_FOUND, error_body))?;
-    let result = polar_client.organizations().get(organization_id).await;
-
-    assert!(
-        matches!(
-            &result,
-            Err(GetOrganizationError::NotFound(error))
-                if error.detail == "Organization not found."
-                    && matches!(
-                        &error.error,
-                        models::common::errors::ResourceNotFoundKind::ResourceNotFound
-                    )
-        ),
-        "expected typed NotFound for 404, got {result:?}"
-    );
-
-    let error_body = b"server failure";
-    let polar_client =
-        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
-            .environment(client::PolarEnvironment::Sandbox)
-            .build_with(mock_transport(StatusCode::INTERNAL_SERVER_ERROR, error_body))?;
-    let result = polar_client.organizations().get(organization_id).await;
-    assert!(
-        matches!(
-            &result,
-            Err(GetOrganizationError::UnexpectedStatus { status, body })
-                if *status == StatusCode::INTERNAL_SERVER_ERROR
-                    && body.as_ref() == error_body
-        ),
-        "expected UnexpectedStatus preserving the 500 response body, got {result:?}"
-    );
-
-    for body in [
-        b"not-json".as_slice(),
-        br#"{"error":"OtherError","detail":"Organization not found."}"#.as_slice(),
-        br#"{"error":"ResourceNotFound"}"#.as_slice(),
-        br#"{"detail":"Organization not found."}"#.as_slice(),
-    ] {
-        let polar_client =
-            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
-                .environment(client::PolarEnvironment::Sandbox)
-                .build_with(mock_transport(StatusCode::NOT_FOUND, body))?;
-        let result = polar_client.organizations().get(organization_id).await;
-        assert!(
-            matches!(&result, Err(GetOrganizationError::DecodeResponse(_))),
-            "expected DecodeResponse for invalid 404 body {body:?}, got {result:?}"
-        );
-    }
-
-    let validation_body = br#"{
-        "detail": [
-            {
-                "loc": ["path", "id"],
-                "msg": "Input should be a valid UUID",
-                "type": "uuid_parsing",
-                "input": "invalid-id"
-            },
-            {
-                "loc": ["body", "items", 0],
-                "msg": "Field required",
-                "type": "missing",
-                "ctx": {"field": "name"}
-            }
-        ]
-    }"#;
-    let polar_client =
-        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
-            .environment(client::PolarEnvironment::Sandbox)
-            .build_with(mock_transport(StatusCode::UNPROCESSABLE_ENTITY, validation_body))?;
-    let result = polar_client.organizations().get(organization_id).await;
-    match &result {
-        Err(GetOrganizationError::Validation(error)) => {
-            let details = error.detail.as_ref().expect("expected validation details");
-            assert_eq!(details.len(), 2);
-            let first = &details[0];
-            assert!(matches!(
-                first.loc.as_slice(),
-                [ValidationLocation::Field(scope), ValidationLocation::Field(field)]
-                    if scope == "path" && field == "id"
-            ));
-            assert_eq!(first.msg, "Input should be a valid UUID");
-            assert_eq!(first.kind, "uuid_parsing");
-            assert_eq!(first.input, Some(serde_json::json!("invalid-id")));
-            assert!(first.ctx.is_none());
-
-            let second = &details[1];
-            assert!(matches!(
-                second.loc.as_slice(),
-                [ValidationLocation::Field(scope), ValidationLocation::Field(field), ValidationLocation::Index(0)]
-                    if scope == "body" && field == "items"
-            ));
-            assert_eq!(second.msg, "Field required");
-            assert_eq!(second.kind, "missing");
-            assert!(second.input.is_none());
-            assert_eq!(
-                second.ctx.as_ref().and_then(|ctx| ctx.get("field")),
-                Some(&serde_json::json!("name"))
-            );
+fn main() -> Result<(), Box<dyn Error>> {
+    let project_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let source = fs::read_to_string(project_dir.join("src/2026-10.openapi.json"))?;
+    let spec = oas3::from_json(&source)?;
+    let document: serde_json::Value = serde_json::from_str(&source)?;
+    let client = openapi::ClientInput::try_from(&spec)?;
+    let page_limit = openapi::pagination::page_limit_config(&spec)?;
+    let enums = openapi::enums::collect_enums(&spec, &document)?;
+    let ids = openapi::uuid_ids::collect_uuid_ids(&spec, &document)?;
+    let newtypes = openapi::newtypes::collect_newtypes(&spec, &document, &enums)?;
+    let mut model_catalog =
+        openapi::models::collect_models(&spec, &document, &enums, &ids, &newtypes)?;
+    let operations =
+        openapi::operations::collect_operations(&spec, &document, &model_catalog, &ids, &enums)?;
+    for (module, models) in &mut model_catalog.modules {
+        let prefix = module.trim_end_matches(".rs").replace('/', "::");
+        for model in models {
+            model.derive_error =
+                operations.error_types.contains(&format!("crate::{prefix}::{}", model.name));
         }
-        other => panic!("expected typed Validation for 422, got {other:?}"),
     }
-
-    for (body, has_detail) in [(br#"{"detail":[]}"#.as_slice(), true), (b"{}".as_slice(), false)] {
-        let polar_client =
-            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
-                .environment(client::PolarEnvironment::Sandbox)
-                .build_with(mock_transport(StatusCode::UNPROCESSABLE_ENTITY, body))?;
-        let result = polar_client.organizations().get(organization_id).await;
-        assert!(
-            matches!(
-                &result,
-                Err(GetOrganizationError::Validation(error))
-                    if matches!((&error.detail, has_detail), (Some(details), true) if details.is_empty())
-                        || matches!((&error.detail, has_detail), (None, false))
-            ),
-            "expected Validation with empty or absent details for {body:?}, got {result:?}"
-        );
-    }
-
-    for body in [br#"{"detail":[{"loc":["path","id"]}]}"#.as_slice(), b"not-json".as_slice()] {
-        let polar_client =
-            PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
-                .environment(client::PolarEnvironment::Sandbox)
-                .build_with(mock_transport(StatusCode::UNPROCESSABLE_ENTITY, body))?;
-        let result = polar_client.organizations().get(organization_id).await;
-        assert!(
-            matches!(&result, Err(GetOrganizationError::DecodeResponse(_))),
-            "expected DecodeResponse for invalid 422 body {body:?}, got {result:?}"
-        );
-    }
-
-    let pending_transport = tower::service_fn(|_: http::Request<RequestBody>| {
-        std::future::pending::<Result<http::Response<RequestBody>, Infallible>>()
-    });
-    let timeout_client =
-        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
-            .timeout(Duration::from_millis(10))
-            .build_with(pending_transport.clone())?;
-    let result = tokio::time::timeout(
-        Duration::from_secs(1),
-        timeout_client.organizations().get(organization_id).send(),
-    )
-    .await
-    .expect("the request must inherit the builder's 10 ms timeout");
-    assert!(
-        matches!(&result, Err(GetOrganizationError::Timeout(_))),
-        "expected Timeout from the builder setting, got {result:?}"
+    let output_dir = project_dir.join("generated");
+    let mut model_files: BTreeSet<String> =
+        ["models/common/ids.rs".into(), "models/common/serde_helpers.rs".into()].into();
+    model_files.extend(
+        enums
+            .modules
+            .keys()
+            .chain(model_catalog.modules.keys())
+            .chain(model_catalog.aliases.keys())
+            .chain(model_catalog.unions.keys())
+            .chain(newtypes.modules.keys())
+            .chain(operations.operations.keys())
+            .cloned(),
     );
 
-    let timeout_client =
-        PolarClient::builder(AccessToken::try_from("example-token").expect("valid test token"))
-            .timeout(Duration::from_secs(60))
-            .build_with(pending_transport)?;
-    let result = tokio::time::timeout(Duration::from_secs(1), async {
-        timeout_client
-            .organizations()
-            .get(organization_id)
-            .options(RequestOptions {
-                timeout: Some(Duration::from_millis(10)),
-                ..Default::default()
-            })
-            .await
-    })
-    .await
-    .expect("the request's 10 ms timeout must override the builder's 60 s timeout");
-    assert!(
-        matches!(&result, Err(GetOrganizationError::Timeout(_))),
-        "expected Timeout from the request override, got {result:?}"
+    let id_count = ids.ids.len();
+    templates::uuid_ids::generate_uuid_ids(&output_dir, ids.ids)?;
+    fs::write(
+        output_dir.join("uuid-mappings.json"),
+        serde_json::to_string_pretty(&ids.type_paths)?,
+    )?;
+    println!("Resolved {} UUID schema mappings", ids.type_paths.len());
+    println!(
+        "Generated {} UUID types in {}",
+        id_count,
+        output_dir.join("models/common/ids.rs").display()
     );
-    assert_eq!(timeout_client.default_timeout(), Duration::from_secs(60));
+
+    templates::client::generate_client(
+        &output_dir,
+        &client.version,
+        &client.servers,
+        &operations.accessors,
+    )?;
+    println!("Generated {}", output_dir.join("client.rs").display());
+
+    templates::error::generate_error(&output_dir)?;
+    println!("Generated {}", output_dir.join("error.rs").display());
+
+    templates::query::generate_query(&output_dir)?;
+    templates::path::generate_path(&output_dir)?;
+    println!("Generated {}", output_dir.join("query.rs").display());
+
+    templates::serde_helpers::generate_serde_helpers(&output_dir)?;
+    println!("Generated {}", output_dir.join("models/common/serde_helpers.rs").display());
+
+    if let Some(config) = page_limit {
+        model_files.insert("models/pagination.rs".into());
+        templates::pagination::generate_pagination(&output_dir, config)?;
+        println!("Generated {}", output_dir.join("models/pagination.rs").display());
+    }
+
+    println!(
+        "Generating {} distinct enum types",
+        enums.modules.values().map(Vec::len).sum::<usize>()
+    );
+    // Remove enum and newtype modules no longer emitted by this schema.
+    for entry in fs::read_dir(output_dir.join("models"))? {
+        let entry = entry?;
+        if !entry.file_type()?.is_dir() {
+            continue;
+        }
+        let path = entry.path().join("enums.rs");
+        if path.is_file() && !enums.modules.keys().any(|module| output_dir.join(module) == path) {
+            fs::remove_file(&path)?;
+            println!("Removed {}", path.display());
+        }
+        let path = entry.path().join("newtypes.rs");
+        if path.is_file() && !newtypes.modules.keys().any(|module| output_dir.join(module) == path)
+        {
+            fs::remove_file(&path)?;
+            println!("Removed {}", path.display());
+        }
+    }
+    for (module_path, definitions) in enums.modules {
+        templates::string_enums::generate_string_enums(&output_dir, &module_path, definitions)?;
+        println!("Generated {}", output_dir.join(module_path).display());
+    }
+
+    fs::write(
+        output_dir.join("newtype-mappings.json"),
+        serde_json::to_string_pretty(&newtypes.type_paths)?,
+    )?;
+    println!(
+        "Generating {} validated scalar types for {} schema locations",
+        newtypes.modules.values().map(Vec::len).sum::<usize>(),
+        newtypes.type_paths.len()
+    );
+    for (module_path, definitions) in newtypes.modules {
+        templates::newtypes::generate_newtypes(&output_dir, &module_path, definitions)?;
+    }
+
+    fs::write(
+        output_dir.join("model-report.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "generated": model_catalog.type_paths,
+            "deferred": model_catalog.deferred,
+            "unions": model_catalog.union_type_paths,
+            "inline_enums": enums.inline_type_paths,
+        }))?,
+    )?;
+    println!(
+        "Generating {} named model types; {} schemas deferred",
+        model_catalog.type_paths.len(),
+        model_catalog.deferred.len()
+    );
+    for entry in fs::read_dir(output_dir.join("models"))? {
+        let entry = entry?;
+        if !entry.file_type()?.is_dir() {
+            continue;
+        }
+        let path = entry.path().join("types.rs");
+        if path.is_file()
+            && !model_catalog.modules.keys().any(|module| output_dir.join(module) == path)
+        {
+            fs::remove_file(&path)?;
+        }
+        let path = entry.path().join("literals.rs");
+        if path.is_file() {
+            fs::remove_file(&path)?;
+        }
+        let path = entry.path().join("unions.rs");
+        if path.is_file()
+            && !model_catalog.unions.keys().any(|module| output_dir.join(module) == path)
+        {
+            fs::remove_file(&path)?;
+        }
+        let path = entry.path().join("aliases.rs");
+        if path.is_file()
+            && !model_catalog.aliases.keys().any(|module| output_dir.join(module) == path)
+        {
+            fs::remove_file(&path)?;
+        }
+    }
+    for (module_path, definitions) in model_catalog.unions {
+        templates::unions::generate_unions(&output_dir, &module_path, definitions)?;
+        println!("Generated {}", output_dir.join(module_path).display());
+    }
+    for (module_path, definitions) in model_catalog.aliases {
+        templates::aliases::generate_aliases(&output_dir, &module_path, definitions)?;
+        println!("Generated {}", output_dir.join(module_path).display());
+    }
+    for (module_path, definitions) in model_catalog.modules {
+        templates::models::generate_models(&output_dir, &module_path, definitions)?;
+        println!("Generated {}", output_dir.join(module_path).display());
+    }
+
+    fs::write(
+        output_dir.join("operation-report.json"),
+        serde_json::to_string_pretty(&serde_json::json!({
+            "generated": operations.generated,
+            "deferred": operations.deferred,
+            "excluded": operations.excluded,
+        }))?,
+    )?;
+    for (module, operation) in operations.operations {
+        match operation.request {
+            openapi::operations::OperationRequest::List(config) => {
+                templates::list_operation::generate_list_operation(
+                    &output_dir,
+                    &module,
+                    operation.definition,
+                    config,
+                )?;
+            }
+            openapi::operations::OperationRequest::Bodyless { method } => {
+                templates::bodyless_operation::generate_bodyless_operation(
+                    &output_dir,
+                    &module,
+                    operation.definition,
+                    method,
+                )?;
+            }
+            openapi::operations::OperationRequest::Json { method, payload } => {
+                templates::json_operation::generate_json_operation(
+                    &output_dir,
+                    &module,
+                    operation.definition,
+                    method,
+                    payload,
+                )?;
+            }
+            openapi::operations::OperationRequest::Form { method, payload } => {
+                templates::form_operation::generate_form_operation(
+                    &output_dir,
+                    &module,
+                    operation.definition,
+                    method,
+                    payload,
+                )?;
+            }
+        }
+    }
+    templates::modules::generate_modules(
+        &output_dir,
+        "models",
+        &model_files,
+        operations.resources,
+    )?;
+    println!("Generated {}", output_dir.join("models.rs").display());
+    templates::modules::generate_library(&output_dir)?;
 
     Ok(())
 }

@@ -1,8 +1,5 @@
 //! Resource accessors that construct operation builders.
-use std::{
-    collections::BTreeSet,
-    path::{Component, Path},
-};
+use std::collections::BTreeSet;
 
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
@@ -10,12 +7,15 @@ use quote::{ToTokens, quote};
 pub struct Resource {
     pub name: String,
     pub methods: Vec<ResourceMethod>,
+    pub accessors: Vec<super::client::ResourceAccessor>,
 }
 pub struct ResourceMethod {
     pub name: String,
+    pub description: Option<String>,
     pub operation_type: String,
     pub arguments: Vec<Argument>,
     pub has_params: bool,
+    pub optional_payload: bool,
 }
 pub struct Argument {
     pub name: String,
@@ -25,6 +25,7 @@ pub struct Argument {
 
 struct MethodFragment {
     name: syn::Ident,
+    docs: Vec<String>,
     operation: syn::Path,
     arguments: Vec<TokenStream>,
     fields: Vec<TokenStream>,
@@ -32,8 +33,9 @@ struct MethodFragment {
 }
 impl ToTokens for MethodFragment {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let Self { name, operation, arguments, fields, params } = self;
+        let Self { name, docs, operation, arguments, fields, params } = self;
         tokens.extend(quote! {
+            #(#[doc = #docs])*
             pub fn #name(&self, #(#arguments),*) -> #operation<'a, ClientService> {
                 #operation { client: self.client, options: crate::client::RequestOptions::default(), #params #(#fields,)* }
             }
@@ -58,6 +60,10 @@ impl TryFrom<ResourceMethod> for MethodFragment {
         if method.has_params {
             field_names.insert("params".into());
         }
+        if method.optional_payload {
+            field_names.insert("payload".into());
+            fields.push(quote!(payload: None));
+        }
         for arg in method.arguments {
             let name: syn::Ident = syn::parse_str(&arg.name).map_err(syntax_error)?;
             let field: syn::Ident = syn::parse_str(&arg.field).map_err(syntax_error)?;
@@ -74,6 +80,7 @@ impl TryFrom<ResourceMethod> for MethodFragment {
         }
         Ok(Self {
             name,
+            docs: super::documentation_lines(method.description.as_deref()),
             operation,
             arguments,
             fields,
@@ -82,16 +89,7 @@ impl TryFrom<ResourceMethod> for MethodFragment {
     }
 }
 
-pub fn generate_resource(
-    staging_dir: &Path,
-    module_path: &str,
-    resource: Resource,
-) -> Result<rrgen::GenResult, rrgen::Error> {
-    if !module_path.ends_with(".rs")
-        || !Path::new(module_path).components().all(|part| matches!(part, Component::Normal(_)))
-    {
-        return Err(rrgen::Error::Message("resource requires a relative Rust file path".into()));
-    }
+pub(super) fn resource_tokens(resource: Resource) -> Result<TokenStream, rrgen::Error> {
     let name: syn::Ident = syn::parse_str(&resource.name).map_err(syntax_error)?;
     let methods = resource
         .methods
@@ -104,15 +102,25 @@ pub fn generate_resource(
             return Err(rrgen::Error::Message("duplicate or reserved resource method".into()));
         }
     }
-    let file = syn::parse2(quote! {
+    let mut accessors = Vec::new();
+    for accessor in resource.accessors {
+        let name: syn::Ident = syn::parse_str(&accessor.name).map_err(syntax_error)?;
+        let ty: syn::Path = syn::parse_str(&accessor.rust_type).map_err(syntax_error)?;
+        if !names.insert(name.to_string().trim_start_matches("r#").into()) {
+            return Err(rrgen::Error::Message("duplicate or reserved resource accessor".into()));
+        }
+        accessors.push(quote! {
+            pub fn #name(&self) -> #ty<'a, ClientService> {
+                #ty::new(self.client)
+            }
+        });
+    }
+    Ok(quote! {
         pub struct #name<'a, ClientService> { client: &'a crate::client::PolarClient<ClientService> }
         impl<'a, ClientService> #name<'a, ClientService> {
             pub(crate) fn new(client: &'a crate::client::PolarClient<ClientService>) -> Self { Self { client } }
             #(#methods)*
+            #(#accessors)*
         }
-    }).map_err(syntax_error)?;
-    let mut tera = tera::Tera::default();
-    tera.autoescape_on(vec![]);
-    rrgen::RRgen::with_working_dir(staging_dir).add_template_engine(tera).generate(include_str!("../../templates/resource.rs.tera"),
-        &serde_json::json!({"module_path": serde_json::to_string(module_path)?, "declarations": prettyplease::unparse(&file)}))
+    })
 }

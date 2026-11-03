@@ -12,7 +12,7 @@ pub(super) struct RequiredFields<'a> {
 impl ToTokens for RequiredFields<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let name = self.name;
-        let fields = self.fields.iter().filter(|field| field.presence.is_required()).map(|field| {
+        let fields = self.fields.iter().filter(|field| field.requires_argument()).map(|field| {
             let FieldFragment { name, ty, docs, .. } = field;
             quote! { #docs pub #name: #ty, }
         });
@@ -53,10 +53,15 @@ struct Initializer<'a>(&'a FieldFragment);
 impl ToTokens for Initializer<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let name = &self.0.name;
+        if self.0.presence.is_required() && self.0.constant {
+            tokens.extend(quote!(#name: Default::default(),));
+            return;
+        }
         let value = match self.0.presence {
             Presence::Required | Presence::RequiredNullable => quote!(required.#name),
             Presence::Optional => quote!(None),
             Presence::OptionalNullable => quote!(presence_rs::Presence::Absent),
+            Presence::AdditionalProperties => quote!(Default::default()),
         };
         tokens.extend(quote!(#name: #value,));
     }
@@ -75,7 +80,7 @@ impl ToTokens for Setter<'_> {
         let assignment = match presence {
             Presence::OptionalNullable => quote!(presence_rs::Presence::Some(#value)),
             Presence::Optional | Presence::RequiredNullable => quote!(Some(#value)),
-            Presence::Required => value,
+            Presence::Required | Presence::AdditionalProperties => value,
         };
         tokens.extend(quote! {
             #docs

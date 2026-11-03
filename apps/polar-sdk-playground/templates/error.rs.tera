@@ -16,6 +16,14 @@ pub(crate) enum RequestFailure {
     #[error("failed to decode response: {0}")]
     DecodeResponse(#[source] serde_json::Error),
 
+    /// A documented error status without a response schema.
+    #[error("HTTP error status: {status}")]
+    HttpStatus {
+        status: http::StatusCode,
+        /// Original response bytes, retained without JSON decoding.
+        body: bytes::Bytes,
+    },
+
     /// The operation received a status it does not handle explicitly.
     #[error("unexpected HTTP status: {status}")]
     UnexpectedStatus {
@@ -43,4 +51,8 @@ pub enum BuildRequestError {
     /// Serializing the request body as JSON failed.
     #[error("failed to serialize request body: {0}")]
     Serialize(#[from] serde_json::Error),
+
+    /// Serializing the request body as form data failed.
+    #[error("failed to serialize form body: {0}")]
+    SerializeForm(#[from] serde_urlencoded::ser::Error),
 }

@@ -2,17 +2,24 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use proc_macro2::TokenStream;
 use quote::{ToTokens, format_ident, quote};
-use syn::{Ident, Type};
+use syn::{Ident, Type, ext::IdentExt};
 
 use super::{
-    super::operation_errors::{OperationErrors, error_tokens},
-    OperationDefinition, Request, syntax_error,
+    super::{
+        bodyless_operation::BodylessMethod,
+        operation_errors::{OperationErrors, error_tokens},
+    },
+    OperationDefinition, PayloadMethod, Request, status_code, syntax_error,
 };
 
 mod execution;
 use execution::{Execution, IntoFuture};
 mod list;
 use list::{List, Streams};
+mod query;
+use query::Query;
+mod success;
+use success::Success;
 
 pub(super) struct Operation {
     name: Ident,
@@ -21,30 +28,48 @@ pub(super) struct Operation {
     docs: Vec<String>,
     fields: Vec<Parameter>,
     path: TokenStream,
+    path_bindings: Vec<TokenStream>,
     response: Type,
-    success: u16,
+    success: Vec<TokenStream>,
+    response_declaration: TokenStream,
     responses: Vec<ResponseArm>,
+    untyped_errors: Vec<TokenStream>,
     errors: TokenStream,
     method: Ident,
-    payload: Option<Type>,
+    payload: Option<Payload>,
     list: Option<List>,
+    query: Option<Query>,
+    accept: Option<String>,
 }
 
 impl ToTokens for Operation {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let Self { name, docs, fields, errors, .. } = self;
-        let payload = self.payload.as_ref().map(|ty| quote!(pub(super) payload: #ty,));
+        let Self { name, docs, fields, errors, response_declaration, .. } = self;
+        let payload = self.payload.as_ref().map(|payload| {
+            let ty = &payload.ty;
+            if payload.required {
+                quote!(pub(super) payload: #ty,)
+            } else {
+                quote!(pub(super) payload: Option<#ty>,)
+            }
+        });
         let request = RequestBuilder(self);
         let execute = Execution(self);
         let into_future = IntoFuture(self);
         let list = &self.list;
-        let params = list.as_ref().map(|list| {
-            let name = &list.params;
-            quote!(pub(super) params: Option<#name>,)
+        let query = &self.query;
+        let params = query.as_ref().map(|query| {
+            let name = &query.name;
+            if query.required {
+                quote!(pub(super) params: #name,)
+            } else {
+                quote!(pub(super) params: Option<#name>,)
+            }
         });
         let streams = list.as_ref().map(|list| Streams { operation: self, list });
         tokens.extend(quote! {
-            #list
+            #query
+            #response_declaration
             #errors
             #(#[doc = #docs])*
             pub struct #name<'a, ClientService> {
@@ -76,51 +101,120 @@ impl ToTokens for Parameter {
 
 struct RequestBuilder<'a>(&'a Operation);
 
+struct Payload {
+    ty: Type,
+    required: bool,
+    form: bool,
+}
+
 impl ToTokens for RequestBuilder<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let Operation { name, path, method, payload, .. } = self.0;
-        let serialization = payload.as_ref().map(|_| JsonBody);
-        let body = if payload.is_some() { quote!(Some(body.into())) } else { quote!(None) };
-        let path = if self.0.list.is_some() {
+        let Operation { name, path, path_bindings, method, payload, .. } = self.0;
+        let serialization = payload.as_ref().map(PayloadBody);
+        let body = match payload {
+            Some(payload) if payload.required => quote!(Some(body.into())),
+            Some(_) => quote!(body.map(Into::into)),
+            None => quote!(None),
+        };
+        let payload_setter = payload.as_ref().filter(|payload| !payload.required).map(|payload| {
+            let ty = &payload.ty;
             quote! {
-                let query_params = self.params.as_ref().map_or_default(|params| crate::query::EncodeQuery::encode_query(params));
+                /// Set the optional request body.
+                pub fn payload(mut self, payload: #ty) -> Self {
+                    self.payload = Some(payload);
+                    self
+                }
+            }
+        });
+        let path = if let Some(query) = &self.0.query {
+            let encode = if query.required {
+                quote!(crate::query::EncodeQuery::encode_query(&self.params))
+            } else {
+                quote!(
+                    self.params
+                        .as_ref()
+                        .map_or_else(String::new, crate::query::EncodeQuery::encode_query)
+                )
+            };
+            quote! {
+                let query_params = #encode;
                 let mut path = #path;
                 if !query_params.is_empty() { path.push_str(format!("?{query_params}").as_ref()); }
             }
         } else {
             quote!(let path = #path;)
         };
-        let params_setter = self.0.list.as_ref().map(|list| {
-            let params = &list.params;
-            quote! { pub fn params(mut self, params: #params) -> Self { self.params = Some(params); self } }
+        let params_setter = self.0.query.as_ref().map(|query| {
+            let params = &query.name;
+            let value = if query.required { quote!(params) } else { quote!(Some(params)) };
+            quote! { pub fn params(mut self, params: #params) -> Self { self.params = #value; self } }
         });
+        let build =
+            quote!(self.client.build_request(http::Method::#method, &path, #body, &self.options));
+        let accept = self.0.accept.as_ref().map(|accept| quote! {
+            request.headers_mut().insert(http::header::ACCEPT, http::HeaderValue::from_static(#accept));
+        });
+        let content_type = payload.as_ref().filter(|payload| payload.form).map(|payload| {
+            let header = quote! {
+                request.headers_mut().insert(http::header::CONTENT_TYPE,
+                    http::HeaderValue::from_static("application/x-www-form-urlencoded"));
+            };
+            if payload.required {
+                header
+            } else {
+                quote! { if self.payload.is_some() { #header } }
+            }
+        });
+        let build = if accept.is_some() || content_type.is_some() {
+            quote! {
+                let mut request = #build?;
+                #accept
+                #content_type
+                Ok(request)
+            }
+        } else {
+            build
+        };
         tokens.extend(quote! {
             impl<'a, ClientService> #name<'a, ClientService> {
                 pub(crate) fn build_request(&self) -> Result<http::Request<RequestBody>, BuildRequestError> {
+                    #(#path_bindings)*
                     #path
                     #serialization
-                    self.client.build_request(http::Method::#method, &path, #body, &self.options)
+                    #build
                 }
                 pub fn options(mut self, options: RequestOptions) -> Self {
                     self.options = options;
                     self
                 }
                 #params_setter
+                #payload_setter
             }
         });
     }
 }
 
-struct JsonBody;
+struct PayloadBody<'a>(&'a Payload);
 
-impl ToTokens for JsonBody {
+impl ToTokens for PayloadBody<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        tokens.extend(quote! { let body = serde_json::to_vec(&self.payload)?; });
+        let serializer = if self.0.form {
+            quote!(serde_urlencoded::to_string)
+        } else {
+            quote!(serde_json::to_vec)
+        };
+        if self.0.required {
+            tokens.extend(quote! { let body = #serializer(&self.payload)?; });
+        } else {
+            tokens.extend(quote! {
+                let body = self.payload.as_ref().map(#serializer).transpose()?;
+            });
+        }
     }
 }
 
 struct ResponseArm {
-    status: u16,
+    status: TokenStream,
     payloads: Vec<Type>,
 }
 
@@ -158,37 +252,67 @@ impl ToTokens for ResponseArm {
 
 impl Operation {
     pub(super) fn new(
-        definition: OperationDefinition,
+        mut definition: OperationDefinition,
         request: Request,
     ) -> Result<Self, rrgen::Error> {
+        let form = matches!(&request, Request::Form { .. });
         let (method, payload, list) = match request {
-            Request::Get => (format_ident!("GET"), None, None),
-            Request::Post(ty) => {
-                (format_ident!("POST"), Some(syn::parse_str(&ty).map_err(syntax_error)?), None)
+            Request::Bodyless(method) => {
+                let method = match method {
+                    BodylessMethod::Get => format_ident!("GET"),
+                    BodylessMethod::Post => format_ident!("POST"),
+                    BodylessMethod::Patch => format_ident!("PATCH"),
+                    BodylessMethod::Put => format_ident!("PUT"),
+                    BodylessMethod::Delete => format_ident!("DELETE"),
+                };
+                (method, None, None)
             }
-            Request::Patch(ty) => {
-                (format_ident!("PATCH"), Some(syn::parse_str(&ty).map_err(syntax_error)?), None)
+            Request::Json { method, payload } | Request::Form { method, payload } => {
+                let method = match method {
+                    PayloadMethod::Post => format_ident!("POST"),
+                    PayloadMethod::Patch => format_ident!("PATCH"),
+                    PayloadMethod::Put => format_ident!("PUT"),
+                };
+                let payload = Payload {
+                    ty: syn::parse_str(&payload.rust_type).map_err(syntax_error)?,
+                    required: payload.required,
+                    form,
+                };
+                (method, Some(payload), None)
             }
-            Request::List(config) => (format_ident!("GET"), None, Some(List::try_from(config)?)),
+            Request::List(config) => {
+                definition.query = Some(config.query);
+                let item = syn::parse_str(&config.item_type).map_err(syntax_error)?;
+                (format_ident!("GET"), None, Some(List { item }))
+            }
         };
+        let query = definition.query.map(Query::try_from).transpose()?;
         let name: Ident = syn::parse_str(&definition.name).map_err(syntax_error)?;
-        let response = syn::parse_str(&definition.response_type).map_err(syntax_error)?;
-        if !(200..300).contains(&definition.success_status) {
-            return Err(rrgen::Error::Message("operation success status must be 2xx".into()));
-        }
+        let success_statuses: BTreeSet<_> =
+            definition.successes.iter().map(|response| response.status).collect();
+        let success = Success::new(&name, definition.successes)?;
         let mut fields = Vec::new();
         let mut parameters = BTreeMap::new();
+        let mut path_bindings = Vec::new();
         let mut names: BTreeSet<String> = ["client".into(), "options".into()].into();
         if payload.is_some() {
             names.insert("payload".into());
         }
-        if list.is_some() {
+        if query.is_some() {
             names.insert("params".into());
         }
         for parameter in definition.parameters {
             let ident: Ident = syn::parse_str(&parameter.rust_name).map_err(syntax_error)?;
+            let expression = if parameter.percent_encode {
+                let encoded = format_ident!("encoded_{}", ident.unraw());
+                path_bindings
+                    .push(quote!(let #encoded = crate::path::encode_segment(&self.#ident);));
+                quote!(#encoded)
+            } else {
+                quote!(self.#ident)
+            };
             if !names.insert(ident.to_string().trim_start_matches("r#").into())
-                || parameters.insert(parameter.name, ident.clone()).is_some()
+                || parameters.insert(parameter.name, expression).is_some()
             {
                 return Err(rrgen::Error::Message("duplicate or reserved path parameter".into()));
             }
@@ -200,9 +324,15 @@ impl Operation {
         let path = path_expression(&definition.path, &parameters)?;
         let mut responses = BTreeMap::<u16, Vec<Type>>::new();
         let mut api_errors = Vec::new();
+        let mut error_types = BTreeSet::new();
+        let untyped_errors: BTreeSet<_> = definition.untyped_errors.into_iter().collect();
+        if untyped_errors.iter().any(|status| !(400..600).contains(status)) {
+            return Err(rrgen::Error::Message("untyped error statuses must be 4xx or 5xx".into()));
+        }
         for response in definition.errors {
             if http::StatusCode::from_u16(response.status).is_err()
-                || response.status == definition.success_status
+                || success_statuses.contains(&response.status)
+                || untyped_errors.contains(&response.status)
             {
                 return Err(rrgen::Error::Message("invalid or duplicate response status".into()));
             }
@@ -210,7 +340,11 @@ impl Operation {
                 .entry(response.status)
                 .or_default()
                 .push(syn::parse_str(&response.error.payload_type).map_err(syntax_error)?);
-            api_errors.push(response.error);
+            // Eros needs each payload type once, even when several statuses use
+            // it.
+            if error_types.insert(response.error.payload_type.clone()) {
+                api_errors.push(response.error);
+            }
         }
         let errors = error_tokens(OperationErrors {
             operation: definition.name,
@@ -224,23 +358,31 @@ impl Operation {
             docs: super::super::documentation_lines(definition.description.as_deref()),
             fields,
             path,
-            response,
-            success: definition.success_status,
+            path_bindings,
+            response: success.ty,
+            response_declaration: success.declaration,
+            success: success.arms,
             responses: responses
                 .into_iter()
-                .map(|(status, payloads)| ResponseArm { status, payloads })
+                .map(|(status, payloads)| ResponseArm {
+                    status: status_code::pattern(status),
+                    payloads,
+                })
                 .collect(),
+            untyped_errors: untyped_errors.into_iter().map(status_code::pattern).collect(),
             errors,
             method,
             payload,
             list,
+            query,
+            accept: success.accept,
         })
     }
 }
 
 fn path_expression(
     path: &str,
-    parameters: &BTreeMap<String, Ident>,
+    parameters: &BTreeMap<String, TokenStream>,
 ) -> Result<TokenStream, rrgen::Error> {
     let mut remaining = path.trim_start_matches('/');
     let mut format = String::new();
@@ -254,12 +396,12 @@ fn path_expression(
         let (name, suffix) = tail
             .split_once('}')
             .ok_or_else(|| rrgen::Error::Message("unclosed path parameter".into()))?;
-        let ident = parameters
+        let expression = parameters
             .get(name)
             .ok_or_else(|| rrgen::Error::Message(format!("unknown path parameter: {name}")))?;
         used.insert(name.to_owned());
         format.push_str("{}");
-        arguments.push(quote!(self.#ident));
+        arguments.push(expression);
         remaining = suffix;
     }
     if remaining.contains('}') || used.len() != parameters.len() {

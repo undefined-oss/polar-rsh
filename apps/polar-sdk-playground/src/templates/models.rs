@@ -1,4 +1,6 @@
 //! Model declarations from resolved names, types, and field presence rules.
+//! Additional properties are captured only when explicitly allowed by the
+//! schema.
 
 use std::{
     collections::BTreeSet,
@@ -8,16 +10,22 @@ use std::{
 use quote::quote;
 
 mod fragments;
-use fragments::ModelFragment;
+use fragments::{FieldFragment, ModelFragment};
 
 const TEMPLATE: &str = include_str!("../../templates/models.rs.tera");
-const HELPERS: &str = include_str!("../../templates/serde_helpers.rs.tera");
 
 pub struct Model {
     pub name: String,
     pub description: Option<String>,
     pub fields: Vec<Field>,
     pub derive_default: bool,
+    pub derive_error: bool,
+    pub additional_properties: Option<AdditionalProperties>,
+}
+
+pub struct AdditionalProperties {
+    pub rust_name: String,
+    pub rust_type: String,
 }
 
 /// `rust_type` is the resolved underlying type, without the presence wrapper.
@@ -30,14 +38,24 @@ pub struct Field {
     pub description: Option<String>,
     pub required: bool,
     pub nullable: bool,
+    /// The schema fixes this field to a single literal value.
+    pub constant: bool,
 }
 
 fn syntax_error(error: syn::Error) -> rrgen::Error {
     rrgen::Error::Message(format!("invalid model syntax: {error}"))
 }
 
-/// Emit model declarations and their shared Serde helpers into staging.
-/// `module_path` is a relative Rust file path, such as
+pub(super) fn field_declarations(
+    fields: Vec<Field>,
+) -> Result<proc_macro2::TokenStream, rrgen::Error> {
+    let fields = fields.into_iter().map(FieldFragment::try_from).collect::<Result<Vec<_>, _>>()?;
+    let fields = fields.iter().map(|field| field.declaration(false));
+    Ok(quote!(#(#fields)*))
+}
+
+/// Emit model declarations into staging; shared helpers are generated
+/// separately. `module_path` is a relative Rust file path, such as
 /// `models/organization/types.rs`.
 pub fn generate_models(
     staging_dir: &Path,
@@ -75,9 +93,8 @@ pub fn generate_models(
         &serde_json::json!({
             // rrgen's frontmatter is YAML; quote the destination independently of Rust syntax.
             "module_path": serde_json::to_string(module_path)?,
-            "declarations": prettyplease::unparse(&file),
+            "declarations": super::format_rust(file),
         }),
     )?;
-    generator.generate(HELPERS, &serde_json::json!({}))?;
     Ok(())
 }

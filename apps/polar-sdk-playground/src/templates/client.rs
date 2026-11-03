@@ -29,13 +29,27 @@ struct EnvironmentContext {
 struct ClientContext {
     version_literal: String,
     environments: Vec<EnvironmentContext>,
+    resources: Vec<ResourceAccessor>,
+}
+
+#[derive(Clone, Serialize)]
+pub struct ResourceAccessor {
+    pub name: String,
+    pub rust_type: String,
 }
 
 pub fn generate_client(
     staging_dir: &Path,
     version: &str,
     servers: &[Server],
+    resources: &[ResourceAccessor],
 ) -> Result<rrgen::GenResult, rrgen::Error> {
+    for resource in resources {
+        syn::parse_str::<syn::Ident>(&resource.name)
+            .map_err(|cause| rrgen::Error::Message(cause.to_string()))?;
+        syn::parse_str::<syn::Path>(&resource.rust_type)
+            .map_err(|cause| rrgen::Error::Message(cause.to_string()))?;
+    }
     if version.is_empty() || http::HeaderValue::from_str(version).is_err() {
         return Err(rrgen::Error::Message(
             "API version must be a nonempty HTTP header value".into(),
@@ -80,11 +94,14 @@ pub fn generate_client(
     environments.sort_by(|a, b| a.name.cmp(&b.name));
     let mut tera = tera::Tera::default();
     tera.autoescape_on(vec![]);
-    rrgen::RRgen::with_working_dir(staging_dir).add_template_engine(tera).generate(
+    let result = rrgen::RRgen::with_working_dir(staging_dir).add_template_engine(tera).generate(
         TEMPLATE,
         &serde_json::to_value(ClientContext {
             version_literal: format!("{version:?}"),
             environments,
+            resources: resources.to_vec(),
         })?,
-    )
+    )?;
+    super::format_rust_file(&staging_dir.join("client.rs"))?;
+    Ok(result)
 }

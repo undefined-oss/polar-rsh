@@ -1,5 +1,5 @@
 {% import "macros/string_enum.rs.tera" as string_enum -%}
-to: models/common/enums.rs
+to: {{ module_path }}
 ---
 // Generated string enums. Edit the playground templates to change these definitions.
 use serde::{Deserialize, Serialize};

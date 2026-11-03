@@ -8,6 +8,14 @@ pub(super) struct Execution<'a>(pub &'a Operation);
 impl ToTokens for Execution<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let Operation { name, error, union, response, success, responses, .. } = self.0;
+        let untyped_errors = self.0.untyped_errors.iter().map(|status| {
+            quote! {
+                #status => Err(eros::ErrorUnion::new(RequestFailure::HttpStatus {
+                    status: response_code,
+                    body: body_slice,
+                })),
+            }
+        });
         tokens.extend(quote! {
             impl<'a, ClientService, Body> #name<'a, ClientService>
             where
@@ -22,10 +30,10 @@ impl ToTokens for Execution<'_> {
                         let response_code = response.status();
                         let body_slice = response.into_body().collect().await
                             .map_err(|error| eros::ErrorUnion::new(RequestFailure::ReadBody(error.into())))?.to_bytes();
-                        match response_code.as_u16() {
-                            #success => serde_json::from_slice::<#response>(&body_slice)
-                                .map_err(|error| eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))),
+                        match response_code {
+                            #(#success)*
                             #(#responses)*
+                            #(#untyped_errors)*
                             _ => Err(eros::ErrorUnion::new(RequestFailure::UnexpectedStatus { status: response_code, body: body_slice })),
                         }
                     }.await;

@@ -10,14 +10,13 @@ use serde::{Deserialize, Serialize};
 use tower::ServiceExt;
 use url::Url;
 
-use crate::{error::BuildRequestError, models::organization::Organizations};
+use crate::error::BuildRequestError;
 
 /// API environments declared by the OpenAPI document. Production is the default.
 #[derive(Debug, PartialEq, Eq, Default)]
 pub enum PolarEnvironment {
 {% for environment in environments %}
-{% for line in environment.documentation %}    /// {{ line }}
-{% endfor %}{% if environment.is_default %}    #[default]
+{% if environment.is_default %}    #[default]
 {% endif %}    {{ environment.name }},
 {% endfor %}
 }
@@ -175,13 +174,7 @@ impl<ClientService> PolarClient<ClientService> {
         body: Option<bytes::Bytes>,
         options: &RequestOptions,
     ) -> Result<http::Request<RequestBody>, BuildRequestError> {
-        let mut base_url = self.config.base_url.clone();
-        // Treat a custom base path as a directory when resolving endpoint
-        // paths.
-        if !base_url.path().ends_with('/') {
-            base_url.set_path(&format!("{}/", base_url.path()));
-        }
-        let request_url = base_url.join(path)?;
+        let request_url = crate::path::join(&self.config.base_url, path)?;
 
         let authorization_value = if let Some(access_token) = &options.access_token {
             access_token.to_header().map_err(http::Error::from)?
@@ -203,10 +196,12 @@ impl<ClientService> PolarClient<ClientService> {
         request.body(RequestBody::new(body.unwrap_or_default())).map_err(BuildRequestError::from)
     }
 
-    /// Access organization operations borrowing this client.
-    pub fn organizations(&self) -> Organizations<'_, ClientService> {
-        Organizations::new(self)
+{% for resource in resources %}
+    /// Access {{ resource.name }} operations borrowing this client.
+    pub fn {{ resource.name }}(&self) -> {{ resource.rust_type }}<'_, ClientService> {
+        {{ resource.rust_type }}::new(self)
     }
+{% endfor %}
 
     pub(crate) fn default_timeout(&self) -> Duration {
         self.config.timeout

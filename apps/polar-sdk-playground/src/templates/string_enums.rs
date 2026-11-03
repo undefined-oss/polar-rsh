@@ -1,6 +1,9 @@
 //! String enum emission from resolved Rust names and wire values.
 
-use std::{collections::BTreeSet, path::Path};
+use std::{
+    collections::BTreeSet,
+    path::{Component, Path},
+};
 
 use heck::ToUpperCamelCase;
 use serde::Serialize;
@@ -42,6 +45,7 @@ struct VariantContext {
 
 #[derive(Serialize)]
 struct Context {
+    module_path: String,
     enums: Vec<EnumContext>,
 }
 
@@ -49,8 +53,14 @@ struct Context {
 /// deduplication belong to the caller; declaration order is stable by name.
 pub fn generate_string_enums(
     staging_dir: &Path,
+    module_path: &str,
     mut enums: Vec<StringEnum>,
 ) -> Result<rrgen::GenResult, rrgen::Error> {
+    if !module_path.ends_with(".rs")
+        || !Path::new(module_path).components().all(|part| matches!(part, Component::Normal(_)))
+    {
+        return Err(rrgen::Error::Message("enums require a relative Rust file path".into()));
+    }
     enums.sort_by(|a, b| a.name.cmp(&b.name));
     let mut names = BTreeSet::new();
     let mut contexts = Vec::new();
@@ -111,15 +121,31 @@ pub fn generate_string_enums(
         ("macros/string_enum.rs.tera", MACRO),
         ("string_enums.rs.tera", TEMPLATE),
     ])?;
-    rrgen::RRgen::with_working_dir(staging_dir)
-        .add_template_engine(tera)
-        .generate(TEMPLATE, &serde_json::to_value(Context { enums: contexts })?)
+    let result = rrgen::RRgen::with_working_dir(staging_dir).add_template_engine(tera).generate(
+        TEMPLATE,
+        &serde_json::to_value(Context {
+            module_path: serde_json::to_string(module_path)?,
+            enums: contexts,
+        })?,
+    )?;
+    super::format_rust_file(&staging_dir.join(module_path))?;
+    Ok(result)
 }
 
 // Convert wire spelling once, before rendering. Keep the original wire value
 // for serde, string conversions, and default matching.
 fn variant_name(wire_value: &str) -> String {
-    let name = wire_value.to_upper_camel_case();
+    // Preserve signed numeric suffixes, such as Etc/GMT+1 and Etc/GMT-1.
+    let mut spelling = String::new();
+    let mut chars = wire_value.chars().peekable();
+    while let Some(character) = chars.next() {
+        match character {
+            '+' if chars.peek().is_some_and(char::is_ascii_digit) => spelling.push_str(" Plus "),
+            '-' if chars.peek().is_some_and(char::is_ascii_digit) => spelling.push_str(" Minus "),
+            _ => spelling.push(character),
+        }
+    }
+    let name = spelling.to_upper_camel_case();
     if name.starts_with(|c: char| c.is_ascii_digit()) {
         format!("Value{name}")
     } else if name == "Self" {

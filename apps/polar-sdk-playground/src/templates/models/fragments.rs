@@ -2,9 +2,9 @@ use std::collections::BTreeSet;
 
 use proc_macro2::TokenStream;
 use quote::{ToTokens, quote};
-use syn::{Ident, Type};
+use syn::{Ident, Type, ext::IdentExt};
 
-use super::{Field, Model, syntax_error};
+use super::{AdditionalProperties, Field, Model, syntax_error};
 
 mod builders;
 use builders::{Constructor, RequiredFields, Setter};
@@ -13,12 +13,13 @@ pub(super) struct ModelFragment {
     pub name: Ident,
     docs: Documentation,
     default: Option<TokenStream>,
+    error: Option<TokenStream>,
     fields: Vec<FieldFragment>,
 }
 
 impl ToTokens for ModelFragment {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        let Self { name, docs, default, fields } = self;
+        let Self { name, docs, default, error, fields } = self;
         let required_name = self.required_name();
         let required = required_name.as_ref().map(|name| RequiredFields { name, fields });
         let constructor = Constructor {
@@ -27,11 +28,15 @@ impl ToTokens for ModelFragment {
             use_default: default.is_some(),
         };
         let setters = fields.iter().filter(|field| !field.presence.is_required()).map(Setter);
+        let deny_unknown = (!fields.iter().any(|field| field.presence.is_flattened()))
+            .then(|| quote!(#[serde(deny_unknown_fields)]));
         tokens.extend(quote! {
             #required
             #docs
             #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+            #deny_unknown
             #default
+            #error
             pub struct #name {
                 #(#fields)*
             }
@@ -48,12 +53,12 @@ impl ModelFragment {
     pub(super) fn required_name(&self) -> Option<Ident> {
         self.fields
             .iter()
-            .any(|field| field.presence.is_required())
+            .any(FieldFragment::requires_argument)
             .then(|| quote::format_ident!("{}Required", self.name))
     }
 }
 
-struct FieldFragment {
+pub(super) struct FieldFragment {
     name: Ident,
     wire_name: String,
     docs: Documentation,
@@ -61,17 +66,31 @@ struct FieldFragment {
     serde: TokenStream,
     base: Type,
     presence: Presence,
+    constant: bool,
 }
 
 impl ToTokens for FieldFragment {
     fn to_tokens(&self, tokens: &mut TokenStream) {
+        tokens.extend(self.declaration(true));
+    }
+}
+
+impl FieldFragment {
+    fn requires_argument(&self) -> bool {
+        self.presence.is_required() && !self.constant
+    }
+
+    pub(super) fn declaration(&self, public: bool) -> TokenStream {
         let Self { name, wire_name, docs, ty, serde, .. } = self;
-        tokens.extend(quote! {
+        let visibility = public.then(|| quote!(pub));
+        let rename = (!self.presence.is_flattened() && name.unraw().to_string() != *wire_name)
+            .then(|| quote!(#[serde(rename = #wire_name)]));
+        quote! {
             #docs
-            #[serde(rename = #wire_name)]
+            #rename
             #serde
-            pub #name: #ty,
-        });
+            #visibility #name: #ty,
+        }
     }
 }
 
@@ -95,9 +114,14 @@ enum Presence {
     RequiredNullable,
     Optional,
     OptionalNullable,
+    AdditionalProperties,
 }
 
 impl Presence {
+    fn is_flattened(&self) -> bool {
+        matches!(self, Self::AdditionalProperties)
+    }
+
     fn is_required(&self) -> bool {
         matches!(self, Self::Required | Self::RequiredNullable)
     }
@@ -113,7 +137,7 @@ impl Presence {
 
     fn field_type(&self, base: &Type) -> TokenStream {
         match self {
-            Self::Required => quote!(#base),
+            Self::Required | Self::AdditionalProperties => quote!(#base),
             Self::RequiredNullable | Self::Optional => quote!(Option<#base>),
             Self::OptionalNullable => quote!(presence_rs::Presence<#base>),
         }
@@ -127,11 +151,12 @@ impl Presence {
             },
             Self::Optional => quote! {
                 #[serde(default, skip_serializing_if = "Option::is_none",
-                    deserialize_with = "crate::models::common::serde_helpers::deserialize_optional_non_null")]
+                    deserialize_with = "crate::models::common::serde_helpers::deserialize_optional_value")]
             },
             Self::OptionalNullable => quote! {
                 #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
             },
+            Self::AdditionalProperties => quote!(#[serde(flatten, default)]),
         }
     }
 }
@@ -151,6 +176,27 @@ impl TryFrom<Field> for FieldFragment {
             serde: presence.serde_attributes(),
             base,
             presence,
+            constant: field.constant,
+        })
+    }
+}
+
+impl TryFrom<AdditionalProperties> for FieldFragment {
+    type Error = rrgen::Error;
+
+    fn try_from(properties: AdditionalProperties) -> Result<Self, Self::Error> {
+        let name = syn::parse_str(&properties.rust_name).map_err(syntax_error)?;
+        let base = syn::parse_str(&properties.rust_type).map_err(syntax_error)?;
+        let presence = Presence::AdditionalProperties;
+        Ok(Self {
+            name,
+            wire_name: properties.rust_name,
+            docs: Documentation::new(None),
+            ty: presence.field_type(&base),
+            serde: presence.serde_attributes(),
+            base,
+            presence,
+            constant: false,
         })
     }
 }
@@ -165,8 +211,11 @@ impl TryFrom<Model> for ModelFragment {
                 "model {name}: Default requires all fields to be optional"
             )));
         }
-        let fields =
+        let mut fields =
             model.fields.into_iter().map(FieldFragment::try_from).collect::<Result<Vec<_>, _>>()?;
+        if let Some(properties) = model.additional_properties {
+            fields.push(FieldFragment::try_from(properties)?);
+        }
         let mut names = BTreeSet::new();
         let mut wire_names = BTreeSet::new();
         for field in &fields {
@@ -186,6 +235,9 @@ impl TryFrom<Model> for ModelFragment {
             name,
             docs: Documentation::new(model.description.as_deref()),
             default: model.derive_default.then(|| quote!(#[derive(Default)])),
+            error: model
+                .derive_error
+                .then(|| quote!(#[derive(thiserror::Error)] #[error("{self:?}")])),
             fields,
         })
     }

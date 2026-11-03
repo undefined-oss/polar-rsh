@@ -61,6 +61,9 @@ impl ToTokens for SharedVariants {
             ReadBody(#[source] tower::BoxError),
             #[error("failed to decode response: {0}")]
             DecodeResponse(#[source] serde_json::Error),
+            /// A documented error status without a response schema.
+            #[error("HTTP error status: {status}")]
+            HttpStatus { status: http::StatusCode, body: bytes::Bytes },
             #[error("unexpected HTTP status: {status}")]
             UnexpectedStatus { status: http::StatusCode, body: bytes::Bytes },
             #[error("request timed out")]
@@ -116,6 +119,7 @@ impl ToTokens for FailureArms {
             crate::error::RequestFailure::BuildRequest(error) => Self::BuildRequest(error),
             crate::error::RequestFailure::ReadBody(error) => Self::ReadBody(error),
             crate::error::RequestFailure::DecodeResponse(error) => Self::DecodeResponse(error),
+            crate::error::RequestFailure::HttpStatus { status, body } => Self::HttpStatus { status, body },
             crate::error::RequestFailure::UnexpectedStatus { status, body } => Self::UnexpectedStatus { status, body },
             crate::error::RequestFailure::Timeout(error) => Self::Timeout(error),
         });
@@ -139,6 +143,7 @@ impl TryFrom<OperationErrors> for OperationErrorsFragment {
             "BuildRequest",
             "ReadBody",
             "DecodeResponse",
+            "HttpStatus",
             "UnexpectedStatus",
             "Timeout",
         ]

@@ -1,0 +1,7 @@
+to: lib.rs
+---
+pub mod client;
+pub mod error;
+pub mod models;
+mod path;
+pub mod query;

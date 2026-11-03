@@ -53,7 +53,9 @@ pub fn generate_uuid_ids(
         ("uuid_ids.rs.tera", UUID_IDS),
     ])?;
 
-    rrgen::RRgen::with_working_dir(staging_dir)
+    let result = rrgen::RRgen::with_working_dir(staging_dir)
         .add_template_engine(tera)
-        .generate(UUID_IDS, &serde_json::to_value(UuidIds { ids })?)
+        .generate(UUID_IDS, &serde_json::to_value(UuidIds { ids })?)?;
+    super::format_rust_file(&staging_dir.join("models/common/ids.rs"))?;
+    Ok(result)
 }
