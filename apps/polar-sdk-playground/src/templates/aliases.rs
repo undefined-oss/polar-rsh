@@ -67,3 +67,37 @@ pub fn generate_aliases(
 fn syntax_error(cause: syn::Error) -> rrgen::Error {
     rrgen::Error::Message(format!("invalid alias syntax: {cause}"))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::templates::test_support::{TestResult, assert_generated};
+
+    #[test]
+    fn scalars_collections_and_nullable_values() -> TestResult {
+        assert_generated("aliases", "models/common/aliases.rs", |output| {
+            generate_aliases(
+                output,
+                "models/common/aliases.rs",
+                vec![
+                    Alias {
+                        name: "Tags".into(),
+                        description: Some("Tags attached to a resource.".into()),
+                        rust_type: "Vec<String>".into(),
+                    },
+                    Alias {
+                        name: "Metadata".into(),
+                        description: None,
+                        rust_type: "std::collections::BTreeMap<String, serde_json::Value>".into(),
+                    },
+                    Alias {
+                        name: "NullableCount".into(),
+                        description: Some("A count, or null when unavailable.".into()),
+                        rust_type: "Option<u64>".into(),
+                    },
+                    Alias { name: "Count".into(), description: None, rust_type: "u64".into() },
+                ],
+            )
+        })
+    }
+}

@@ -4,6 +4,14 @@ set positional-arguments
 default:
     @just --list
 
+# Run the playground generator; output goes to apps/polar-sdk-playground/generated.
+dev *args:
+    cargo run --locked -p polar-sdk-playground "$@"
+
+# Run playground tests with nextest; e.g. just test-playground -E 'test(generator::)'.
+test-playground *args:
+    cargo nextest run --locked -p polar-sdk-playground "$@"
+
 # Install the exact generator version required by sdkgen.
 install-generator:
     cargo install --locked openapi-to-rust --version 0.22.0

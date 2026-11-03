@@ -105,3 +105,51 @@ pub fn generate_client(
     super::format_rust_file(&staging_dir.join("client.rs"))?;
     Ok(result)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::templates::test_support::{TestResult, assert_generated};
+
+    #[test]
+    fn client() -> TestResult {
+        assert_generated("client", "client.rs", |output| {
+            generate_client(
+                output,
+                "2026-10-01",
+                &[
+                    Server {
+                        url: "https://sandbox-api.polar.sh".into(),
+                        description: Some("Sandbox environment".into()),
+                        environment: "sandbox".into(),
+                    },
+                    Server {
+                        url: "https://api.polar.sh".into(),
+                        description: Some("Production environment".into()),
+                        environment: "production".into(),
+                    },
+                ],
+                &[ResourceAccessor {
+                    name: "organizations".into(),
+                    rust_type: "crate::models::organizations::Organizations".into(),
+                }],
+            )
+        })
+    }
+
+    #[test]
+    fn client_without_resources() -> TestResult {
+        assert_generated("client_without_resources", "client.rs", |output| {
+            generate_client(
+                output,
+                "2026-10-01",
+                &[Server {
+                    url: "https://api.polar.sh".into(),
+                    description: None,
+                    environment: "production".into(),
+                }],
+                &[],
+            )
+        })
+    }
+}

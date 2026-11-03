@@ -1,0 +1,70 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+///Failures returned while creating a customer.
+#[derive(Debug, thiserror::Error)]
+pub enum CreateCustomerError<TransportError> {
+    #[error("HTTP transport failed: {0}")]
+    Transport(#[source] TransportError),
+    #[error("failed to build request: {0}")]
+    BuildRequest(#[source] crate::error::BuildRequestError),
+    #[error("failed to read response body: {0}")]
+    ReadBody(#[source] tower::BoxError),
+    #[error("failed to decode response: {0}")]
+    DecodeResponse(#[source] serde_json::Error),
+    /// A documented error status without a response schema.
+    #[error("HTTP error status: {status}")]
+    HttpStatus { status: http::StatusCode, body: bytes::Bytes },
+    #[error("unexpected HTTP status: {status}")]
+    UnexpectedStatus { status: http::StatusCode, body: bytes::Bytes },
+    #[error("request timed out")]
+    Timeout(#[source] tokio::time::error::Elapsed),
+    ///The API returned Validation.
+    #[error("{message}: {0}", message = "Validation")]
+    Validation(#[source] crate::models::common::errors::HTTPValidationError),
+    ///The API returned Conflict.
+    #[error("{message}: {0}", message = "Conflict")]
+    Conflict(#[source] crate::models::common::errors::Conflict),
+}
+pub(super) type CreateCustomerErrors = (
+    crate::error::RequestFailure,
+    crate::models::common::errors::HTTPValidationError,
+    crate::models::common::errors::Conflict,
+);
+impl<T> From<eros::ErrorUnion<CreateCustomerErrors>> for CreateCustomerError<T> {
+    fn from(error: eros::ErrorUnion<CreateCustomerErrors>) -> Self {
+        match error.into_enum() {
+            eros::E3::A(error) => {
+                match error {
+                    crate::error::RequestFailure::BuildRequest(error) => {
+                        Self::BuildRequest(error)
+                    }
+                    crate::error::RequestFailure::ReadBody(error) => {
+                        Self::ReadBody(error)
+                    }
+                    crate::error::RequestFailure::DecodeResponse(error) => {
+                        Self::DecodeResponse(error)
+                    }
+                    crate::error::RequestFailure::HttpStatus { status, body } => {
+                        Self::HttpStatus { status, body }
+                    }
+                    crate::error::RequestFailure::UnexpectedStatus { status, body } => {
+                        Self::UnexpectedStatus {
+                            status,
+                            body,
+                        }
+                    }
+                    crate::error::RequestFailure::Timeout(error) => Self::Timeout(error),
+                }
+            }
+            eros::E3::B(error) => Self::Validation(error),
+            eros::E3::C(error) => Self::Conflict(error),
+        }
+    }
+}
+impl<T> CreateCustomerError<T> {
+    pub(super) fn from_failure(error: crate::error::RequestFailure) -> Self {
+        let union: eros::ErrorUnion<CreateCustomerErrors> = eros::ErrorUnion::new(error);
+        union.into()
+    }
+}

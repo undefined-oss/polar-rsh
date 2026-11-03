@@ -26,3 +26,73 @@ pub fn generate_list_operation(
     );
     generate_operation(staging_dir, module_path, definition, Request::List(config))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::templates::{
+        operation::{
+            PathParameter,
+            test_support::{definition, query_field},
+        },
+        operation_query::{MetadataVariant, QueryConfig, QueryEncoding, QueryField},
+        test_support::{TestResult, assert_generated},
+    };
+
+    #[test]
+    fn pagination_filters_and_sorting() -> TestResult {
+        assert_generated("operation_list", "models/customers/list.rs", |output| {
+            let mut operation = definition(
+                "ListCustomers",
+                "/v1/organizations/{organization_id}/customers",
+                ResponseBody::Empty,
+            );
+            operation.parameters = vec![PathParameter {
+                name: "organization_id".into(),
+                rust_name: "organization_id".into(),
+                rust_type: "crate::models::common::OrganizationId".into(),
+                percent_encode: false,
+            }];
+            generate_list_operation(
+                output,
+                "models/customers/list.rs",
+                operation,
+                ListConfig {
+                    item_type: "crate::models::customers::types::Customer".into(),
+                    query: QueryConfig {
+                        params_name: "ListCustomersParams".into(),
+                        fields: vec![
+                            query_field("page", "std::num::NonZeroU64"),
+                            query_field("limit", "crate::models::pagination::PageLimit"),
+                            QueryField {
+                                wire_name: "email".into(),
+                                encoding: QueryEncoding::Repeated,
+                                ..query_field("emails", "Vec<String>")
+                            },
+                            QueryField { deprecated: true, ..query_field("active", "bool") },
+                            QueryField {
+                                encoding: QueryEncoding::Metadata {
+                                    value_type: "crate::models::common::unions::MetadataValue"
+                                        .into(),
+                                    variants: vec![
+                                        MetadataVariant { name: "String".into(), repeated: false },
+                                        MetadataVariant { name: "Strings".into(), repeated: true },
+                                    ],
+                                },
+                                ..query_field(
+                                    "metadata",
+                                    "std::collections::BTreeMap<String, \
+                                     crate::models::common::unions::MetadataValue>",
+                                )
+                            },
+                        ],
+                        sort_type: Some(
+                            "crate::models::customers::enums::CustomerSortField".into(),
+                        ),
+                        sorting_description: Some("Sort customers by one or more fields.".into()),
+                    },
+                },
+            )
+        })
+    }
+}

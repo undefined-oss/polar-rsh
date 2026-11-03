@@ -1,0 +1,74 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+// models.rs
+pub mod customer_portal;
+
+
+// models/customer_portal.rs
+pub mod customers;
+pub mod enums;
+pub mod subscriptions;
+
+pub use self::customers::Customers;
+pub use self::enums::*;
+pub use self::subscriptions::Subscriptions;
+
+pub struct CustomerPortal<'a, ClientService> {
+    client: &'a crate::client::PolarClient<ClientService>,
+}
+
+impl<'a, ClientService> CustomerPortal<'a, ClientService> {
+    pub(crate) fn new(client: &'a crate::client::PolarClient<ClientService>) -> Self {
+        Self { client }
+    }
+    pub fn customers(
+        &self,
+    ) -> crate::models::customer_portal::customers::Customers<'a, ClientService> {
+        crate::models::customer_portal::customers::Customers::new(self.client)
+    }
+    pub fn subscriptions(
+        &self,
+    ) -> crate::models::customer_portal::subscriptions::Subscriptions<
+        'a,
+        ClientService,
+    > {
+        crate::models::customer_portal::subscriptions::Subscriptions::new(self.client)
+    }
+}
+
+
+// models/customer_portal/customers.rs
+pub mod get;
+pub mod types;
+
+pub use self::get::*;
+pub use self::types::*;
+
+pub struct Customers<'a, ClientService> {
+    client: &'a crate::client::PolarClient<ClientService>,
+}
+
+impl<'a, ClientService> Customers<'a, ClientService> {
+    pub(crate) fn new(client: &'a crate::client::PolarClient<ClientService>) -> Self {
+        Self { client }
+    }
+}
+
+
+// models/customer_portal/subscriptions.rs
+pub mod get;
+pub mod types;
+
+pub use self::get::*;
+pub use self::types::*;
+
+pub struct Subscriptions<'a, ClientService> {
+    client: &'a crate::client::PolarClient<ClientService>,
+}
+
+impl<'a, ClientService> Subscriptions<'a, ClientService> {
+    pub(crate) fn new(client: &'a crate::client::PolarClient<ClientService>) -> Self {
+        Self { client }
+    }
+}

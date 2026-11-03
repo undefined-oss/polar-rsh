@@ -154,3 +154,79 @@ fn variant_name(wire_value: &str) -> String {
         name
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::templates::test_support::{TestResult, assert_generated};
+
+    #[test]
+    fn string_enums() -> TestResult {
+        assert_generated("string_enums", "models/common/enums.rs", |output| {
+            generate_string_enums(
+                output,
+                "models/common/enums.rs",
+                vec![
+                    StringEnum {
+                        name: "SubscriptionStatus".into(),
+                        description: Some("The subscription's status.".into()),
+                        derives: ["Debug", "Clone", "Copy", "Deserialize", "Serialize"]
+                            .map(String::from)
+                            .into(),
+                        variants: vec![
+                            StringVariant { wire_value: "active".into(), description: None },
+                            StringVariant {
+                                wire_value: "past_due".into(),
+                                description: Some(
+                                    "Payment is overdue.\r\nA retry may follow.".into(),
+                                ),
+                            },
+                        ],
+                        default_value: Some("active".into()),
+                    },
+                    StringEnum {
+                        name: "CheckoutStatus".into(),
+                        description: None,
+                        derives: ["Debug", "Clone", "Deserialize", "Serialize"]
+                            .map(String::from)
+                            .into(),
+                        variants: vec![StringVariant {
+                            wire_value: "confirmed".into(),
+                            description: None,
+                        }],
+                        default_value: None,
+                    },
+                ],
+            )
+        })
+    }
+
+    #[test]
+    fn string_enum_variant_names() -> TestResult {
+        assert_generated("string_enum_variant_names", "models/common/enums.rs", |output| {
+            generate_string_enums(
+                output,
+                "models/common/enums.rs",
+                vec![StringEnum {
+                    name: "WireValue".into(),
+                    description: None,
+                    derives: ["Debug", "Clone", "Deserialize", "Serialize"]
+                        .map(String::from)
+                        .into(),
+                    variants: [
+                        "Etc/GMT+1",
+                        "Etc/GMT-1",
+                        "self",
+                        "123",
+                        "with\"quote",
+                        "line\nbreak",
+                    ]
+                    .into_iter()
+                    .map(|value| StringVariant { wire_value: value.into(), description: None })
+                    .collect(),
+                    default_value: None,
+                }],
+            )
+        })
+    }
+}

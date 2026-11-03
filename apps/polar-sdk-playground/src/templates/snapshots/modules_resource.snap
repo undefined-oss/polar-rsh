@@ -1,0 +1,33 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+// models.rs
+pub mod organizations;
+
+
+// models/organizations.rs
+pub mod list;
+pub mod types;
+
+pub use self::list::*;
+pub use self::types::*;
+
+pub struct Organizations<'a, ClientService> {
+    client: &'a crate::client::PolarClient<ClientService>,
+}
+
+impl<'a, ClientService> Organizations<'a, ClientService> {
+    pub(crate) fn new(client: &'a crate::client::PolarClient<ClientService>) -> Self {
+        Self { client }
+    }
+    ///List organizations.
+    pub fn list(
+        &self,
+    ) -> crate::models::organizations::ListOrganizations<'a, ClientService> {
+        crate::models::organizations::ListOrganizations {
+            client: self.client,
+            options: crate::client::RequestOptions::default(),
+            params: None,
+        }
+    }
+}

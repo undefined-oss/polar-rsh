@@ -70,3 +70,29 @@ fn documentation_lines(description: Option<&str>) -> Vec<String> {
         .map(String::from)
         .collect()
 }
+
+#[cfg(test)]
+mod test_support {
+    use std::{error::Error, fs, path::Path};
+
+    pub(super) type TestResult = Result<(), Box<dyn Error>>;
+
+    pub(super) fn assert_generated<T>(
+        name: &str,
+        relative_path: &str,
+        generate: impl FnOnce(&Path) -> Result<T, rrgen::Error>,
+    ) -> TestResult {
+        let output = tempfile::tempdir()?;
+        generate(output.path())?;
+        let source = fs::read_to_string(output.path().join(relative_path))?;
+        assert_source(name, &source);
+        Ok(())
+    }
+
+    pub(super) fn assert_source(name: &str, source: &str) {
+        insta::with_settings!({ snapshot_path => concat!(env!("CARGO_MANIFEST_DIR"), "/src/templates/snapshots"),
+            prepend_module_to_snapshot => false, omit_expression => true }, {
+            insta::assert_snapshot!(name, source);
+        });
+    }
+}

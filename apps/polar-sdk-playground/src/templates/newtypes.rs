@@ -161,3 +161,106 @@ pub fn generate_newtypes(
 fn syntax_error(cause: syn::Error) -> rrgen::Error {
     rrgen::Error::Message(format!("invalid newtype syntax: {cause}"))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::templates::test_support::{TestResult, assert_generated};
+
+    #[test]
+    fn bounded_string() -> TestResult {
+        assert_generated("newtype_string", "models/organizations/newtypes.rs", |output| {
+            generate_newtypes(
+                output,
+                "models/organizations/newtypes.rs",
+                vec![Newtype {
+                    name: "OrganizationName".into(),
+                    description: Some("The organization's name.".into()),
+                    scalar: Scalar::String { minimum: Some(3), maximum: Some(100) },
+                }],
+            )
+        })
+    }
+
+    #[test]
+    fn bounded_url() -> TestResult {
+        assert_generated("newtype_url", "models/webhooks/newtypes.rs", |output| {
+            generate_newtypes(
+                output,
+                "models/webhooks/newtypes.rs",
+                vec![Newtype {
+                    name: "WebhookEndpointUrl".into(),
+                    description: None,
+                    scalar: Scalar::Url { minimum: Some(1), maximum: Some(2083) },
+                }],
+            )
+        })
+    }
+
+    #[test]
+    fn signed_and_unsigned_bounds() -> TestResult {
+        assert_generated("newtype_integers", "models/common/newtypes.rs", |output| {
+            generate_newtypes(
+                output,
+                "models/common/newtypes.rs",
+                vec![
+                    Newtype {
+                        name: "Adjustment".into(),
+                        description: None,
+                        scalar: Scalar::Integer {
+                            rust_type: "i64".into(),
+                            minimum: Some(-100),
+                            maximum: Some(100),
+                        },
+                    },
+                    Newtype {
+                        name: "Quantity".into(),
+                        description: None,
+                        scalar: Scalar::Integer {
+                            rust_type: "u64".into(),
+                            minimum: Some(1),
+                            maximum: None,
+                        },
+                    },
+                    Newtype {
+                        name: "Capacity".into(),
+                        description: None,
+                        scalar: Scalar::Integer {
+                            rust_type: "u32".into(),
+                            minimum: None,
+                            maximum: Some(1000),
+                        },
+                    },
+                ],
+            )
+        })
+    }
+
+    #[test]
+    fn inclusive_and_exclusive_number_bounds() -> TestResult {
+        assert_generated("newtype_numbers", "models/common/newtypes.rs", |output| {
+            generate_newtypes(
+                output,
+                "models/common/newtypes.rs",
+                vec![
+                    Newtype {
+                        name: "Ratio".into(),
+                        description: None,
+                        scalar: Scalar::Number {
+                            minimum: Some(NumberBound { value: 0.0, exclusive: false }),
+                            maximum: Some(NumberBound { value: 1.0, exclusive: true }),
+                        },
+                    },
+                    Newtype {
+                        name: "Weight".into(),
+                        description: None,
+                        scalar: Scalar::Number {
+                            minimum: Some(NumberBound { value: 0.0, exclusive: true }),
+                            maximum: Some(NumberBound { value: 100.0, exclusive: false }),
+                        },
+                    },
+                ],
+            )
+        })
+    }
+}

@@ -38,3 +38,23 @@ pub fn generate_pagination(
     super::format_rust_file(&staging_dir.join("models/pagination.rs"))?;
     Ok(result)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::templates::test_support::{TestResult, assert_generated};
+
+    #[test]
+    fn pagination() -> TestResult {
+        assert_generated("pagination", "models/pagination.rs", |output| {
+            generate_pagination(output, PageLimitConfig::default())
+        })
+    }
+
+    #[test]
+    fn pagination_custom_bounds() -> TestResult {
+        assert_generated("pagination_custom_bounds", "models/pagination.rs", |output| {
+            generate_pagination(output, PageLimitConfig { minimum: 5, maximum: 50, default: 20 })
+        })
+    }
+}

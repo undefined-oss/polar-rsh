@@ -3,7 +3,7 @@ to: models/webhooks/verification.rs
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use base64::{Engine, alphabet, engine::{DecodePaddingMode, GeneralPurpose, GeneralPurposeConfig}};
-use hmac::{Hmac, Mac};
+use hmac::{Hmac, KeyInit, Mac};
 use http::HeaderMap;
 use sha2::Sha256;
 

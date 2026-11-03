@@ -1,0 +1,24 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+///An incoming webhook payload.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(tag = "type", deny_unknown_fields)]
+pub enum WebhookPayload {
+    ///The checkout.created event.
+    #[serde(rename = "checkout.created")]
+    CheckoutCreated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        ///The affected resource.
+        data: Box<crate::models::checkouts::types::Checkout>,
+    },
+    ///The product.updated event.
+    #[serde(rename = "product.updated")]
+    ProductUpdated {
+        timestamp: jiff::Timestamp,
+        api_version: String,
+        ///The affected resource.
+        data: Box<crate::models::products::types::Product>,
+    },
+}

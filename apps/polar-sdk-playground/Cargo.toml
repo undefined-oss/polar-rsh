@@ -42,3 +42,7 @@ reqwest = { version = "0.13", default-features = false, features = ["query", "ru
 reqwest-middleware = { version = "0.5", features = ["query"] }
 
 tokio = { version = "1.54.1", features = ["io-util", "macros", "net", "parking_lot", "rt-multi-thread", "signal", "sync", "time"] }
+
+[dev-dependencies]
+insta = "1.49.0"
+tempfile = "3.27.0"

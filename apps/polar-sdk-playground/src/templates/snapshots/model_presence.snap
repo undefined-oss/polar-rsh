@@ -1,0 +1,76 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+// Generated models.
+#[derive(Debug, Clone)]
+pub struct CustomerCreateRequired {
+    ///The customer's name.
+    pub name: String,
+    pub external_id: Option<String>,
+}
+
+///Create a customer.
+///
+///Optional values may be supplied with setters.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct CustomerCreate {
+    ///The customer's name.
+    pub name: String,
+    #[serde(
+        deserialize_with = "crate::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub external_id: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub email: Option<String>,
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub nickname: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub enabled: Option<bool>,
+    #[serde(rename = "displayName")]
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub display_name: Option<String>,
+    pub r#type: monostate::MustBe!("individual"),
+}
+
+impl CustomerCreate {
+    pub fn new(required: CustomerCreateRequired) -> Self {
+        Self {
+            name: required.name,
+            external_id: required.external_id,
+            email: None,
+            nickname: presence_rs::Presence::Absent,
+            enabled: None,
+            display_name: None,
+            r#type: Default::default(),
+        }
+    }
+    pub fn email(mut self, value: impl Into<String>) -> Self {
+        self.email = Some(value.into());
+        self
+    }
+    pub fn nickname(mut self, value: impl Into<String>) -> Self {
+        self.nickname = presence_rs::Presence::Some(value.into());
+        self
+    }
+    pub fn enabled(mut self, value: bool) -> Self {
+        self.enabled = Some(value);
+        self
+    }
+    pub fn display_name(mut self, value: impl Into<String>) -> Self {
+        self.display_name = Some(value.into());
+        self
+    }
+}

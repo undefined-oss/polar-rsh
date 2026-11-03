@@ -8,3 +8,18 @@ pub fn generate_verification(staging_dir: &Path) -> Result<rrgen::GenResult, rrg
     super::format_rust_file(&staging_dir.join("models/webhooks/verification.rs"))?;
     Ok(result)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::templates::test_support::{TestResult, assert_generated};
+
+    #[test]
+    fn webhook_verification() -> TestResult {
+        assert_generated(
+            "webhook_verification",
+            "models/webhooks/verification.rs",
+            generate_verification,
+        )
+    }
+}

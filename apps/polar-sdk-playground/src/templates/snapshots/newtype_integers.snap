@@ -1,0 +1,184 @@
+---
+source: apps/polar-sdk-playground/src/templates.rs
+---
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Copy,
+    Eq,
+    Ord,
+    Hash,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref
+)]
+#[serde(transparent)]
+pub struct Adjustment(i64);
+
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum AdjustmentValidationError {
+    #[error("must be at least -100")]
+    BelowMinimum,
+    #[error("must be at most 100")]
+    AboveMaximum,
+}
+
+impl Adjustment {
+    /// Validate a value.
+    pub fn try_new(value: i64) -> Result<Self, AdjustmentValidationError> {
+        Self::try_from(value)
+    }
+    /// Take the underlying value.
+    pub fn into_inner(self) -> i64 {
+        self.0
+    }
+}
+
+impl TryFrom<i64> for Adjustment {
+    type Error = AdjustmentValidationError;
+    fn try_from(value: i64) -> Result<Self, Self::Error> {
+        if i128::from(value) < -100i128 {
+            return Err(AdjustmentValidationError::BelowMinimum);
+        }
+        if i128::from(value) > 100i128 {
+            return Err(AdjustmentValidationError::AboveMaximum);
+        }
+        Ok(Self(value))
+    }
+}
+
+impl From<Adjustment> for i64 {
+    fn from(value: Adjustment) -> Self {
+        value.0
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for Adjustment {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <i64 as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Copy,
+    Eq,
+    Ord,
+    Hash,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref
+)]
+#[serde(transparent)]
+pub struct Capacity(u32);
+
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum CapacityValidationError {
+    #[error("must be at most 1000")]
+    AboveMaximum,
+}
+
+impl Capacity {
+    /// Validate a value.
+    pub fn try_new(value: u32) -> Result<Self, CapacityValidationError> {
+        Self::try_from(value)
+    }
+    /// Take the underlying value.
+    pub fn into_inner(self) -> u32 {
+        self.0
+    }
+}
+
+impl TryFrom<u32> for Capacity {
+    type Error = CapacityValidationError;
+    fn try_from(value: u32) -> Result<Self, Self::Error> {
+        if i128::from(value) > 1000i128 {
+            return Err(CapacityValidationError::AboveMaximum);
+        }
+        Ok(Self(value))
+    }
+}
+
+impl From<Capacity> for u32 {
+    fn from(value: Capacity) -> Self {
+        value.0
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for Capacity {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <u32 as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Copy,
+    Eq,
+    Ord,
+    Hash,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref
+)]
+#[serde(transparent)]
+pub struct Quantity(u64);
+
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum QuantityValidationError {
+    #[error("must be at least 1")]
+    BelowMinimum,
+}
+
+impl Quantity {
+    /// Validate a value.
+    pub fn try_new(value: u64) -> Result<Self, QuantityValidationError> {
+        Self::try_from(value)
+    }
+    /// Take the underlying value.
+    pub fn into_inner(self) -> u64 {
+        self.0
+    }
+}
+
+impl TryFrom<u64> for Quantity {
+    type Error = QuantityValidationError;
+    fn try_from(value: u64) -> Result<Self, Self::Error> {
+        if i128::from(value) < 1i128 {
+            return Err(QuantityValidationError::BelowMinimum);
+        }
+        Ok(Self(value))
+    }
+}
+
+impl From<Quantity> for u64 {
+    fn from(value: Quantity) -> Self {
+        value.0
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for Quantity {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <u64 as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}

@@ -54,3 +54,33 @@ pub fn generate_operation_errors(
         }),
     )
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::templates::{
+        operation::test_support::api_error,
+        test_support::{TestResult, assert_generated},
+    };
+
+    #[test]
+    fn standalone_errors() -> TestResult {
+        assert_generated("operation_errors", "models/customers/errors.rs", |output| {
+            generate_operation_errors(
+                output,
+                "models/customers/errors.rs",
+                OperationErrors {
+                    operation: "CreateCustomer".into(),
+                    description: Some("Failures returned while creating a customer.".into()),
+                    api_errors: vec![
+                        api_error(
+                            "Validation",
+                            "crate::models::common::errors::HTTPValidationError",
+                        ),
+                        api_error("Conflict", "crate::models::common::errors::Conflict"),
+                    ],
+                },
+            )
+        })
+    }
+}

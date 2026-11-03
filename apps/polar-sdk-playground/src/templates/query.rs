@@ -11,3 +11,14 @@ pub fn generate_query(staging_dir: &Path) -> Result<rrgen::GenResult, rrgen::Err
     super::format_rust_file(&staging_dir.join("query.rs"))?;
     Ok(result)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::templates::test_support::{TestResult, assert_generated};
+
+    #[test]
+    fn query() -> TestResult {
+        assert_generated("query", "query.rs", generate_query)
+    }
+}

@@ -205,3 +205,159 @@ pub fn generate_unions(
 fn syntax_error(cause: syn::Error) -> rrgen::Error {
     rrgen::Error::Message(format!("invalid union syntax: {cause}"))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::templates::{
+        models::Field,
+        test_support::{TestResult, assert_generated},
+    };
+
+    fn scalar_variants() -> Vec<Variant> {
+        vec![
+            Variant {
+                name: "Text".into(),
+                description: Some("A textual value.".into()),
+                rust_type: "String".into(),
+                tags: vec![],
+                fields: None,
+            },
+            Variant {
+                name: "Integer".into(),
+                description: None,
+                rust_type: "i64".into(),
+                tags: vec![],
+                fields: None,
+            },
+        ]
+    }
+
+    #[test]
+    fn untagged_any_of() -> TestResult {
+        assert_generated("union_untagged", "models/common/unions.rs", |output| {
+            generate_unions(
+                output,
+                "models/common/unions.rs",
+                vec![Union {
+                    name: "TextOrInteger".into(),
+                    description: Some("A value supplied as text or an integer.".into()),
+                    exclusive: false,
+                    discriminator: None,
+                    variants: scalar_variants(),
+                }],
+            )
+        })
+    }
+
+    #[test]
+    fn exclusive_one_of() -> TestResult {
+        assert_generated("union_exclusive", "models/common/unions.rs", |output| {
+            generate_unions(
+                output,
+                "models/common/unions.rs",
+                vec![Union {
+                    name: "TextOrInteger".into(),
+                    description: None,
+                    exclusive: true,
+                    discriminator: None,
+                    variants: scalar_variants(),
+                }],
+            )
+        })
+    }
+
+    #[test]
+    fn tagged_webhook_with_boxed_data() -> TestResult {
+        assert_generated("union_tagged_webhook", "models/webhooks/events.rs", |output| {
+            let variants = [
+                (
+                    "CheckoutCreated",
+                    "checkout.created",
+                    "crate::models::checkouts::types::Checkout",
+                ),
+                ("ProductUpdated", "product.updated", "crate::models::products::types::Product"),
+            ]
+            .into_iter()
+            .map(|(name, tag, payload)| Variant {
+                name: name.into(),
+                description: Some(format!("The {tag} event.")),
+                rust_type: payload.into(),
+                tags: vec![tag.into()],
+                fields: Some(vec![
+                    Field {
+                        rust_name: "timestamp".into(),
+                        wire_name: "timestamp".into(),
+                        rust_type: "jiff::Timestamp".into(),
+                        description: None,
+                        required: true,
+                        nullable: false,
+                        constant: false,
+                    },
+                    Field {
+                        rust_name: "api_version".into(),
+                        wire_name: "api_version".into(),
+                        rust_type: "String".into(),
+                        description: None,
+                        required: true,
+                        nullable: false,
+                        constant: false,
+                    },
+                    Field {
+                        rust_name: "data".into(),
+                        wire_name: "data".into(),
+                        rust_type: format!("Box<{payload}>"),
+                        description: Some("The affected resource.".into()),
+                        required: true,
+                        nullable: false,
+                        constant: false,
+                    },
+                ]),
+            })
+            .collect();
+            generate_unions(
+                output,
+                "models/webhooks/events.rs",
+                vec![Union {
+                    name: "WebhookPayload".into(),
+                    description: Some("An incoming webhook payload.".into()),
+                    exclusive: true,
+                    discriminator: Some("type".into()),
+                    variants,
+                }],
+            )
+        })
+    }
+
+    #[test]
+    fn custom_discriminator_with_shared_tags() -> TestResult {
+        assert_generated("union_custom_discriminator", "models/meters/unions.rs", |output| {
+            generate_unions(
+                output,
+                "models/meters/unions.rs",
+                vec![Union {
+                    name: "MeterAggregation".into(),
+                    description: None,
+                    exclusive: true,
+                    discriminator: Some("func".into()),
+                    variants: vec![
+                        Variant {
+                            name: "Count".into(),
+                            description: None,
+                            rust_type: "crate::models::meters::types::CountAggregation".into(),
+                            tags: vec!["count".into()],
+                            fields: None,
+                        },
+                        Variant {
+                            name: "Property".into(),
+                            description: Some("An aggregation over a property.".into()),
+                            rust_type: "crate::models::meters::types::PropertyAggregation".into(),
+                            tags: ["avg", "max", "min", "sum"].map(String::from).into(),
+                            fields: None,
+                        },
+                    ],
+                }],
+            )
+        })
+    }
+}

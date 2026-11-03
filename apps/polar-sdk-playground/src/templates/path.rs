@@ -8,3 +8,14 @@ pub fn generate_path(staging_dir: &Path) -> Result<rrgen::GenResult, rrgen::Erro
     super::format_rust_file(&staging_dir.join("path.rs"))?;
     Ok(result)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::templates::test_support::{TestResult, assert_generated};
+
+    #[test]
+    fn path() -> TestResult {
+        assert_generated("path", "path.rs", generate_path)
+    }
+}

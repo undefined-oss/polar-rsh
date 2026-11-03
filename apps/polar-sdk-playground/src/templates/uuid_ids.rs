@@ -59,3 +59,29 @@ pub fn generate_uuid_ids(
     super::format_rust_file(&staging_dir.join("models/common/ids.rs"))?;
     Ok(result)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::templates::test_support::{TestResult, assert_generated};
+
+    #[test]
+    fn uuid_ids() -> TestResult {
+        assert_generated("uuid_ids", "models/common/ids.rs", |output| {
+            let organization = UuidId {
+                name: "OrganizationId".into(),
+                description: Some(
+                    "The organization's identifier.\r\n\r\nUsed across resources.".into(),
+                ),
+            };
+            generate_uuid_ids(
+                output,
+                vec![
+                    organization.clone(),
+                    UuidId { name: "CustomerId".into(), description: None },
+                    organization,
+                ],
+            )
+        })
+    }
+}

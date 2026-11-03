@@ -124,3 +124,137 @@ pub(super) fn resource_tokens(resource: Resource) -> Result<TokenStream, rrgen::
         }
     })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::templates::{
+        client::ResourceAccessor,
+        test_support::{TestResult, assert_source},
+    };
+
+    fn assert_resource(name: &str, resource: Resource) -> TestResult {
+        let file = syn::parse2(resource_tokens(resource)?)?;
+        assert_source(name, &crate::templates::format_rust(file));
+        Ok(())
+    }
+
+    #[test]
+    fn domain_operations() -> TestResult {
+        assert_resource(
+            "resource_operations",
+            Resource {
+                name: "Organizations".into(),
+                accessors: vec![],
+                methods: vec![
+                    ResourceMethod {
+                        name: "get".into(),
+                        description: Some(
+                            "Get an organization.\n\nRequired scopes: `organizations:read`.".into(),
+                        ),
+                        operation_type: "crate::models::organizations::GetOrganization".into(),
+                        arguments: vec![Argument {
+                            name: "organization_id".into(),
+                            field: "id".into(),
+                            rust_type: "crate::models::common::OrganizationId".into(),
+                        }],
+                        has_params: false,
+                        optional_payload: false,
+                    },
+                    ResourceMethod {
+                        name: "list".into(),
+                        description: Some("List organizations.".into()),
+                        operation_type: "crate::models::organizations::ListOrganizations".into(),
+                        arguments: vec![],
+                        has_params: true,
+                        optional_payload: false,
+                    },
+                    ResourceMethod {
+                        name: "create".into(),
+                        description: None,
+                        operation_type: "crate::models::organizations::CreateOrganization".into(),
+                        arguments: vec![Argument {
+                            name: "body".into(),
+                            field: "payload".into(),
+                            rust_type: "crate::models::organizations::OrganizationCreate".into(),
+                        }],
+                        has_params: false,
+                        optional_payload: false,
+                    },
+                    ResourceMethod {
+                        name: "update".into(),
+                        description: None,
+                        operation_type: "crate::models::organizations::UpdateOrganization".into(),
+                        arguments: vec![
+                            Argument {
+                                name: "organization_id".into(),
+                                field: "id".into(),
+                                rust_type: "crate::models::common::OrganizationId".into(),
+                            },
+                            Argument {
+                                name: "payload".into(),
+                                field: "payload".into(),
+                                rust_type: "crate::models::organizations::OrganizationUpdate"
+                                    .into(),
+                            },
+                        ],
+                        has_params: false,
+                        optional_payload: false,
+                    },
+                ],
+            },
+        )
+    }
+
+    #[test]
+    fn required_params_and_optional_body() -> TestResult {
+        assert_resource(
+            "resource_required_params_optional_body",
+            Resource {
+                name: "Checkouts".into(),
+                accessors: vec![],
+                methods: vec![ResourceMethod {
+                    name: "confirm".into(),
+                    description: None,
+                    operation_type: "crate::models::checkouts::ConfirmCheckout".into(),
+                    arguments: vec![
+                        Argument {
+                            name: "checkout_id".into(),
+                            field: "id".into(),
+                            rust_type: "crate::models::common::CheckoutId".into(),
+                        },
+                        Argument {
+                            name: "params".into(),
+                            field: "params".into(),
+                            rust_type: "crate::models::checkouts::ConfirmCheckoutParams".into(),
+                        },
+                    ],
+                    has_params: false,
+                    optional_payload: true,
+                }],
+            },
+        )
+    }
+
+    #[test]
+    fn nested_resource_accessors() -> TestResult {
+        assert_resource(
+            "resource_accessors",
+            Resource {
+                name: "CustomerPortal".into(),
+                methods: vec![],
+                accessors: vec![
+                    ResourceAccessor {
+                        name: "customers".into(),
+                        rust_type: "crate::models::customer_portal::customers::Customers".into(),
+                    },
+                    ResourceAccessor {
+                        name: "subscriptions".into(),
+                        rust_type: "crate::models::customer_portal::subscriptions::Subscriptions"
+                            .into(),
+                    },
+                ],
+            },
+        )
+    }
+}
