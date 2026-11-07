@@ -13,67 +13,6 @@
     derive_more::Deref,
 )]
 #[serde(transparent)]
-pub struct DiscountAmount(u64);
-#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
-pub enum DiscountAmountValidationError {
-    #[error("must be at least 0")]
-    BelowMinimum,
-    #[error("must be at most 999999999999")]
-    AboveMaximum,
-}
-impl DiscountAmount {
-    /// Validate a value.
-    pub fn try_new(value: u64) -> Result<Self, DiscountAmountValidationError> {
-        Self::try_from(value)
-    }
-
-    /// Take the underlying value.
-    pub fn into_inner(self) -> u64 {
-        self.0
-    }
-}
-impl TryFrom<u64> for DiscountAmount {
-    type Error = DiscountAmountValidationError;
-
-    fn try_from(value: u64) -> Result<Self, Self::Error> {
-        if i128::from(value) < 0i128 {
-            return Err(DiscountAmountValidationError::BelowMinimum);
-        }
-        if i128::from(value) > 999999999999i128 {
-            return Err(DiscountAmountValidationError::AboveMaximum);
-        }
-        Ok(Self(value))
-    }
-}
-impl From<DiscountAmount> for u64 {
-    fn from(value: DiscountAmount) -> Self {
-        value.0
-    }
-}
-impl<'de> serde::Deserialize<'de> for DiscountAmount {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let value = <u64 as serde::Deserialize>::deserialize(deserializer)?;
-        Self::try_from(value).map_err(serde::de::Error::custom)
-    }
-}
-/// Fixed amount to discount from the invoice total.
-#[derive(
-    Debug,
-    Clone,
-    PartialEq,
-    PartialOrd,
-    Copy,
-    Eq,
-    Ord,
-    Hash,
-    serde::Serialize,
-    derive_more::Display,
-    derive_more::Deref,
-)]
-#[serde(transparent)]
 pub struct DiscountAmountsValue(u64);
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum DiscountAmountsValueValidationError {
@@ -240,67 +179,6 @@ impl From<DiscountDurationInMonths> for u64 {
     }
 }
 impl<'de> serde::Deserialize<'de> for DiscountDurationInMonths {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let value = <u64 as serde::Deserialize>::deserialize(deserializer)?;
-        Self::try_from(value).map_err(serde::de::Error::custom)
-    }
-}
-/// Fixed amount to discount from the invoice total.
-#[derive(
-    Debug,
-    Clone,
-    PartialEq,
-    PartialOrd,
-    Copy,
-    Eq,
-    Ord,
-    Hash,
-    serde::Serialize,
-    derive_more::Display,
-    derive_more::Deref,
-)]
-#[serde(transparent)]
-pub struct DiscountFixedCreateAmount(u64);
-#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
-pub enum DiscountFixedCreateAmountValidationError {
-    #[error("must be at least 0")]
-    BelowMinimum,
-    #[error("must be at most 999999999999")]
-    AboveMaximum,
-}
-impl DiscountFixedCreateAmount {
-    /// Validate a value.
-    pub fn try_new(value: u64) -> Result<Self, DiscountFixedCreateAmountValidationError> {
-        Self::try_from(value)
-    }
-
-    /// Take the underlying value.
-    pub fn into_inner(self) -> u64 {
-        self.0
-    }
-}
-impl TryFrom<u64> for DiscountFixedCreateAmount {
-    type Error = DiscountFixedCreateAmountValidationError;
-
-    fn try_from(value: u64) -> Result<Self, Self::Error> {
-        if i128::from(value) < 0i128 {
-            return Err(DiscountFixedCreateAmountValidationError::BelowMinimum);
-        }
-        if i128::from(value) > 999999999999i128 {
-            return Err(DiscountFixedCreateAmountValidationError::AboveMaximum);
-        }
-        Ok(Self(value))
-    }
-}
-impl From<DiscountFixedCreateAmount> for u64 {
-    fn from(value: DiscountFixedCreateAmount) -> Self {
-        value.0
-    }
-}
-impl<'de> serde::Deserialize<'de> for DiscountFixedCreateAmount {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,

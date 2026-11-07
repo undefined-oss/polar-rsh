@@ -215,6 +215,29 @@ impl ::std::default::Default for CaseId {
         Self(uuid::Uuid::new_v4())
     }
 }
+/// ID of the catalog that introduced this version of the benefit. None for
+/// benefits not managed by declarative config.
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    Display,
+    Eq,
+    From,
+    Ord,
+    PartialEq,
+    PartialOrd,
+    Deref,
+    Hash,
+    Deserialize,
+    Serialize,
+)]
+pub struct CatalogId(uuid::Uuid);
+impl ::std::default::Default for CatalogId {
+    fn default() -> Self {
+        Self(uuid::Uuid::new_v4())
+    }
+}
 /// Optional mapping of product IDs to a list of ad-hoc prices to create for
 /// that product. If not set, catalog prices of the product will be used.
 #[derive(
@@ -918,27 +941,6 @@ impl ::std::default::Default for LicenseKeyId {
         Self(uuid::Uuid::new_v4())
     }
 }
-#[derive(
-    Debug,
-    Clone,
-    Copy,
-    Display,
-    Eq,
-    From,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    Deref,
-    Hash,
-    Deserialize,
-    Serialize,
-)]
-pub struct LicenseKeyUserId(uuid::Uuid);
-impl ::std::default::Default for LicenseKeyUserId {
-    fn default() -> Self {
-        Self(uuid::Uuid::new_v4())
-    }
-}
 /// ID of the member within the customer's organization who performed the action
 /// inside B2B.
 #[derive(
@@ -1024,27 +1026,6 @@ impl ::std::default::Default for OrderId {
 )]
 pub struct OrderItemSchemaId(uuid::Uuid);
 impl ::std::default::Default for OrderItemSchemaId {
-    fn default() -> Self {
-        Self(uuid::Uuid::new_v4())
-    }
-}
-#[derive(
-    Debug,
-    Clone,
-    Copy,
-    Display,
-    Eq,
-    From,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    Deref,
-    Hash,
-    Deserialize,
-    Serialize,
-)]
-pub struct OrderUserId(uuid::Uuid);
-impl ::std::default::Default for OrderUserId {
     fn default() -> Self {
         Self(uuid::Uuid::new_v4())
     }
@@ -1204,7 +1185,7 @@ impl ::std::default::Default for ProductId {
         Self(uuid::Uuid::new_v4())
     }
 }
-/// ID of the product price to checkout.
+/// Associated price ID, if any.
 #[derive(
     Debug,
     Clone,
@@ -1355,27 +1336,6 @@ impl ::std::default::Default for SlackIntegrationId {
 )]
 pub struct SubscriptionId(uuid::Uuid);
 impl ::std::default::Default for SubscriptionId {
-    fn default() -> Self {
-        Self(uuid::Uuid::new_v4())
-    }
-}
-#[derive(
-    Debug,
-    Clone,
-    Copy,
-    Display,
-    Eq,
-    From,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    Deref,
-    Hash,
-    Deserialize,
-    Serialize,
-)]
-pub struct SubscriptionUserId(uuid::Uuid);
-impl ::std::default::Default for SubscriptionUserId {
     fn default() -> Self {
         Self(uuid::Uuid::new_v4())
     }

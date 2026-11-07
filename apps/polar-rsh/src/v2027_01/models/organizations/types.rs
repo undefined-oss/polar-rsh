@@ -73,8 +73,7 @@ pub struct CustomerProductRequired {
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
     /// List of available prices for this product.
-    pub prices:
-        Vec<crate::v2027_01::models::organizations::unions::CustomerProductPricesItemsUnion>,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of benefits granted by the product.
     pub benefits: Vec<crate::v2027_01::models::common::unions::BenefitPublic>,
     /// The medias associated to the product.
@@ -144,8 +143,7 @@ pub struct CustomerProduct {
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
     /// List of available prices for this product.
-    pub prices:
-        Vec<crate::v2027_01::models::organizations::unions::CustomerProductPricesItemsUnion>,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of benefits granted by the product.
     pub benefits: Vec<crate::v2027_01::models::common::unions::BenefitPublic>,
     /// The medias associated to the product.
@@ -509,8 +507,9 @@ pub struct OrganizationCreate {
     /// Additional, private, business details Polar needs about active
     /// organizations for compliance (KYC).
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub details:
-        presence_rs::Presence<crate::v2027_01::models::organizations::types::OrganizationDetails>,
+    pub details: presence_rs::Presence<
+        crate::v2027_01::models::organizations::types::OrganizationDetailsInput,
+    >,
     /// Two-letter country code (ISO 3166-1 alpha-2).
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub country: presence_rs::Presence<crate::v2027_01::models::common::enums::CountryAlpha2Input>,
@@ -618,7 +617,7 @@ impl OrganizationCreate {
     #[allow(clippy::should_implement_trait)]
     pub fn details(
         mut self,
-        value: crate::v2027_01::models::organizations::types::OrganizationDetails,
+        value: crate::v2027_01::models::organizations::types::OrganizationDetailsInput,
     ) -> Self {
         self.details = presence_rs::Presence::Some(value);
         self
@@ -751,10 +750,7 @@ impl OrganizationCustomerEmailSettings {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
-pub struct OrganizationDetails {
-    /// Brief information about you and your business.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub about: presence_rs::Presence<String>,
+pub struct OrganizationDetailsInput {
     /// Description of digital products being sold.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub product_description: presence_rs::Presence<String>,
@@ -772,21 +768,6 @@ pub struct OrganizationDetails {
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
     )]
     pub pricing_models: Option<Vec<String>>,
-    /// How the organization will integrate and use Polar.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub intended_use: presence_rs::Presence<String>,
-    /// Main customer acquisition channels.
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
-    )]
-    pub customer_acquisition: Option<Vec<String>>,
-    /// Estimated revenue in the next 12 months
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub future_annual_revenue: presence_rs::Presence<
-        crate::v2027_01::models::organizations::newtypes::OrganizationDetailsFutureAnnualRevenue,
-    >,
     /// Switching from another platform?
     #[serde(
         default,
@@ -797,25 +778,13 @@ pub struct OrganizationDetails {
     /// Which platform the organization is migrating from.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub switching_from: presence_rs::Presence<
-        crate::v2027_01::models::organizations::enums::OrganizationDetailsSwitchingFrom,
-    >,
-    /// Revenue from last year if applicable.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub previous_annual_revenue: presence_rs::Presence<
-        crate::v2027_01::models::organizations::newtypes::OrganizationDetailsPreviousAnnualRevenue,
+        crate::v2027_01::models::organizations::enums::OrganizationDetailsInputSwitchingFrom,
     >,
 }
 #[allow(clippy::type_complexity)]
-impl OrganizationDetails {
+impl OrganizationDetailsInput {
     pub fn new() -> Self {
         Self::default()
-    }
-
-    /// Brief information about you and your business.
-    #[allow(clippy::should_implement_trait)]
-    pub fn about(mut self, value: impl Into<String>) -> Self {
-        self.about = presence_rs::Presence::Some(value.into());
-        self
     }
 
     /// Description of digital products being sold.
@@ -839,30 +808,6 @@ impl OrganizationDetails {
         self
     }
 
-    /// How the organization will integrate and use Polar.
-    #[allow(clippy::should_implement_trait)]
-    pub fn intended_use(mut self, value: impl Into<String>) -> Self {
-        self.intended_use = presence_rs::Presence::Some(value.into());
-        self
-    }
-
-    /// Main customer acquisition channels.
-    #[allow(clippy::should_implement_trait)]
-    pub fn customer_acquisition(mut self, value: Vec<String>) -> Self {
-        self.customer_acquisition = Some(value);
-        self
-    }
-
-    /// Estimated revenue in the next 12 months
-    #[allow(clippy::should_implement_trait)]
-    pub fn future_annual_revenue(
-        mut self,
-        value: crate::v2027_01::models::organizations::newtypes::OrganizationDetailsFutureAnnualRevenue,
-    ) -> Self {
-        self.future_annual_revenue = presence_rs::Presence::Some(value);
-        self
-    }
-
     /// Switching from another platform?
     #[allow(clippy::should_implement_trait)]
     pub fn switching(mut self, value: bool) -> Self {
@@ -874,19 +819,9 @@ impl OrganizationDetails {
     #[allow(clippy::should_implement_trait)]
     pub fn switching_from(
         mut self,
-        value: crate::v2027_01::models::organizations::enums::OrganizationDetailsSwitchingFrom,
+        value: crate::v2027_01::models::organizations::enums::OrganizationDetailsInputSwitchingFrom,
     ) -> Self {
         self.switching_from = presence_rs::Presence::Some(value);
-        self
-    }
-
-    /// Revenue from last year if applicable.
-    #[allow(clippy::should_implement_trait)]
-    pub fn previous_annual_revenue(
-        mut self,
-        value: crate::v2027_01::models::organizations::newtypes::OrganizationDetailsPreviousAnnualRevenue,
-    ) -> Self {
-        self.previous_annual_revenue = presence_rs::Presence::Some(value);
         self
     }
 }
@@ -1020,14 +955,6 @@ pub struct OrganizationFeatureSettings {
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
     )]
     pub dispute_auto_accept_enabled: Option<bool>,
-    /// If this organization has the split product navigation (Billing / Compass
-    /// / Customers) enabled in the dashboard
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
-    )]
-    pub compass_enabled: Option<bool>,
     /// If this organization can migrate its billing from another provider (e.g.
     /// Stripe) to Polar.
     #[serde(
@@ -1036,14 +963,14 @@ pub struct OrganizationFeatureSettings {
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
     )]
     pub merchant_migration_enabled: Option<bool>,
-    /// If this organization accepts payments from AI agents through Stripe
-    /// shared payment tokens.
+    /// If this organization's ingested events are queued in `staged_events` and
+    /// moved to `events` out of band.
     #[serde(
         default,
         skip_serializing_if = "Option::is_none",
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
     )]
-    pub agentic_payments_enabled: Option<bool>,
+    pub staged_events_ingest_enabled: Option<bool>,
     /// If this organization can manage its configuration from a declarative
     /// config document.
     #[serde(
@@ -1138,14 +1065,6 @@ impl OrganizationFeatureSettings {
         self
     }
 
-    /// If this organization has the split product navigation (Billing / Compass
-    /// / Customers) enabled in the dashboard
-    #[allow(clippy::should_implement_trait)]
-    pub fn compass_enabled(mut self, value: bool) -> Self {
-        self.compass_enabled = Some(value);
-        self
-    }
-
     /// If this organization can migrate its billing from another provider (e.g.
     /// Stripe) to Polar.
     #[allow(clippy::should_implement_trait)]
@@ -1154,11 +1073,11 @@ impl OrganizationFeatureSettings {
         self
     }
 
-    /// If this organization accepts payments from AI agents through Stripe
-    /// shared payment tokens.
+    /// If this organization's ingested events are queued in `staged_events` and
+    /// moved to `events` out of band.
     #[allow(clippy::should_implement_trait)]
-    pub fn agentic_payments_enabled(mut self, value: bool) -> Self {
-        self.agentic_payments_enabled = Some(value);
+    pub fn staged_events_ingest_enabled(mut self, value: bool) -> Self {
+        self.staged_events_ingest_enabled = Some(value);
         self
     }
 
@@ -1303,8 +1222,9 @@ pub struct OrganizationUpdate {
     /// Additional, private, business details Polar needs about active
     /// organizations for compliance (KYC).
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub details:
-        presence_rs::Presence<crate::v2027_01::models::organizations::types::OrganizationDetails>,
+    pub details: presence_rs::Presence<
+        crate::v2027_01::models::organizations::types::OrganizationDetailsInput,
+    >,
     /// Two-letter country code (ISO 3166-1 alpha-2).
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub country: presence_rs::Presence<crate::v2027_01::models::common::enums::CountryAlpha2Input>,
@@ -1400,7 +1320,7 @@ impl OrganizationUpdate {
     #[allow(clippy::should_implement_trait)]
     pub fn details(
         mut self,
-        value: crate::v2027_01::models::organizations::types::OrganizationDetails,
+        value: crate::v2027_01::models::organizations::types::OrganizationDetailsInput,
     ) -> Self {
         self.details = presence_rs::Presence::Some(value);
         self
@@ -1512,6 +1432,25 @@ pub struct SsoEnforcementRequiresConnection {
 #[allow(clippy::type_complexity)]
 impl SsoEnforcementRequiresConnection {
     pub fn new(required: SsoEnforcementRequiresConnectionRequired) -> Self {
+        Self { error: Default::default(), detail: required.detail }
+    }
+}
+#[derive(Debug, Clone)]
+pub struct SsoRequiresVerifiedDomainRequired {
+    pub detail: String,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(thiserror::Error)]
+#[error("{self:?}")]
+pub struct SsoRequiresVerifiedDomain {
+    pub error: monostate::MustBe!("SSORequiresVerifiedDomain"),
+    pub detail: String,
+}
+#[allow(clippy::type_complexity)]
+impl SsoRequiresVerifiedDomain {
+    pub fn new(required: SsoRequiresVerifiedDomainRequired) -> Self {
         Self { error: Default::default(), detail: required.detail }
     }
 }

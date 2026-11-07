@@ -23,7 +23,7 @@ impl<'a, ClientService> CheckoutLinks<'a, ClientService> {
     /// **Scopes**: `checkout_links:write`
     pub fn create(
         &self,
-        payload: crate::v2027_01::models::checkout_links::unions::CheckoutLinkCreate,
+        payload: crate::v2027_01::models::checkout_links::types::CheckoutLinkCreateProducts,
     ) -> crate::v2027_01::models::checkout_links::CheckoutLinksCreate<'a, ClientService> {
         crate::v2027_01::models::checkout_links::CheckoutLinksCreate {
             client: self.client,

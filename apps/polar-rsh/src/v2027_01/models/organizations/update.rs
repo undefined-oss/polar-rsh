@@ -42,10 +42,21 @@ pub enum OrganizationsUpdateError<TransportError> {
     /// Organization not found.
     #[error("{message}: {0}", message = "Organization not found.")]
     ResourceNotFound(#[source] crate::v2027_01::models::common::types::ResourceNotFound),
-    /// Cannot enforce SSO without an enabled connection.
-    #[error("{message}: {0}", message = "Cannot enforce SSO without an enabled connection.")]
+    /// Cannot enforce SSO without an enabled connection and a verified domain.
+    #[error(
+        "{message}: {0}",
+        message = "Cannot enforce SSO without an enabled connection and a verified domain."
+    )]
     SsoEnforcementRequiresConnection(
         #[source] crate::v2027_01::models::organizations::types::SsoEnforcementRequiresConnection,
+    ),
+    /// Cannot enforce SSO without an enabled connection and a verified domain.
+    #[error(
+        "{message}: {0}",
+        message = "Cannot enforce SSO without an enabled connection and a verified domain."
+    )]
+    SsoRequiresVerifiedDomain(
+        #[source] crate::v2027_01::models::organizations::types::SsoRequiresVerifiedDomain,
     ),
     /// Validation Error
     #[error("{message}: {0}", message = "Validation Error")]
@@ -57,12 +68,13 @@ pub(super) type OrganizationsUpdateErrors = (
     crate::v2027_01::models::organizations::types::DisputeAutoAcceptNotEnabled,
     crate::v2027_01::models::common::types::ResourceNotFound,
     crate::v2027_01::models::organizations::types::SsoEnforcementRequiresConnection,
+    crate::v2027_01::models::organizations::types::SsoRequiresVerifiedDomain,
     crate::v2027_01::models::common::types::HttpValidationError,
 );
 impl<T> From<eros::ErrorUnion<OrganizationsUpdateErrors>> for OrganizationsUpdateError<T> {
     fn from(error: eros::ErrorUnion<OrganizationsUpdateErrors>) -> Self {
         match error.into_enum() {
-            eros::E6::A(error) => match error {
+            eros::E7::A(error) => match error {
                 crate::v2027_01::error::RequestFailure::BuildRequest(error) => {
                     Self::BuildRequest(error)
                 }
@@ -78,11 +90,12 @@ impl<T> From<eros::ErrorUnion<OrganizationsUpdateErrors>> for OrganizationsUpdat
                 }
                 crate::v2027_01::error::RequestFailure::Timeout(error) => Self::Timeout(error),
             },
-            eros::E6::B(error) => Self::NotPermitted(error),
-            eros::E6::C(error) => Self::DisputeAutoAcceptNotEnabled(error),
-            eros::E6::D(error) => Self::ResourceNotFound(error),
-            eros::E6::E(error) => Self::SsoEnforcementRequiresConnection(error),
-            eros::E6::F(error) => Self::HttpValidationError(error),
+            eros::E7::B(error) => Self::NotPermitted(error),
+            eros::E7::C(error) => Self::DisputeAutoAcceptNotEnabled(error),
+            eros::E7::D(error) => Self::ResourceNotFound(error),
+            eros::E7::E(error) => Self::SsoEnforcementRequiresConnection(error),
+            eros::E7::F(error) => Self::SsoRequiresVerifiedDomain(error),
+            eros::E7::G(error) => Self::HttpValidationError(error),
         }
     }
 }
@@ -184,13 +197,30 @@ where
                     Err(eros::ErrorUnion::new(error))
                 }
                 http::StatusCode::CONFLICT => {
-                    let error = serde_json::from_slice::<
-                        crate::v2027_01::models::organizations::types::SsoEnforcementRequiresConnection,
-                    >(&body_slice)
+                    #[derive(serde::Deserialize)]
+                    #[serde(untagged)]
+                    enum ResponseError {
+                        Payload0(
+                            crate::v2027_01::models::organizations::types::SsoEnforcementRequiresConnection,
+                        ),
+                        Payload1(
+                            crate::v2027_01::models::organizations::types::SsoRequiresVerifiedDomain,
+                        ),
+                    }
+                    let error = serde_json::from_slice::<ResponseError>(&body_slice)
                         .map_err(|error| eros::ErrorUnion::new(
                             RequestFailure::DecodeResponse(error),
                         ))?;
-                    Err(eros::ErrorUnion::new(error))
+                    Err(
+                        match error {
+                            ResponseError::Payload0(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                            ResponseError::Payload1(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                        },
+                    )
                 }
                 http::StatusCode::UNPROCESSABLE_ENTITY => {
                     let error = serde_json::from_slice::<

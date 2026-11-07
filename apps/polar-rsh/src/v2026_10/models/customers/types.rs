@@ -465,7 +465,9 @@ impl CustomerPaymentMethodKrCard {
 #[derive(Default)]
 pub struct CustomerPortalCustomerUpdate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub billing_name: presence_rs::Presence<String>,
+    pub billing_name: presence_rs::Presence<
+        crate::v2026_10::models::customers::newtypes::CustomerPortalCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub billing_address:
         presence_rs::Presence<crate::v2026_10::models::common::types::AddressInput>,
@@ -482,8 +484,11 @@ impl CustomerPortalCustomerUpdate {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn billing_name(mut self, value: impl Into<String>) -> Self {
-        self.billing_name = presence_rs::Presence::Some(value.into());
+    pub fn billing_name(
+        mut self,
+        value: crate::v2026_10::models::customers::newtypes::CustomerPortalCustomerBillingName,
+    ) -> Self {
+        self.billing_name = presence_rs::Presence::Some(value);
         self
     }
 

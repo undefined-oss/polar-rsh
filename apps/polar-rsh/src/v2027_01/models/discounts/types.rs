@@ -7,6 +7,12 @@ pub struct DiscountFixedCreateRequired {
     /// the first invoice, forever, or for a certain number of months determined
     /// by `duration_in_months`.
     pub duration: crate::v2027_01::models::common::enums::DiscountDuration,
+    /// Map of currency to fixed amount to discount from the total. This allows
+    /// specifying different discount amounts for different currencies.
+    pub amounts: std::collections::BTreeMap<
+        crate::v2027_01::models::common::enums::PresentmentCurrency,
+        crate::v2027_01::models::discounts::newtypes::DiscountFixedCreateAmountsValue,
+    >,
 }
 /// Schema to create a fixed amount discount.
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
@@ -86,20 +92,10 @@ pub struct DiscountFixedCreate {
     pub duration_in_months: presence_rs::Presence<
         crate::v2027_01::models::discounts::newtypes::DiscountFixedCreateDurationInMonths,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub amount: presence_rs::Presence<
-        crate::v2027_01::models::discounts::newtypes::DiscountFixedCreateAmount,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub currency: presence_rs::Presence<
+    ///Map of currency to fixed amount to discount from the total. This allows specifying different discount amounts for different currencies.
+    pub amounts: std::collections::BTreeMap<
         crate::v2027_01::models::common::enums::PresentmentCurrency,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub amounts: presence_rs::Presence<
-        std::collections::BTreeMap<
-            crate::v2027_01::models::common::enums::PresentmentCurrency,
-            crate::v2027_01::models::discounts::newtypes::DiscountFixedCreateAmountsValue,
-        >,
+        crate::v2027_01::models::discounts::newtypes::DiscountFixedCreateAmountsValue,
     >,
 }
 #[allow(clippy::type_complexity)]
@@ -119,9 +115,7 @@ impl DiscountFixedCreate {
             r#type: None,
             duration: required.duration,
             duration_in_months: presence_rs::Presence::Absent,
-            amount: presence_rs::Presence::Absent,
-            currency: presence_rs::Presence::Absent,
-            amounts: presence_rs::Presence::Absent,
+            amounts: required.amounts,
         }
     }
 
@@ -238,43 +232,11 @@ impl DiscountFixedCreate {
         self.duration_in_months = presence_rs::Presence::Some(value);
         self
     }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn amount(
-        mut self,
-        value: crate::v2027_01::models::discounts::newtypes::DiscountFixedCreateAmount,
-    ) -> Self {
-        self.amount = presence_rs::Presence::Some(value);
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn currency(
-        mut self,
-        value: crate::v2027_01::models::common::enums::PresentmentCurrency,
-    ) -> Self {
-        self.currency = presence_rs::Presence::Some(value);
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn amounts(
-        mut self,
-        value: std::collections::BTreeMap<
-            crate::v2027_01::models::common::enums::PresentmentCurrency,
-            crate::v2027_01::models::discounts::newtypes::DiscountFixedCreateAmountsValue,
-        >,
-    ) -> Self {
-        self.amounts = presence_rs::Presence::Some(value);
-        self
-    }
 }
 #[derive(Debug, Clone)]
 pub struct DiscountFixedOnceForeverDurationRequired {
     pub duration: crate::v2027_01::models::common::enums::DiscountDuration,
     pub r#type: crate::v2027_01::models::common::enums::DiscountType,
-    pub amount: i64,
-    pub currency: String,
     /// Map of currency to fixed amount to discount from the total.
     pub amounts: std::collections::BTreeMap<String, i64>,
     /// Creation timestamp of the object.
@@ -314,8 +276,6 @@ pub struct DiscountFixedOnceForeverDurationRequired {
 pub struct DiscountFixedOnceForeverDuration {
     pub duration: crate::v2027_01::models::common::enums::DiscountDuration,
     pub r#type: crate::v2027_01::models::common::enums::DiscountType,
-    pub amount: i64,
-    pub currency: String,
     /// Map of currency to fixed amount to discount from the total.
     pub amounts: std::collections::BTreeMap<String, i64>,
     /// Creation timestamp of the object.
@@ -375,8 +335,6 @@ impl DiscountFixedOnceForeverDuration {
         Self {
             duration: required.duration,
             r#type: required.r#type,
-            amount: required.amount,
-            currency: required.currency,
             amounts: required.amounts,
             created_at: required.created_at,
             modified_at: required.modified_at,
@@ -400,8 +358,6 @@ pub struct DiscountFixedRepeatDurationRequired {
     pub duration: crate::v2027_01::models::common::enums::DiscountDuration,
     pub duration_in_months: i64,
     pub r#type: crate::v2027_01::models::common::enums::DiscountType,
-    pub amount: i64,
-    pub currency: String,
     /// Map of currency to fixed amount to discount from the total.
     pub amounts: std::collections::BTreeMap<String, i64>,
     /// Creation timestamp of the object.
@@ -443,8 +399,6 @@ pub struct DiscountFixedRepeatDuration {
     pub duration: crate::v2027_01::models::common::enums::DiscountDuration,
     pub duration_in_months: i64,
     pub r#type: crate::v2027_01::models::common::enums::DiscountType,
-    pub amount: i64,
-    pub currency: String,
     /// Map of currency to fixed amount to discount from the total.
     pub amounts: std::collections::BTreeMap<String, i64>,
     /// Creation timestamp of the object.
@@ -505,8 +459,6 @@ impl DiscountFixedRepeatDuration {
             duration: required.duration,
             duration_in_months: required.duration_in_months,
             r#type: required.r#type,
-            amount: required.amount,
-            currency: required.currency,
             amounts: required.amounts,
             created_at: required.created_at,
             modified_at: required.modified_at,
@@ -1201,14 +1153,6 @@ pub struct DiscountUpdate {
         crate::v2027_01::models::common::enums::DiscountType,
     >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub amount: presence_rs::Presence<
-        crate::v2027_01::models::discounts::newtypes::DiscountAmount,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub currency: presence_rs::Presence<
-        crate::v2027_01::models::common::enums::PresentmentCurrency,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub amounts: presence_rs::Presence<
         std::collections::BTreeMap<
             crate::v2027_01::models::common::enums::PresentmentCurrency,
@@ -1336,24 +1280,6 @@ impl DiscountUpdate {
     #[allow(clippy::should_implement_trait)]
     pub fn r#type(mut self, value: crate::v2027_01::models::common::enums::DiscountType) -> Self {
         self.r#type = presence_rs::Presence::Some(value);
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn amount(
-        mut self,
-        value: crate::v2027_01::models::discounts::newtypes::DiscountAmount,
-    ) -> Self {
-        self.amount = presence_rs::Presence::Some(value);
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn currency(
-        mut self,
-        value: crate::v2027_01::models::common::enums::PresentmentCurrency,
-    ) -> Self {
-        self.currency = presence_rs::Presence::Some(value);
         self
     }
 

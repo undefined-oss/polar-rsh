@@ -412,7 +412,6 @@
   "#/components/schemas/CustomerUpdatedEvent/properties/parent_id/anyOf/0": "crate::models::common::ids::EventId",
   "#/components/schemas/CustomerWallet/properties/customer_id": "crate::models::common::ids::CustomerId",
   "#/components/schemas/CustomerWallet/properties/id": "crate::models::common::ids::WalletId",
-  "#/components/schemas/DeprecatedWebhookEndpointCreateWithSecret/properties/organization_id/anyOf/0": "crate::models::common::ids::OrganizationId",
   "#/components/schemas/DiscountFixedCreate/properties/organization_id/anyOf/0": "crate::models::common::ids::OrganizationId",
   "#/components/schemas/DiscountFixedCreate/properties/products/anyOf/0/items": "crate::models::common::ids::ProductId",
   "#/components/schemas/DiscountFixedOnceForeverDuration/properties/id": "crate::models::common::ids::DiscountId",

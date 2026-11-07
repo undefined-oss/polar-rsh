@@ -146,20 +146,10 @@ pub enum DiscountCreate {
         duration_in_months: presence_rs::Presence<
             crate::v2027_01::models::discounts::newtypes::DiscountFixedCreateDurationInMonths,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        amount: presence_rs::Presence<
-            crate::v2027_01::models::discounts::newtypes::DiscountFixedCreateAmount,
-        >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        currency: presence_rs::Presence<
+        ///Map of currency to fixed amount to discount from the total. This allows specifying different discount amounts for different currencies.
+        amounts: std::collections::BTreeMap<
             crate::v2027_01::models::common::enums::PresentmentCurrency,
-        >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        amounts: presence_rs::Presence<
-            std::collections::BTreeMap<
-                crate::v2027_01::models::common::enums::PresentmentCurrency,
-                crate::v2027_01::models::discounts::newtypes::DiscountFixedCreateAmountsValue,
-            >,
+            crate::v2027_01::models::discounts::newtypes::DiscountFixedCreateAmountsValue,
         >,
     },
     #[serde(rename = "percentage")]
