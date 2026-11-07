@@ -588,11 +588,6 @@ pub struct CheckoutConfirmStripe {
     pub product_id: presence_rs::Presence<
         crate::v2026_04::models::common::ids::ProductId,
     >,
-    ///ID of the product price to checkout. Must correspond to a price present in the checkout's product list.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub product_price_id: presence_rs::Presence<
-        crate::v2026_04::models::common::ids::ProductPriceId,
-    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub amount: presence_rs::Presence<
         crate::v2026_04::models::checkouts::newtypes::CheckoutConfirmStripeAmount,
@@ -616,7 +611,9 @@ pub struct CheckoutConfirmStripe {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_email: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2026_04::models::checkouts::newtypes::CheckoutConfirmStripeCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2026_04::models::common::types::AddressInput,
@@ -637,6 +634,11 @@ pub struct CheckoutConfirmStripe {
     ///ID of the Stripe confirmation token. Required for fixed prices and custom prices.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub confirmation_token_id: presence_rs::Presence<String>,
+    ///ID of the product price to checkout. Must correspond to a price present in the checkout's product list.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub product_price_id: presence_rs::Presence<
+        crate::v2026_04::models::common::ids::ProductPriceId,
+    >,
 }
 #[allow(clippy::type_complexity)]
 impl CheckoutConfirmStripe {
@@ -664,17 +666,6 @@ impl CheckoutConfirmStripe {
     #[allow(clippy::should_implement_trait)]
     pub fn product_id(mut self, value: crate::v2026_04::models::common::ids::ProductId) -> Self {
         self.product_id = presence_rs::Presence::Some(value);
-        self
-    }
-
-    /// ID of the product price to checkout. Must correspond to a price present
-    /// in the checkout's product list.
-    #[allow(clippy::should_implement_trait)]
-    pub fn product_price_id(
-        mut self,
-        value: crate::v2026_04::models::common::ids::ProductPriceId,
-    ) -> Self {
-        self.product_price_id = presence_rs::Presence::Some(value);
         self
     }
 
@@ -729,8 +720,11 @@ impl CheckoutConfirmStripe {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2026_04::models::checkouts::newtypes::CheckoutConfirmStripeCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 
@@ -783,6 +777,17 @@ impl CheckoutConfirmStripe {
     #[allow(clippy::should_implement_trait)]
     pub fn confirmation_token_id(mut self, value: impl Into<String>) -> Self {
         self.confirmation_token_id = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// ID of the product price to checkout. Must correspond to a price present
+    /// in the checkout's product list.
+    #[allow(clippy::should_implement_trait)]
+    pub fn product_price_id(
+        mut self,
+        value: crate::v2026_04::models::common::ids::ProductPriceId,
+    ) -> Self {
+        self.product_price_id = presence_rs::Presence::Some(value);
         self
     }
 }
@@ -1343,7 +1348,9 @@ pub struct CheckoutProductsCreate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_ip_address: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2026_04::models::checkouts::newtypes::CheckoutProductsCreateCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2026_04::models::common::types::AddressInput,
@@ -1660,8 +1667,11 @@ impl CheckoutProductsCreate {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2026_04::models::checkouts::newtypes::CheckoutProductsCreateCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 
@@ -2742,11 +2752,6 @@ pub struct CheckoutUpdate {
     pub product_id: presence_rs::Presence<
         crate::v2026_04::models::common::ids::ProductId,
     >,
-    ///ID of the product price to checkout. Must correspond to a price present in the checkout's product list.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub product_price_id: presence_rs::Presence<
-        crate::v2026_04::models::common::ids::ProductPriceId,
-    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub amount: presence_rs::Presence<
         crate::v2026_04::models::checkouts::newtypes::CheckoutAmount,
@@ -2770,7 +2775,9 @@ pub struct CheckoutUpdate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_email: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2026_04::models::checkouts::newtypes::CheckoutCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2026_04::models::common::types::AddressInput,
@@ -2862,6 +2869,11 @@ pub struct CheckoutUpdate {
     ///If you plan to embed the checkout session, set this to the Origin of the embedding page. It'll allow the Polar iframe to communicate with the parent page.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub embed_origin: presence_rs::Presence<String>,
+    ///ID of the product price to checkout. Must correspond to a price present in the checkout's product list.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub product_price_id: presence_rs::Presence<
+        crate::v2026_04::models::common::ids::ProductPriceId,
+    >,
 }
 #[allow(clippy::type_complexity)]
 impl CheckoutUpdate {
@@ -2889,17 +2901,6 @@ impl CheckoutUpdate {
     #[allow(clippy::should_implement_trait)]
     pub fn product_id(mut self, value: crate::v2026_04::models::common::ids::ProductId) -> Self {
         self.product_id = presence_rs::Presence::Some(value);
-        self
-    }
-
-    /// ID of the product price to checkout. Must correspond to a price present
-    /// in the checkout's product list.
-    #[allow(clippy::should_implement_trait)]
-    pub fn product_price_id(
-        mut self,
-        value: crate::v2026_04::models::common::ids::ProductPriceId,
-    ) -> Self {
-        self.product_price_id = presence_rs::Presence::Some(value);
         self
     }
 
@@ -2954,8 +2955,11 @@ impl CheckoutUpdate {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2026_04::models::checkouts::newtypes::CheckoutCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 
@@ -3128,6 +3132,17 @@ impl CheckoutUpdate {
         self.embed_origin = presence_rs::Presence::Some(value.into());
         self
     }
+
+    /// ID of the product price to checkout. Must correspond to a price present
+    /// in the checkout's product list.
+    #[allow(clippy::should_implement_trait)]
+    pub fn product_price_id(
+        mut self,
+        value: crate::v2026_04::models::common::ids::ProductPriceId,
+    ) -> Self {
+        self.product_price_id = presence_rs::Presence::Some(value);
+        self
+    }
 }
 /// Update an existing checkout session using the client secret.
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
@@ -3154,11 +3169,6 @@ pub struct CheckoutUpdatePublic {
     pub product_id: presence_rs::Presence<
         crate::v2026_04::models::common::ids::ProductId,
     >,
-    ///ID of the product price to checkout. Must correspond to a price present in the checkout's product list.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub product_price_id: presence_rs::Presence<
-        crate::v2026_04::models::common::ids::ProductPriceId,
-    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub amount: presence_rs::Presence<
         crate::v2026_04::models::checkouts::newtypes::CheckoutUpdatePublicAmount,
@@ -3182,7 +3192,9 @@ pub struct CheckoutUpdatePublic {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_email: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2026_04::models::checkouts::newtypes::CheckoutUpdatePublicCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2026_04::models::common::types::AddressInput,
@@ -3200,6 +3212,11 @@ pub struct CheckoutUpdatePublic {
     ///Disable the trial period for the checkout session. It's mainly useful when the trial is blocked because the customer already redeemed one.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub allow_trial: presence_rs::Presence<monostate::MustBe!(false)>,
+    ///ID of the product price to checkout. Must correspond to a price present in the checkout's product list.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub product_price_id: presence_rs::Presence<
+        crate::v2026_04::models::common::ids::ProductPriceId,
+    >,
 }
 #[allow(clippy::type_complexity)]
 impl CheckoutUpdatePublic {
@@ -3227,17 +3244,6 @@ impl CheckoutUpdatePublic {
     #[allow(clippy::should_implement_trait)]
     pub fn product_id(mut self, value: crate::v2026_04::models::common::ids::ProductId) -> Self {
         self.product_id = presence_rs::Presence::Some(value);
-        self
-    }
-
-    /// ID of the product price to checkout. Must correspond to a price present
-    /// in the checkout's product list.
-    #[allow(clippy::should_implement_trait)]
-    pub fn product_price_id(
-        mut self,
-        value: crate::v2026_04::models::common::ids::ProductPriceId,
-    ) -> Self {
-        self.product_price_id = presence_rs::Presence::Some(value);
         self
     }
 
@@ -3292,8 +3298,11 @@ impl CheckoutUpdatePublic {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2026_04::models::checkouts::newtypes::CheckoutUpdatePublicCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 
@@ -3338,6 +3347,17 @@ impl CheckoutUpdatePublic {
     #[allow(clippy::should_implement_trait)]
     pub fn allow_trial(mut self, value: monostate::MustBe!(false)) -> Self {
         self.allow_trial = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// ID of the product price to checkout. Must correspond to a price present
+    /// in the checkout's product list.
+    #[allow(clippy::should_implement_trait)]
+    pub fn product_price_id(
+        mut self,
+        value: crate::v2026_04::models::common::ids::ProductPriceId,
+    ) -> Self {
+        self.product_price_id = presence_rs::Presence::Some(value);
         self
     }
 }

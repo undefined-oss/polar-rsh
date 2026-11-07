@@ -201,6 +201,9 @@ pub struct BenefitCustomRequired {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitCustomProperties,
     pub visibility_configurable: bool,
 }
@@ -240,6 +243,12 @@ pub struct BenefitCustom {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitCustomProperties,
     pub visibility_configurable: bool,
 }
@@ -259,6 +268,7 @@ impl BenefitCustom {
             external_id: required.external_id,
             metadata: required.metadata,
             visibility: required.visibility,
+            catalog_id: required.catalog_id,
             properties: required.properties,
             visibility_configurable: required.visibility_configurable,
         }
@@ -368,6 +378,9 @@ pub struct BenefitDiscordRequired {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitDiscordProperties,
     pub visibility_configurable: bool,
 }
@@ -407,6 +420,12 @@ pub struct BenefitDiscord {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitDiscordProperties,
     pub visibility_configurable: bool,
 }
@@ -426,6 +445,7 @@ impl BenefitDiscord {
             external_id: required.external_id,
             metadata: required.metadata,
             visibility: required.visibility,
+            catalog_id: required.catalog_id,
             properties: required.properties,
             visibility_configurable: required.visibility_configurable,
         }
@@ -546,6 +566,9 @@ pub struct BenefitDownloadablesRequired {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitDownloadablesProperties,
     pub visibility_configurable: bool,
 }
@@ -582,6 +605,12 @@ pub struct BenefitDownloadables {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitDownloadablesProperties,
     pub visibility_configurable: bool,
 }
@@ -601,6 +630,7 @@ impl BenefitDownloadables {
             external_id: required.external_id,
             metadata: required.metadata,
             visibility: required.visibility,
+            catalog_id: required.catalog_id,
             properties: required.properties,
             visibility_configurable: required.visibility_configurable,
         }
@@ -714,6 +744,9 @@ pub struct BenefitFeatureFlagRequired {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitFeatureFlagProperties,
     pub visibility_configurable: bool,
 }
@@ -754,6 +787,12 @@ pub struct BenefitFeatureFlag {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitFeatureFlagProperties,
     pub visibility_configurable: bool,
 }
@@ -773,6 +812,7 @@ impl BenefitFeatureFlag {
             external_id: required.external_id,
             metadata: required.metadata,
             visibility: required.visibility,
+            catalog_id: required.catalog_id,
             properties: required.properties,
             visibility_configurable: required.visibility_configurable,
         }
@@ -874,6 +914,9 @@ pub struct BenefitGitHubRepositoryRequired {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitGitHubRepositoryProperties,
     pub visibility_configurable: bool,
 }
@@ -913,6 +956,12 @@ pub struct BenefitGitHubRepository {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitGitHubRepositoryProperties,
     pub visibility_configurable: bool,
 }
@@ -932,6 +981,7 @@ impl BenefitGitHubRepository {
             external_id: required.external_id,
             metadata: required.metadata,
             visibility: required.visibility,
+            catalog_id: required.catalog_id,
             properties: required.properties,
             visibility_configurable: required.visibility_configurable,
         }
@@ -1559,6 +1609,9 @@ pub struct BenefitLicenseKeysRequired {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitLicenseKeysProperties,
     pub visibility_configurable: bool,
 }
@@ -1595,6 +1648,12 @@ pub struct BenefitLicenseKeys {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitLicenseKeysProperties,
     pub visibility_configurable: bool,
 }
@@ -1614,6 +1673,7 @@ impl BenefitLicenseKeys {
             external_id: required.external_id,
             metadata: required.metadata,
             visibility: required.visibility,
+            catalog_id: required.catalog_id,
             properties: required.properties,
             visibility_configurable: required.visibility_configurable,
         }
@@ -1746,6 +1806,9 @@ pub struct BenefitMeterCreditRequired {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitMeterCreditProperties,
     pub visibility_configurable: bool,
 }
@@ -1785,6 +1848,12 @@ pub struct BenefitMeterCredit {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitMeterCreditProperties,
     pub visibility_configurable: bool,
 }
@@ -1804,6 +1873,7 @@ impl BenefitMeterCredit {
             external_id: required.external_id,
             metadata: required.metadata,
             visibility: required.visibility,
+            catalog_id: required.catalog_id,
             properties: required.properties,
             visibility_configurable: required.visibility_configurable,
         }
@@ -1939,6 +2009,9 @@ pub struct BenefitSlackSharedChannelRequired {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitSlackSharedChannelProperties,
     pub visibility_configurable: bool,
 }
@@ -1975,6 +2048,12 @@ pub struct BenefitSlackSharedChannel {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
     pub visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+    /// ID of the catalog that introduced this version of the benefit. None for
+    /// benefits not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     pub properties: crate::v2027_01::models::common::types::BenefitSlackSharedChannelProperties,
     pub visibility_configurable: bool,
 }
@@ -1994,6 +2073,7 @@ impl BenefitSlackSharedChannel {
             external_id: required.external_id,
             metadata: required.metadata,
             visibility: required.visibility,
+            catalog_id: required.catalog_id,
             properties: required.properties,
             visibility_configurable: required.visibility_configurable,
         }
@@ -3558,7 +3638,7 @@ pub struct CustomerSubscriptionRequired {
     /// still be active if `cancel_at_period_end` is `true`.
     pub canceled_at: Option<jiff::Timestamp>,
     /// The timestamp when the subscription started.
-    pub started_at: Option<jiff::Timestamp>,
+    pub started_at: jiff::Timestamp,
     /// The timestamp when the subscription will end.
     pub ends_at: Option<jiff::Timestamp>,
     /// The timestamp when the subscription ended.
@@ -3586,7 +3666,7 @@ pub struct CustomerSubscriptionRequired {
     pub customer_cancellation_comment: Option<String>,
     pub product: crate::v2027_01::models::common::types::CustomerSubscriptionProduct,
     /// List of enabled prices for the subscription.
-    pub prices: Vec<crate::v2027_01::models::common::unions::CustomerSubscriptionPricesItemsUnion>,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of meters associated with the subscription.
     pub meters: Vec<crate::v2027_01::models::common::types::CustomerSubscriptionMeter>,
     /// Pending subscription update that will be applied at the beginning of the
@@ -3655,10 +3735,7 @@ pub struct CustomerSubscription {
     )]
     pub canceled_at: Option<jiff::Timestamp>,
     /// The timestamp when the subscription started.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub started_at: Option<jiff::Timestamp>,
+    pub started_at: jiff::Timestamp,
     /// The timestamp when the subscription will end.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
@@ -3720,7 +3797,7 @@ pub struct CustomerSubscription {
     pub customer_cancellation_comment: Option<String>,
     pub product: crate::v2027_01::models::common::types::CustomerSubscriptionProduct,
     /// List of enabled prices for the subscription.
-    pub prices: Vec<crate::v2027_01::models::common::unions::CustomerSubscriptionPricesItemsUnion>,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of meters associated with the subscription.
     pub meters: Vec<crate::v2027_01::models::common::types::CustomerSubscriptionMeter>,
     /// Pending subscription update that will be applied at the beginning of the
@@ -3918,8 +3995,7 @@ pub struct CustomerSubscriptionProductRequired {
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
     /// List of prices for this product.
-    pub prices:
-        Vec<crate::v2027_01::models::common::unions::CustomerSubscriptionProductPricesItemsUnion>,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of benefits granted by the product.
     pub benefits: Vec<crate::v2027_01::models::common::unions::BenefitPublic>,
     /// List of medias associated to the product.
@@ -3989,8 +4065,7 @@ pub struct CustomerSubscriptionProduct {
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
     /// List of prices for this product.
-    pub prices:
-        Vec<crate::v2027_01::models::common::unions::CustomerSubscriptionProductPricesItemsUnion>,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of benefits granted by the product.
     pub benefits: Vec<crate::v2027_01::models::common::unions::BenefitPublic>,
     /// List of medias associated to the product.
@@ -4187,8 +4262,6 @@ impl CustomerTeam {
 pub struct DiscountFixedOnceForeverDurationBaseRequired {
     pub duration: crate::v2027_01::models::common::enums::DiscountDuration,
     pub r#type: crate::v2027_01::models::common::enums::DiscountType,
-    pub amount: i64,
-    pub currency: String,
     /// Map of currency to fixed amount to discount from the total.
     pub amounts: std::collections::BTreeMap<String, i64>,
     /// Creation timestamp of the object.
@@ -4226,8 +4299,6 @@ pub struct DiscountFixedOnceForeverDurationBaseRequired {
 pub struct DiscountFixedOnceForeverDurationBase {
     pub duration: crate::v2027_01::models::common::enums::DiscountDuration,
     pub r#type: crate::v2027_01::models::common::enums::DiscountType,
-    pub amount: i64,
-    pub currency: String,
     /// Map of currency to fixed amount to discount from the total.
     pub amounts: std::collections::BTreeMap<String, i64>,
     /// Creation timestamp of the object.
@@ -4286,8 +4357,6 @@ impl DiscountFixedOnceForeverDurationBase {
         Self {
             duration: required.duration,
             r#type: required.r#type,
-            amount: required.amount,
-            currency: required.currency,
             amounts: required.amounts,
             created_at: required.created_at,
             modified_at: required.modified_at,
@@ -4310,8 +4379,6 @@ pub struct DiscountFixedRepeatDurationBaseRequired {
     pub duration: crate::v2027_01::models::common::enums::DiscountDuration,
     pub duration_in_months: i64,
     pub r#type: crate::v2027_01::models::common::enums::DiscountType,
-    pub amount: i64,
-    pub currency: String,
     /// Map of currency to fixed amount to discount from the total.
     pub amounts: std::collections::BTreeMap<String, i64>,
     /// Creation timestamp of the object.
@@ -4350,8 +4417,6 @@ pub struct DiscountFixedRepeatDurationBase {
     pub duration: crate::v2027_01::models::common::enums::DiscountDuration,
     pub duration_in_months: i64,
     pub r#type: crate::v2027_01::models::common::enums::DiscountType,
-    pub amount: i64,
-    pub currency: String,
     /// Map of currency to fixed amount to discount from the total.
     pub amounts: std::collections::BTreeMap<String, i64>,
     /// Creation timestamp of the object.
@@ -4411,8 +4476,6 @@ impl DiscountFixedRepeatDurationBase {
             duration: required.duration,
             duration_in_months: required.duration_in_months,
             r#type: required.r#type,
-            amount: required.amount,
-            currency: required.currency,
             amounts: required.amounts,
             created_at: required.created_at,
             modified_at: required.modified_at,
@@ -4732,233 +4795,6 @@ impl HttpValidationError {
         value: Vec<crate::v2027_01::models::common::types::ValidationError>,
     ) -> Self {
         self.detail = Some(value);
-        self
-    }
-}
-#[derive(Debug, Clone)]
-pub struct LegacyRecurringProductPriceCustomRequired {
-    /// Creation timestamp of the object.
-    pub created_at: jiff::Timestamp,
-    /// Last modification timestamp of the object.
-    pub modified_at: Option<jiff::Timestamp>,
-    /// The ID of the price.
-    pub id: crate::v2027_01::models::common::ids::ProductPriceId,
-    /// The source of the price . `catalog` is a predefined price, while
-    /// `ad_hoc` is a price created dynamically on a Checkout session.
-    pub source: crate::v2027_01::models::common::enums::ProductPriceSource,
-    /// The currency in which the customer will be charged.
-    pub price_currency: String,
-    /// The tax behavior of the price. If null, it defaults to the
-    /// organization's default tax behavior.
-    pub tax_behavior: Option<crate::v2027_01::models::common::enums::TaxBehaviorOption>,
-    /// Whether the price is archived and no longer available.
-    pub is_archived: bool,
-    /// The ID of the product owning the price.
-    pub product_id: crate::v2027_01::models::common::ids::ProductId,
-    /// The recurring interval of the price.
-    pub recurring_interval: crate::v2027_01::models::common::enums::RecurringInterval,
-    /// The minimum amount the customer can pay. If 0, the price is 'free or pay
-    /// what you want'.
-    pub minimum_amount: i64,
-    /// The maximum amount the customer can pay.
-    pub maximum_amount: Option<i64>,
-    /// The initial amount shown to the customer.
-    pub preset_amount: Option<i64>,
-}
-/// A pay-what-you-want recurring price for a product, i.e. a subscription.
-///
-/// **Deprecated**: The recurring interval should be set on the product itself.
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-pub struct LegacyRecurringProductPriceCustom {
-    /// Creation timestamp of the object.
-    pub created_at: jiff::Timestamp,
-    /// Last modification timestamp of the object.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub modified_at: Option<jiff::Timestamp>,
-    /// The ID of the price.
-    pub id: crate::v2027_01::models::common::ids::ProductPriceId,
-    /// The source of the price . `catalog` is a predefined price, while
-    /// `ad_hoc` is a price created dynamically on a Checkout session.
-    pub source: crate::v2027_01::models::common::enums::ProductPriceSource,
-    pub amount_type: monostate::MustBe!("custom"),
-    /// The currency in which the customer will be charged.
-    pub price_currency: String,
-    /// The tax behavior of the price. If null, it defaults to the
-    /// organization's default tax behavior.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub tax_behavior: Option<crate::v2027_01::models::common::enums::TaxBehaviorOption>,
-    /// Whether the price is archived and no longer available.
-    pub is_archived: bool,
-    /// The ID of the product owning the price.
-    pub product_id: crate::v2027_01::models::common::ids::ProductId,
-    /// The type of the price.
-    pub r#type: monostate::MustBe!("recurring"),
-    /// The recurring interval of the price.
-    pub recurring_interval: crate::v2027_01::models::common::enums::RecurringInterval,
-    /// The minimum amount the customer can pay. If 0, the price is 'free or pay
-    /// what you want'.
-    pub minimum_amount: i64,
-    /// The maximum amount the customer can pay.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub maximum_amount: Option<i64>,
-    /// The initial amount shown to the customer.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub preset_amount: Option<i64>,
-    pub legacy: monostate::MustBe!(true),
-}
-#[allow(clippy::type_complexity)]
-impl LegacyRecurringProductPriceCustom {
-    pub fn new(required: LegacyRecurringProductPriceCustomRequired) -> Self {
-        Self {
-            created_at: required.created_at,
-            modified_at: required.modified_at,
-            id: required.id,
-            source: required.source,
-            amount_type: Default::default(),
-            price_currency: required.price_currency,
-            tax_behavior: required.tax_behavior,
-            is_archived: required.is_archived,
-            product_id: required.product_id,
-            r#type: Default::default(),
-            recurring_interval: required.recurring_interval,
-            minimum_amount: required.minimum_amount,
-            maximum_amount: required.maximum_amount,
-            preset_amount: required.preset_amount,
-            legacy: Default::default(),
-        }
-    }
-}
-#[derive(Debug, Clone)]
-pub struct LegacyRecurringProductPriceFixedRequired {
-    /// Creation timestamp of the object.
-    pub created_at: jiff::Timestamp,
-    /// Last modification timestamp of the object.
-    pub modified_at: Option<jiff::Timestamp>,
-    /// The ID of the price.
-    pub id: crate::v2027_01::models::common::ids::ProductPriceId,
-    /// The source of the price . `catalog` is a predefined price, while
-    /// `ad_hoc` is a price created dynamically on a Checkout session.
-    pub source: crate::v2027_01::models::common::enums::ProductPriceSource,
-    /// The currency in which the customer will be charged.
-    pub price_currency: String,
-    /// The tax behavior of the price. If null, it defaults to the
-    /// organization's default tax behavior.
-    pub tax_behavior: Option<crate::v2027_01::models::common::enums::TaxBehaviorOption>,
-    /// Whether the price is archived and no longer available.
-    pub is_archived: bool,
-    /// The ID of the product owning the price.
-    pub product_id: crate::v2027_01::models::common::ids::ProductId,
-    /// The recurring interval of the price.
-    pub recurring_interval: crate::v2027_01::models::common::enums::RecurringInterval,
-    /// The price in cents.
-    pub price_amount: i64,
-}
-/// A recurring price for a product, i.e. a subscription.
-///
-/// **Deprecated**: The recurring interval should be set on the product itself.
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-pub struct LegacyRecurringProductPriceFixed {
-    /// Creation timestamp of the object.
-    pub created_at: jiff::Timestamp,
-    /// Last modification timestamp of the object.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub modified_at: Option<jiff::Timestamp>,
-    /// The ID of the price.
-    pub id: crate::v2027_01::models::common::ids::ProductPriceId,
-    /// The source of the price . `catalog` is a predefined price, while
-    /// `ad_hoc` is a price created dynamically on a Checkout session.
-    pub source: crate::v2027_01::models::common::enums::ProductPriceSource,
-    pub amount_type: monostate::MustBe!("fixed"),
-    /// The currency in which the customer will be charged.
-    pub price_currency: String,
-    /// The tax behavior of the price. If null, it defaults to the
-    /// organization's default tax behavior.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub tax_behavior: Option<crate::v2027_01::models::common::enums::TaxBehaviorOption>,
-    /// Whether the price is archived and no longer available.
-    pub is_archived: bool,
-    /// The ID of the product owning the price.
-    pub product_id: crate::v2027_01::models::common::ids::ProductId,
-    /// The type of the price.
-    pub r#type: monostate::MustBe!("recurring"),
-    /// The recurring interval of the price.
-    pub recurring_interval: crate::v2027_01::models::common::enums::RecurringInterval,
-    /// The price in cents.
-    pub price_amount: i64,
-    pub legacy: monostate::MustBe!(true),
-}
-#[allow(clippy::type_complexity)]
-impl LegacyRecurringProductPriceFixed {
-    pub fn new(required: LegacyRecurringProductPriceFixedRequired) -> Self {
-        Self {
-            created_at: required.created_at,
-            modified_at: required.modified_at,
-            id: required.id,
-            source: required.source,
-            amount_type: Default::default(),
-            price_currency: required.price_currency,
-            tax_behavior: required.tax_behavior,
-            is_archived: required.is_archived,
-            product_id: required.product_id,
-            r#type: Default::default(),
-            recurring_interval: required.recurring_interval,
-            price_amount: required.price_amount,
-            legacy: Default::default(),
-        }
-    }
-}
-#[derive(Debug, Clone)]
-pub struct LicenseKeyUserRequired {
-    pub id: crate::v2027_01::models::common::ids::LicenseKeyUserId,
-    pub public_name: String,
-}
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-pub struct LicenseKeyUser {
-    pub id: crate::v2027_01::models::common::ids::LicenseKeyUserId,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub email: presence_rs::Presence<String>,
-    pub public_name: String,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub avatar_url: presence_rs::Presence<String>,
-}
-#[allow(clippy::type_complexity)]
-impl LicenseKeyUser {
-    pub fn new(required: LicenseKeyUserRequired) -> Self {
-        Self {
-            id: required.id,
-            email: presence_rs::Presence::Absent,
-            public_name: required.public_name,
-            avatar_url: presence_rs::Presence::Absent,
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn email(mut self, value: impl Into<String>) -> Self {
-        self.email = presence_rs::Presence::Some(value.into());
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn avatar_url(mut self, value: impl Into<String>) -> Self {
-        self.avatar_url = presence_rs::Presence::Some(value.into());
         self
     }
 }
@@ -5315,54 +5151,6 @@ impl NotPermitted {
     }
 }
 #[derive(Debug, Clone)]
-pub struct OrderUserRequired {
-    pub id: crate::v2027_01::models::common::ids::OrderUserId,
-    pub public_name: String,
-}
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-pub struct OrderUser {
-    pub id: crate::v2027_01::models::common::ids::OrderUserId,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub email: presence_rs::Presence<String>,
-    pub public_name: String,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub avatar_url: presence_rs::Presence<String>,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub github_username: presence_rs::Presence<String>,
-}
-#[allow(clippy::type_complexity)]
-impl OrderUser {
-    pub fn new(required: OrderUserRequired) -> Self {
-        Self {
-            id: required.id,
-            email: presence_rs::Presence::Absent,
-            public_name: required.public_name,
-            avatar_url: presence_rs::Presence::Absent,
-            github_username: presence_rs::Presence::Absent,
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn email(mut self, value: impl Into<String>) -> Self {
-        self.email = presence_rs::Presence::Some(value.into());
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn avatar_url(mut self, value: impl Into<String>) -> Self {
-        self.avatar_url = presence_rs::Presence::Some(value.into());
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn github_username(mut self, value: impl Into<String>) -> Self {
-        self.github_username = presence_rs::Presence::Some(value.into());
-        self
-    }
-}
-#[derive(Debug, Clone)]
 pub struct OrganizationCustomerPortalSettingsRequired {
     pub usage: crate::v2027_01::models::common::types::CustomerPortalUsageSettings,
     pub subscription: crate::v2027_01::models::common::types::CustomerPortalSubscriptionSettings,
@@ -5639,6 +5427,9 @@ pub struct ProductRequired {
     pub is_archived: bool,
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the product. None for
+    /// products not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     /// An ID from your own system to reference this resource. It must be unique
     /// within the organization for this type of resource.
     pub external_id: Option<String>,
@@ -5647,7 +5438,7 @@ pub struct ProductRequired {
     /// an order, subscription, trial or discount cannot be deleted.
     pub is_deletable: bool,
     /// List of prices for this product.
-    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPricesItemsUnion>,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of benefits granted by the product.
     pub benefits: Vec<crate::v2027_01::models::common::unions::Benefit>,
     /// List of medias associated to the product.
@@ -5718,6 +5509,12 @@ pub struct Product {
     pub is_archived: bool,
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the product. None for
+    /// products not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
     /// An ID from your own system to reference this resource. It must be unique
     /// within the organization for this type of resource.
     #[serde(
@@ -5729,7 +5526,7 @@ pub struct Product {
     /// an order, subscription, trial or discount cannot be deleted.
     pub is_deletable: bool,
     /// List of prices for this product.
-    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPricesItemsUnion>,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of benefits granted by the product.
     pub benefits: Vec<crate::v2027_01::models::common::unions::Benefit>,
     /// List of medias associated to the product.
@@ -5756,6 +5553,7 @@ impl Product {
             is_recurring: required.is_recurring,
             is_archived: required.is_archived,
             organization_id: required.organization_id,
+            catalog_id: required.catalog_id,
             external_id: required.external_id,
             metadata: required.metadata,
             is_deletable: required.is_deletable,
@@ -7803,54 +7601,6 @@ impl SeatsList {
             available_seats: required.available_seats,
             total_seats: required.total_seats,
         }
-    }
-}
-#[derive(Debug, Clone)]
-pub struct SubscriptionUserRequired {
-    pub id: crate::v2027_01::models::common::ids::SubscriptionUserId,
-    pub public_name: String,
-}
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-pub struct SubscriptionUser {
-    pub id: crate::v2027_01::models::common::ids::SubscriptionUserId,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub email: presence_rs::Presence<String>,
-    pub public_name: String,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub avatar_url: presence_rs::Presence<String>,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub github_username: presence_rs::Presence<String>,
-}
-#[allow(clippy::type_complexity)]
-impl SubscriptionUser {
-    pub fn new(required: SubscriptionUserRequired) -> Self {
-        Self {
-            id: required.id,
-            email: presence_rs::Presence::Absent,
-            public_name: required.public_name,
-            avatar_url: presence_rs::Presence::Absent,
-            github_username: presence_rs::Presence::Absent,
-        }
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn email(mut self, value: impl Into<String>) -> Self {
-        self.email = presence_rs::Presence::Some(value.into());
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn avatar_url(mut self, value: impl Into<String>) -> Self {
-        self.avatar_url = presence_rs::Presence::Some(value.into());
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn github_username(mut self, value: impl Into<String>) -> Self {
-        self.github_username = presence_rs::Presence::Some(value.into());
-        self
     }
 }
 #[derive(Debug, Clone)]

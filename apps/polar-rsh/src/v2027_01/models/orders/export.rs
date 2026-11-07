@@ -13,6 +13,8 @@ pub struct OrdersExportParams {
     pub created_after: Option<jiff::Timestamp>,
     /// Only include orders created before this date. Must include a UTC offset.
     pub created_before: Option<jiff::Timestamp>,
+    /// Filter by product external ID.
+    pub external_product_id: Vec<String>,
     /// Filter by organization ID.
     pub organization_id: Vec<crate::v2027_01::models::common::ids::OrganizationId>,
     /// Filter by product ID.
@@ -35,6 +37,9 @@ impl crate::v2027_01::query::EncodeQuery for OrdersExportParams {
         }
         if let Some(value) = &self.created_before {
             params.push(("created_before", value.to_string()));
+        }
+        for value in &self.external_product_id {
+            params.push(("external_product_id", value.to_string()));
         }
         for value in &self.organization_id {
             params.push(("organization_id", value.to_string()));

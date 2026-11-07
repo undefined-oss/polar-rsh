@@ -318,7 +318,7 @@ pub struct SubscriptionRequired {
     /// still be active if `cancel_at_period_end` is `true`.
     pub canceled_at: Option<jiff::Timestamp>,
     /// The timestamp when the subscription started.
-    pub started_at: Option<jiff::Timestamp>,
+    pub started_at: jiff::Timestamp,
     /// The timestamp when the subscription will end.
     pub ends_at: Option<jiff::Timestamp>,
     /// The timestamp when the subscription ended.
@@ -350,7 +350,7 @@ pub struct SubscriptionRequired {
     pub discount:
         Option<crate::v2027_01::models::subscriptions::unions::SubscriptionDiscountAnyOf0Union>,
     /// List of enabled prices for the subscription.
-    pub prices: Vec<crate::v2027_01::models::subscriptions::unions::SubscriptionPricesItemsUnion>,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of meters associated with the subscription.
     pub meters: Vec<crate::v2027_01::models::subscriptions::types::SubscriptionMeter>,
     /// Pending subscription update that will be applied at the beginning of the
@@ -412,10 +412,7 @@ pub struct Subscription {
     )]
     pub canceled_at: Option<jiff::Timestamp>,
     ///The timestamp when the subscription started.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub started_at: Option<jiff::Timestamp>,
+    pub started_at: jiff::Timestamp,
     ///The timestamp when the subscription will end.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
@@ -496,9 +493,7 @@ pub struct Subscription {
         crate::v2027_01::models::subscriptions::unions::SubscriptionDiscountAnyOf0Union,
     >,
     ///List of enabled prices for the subscription.
-    pub prices: Vec<
-        crate::v2027_01::models::subscriptions::unions::SubscriptionPricesItemsUnion,
-    >,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     ///List of meters associated with the subscription.
     pub meters: Vec<crate::v2027_01::models::subscriptions::types::SubscriptionMeter>,
     ///Pending subscription update that will be applied at the beginning of the next period. If `null`, there is no pending update.

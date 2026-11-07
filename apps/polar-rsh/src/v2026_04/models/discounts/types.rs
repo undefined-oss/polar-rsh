@@ -8,7 +8,6 @@ pub struct DiscountFixedCreateRequired {
     /// by `duration_in_months`.
     pub duration: crate::v2026_04::models::common::enums::DiscountDuration,
 }
-/// Schema to create a fixed amount discount.
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
@@ -84,19 +83,19 @@ pub struct DiscountFixedCreate {
         crate::v2026_04::models::discounts::newtypes::DiscountFixedCreateDurationInMonths,
     >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub amounts: presence_rs::Presence<
+        std::collections::BTreeMap<
+            crate::v2026_04::models::common::enums::PresentmentCurrency,
+            crate::v2026_04::models::discounts::newtypes::DiscountFixedCreateAmountsValue,
+        >,
+    >,
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub amount: presence_rs::Presence<
         crate::v2026_04::models::discounts::newtypes::DiscountFixedCreateAmount,
     >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub currency: presence_rs::Presence<
         crate::v2026_04::models::common::enums::PresentmentCurrency,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub amounts: presence_rs::Presence<
-        std::collections::BTreeMap<
-            crate::v2026_04::models::common::enums::PresentmentCurrency,
-            crate::v2026_04::models::discounts::newtypes::DiscountFixedCreateAmountsValue,
-        >,
     >,
 }
 #[allow(clippy::type_complexity)]
@@ -115,9 +114,9 @@ impl DiscountFixedCreate {
             r#type: None,
             duration: required.duration,
             duration_in_months: presence_rs::Presence::Absent,
+            amounts: presence_rs::Presence::Absent,
             amount: presence_rs::Presence::Absent,
             currency: presence_rs::Presence::Absent,
-            amounts: presence_rs::Presence::Absent,
         }
     }
 
@@ -228,6 +227,18 @@ impl DiscountFixedCreate {
     }
 
     #[allow(clippy::should_implement_trait)]
+    pub fn amounts(
+        mut self,
+        value: std::collections::BTreeMap<
+            crate::v2026_04::models::common::enums::PresentmentCurrency,
+            crate::v2026_04::models::discounts::newtypes::DiscountFixedCreateAmountsValue,
+        >,
+    ) -> Self {
+        self.amounts = presence_rs::Presence::Some(value);
+        self
+    }
+
+    #[allow(clippy::should_implement_trait)]
     pub fn amount(
         mut self,
         value: crate::v2026_04::models::discounts::newtypes::DiscountFixedCreateAmount,
@@ -242,18 +253,6 @@ impl DiscountFixedCreate {
         value: crate::v2026_04::models::common::enums::PresentmentCurrency,
     ) -> Self {
         self.currency = presence_rs::Presence::Some(value);
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn amounts(
-        mut self,
-        value: std::collections::BTreeMap<
-            crate::v2026_04::models::common::enums::PresentmentCurrency,
-            crate::v2026_04::models::discounts::newtypes::DiscountFixedCreateAmountsValue,
-        >,
-    ) -> Self {
-        self.amounts = presence_rs::Presence::Some(value);
         self
     }
 }
@@ -1070,7 +1069,6 @@ impl DiscountProduct {
         }
     }
 }
-/// Schema to update a discount.
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
@@ -1134,14 +1132,6 @@ pub struct DiscountUpdate {
         crate::v2026_04::models::common::enums::DiscountType,
     >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub amount: presence_rs::Presence<
-        crate::v2026_04::models::discounts::newtypes::DiscountAmount,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub currency: presence_rs::Presence<
-        crate::v2026_04::models::common::enums::PresentmentCurrency,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub amounts: presence_rs::Presence<
         std::collections::BTreeMap<
             crate::v2026_04::models::common::enums::PresentmentCurrency,
@@ -1155,6 +1145,14 @@ pub struct DiscountUpdate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub products: presence_rs::Presence<
         Vec<crate::v2026_04::models::common::ids::ProductId>,
+    >,
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub amount: presence_rs::Presence<
+        crate::v2026_04::models::discounts::newtypes::DiscountAmount,
+    >,
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub currency: presence_rs::Presence<
+        crate::v2026_04::models::common::enums::PresentmentCurrency,
     >,
 }
 #[allow(clippy::type_complexity)]
@@ -1265,24 +1263,6 @@ impl DiscountUpdate {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn amount(
-        mut self,
-        value: crate::v2026_04::models::discounts::newtypes::DiscountAmount,
-    ) -> Self {
-        self.amount = presence_rs::Presence::Some(value);
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn currency(
-        mut self,
-        value: crate::v2026_04::models::common::enums::PresentmentCurrency,
-    ) -> Self {
-        self.currency = presence_rs::Presence::Some(value);
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
     pub fn amounts(
         mut self,
         value: std::collections::BTreeMap<
@@ -1306,6 +1286,24 @@ impl DiscountUpdate {
     #[allow(clippy::should_implement_trait)]
     pub fn products(mut self, value: Vec<crate::v2026_04::models::common::ids::ProductId>) -> Self {
         self.products = presence_rs::Presence::Some(value);
+        self
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn amount(
+        mut self,
+        value: crate::v2026_04::models::discounts::newtypes::DiscountAmount,
+    ) -> Self {
+        self.amount = presence_rs::Presence::Some(value);
+        self
+    }
+
+    #[allow(clippy::should_implement_trait)]
+    pub fn currency(
+        mut self,
+        value: crate::v2026_04::models::common::enums::PresentmentCurrency,
+    ) -> Self {
+        self.currency = presence_rs::Presence::Some(value);
         self
     }
 }

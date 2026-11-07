@@ -465,7 +465,9 @@ impl CustomerPaymentMethodKrCard {
 #[derive(Default)]
 pub struct CustomerPortalCustomerUpdate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub billing_name: presence_rs::Presence<String>,
+    pub billing_name: presence_rs::Presence<
+        crate::v2027_01::models::customers::newtypes::CustomerPortalCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub billing_address:
         presence_rs::Presence<crate::v2027_01::models::common::types::AddressInput>,
@@ -482,8 +484,11 @@ impl CustomerPortalCustomerUpdate {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn billing_name(mut self, value: impl Into<String>) -> Self {
-        self.billing_name = presence_rs::Presence::Some(value.into());
+    pub fn billing_name(
+        mut self,
+        value: crate::v2027_01::models::customers::newtypes::CustomerPortalCustomerBillingName,
+    ) -> Self {
+        self.billing_name = presence_rs::Presence::Some(value);
         self
     }
 
@@ -832,7 +837,7 @@ pub struct CustomerStateSubscriptionRequired {
     /// still be active if `cancel_at_period_end` is `true`.
     pub canceled_at: Option<jiff::Timestamp>,
     /// The timestamp when the subscription started.
-    pub started_at: Option<jiff::Timestamp>,
+    pub started_at: jiff::Timestamp,
     /// The timestamp when the subscription will end.
     pub ends_at: Option<jiff::Timestamp>,
     /// The ID of the subscribed product.
@@ -906,10 +911,7 @@ pub struct CustomerStateSubscription {
     )]
     pub canceled_at: Option<jiff::Timestamp>,
     ///The timestamp when the subscription started.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub started_at: Option<jiff::Timestamp>,
+    pub started_at: jiff::Timestamp,
     ///The timestamp when the subscription will end.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"

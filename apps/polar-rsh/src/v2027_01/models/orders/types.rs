@@ -413,7 +413,7 @@ pub struct CustomerOrderProductRequired {
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
     /// List of prices for this product.
-    pub prices: Vec<crate::v2027_01::models::orders::unions::CustomerOrderProductPricesItemsUnion>,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of benefits granted by the product.
     pub benefits: Vec<crate::v2027_01::models::common::unions::BenefitPublic>,
     /// List of medias associated to the product.
@@ -483,7 +483,7 @@ pub struct CustomerOrderProduct {
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
     /// List of prices for this product.
-    pub prices: Vec<crate::v2027_01::models::orders::unions::CustomerOrderProductPricesItemsUnion>,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of benefits granted by the product.
     pub benefits: Vec<crate::v2027_01::models::common::unions::BenefitPublic>,
     /// List of medias associated to the product.
@@ -577,7 +577,7 @@ pub struct CustomerOrderSubscriptionRequired {
     /// still be active if `cancel_at_period_end` is `true`.
     pub canceled_at: Option<jiff::Timestamp>,
     /// The timestamp when the subscription started.
-    pub started_at: Option<jiff::Timestamp>,
+    pub started_at: jiff::Timestamp,
     /// The timestamp when the subscription will end.
     pub ends_at: Option<jiff::Timestamp>,
     /// The timestamp when the subscription ended.
@@ -666,10 +666,7 @@ pub struct CustomerOrderSubscription {
     )]
     pub canceled_at: Option<jiff::Timestamp>,
     /// The timestamp when the subscription started.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub started_at: Option<jiff::Timestamp>,
+    pub started_at: jiff::Timestamp,
     /// The timestamp when the subscription will end.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
@@ -1728,6 +1725,9 @@ pub struct OrderProductRequired {
     pub is_archived: bool,
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the product. None for
+    /// products not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
 }
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 #[allow(clippy::type_complexity)]
@@ -1792,6 +1792,12 @@ pub struct OrderProduct {
     pub is_archived: bool,
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the product. None for
+    /// products not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
 }
 #[allow(clippy::type_complexity)]
 impl OrderProduct {
@@ -1813,6 +1819,7 @@ impl OrderProduct {
             is_recurring: required.is_recurring,
             is_archived: required.is_archived,
             organization_id: required.organization_id,
+            catalog_id: required.catalog_id,
         }
     }
 }
@@ -1878,7 +1885,7 @@ pub struct OrderSubscriptionRequired {
     /// still be active if `cancel_at_period_end` is `true`.
     pub canceled_at: Option<jiff::Timestamp>,
     /// The timestamp when the subscription started.
-    pub started_at: Option<jiff::Timestamp>,
+    pub started_at: jiff::Timestamp,
     /// The timestamp when the subscription will end.
     pub ends_at: Option<jiff::Timestamp>,
     /// The timestamp when the subscription ended.
@@ -1968,10 +1975,7 @@ pub struct OrderSubscription {
     )]
     pub canceled_at: Option<jiff::Timestamp>,
     /// The timestamp when the subscription started.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub started_at: Option<jiff::Timestamp>,
+    pub started_at: jiff::Timestamp,
     /// The timestamp when the subscription will end.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"

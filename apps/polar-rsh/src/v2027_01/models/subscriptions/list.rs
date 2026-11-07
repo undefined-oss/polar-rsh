@@ -24,6 +24,8 @@ pub struct SubscriptionsListParams {
     pub discount_id: Vec<crate::v2027_01::models::common::ids::DiscountId>,
     /// Filter by customer external ID.
     pub external_customer_id: Vec<String>,
+    /// Filter by product external ID.
+    pub external_product_id: Vec<String>,
     /// Filter by metadata key-value pairs. It uses the `deepObject` style, e.g.
     /// `?metadata[key]=value`.
     pub metadata: std::collections::BTreeMap<
@@ -80,6 +82,9 @@ impl crate::v2027_01::query::EncodeQuery for SubscriptionsListParams {
         }
         for value in &self.external_customer_id {
             params.push(("external_customer_id", value.to_string()));
+        }
+        for value in &self.external_product_id {
+            params.push(("external_product_id", value.to_string()));
         }
         for value in &self.organization_id {
             params.push(("organization_id", value.to_string()));

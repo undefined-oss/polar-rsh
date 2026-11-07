@@ -1752,51 +1752,6 @@ impl AsRef<str> for CustomerType {
         self.as_str()
     }
 }
-/// The API version that'll be used in event payloads.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
-pub enum DeprecatedWebhookEndpointCreateWithSecretApiVersion {
-    #[serde(rename = "2026-04")]
-    Value2026Minus04,
-}
-impl DeprecatedWebhookEndpointCreateWithSecretApiVersion {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::Value2026Minus04 => "2026-04",
-        }
-    }
-}
-impl ::std::fmt::Display for DeprecatedWebhookEndpointCreateWithSecretApiVersion {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-impl AsRef<str> for DeprecatedWebhookEndpointCreateWithSecretApiVersion {
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
-}
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
-pub enum DeprecatedWebhookEndpointUpdateWithSecretApiVersion {
-    #[serde(rename = "2026-04")]
-    Value2026Minus04,
-}
-impl DeprecatedWebhookEndpointUpdateWithSecretApiVersion {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::Value2026Minus04 => "2026-04",
-        }
-    }
-}
-impl ::std::fmt::Display for DeprecatedWebhookEndpointUpdateWithSecretApiVersion {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-impl AsRef<str> for DeprecatedWebhookEndpointUpdateWithSecretApiVersion {
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
-}
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
 pub enum DiscountDuration {
     #[serde(rename = "once")]

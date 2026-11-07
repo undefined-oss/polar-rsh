@@ -31,6 +31,12 @@ pub enum Benefit {
         metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
         /// The visibility of the benefit in the customer portal.
         visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+        /// ID of the catalog that introduced this version of the benefit. None
+        /// for benefits not managed by declarative config.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
         properties: crate::v2027_01::models::common::types::BenefitCustomProperties,
         visibility_configurable: bool,
     },
@@ -64,6 +70,12 @@ pub enum Benefit {
         metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
         /// The visibility of the benefit in the customer portal.
         visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+        /// ID of the catalog that introduced this version of the benefit. None
+        /// for benefits not managed by declarative config.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
         properties: crate::v2027_01::models::common::types::BenefitDiscordProperties,
         visibility_configurable: bool,
     },
@@ -97,6 +109,12 @@ pub enum Benefit {
         metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
         /// The visibility of the benefit in the customer portal.
         visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+        /// ID of the catalog that introduced this version of the benefit. None
+        /// for benefits not managed by declarative config.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
         properties: crate::v2027_01::models::common::types::BenefitGitHubRepositoryProperties,
         visibility_configurable: bool,
     },
@@ -130,6 +148,12 @@ pub enum Benefit {
         metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
         /// The visibility of the benefit in the customer portal.
         visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+        /// ID of the catalog that introduced this version of the benefit. None
+        /// for benefits not managed by declarative config.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
         properties: crate::v2027_01::models::common::types::BenefitDownloadablesProperties,
         visibility_configurable: bool,
     },
@@ -163,6 +187,12 @@ pub enum Benefit {
         metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
         /// The visibility of the benefit in the customer portal.
         visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+        /// ID of the catalog that introduced this version of the benefit. None
+        /// for benefits not managed by declarative config.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
         properties: crate::v2027_01::models::common::types::BenefitLicenseKeysProperties,
         visibility_configurable: bool,
     },
@@ -196,6 +226,12 @@ pub enum Benefit {
         metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
         /// The visibility of the benefit in the customer portal.
         visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+        /// ID of the catalog that introduced this version of the benefit. None
+        /// for benefits not managed by declarative config.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
         properties: crate::v2027_01::models::common::types::BenefitMeterCreditProperties,
         visibility_configurable: bool,
     },
@@ -229,6 +265,12 @@ pub enum Benefit {
         metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
         /// The visibility of the benefit in the customer portal.
         visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+        /// ID of the catalog that introduced this version of the benefit. None
+        /// for benefits not managed by declarative config.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
         properties: crate::v2027_01::models::common::types::BenefitFeatureFlagProperties,
         visibility_configurable: bool,
     },
@@ -262,6 +304,12 @@ pub enum Benefit {
         metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
         /// The visibility of the benefit in the customer portal.
         visibility: crate::v2027_01::models::common::enums::BenefitVisibility,
+        /// ID of the catalog that introduced this version of the benefit. None
+        /// for benefits not managed by declarative config.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
         properties: crate::v2027_01::models::common::types::BenefitSlackSharedChannelProperties,
         visibility_configurable: bool,
     },
@@ -720,100 +768,6 @@ pub enum Customer {
         avatar_url: Option<String>,
     },
 }
-#[derive(Debug, Clone, serde::Serialize)]
-#[serde(untagged)]
-pub enum CustomerSubscriptionPricesItemsUnion {
-    LegacyRecurringProductPrice(
-        crate::v2027_01::models::common::unions::LegacyRecurringProductPrice,
-    ),
-    ProductPrice(crate::v2027_01::models::common::unions::ProductPrice),
-}
-impl<'de> serde::Deserialize<'de> for CustomerSubscriptionPricesItemsUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let value = <serde_json::Value as serde::Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        if let Ok(payload) = serde_json::from_value::<
-            crate::v2027_01::models::common::unions::LegacyRecurringProductPrice,
-        >(value.clone())
-        {
-            if matched.is_some() {
-                return Err(serde::de::Error::custom(concat!(
-                    "ambiguous oneOf value for ",
-                    "CustomerSubscriptionPricesItemsUnion"
-                )));
-            }
-            matched = Some(Self::LegacyRecurringProductPrice(payload));
-        }
-        if let Ok(payload) = serde_json::from_value::<
-            crate::v2027_01::models::common::unions::ProductPrice,
-        >(value.clone())
-        {
-            if matched.is_some() {
-                return Err(serde::de::Error::custom(concat!(
-                    "ambiguous oneOf value for ",
-                    "CustomerSubscriptionPricesItemsUnion"
-                )));
-            }
-            matched = Some(Self::ProductPrice(payload));
-        }
-        matched.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no matching oneOf variant for ",
-                "CustomerSubscriptionPricesItemsUnion"
-            ))
-        })
-    }
-}
-#[derive(Debug, Clone, serde::Serialize)]
-#[serde(untagged)]
-pub enum CustomerSubscriptionProductPricesItemsUnion {
-    LegacyRecurringProductPrice(
-        crate::v2027_01::models::common::unions::LegacyRecurringProductPrice,
-    ),
-    ProductPrice(crate::v2027_01::models::common::unions::ProductPrice),
-}
-impl<'de> serde::Deserialize<'de> for CustomerSubscriptionProductPricesItemsUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let value = <serde_json::Value as serde::Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        if let Ok(payload) = serde_json::from_value::<
-            crate::v2027_01::models::common::unions::LegacyRecurringProductPrice,
-        >(value.clone())
-        {
-            if matched.is_some() {
-                return Err(serde::de::Error::custom(concat!(
-                    "ambiguous oneOf value for ",
-                    "CustomerSubscriptionProductPricesItemsUnion"
-                )));
-            }
-            matched = Some(Self::LegacyRecurringProductPrice(payload));
-        }
-        if let Ok(payload) = serde_json::from_value::<
-            crate::v2027_01::models::common::unions::ProductPrice,
-        >(value.clone())
-        {
-            if matched.is_some() {
-                return Err(serde::de::Error::custom(concat!(
-                    "ambiguous oneOf value for ",
-                    "CustomerSubscriptionProductPricesItemsUnion"
-                )));
-            }
-            matched = Some(Self::ProductPrice(payload));
-        }
-        matched.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no matching oneOf variant for ",
-                "CustomerSubscriptionProductPricesItemsUnion"
-            ))
-        })
-    }
-}
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(untagged)]
 pub enum FilterClauseValueUnion {
@@ -826,89 +780,6 @@ pub enum FilterClauseValueUnion {
 pub enum FilterClausesItemsUnion {
     FilterClause(crate::v2027_01::models::common::types::FilterClause),
     Filter(crate::v2027_01::models::common::types::Filter),
-}
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-#[serde(tag = "amount_type", deny_unknown_fields)]
-pub enum LegacyRecurringProductPrice {
-    #[serde(rename = "fixed")]
-    Fixed {
-        /// Creation timestamp of the object.
-        created_at: jiff::Timestamp,
-        /// Last modification timestamp of the object.
-        #[serde(
-            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-        )]
-        modified_at: Option<jiff::Timestamp>,
-        /// The ID of the price.
-        id: crate::v2027_01::models::common::ids::ProductPriceId,
-        /// The source of the price . `catalog` is a predefined price, while
-        /// `ad_hoc` is a price created dynamically on a Checkout session.
-        source: crate::v2027_01::models::common::enums::ProductPriceSource,
-        /// The currency in which the customer will be charged.
-        price_currency: String,
-        /// The tax behavior of the price. If null, it defaults to the
-        /// organization's default tax behavior.
-        #[serde(
-            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-        )]
-        tax_behavior: Option<crate::v2027_01::models::common::enums::TaxBehaviorOption>,
-        /// Whether the price is archived and no longer available.
-        is_archived: bool,
-        /// The ID of the product owning the price.
-        product_id: crate::v2027_01::models::common::ids::ProductId,
-        /// The type of the price.
-        r#type: monostate::MustBe!("recurring"),
-        /// The recurring interval of the price.
-        recurring_interval: crate::v2027_01::models::common::enums::RecurringInterval,
-        /// The price in cents.
-        price_amount: i64,
-        legacy: monostate::MustBe!(true),
-    },
-    #[serde(rename = "custom")]
-    Custom {
-        /// Creation timestamp of the object.
-        created_at: jiff::Timestamp,
-        /// Last modification timestamp of the object.
-        #[serde(
-            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-        )]
-        modified_at: Option<jiff::Timestamp>,
-        /// The ID of the price.
-        id: crate::v2027_01::models::common::ids::ProductPriceId,
-        /// The source of the price . `catalog` is a predefined price, while
-        /// `ad_hoc` is a price created dynamically on a Checkout session.
-        source: crate::v2027_01::models::common::enums::ProductPriceSource,
-        /// The currency in which the customer will be charged.
-        price_currency: String,
-        /// The tax behavior of the price. If null, it defaults to the
-        /// organization's default tax behavior.
-        #[serde(
-            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-        )]
-        tax_behavior: Option<crate::v2027_01::models::common::enums::TaxBehaviorOption>,
-        /// Whether the price is archived and no longer available.
-        is_archived: bool,
-        /// The ID of the product owning the price.
-        product_id: crate::v2027_01::models::common::ids::ProductId,
-        /// The type of the price.
-        r#type: monostate::MustBe!("recurring"),
-        /// The recurring interval of the price.
-        recurring_interval: crate::v2027_01::models::common::enums::RecurringInterval,
-        /// The minimum amount the customer can pay. If 0, the price is 'free or
-        /// pay what you want'.
-        minimum_amount: i64,
-        /// The maximum amount the customer can pay.
-        #[serde(
-            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-        )]
-        maximum_amount: Option<i64>,
-        /// The initial amount shown to the customer.
-        #[serde(
-            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-        )]
-        preset_amount: Option<i64>,
-        legacy: monostate::MustBe!(true),
-    },
 }
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(untagged)]
@@ -1221,53 +1092,6 @@ pub enum ProductPrice {
 pub enum ProductPriceMeteredUnitCreateUnitAmountUnion {
     Number(crate::v2027_01::models::common::newtypes::ProductPriceMeteredUnitUnitAmountNumber),
     String(String),
-}
-#[derive(Debug, Clone, serde::Serialize)]
-#[serde(untagged)]
-pub enum ProductPricesItemsUnion {
-    LegacyRecurringProductPrice(
-        crate::v2027_01::models::common::unions::LegacyRecurringProductPrice,
-    ),
-    ProductPrice(crate::v2027_01::models::common::unions::ProductPrice),
-}
-impl<'de> serde::Deserialize<'de> for ProductPricesItemsUnion {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let value = <serde_json::Value as serde::Deserialize>::deserialize(deserializer)?;
-        let mut matched = None;
-        if let Ok(payload) = serde_json::from_value::<
-            crate::v2027_01::models::common::unions::LegacyRecurringProductPrice,
-        >(value.clone())
-        {
-            if matched.is_some() {
-                return Err(serde::de::Error::custom(concat!(
-                    "ambiguous oneOf value for ",
-                    "ProductPricesItemsUnion"
-                )));
-            }
-            matched = Some(Self::LegacyRecurringProductPrice(payload));
-        }
-        if let Ok(payload) = serde_json::from_value::<
-            crate::v2027_01::models::common::unions::ProductPrice,
-        >(value.clone())
-        {
-            if matched.is_some() {
-                return Err(serde::de::Error::custom(concat!(
-                    "ambiguous oneOf value for ",
-                    "ProductPricesItemsUnion"
-                )));
-            }
-            matched = Some(Self::ProductPrice(payload));
-        }
-        matched.ok_or_else(|| {
-            serde::de::Error::custom(concat!(
-                "no matching oneOf variant for ",
-                "ProductPricesItemsUnion"
-            ))
-        })
-    }
 }
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(untagged)]

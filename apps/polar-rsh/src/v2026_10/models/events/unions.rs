@@ -58,8 +58,8 @@ impl<'de> serde::Deserialize<'de> for Event {
 #[serde(untagged)]
 pub enum EventMetadataInputAdditionalPropertiesUnion {
     String(crate::v2026_10::models::events::newtypes::EventMetadataInputValueString),
-    Integer(i64),
-    Number(f64),
+    Integer(crate::v2026_10::models::events::newtypes::EventMetadataInputValueInteger),
+    Number(crate::v2026_10::models::events::newtypes::EventMetadataInputValueNumber),
     Boolean(bool),
 }
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
-pub enum OrganizationDetailsSwitchingFrom {
+pub enum OrganizationDetailsInputSwitchingFrom {
     #[serde(rename = "paddle")]
     Paddle,
     #[serde(rename = "lemon_squeezy")]
@@ -12,7 +12,7 @@ pub enum OrganizationDetailsSwitchingFrom {
     #[serde(rename = "other")]
     Other,
 }
-impl OrganizationDetailsSwitchingFrom {
+impl OrganizationDetailsInputSwitchingFrom {
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Paddle => "paddle",
@@ -23,12 +23,12 @@ impl OrganizationDetailsSwitchingFrom {
         }
     }
 }
-impl ::std::fmt::Display for OrganizationDetailsSwitchingFrom {
+impl ::std::fmt::Display for OrganizationDetailsInputSwitchingFrom {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(self.as_str())
     }
 }
-impl AsRef<str> for OrganizationDetailsSwitchingFrom {
+impl AsRef<str> for OrganizationDetailsInputSwitchingFrom {
     fn as_ref(&self) -> &str {
         self.as_str()
     }

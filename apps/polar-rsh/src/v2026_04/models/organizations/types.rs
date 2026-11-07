@@ -752,9 +752,6 @@ impl OrganizationCustomerEmailSettings {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct OrganizationDetails {
-    /// Brief information about you and your business.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub about: presence_rs::Presence<String>,
     /// Description of digital products being sold.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub product_description: presence_rs::Presence<String>,
@@ -772,6 +769,21 @@ pub struct OrganizationDetails {
         deserialize_with = "crate::v2026_04::models::common::serde_helpers::deserialize_optional_value"
     )]
     pub pricing_models: Option<Vec<String>>,
+    /// Switching from another platform?
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2026_04::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub switching: Option<bool>,
+    /// Which platform the organization is migrating from.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub switching_from: presence_rs::Presence<
+        crate::v2026_04::models::organizations::enums::OrganizationDetailsSwitchingFrom,
+    >,
+    /// Brief information about you and your business.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub about: presence_rs::Presence<String>,
     /// How the organization will integrate and use Polar.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub intended_use: presence_rs::Presence<String>,
@@ -787,18 +799,6 @@ pub struct OrganizationDetails {
     pub future_annual_revenue: presence_rs::Presence<
         crate::v2026_04::models::organizations::newtypes::OrganizationDetailsFutureAnnualRevenue,
     >,
-    /// Switching from another platform?
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::v2026_04::models::common::serde_helpers::deserialize_optional_value"
-    )]
-    pub switching: Option<bool>,
-    /// Which platform the organization is migrating from.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub switching_from: presence_rs::Presence<
-        crate::v2026_04::models::organizations::enums::OrganizationDetailsSwitchingFrom,
-    >,
     /// Revenue from last year if applicable.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub previous_annual_revenue: presence_rs::Presence<
@@ -809,13 +809,6 @@ pub struct OrganizationDetails {
 impl OrganizationDetails {
     pub fn new() -> Self {
         Self::default()
-    }
-
-    /// Brief information about you and your business.
-    #[allow(clippy::should_implement_trait)]
-    pub fn about(mut self, value: impl Into<String>) -> Self {
-        self.about = presence_rs::Presence::Some(value.into());
-        self
     }
 
     /// Description of digital products being sold.
@@ -836,6 +829,30 @@ impl OrganizationDetails {
     #[allow(clippy::should_implement_trait)]
     pub fn pricing_models(mut self, value: Vec<String>) -> Self {
         self.pricing_models = Some(value);
+        self
+    }
+
+    /// Switching from another platform?
+    #[allow(clippy::should_implement_trait)]
+    pub fn switching(mut self, value: bool) -> Self {
+        self.switching = Some(value);
+        self
+    }
+
+    /// Which platform the organization is migrating from.
+    #[allow(clippy::should_implement_trait)]
+    pub fn switching_from(
+        mut self,
+        value: crate::v2026_04::models::organizations::enums::OrganizationDetailsSwitchingFrom,
+    ) -> Self {
+        self.switching_from = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// Brief information about you and your business.
+    #[allow(clippy::should_implement_trait)]
+    pub fn about(mut self, value: impl Into<String>) -> Self {
+        self.about = presence_rs::Presence::Some(value.into());
         self
     }
 
@@ -860,23 +877,6 @@ impl OrganizationDetails {
         value: crate::v2026_04::models::organizations::newtypes::OrganizationDetailsFutureAnnualRevenue,
     ) -> Self {
         self.future_annual_revenue = presence_rs::Presence::Some(value);
-        self
-    }
-
-    /// Switching from another platform?
-    #[allow(clippy::should_implement_trait)]
-    pub fn switching(mut self, value: bool) -> Self {
-        self.switching = Some(value);
-        self
-    }
-
-    /// Which platform the organization is migrating from.
-    #[allow(clippy::should_implement_trait)]
-    pub fn switching_from(
-        mut self,
-        value: crate::v2026_04::models::organizations::enums::OrganizationDetailsSwitchingFrom,
-    ) -> Self {
-        self.switching_from = presence_rs::Presence::Some(value);
         self
     }
 

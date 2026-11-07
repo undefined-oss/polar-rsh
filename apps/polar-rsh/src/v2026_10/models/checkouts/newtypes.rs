@@ -112,6 +112,75 @@ impl<'de> serde::Deserialize<'de> for CheckoutConfirmStripeAmount {
         Self::try_from(value).map_err(serde::de::Error::custom)
     }
 }
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Eq,
+    Ord,
+    Hash,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref,
+)]
+#[serde(transparent)]
+pub struct CheckoutConfirmStripeCustomerBillingName(String);
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum CheckoutConfirmStripeCustomerBillingNameValidationError {
+    #[error("must contain at most 256 characters")]
+    TooLong,
+}
+impl CheckoutConfirmStripeCustomerBillingName {
+    /// Validate a value.
+    pub fn try_new(
+        value: impl Into<String>,
+    ) -> Result<Self, CheckoutConfirmStripeCustomerBillingNameValidationError> {
+        Self::try_from(value.into())
+    }
+
+    /// Take the underlying value.
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+}
+impl TryFrom<String> for CheckoutConfirmStripeCustomerBillingName {
+    type Error = CheckoutConfirmStripeCustomerBillingNameValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        let length = value.chars().count() as u64;
+        if length > 256u64 {
+            return Err(CheckoutConfirmStripeCustomerBillingNameValidationError::TooLong);
+        }
+        Ok(Self(value))
+    }
+}
+impl From<CheckoutConfirmStripeCustomerBillingName> for String {
+    fn from(value: CheckoutConfirmStripeCustomerBillingName) -> Self {
+        value.0
+    }
+}
+impl<'de> serde::Deserialize<'de> for CheckoutConfirmStripeCustomerBillingName {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <String as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+impl TryFrom<&str> for CheckoutConfirmStripeCustomerBillingName {
+    type Error = CheckoutConfirmStripeCustomerBillingNameValidationError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::try_from(value.to_owned())
+    }
+}
+impl AsRef<str> for CheckoutConfirmStripeCustomerBillingName {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
 /// The name of the customer.
 #[derive(
     Debug,
@@ -302,6 +371,75 @@ impl<'de> serde::Deserialize<'de> for CheckoutConfirmStripeUnits {
     {
         let value = <u64 as serde::Deserialize>::deserialize(deserializer)?;
         Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Eq,
+    Ord,
+    Hash,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref,
+)]
+#[serde(transparent)]
+pub struct CheckoutCustomerBillingName(String);
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum CheckoutCustomerBillingNameValidationError {
+    #[error("must contain at most 256 characters")]
+    TooLong,
+}
+impl CheckoutCustomerBillingName {
+    /// Validate a value.
+    pub fn try_new(
+        value: impl Into<String>,
+    ) -> Result<Self, CheckoutCustomerBillingNameValidationError> {
+        Self::try_from(value.into())
+    }
+
+    /// Take the underlying value.
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+}
+impl TryFrom<String> for CheckoutCustomerBillingName {
+    type Error = CheckoutCustomerBillingNameValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        let length = value.chars().count() as u64;
+        if length > 256u64 {
+            return Err(CheckoutCustomerBillingNameValidationError::TooLong);
+        }
+        Ok(Self(value))
+    }
+}
+impl From<CheckoutCustomerBillingName> for String {
+    fn from(value: CheckoutCustomerBillingName) -> Self {
+        value.0
+    }
+}
+impl<'de> serde::Deserialize<'de> for CheckoutCustomerBillingName {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <String as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+impl TryFrom<&str> for CheckoutCustomerBillingName {
+    type Error = CheckoutCustomerBillingNameValidationError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::try_from(value.to_owned())
+    }
+}
+impl AsRef<str> for CheckoutCustomerBillingName {
+    fn as_ref(&self) -> &str {
+        &self.0
     }
 }
 #[derive(
@@ -721,6 +859,75 @@ impl<'de> serde::Deserialize<'de> for CheckoutProductsCreateAmount {
     {
         let value = <u64 as serde::Deserialize>::deserialize(deserializer)?;
         Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Eq,
+    Ord,
+    Hash,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref,
+)]
+#[serde(transparent)]
+pub struct CheckoutProductsCreateCustomerBillingName(String);
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum CheckoutProductsCreateCustomerBillingNameValidationError {
+    #[error("must contain at most 256 characters")]
+    TooLong,
+}
+impl CheckoutProductsCreateCustomerBillingName {
+    /// Validate a value.
+    pub fn try_new(
+        value: impl Into<String>,
+    ) -> Result<Self, CheckoutProductsCreateCustomerBillingNameValidationError> {
+        Self::try_from(value.into())
+    }
+
+    /// Take the underlying value.
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+}
+impl TryFrom<String> for CheckoutProductsCreateCustomerBillingName {
+    type Error = CheckoutProductsCreateCustomerBillingNameValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        let length = value.chars().count() as u64;
+        if length > 256u64 {
+            return Err(CheckoutProductsCreateCustomerBillingNameValidationError::TooLong);
+        }
+        Ok(Self(value))
+    }
+}
+impl From<CheckoutProductsCreateCustomerBillingName> for String {
+    fn from(value: CheckoutProductsCreateCustomerBillingName) -> Self {
+        value.0
+    }
+}
+impl<'de> serde::Deserialize<'de> for CheckoutProductsCreateCustomerBillingName {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <String as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+impl TryFrom<&str> for CheckoutProductsCreateCustomerBillingName {
+    type Error = CheckoutProductsCreateCustomerBillingNameValidationError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::try_from(value.to_owned())
+    }
+}
+impl AsRef<str> for CheckoutProductsCreateCustomerBillingName {
+    fn as_ref(&self) -> &str {
+        &self.0
     }
 }
 #[derive(
@@ -2028,6 +2235,75 @@ impl<'de> serde::Deserialize<'de> for CheckoutUpdatePublicAmount {
     {
         let value = <u64 as serde::Deserialize>::deserialize(deserializer)?;
         Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Eq,
+    Ord,
+    Hash,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref,
+)]
+#[serde(transparent)]
+pub struct CheckoutUpdatePublicCustomerBillingName(String);
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum CheckoutUpdatePublicCustomerBillingNameValidationError {
+    #[error("must contain at most 256 characters")]
+    TooLong,
+}
+impl CheckoutUpdatePublicCustomerBillingName {
+    /// Validate a value.
+    pub fn try_new(
+        value: impl Into<String>,
+    ) -> Result<Self, CheckoutUpdatePublicCustomerBillingNameValidationError> {
+        Self::try_from(value.into())
+    }
+
+    /// Take the underlying value.
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+}
+impl TryFrom<String> for CheckoutUpdatePublicCustomerBillingName {
+    type Error = CheckoutUpdatePublicCustomerBillingNameValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        let length = value.chars().count() as u64;
+        if length > 256u64 {
+            return Err(CheckoutUpdatePublicCustomerBillingNameValidationError::TooLong);
+        }
+        Ok(Self(value))
+    }
+}
+impl From<CheckoutUpdatePublicCustomerBillingName> for String {
+    fn from(value: CheckoutUpdatePublicCustomerBillingName) -> Self {
+        value.0
+    }
+}
+impl<'de> serde::Deserialize<'de> for CheckoutUpdatePublicCustomerBillingName {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <String as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+impl TryFrom<&str> for CheckoutUpdatePublicCustomerBillingName {
+    type Error = CheckoutUpdatePublicCustomerBillingNameValidationError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::try_from(value.to_owned())
+    }
+}
+impl AsRef<str> for CheckoutUpdatePublicCustomerBillingName {
+    fn as_ref(&self) -> &str {
+        &self.0
     }
 }
 /// The name of the customer.
