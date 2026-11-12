@@ -3072,11 +3072,11 @@ pub struct LlmMetadataRequired {
     /// The model used for the event.
     pub model: String,
     /// The number of LLM input tokens used for the event.
-    pub input_tokens: i64,
+    pub input_tokens: crate::v2026_10::models::events::newtypes::LlmMetadataInputTokens,
     /// The number of LLM output tokens used for the event.
-    pub output_tokens: i64,
+    pub output_tokens: crate::v2026_10::models::events::newtypes::LlmMetadataOutputTokens,
     /// The total number of LLM tokens used for the event.
-    pub total_tokens: i64,
+    pub total_tokens: crate::v2026_10::models::events::newtypes::LlmMetadataTotalTokens,
 }
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 #[allow(clippy::type_complexity)]
@@ -3093,18 +3093,19 @@ pub struct LlmMetadata {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub response: presence_rs::Presence<String>,
     /// The number of LLM input tokens used for the event.
-    pub input_tokens: i64,
+    pub input_tokens: crate::v2026_10::models::events::newtypes::LlmMetadataInputTokens,
     /// The number of LLM cached tokens that were used for the event.
     #[serde(
         default,
         skip_serializing_if = "Option::is_none",
         deserialize_with = "crate::v2026_10::models::common::serde_helpers::deserialize_optional_value"
     )]
-    pub cached_input_tokens: Option<i64>,
+    pub cached_input_tokens:
+        Option<crate::v2026_10::models::events::newtypes::LlmMetadataCachedInputTokens>,
     /// The number of LLM output tokens used for the event.
-    pub output_tokens: i64,
+    pub output_tokens: crate::v2026_10::models::events::newtypes::LlmMetadataOutputTokens,
     /// The total number of LLM tokens used for the event.
-    pub total_tokens: i64,
+    pub total_tokens: crate::v2026_10::models::events::newtypes::LlmMetadataTotalTokens,
 }
 #[allow(clippy::type_complexity)]
 impl LlmMetadata {
@@ -3137,7 +3138,10 @@ impl LlmMetadata {
 
     /// The number of LLM cached tokens that were used for the event.
     #[allow(clippy::should_implement_trait)]
-    pub fn cached_input_tokens(mut self, value: i64) -> Self {
+    pub fn cached_input_tokens(
+        mut self,
+        value: crate::v2026_10::models::events::newtypes::LlmMetadataCachedInputTokens,
+    ) -> Self {
         self.cached_input_tokens = Some(value);
         self
     }

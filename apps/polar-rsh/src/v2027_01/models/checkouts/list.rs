@@ -10,6 +10,8 @@ pub struct CheckoutsListParams {
     pub customer_id: Vec<crate::v2027_01::models::common::ids::CustomerId>,
     /// Filter by customer external ID.
     pub external_customer_id: Vec<String>,
+    /// Filter by product external ID.
+    pub external_product_id: Vec<String>,
     /// Filter by organization ID.
     pub organization_id: Vec<crate::v2027_01::models::common::ids::OrganizationId>,
     /// Filter by product ID.
@@ -40,6 +42,9 @@ impl crate::v2027_01::query::EncodeQuery for CheckoutsListParams {
         }
         for value in &self.external_customer_id {
             params.push(("external_customer_id", value.to_string()));
+        }
+        for value in &self.external_product_id {
+            params.push(("external_product_id", value.to_string()));
         }
         for value in &self.organization_id {
             params.push(("organization_id", value.to_string()));

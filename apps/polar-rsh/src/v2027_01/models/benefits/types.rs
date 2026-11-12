@@ -10,7 +10,7 @@ pub struct BenefitCustomCreateRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitCustomCreate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -65,7 +65,8 @@ impl BenefitCustomCreate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -142,7 +143,7 @@ impl BenefitCustomCreateProperties {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct BenefitCustomUpdate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -190,7 +191,8 @@ impl BenefitCustomUpdate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -261,7 +263,7 @@ pub struct BenefitDiscordCreateRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitDiscordCreate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -316,7 +318,8 @@ impl BenefitDiscordCreate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -403,7 +406,7 @@ impl BenefitDiscordCreateProperties {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct BenefitDiscordUpdate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -446,7 +449,8 @@ impl BenefitDiscordUpdate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -605,7 +609,7 @@ pub struct BenefitDownloadablesCreateRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitDownloadablesCreate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -660,7 +664,8 @@ impl BenefitDownloadablesCreate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -860,7 +865,7 @@ pub struct BenefitFeatureFlagCreateRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitFeatureFlagCreate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -915,7 +920,8 @@ impl BenefitFeatureFlagCreate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -1104,7 +1110,7 @@ pub struct BenefitGitHubRepositoryCreateRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGitHubRepositoryCreate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -1159,7 +1165,8 @@ impl BenefitGitHubRepositoryCreate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -1248,7 +1255,7 @@ impl BenefitGitHubRepositoryCreateProperties {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct BenefitGitHubRepositoryUpdate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -1291,7 +1298,8 @@ impl BenefitGitHubRepositoryUpdate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -1370,7 +1378,7 @@ pub struct BenefitLicenseKeysCreateRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitLicenseKeysCreate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -1425,7 +1433,8 @@ impl BenefitLicenseKeysCreate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -1660,7 +1669,7 @@ pub struct BenefitMeterCreditCreateRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitMeterCreditCreate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -1715,7 +1724,8 @@ impl BenefitMeterCreditCreate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -1792,7 +1802,7 @@ impl BenefitMeterCreditCreateProperties {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct BenefitMeterCreditUpdate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -1840,7 +1850,8 @@ impl BenefitMeterCreditUpdate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -1913,7 +1924,7 @@ pub struct BenefitSlackSharedChannelCreateRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitSlackSharedChannelCreate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -1968,7 +1979,8 @@ impl BenefitSlackSharedChannelCreate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -2100,7 +2112,7 @@ impl BenefitSlackSharedChannelCreateProperties {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct BenefitSlackSharedChannelUpdate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -2143,7 +2155,8 @@ impl BenefitSlackSharedChannelUpdate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());

@@ -83,8 +83,6 @@ pub struct CheckoutRequired {
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
     ///ID of the product to checkout.
     pub product_id: Option<crate::v2027_01::models::common::ids::ProductId>,
-    ///ID of the product price to checkout.
-    pub product_price_id: Option<crate::v2027_01::models::common::ids::ProductPriceId>,
     ///ID of the discount applied to the checkout.
     pub discount_id: Option<crate::v2027_01::models::common::ids::DiscountId>,
     ///Whether to allow the customer to apply discount codes. If you apply a discount through `discount_id`, it'll still be applied, but the customer won't be able to change it.
@@ -131,16 +129,12 @@ pub struct CheckoutRequired {
     ///Product selected to checkout.
     pub product: Option<crate::v2027_01::models::checkouts::types::CheckoutProduct>,
     ///Price of the selected product.
-    pub product_price: Option<
-        crate::v2027_01::models::checkouts::unions::CheckoutProductPriceAnyOf0Union,
-    >,
+    pub product_price: Option<crate::v2027_01::models::common::unions::ProductPrice>,
     ///Mapping of product IDs to their list of prices.
     pub prices: Option<
         std::collections::BTreeMap<
             crate::v2027_01::models::common::ids::CheckoutPricesId,
-            Vec<
-                crate::v2027_01::models::checkouts::unions::CheckoutPricesAnyOf0AdditionalPropertiesItemsUnion,
-            >,
+            Vec<crate::v2027_01::models::common::unions::ProductPrice>,
         >,
     >,
     pub discount: Option<
@@ -286,11 +280,6 @@ pub struct Checkout {
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
     )]
     pub product_id: Option<crate::v2027_01::models::common::ids::ProductId>,
-    ///ID of the product price to checkout.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub product_price_id: Option<crate::v2027_01::models::common::ids::ProductPriceId>,
     ///ID of the discount applied to the checkout.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
@@ -381,9 +370,7 @@ pub struct Checkout {
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
     )]
-    pub product_price: Option<
-        crate::v2027_01::models::checkouts::unions::CheckoutProductPriceAnyOf0Union,
-    >,
+    pub product_price: Option<crate::v2027_01::models::common::unions::ProductPrice>,
     ///Mapping of product IDs to their list of prices.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
@@ -391,9 +378,7 @@ pub struct Checkout {
     pub prices: Option<
         std::collections::BTreeMap<
             crate::v2027_01::models::common::ids::CheckoutPricesId,
-            Vec<
-                crate::v2027_01::models::checkouts::unions::CheckoutPricesAnyOf0AdditionalPropertiesItemsUnion,
-            >,
+            Vec<crate::v2027_01::models::common::unions::ProductPrice>,
         >,
     >,
     #[serde(
@@ -452,7 +437,6 @@ impl Checkout {
             trial_end: required.trial_end,
             organization_id: required.organization_id,
             product_id: required.product_id,
-            product_price_id: required.product_price_id,
             discount_id: required.discount_id,
             allow_discount_codes: required.allow_discount_codes,
             require_billing_address: required.require_billing_address,
@@ -595,11 +579,6 @@ pub struct CheckoutConfirmSharedPaymentToken {
     pub product_id: presence_rs::Presence<
         crate::v2027_01::models::common::ids::ProductId,
     >,
-    ///ID of the product price to checkout. Must correspond to a price present in the checkout's product list.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub product_price_id: presence_rs::Presence<
-        crate::v2027_01::models::common::ids::ProductPriceId,
-    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub amount: presence_rs::Presence<
         crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmSharedPaymentTokenAmount,
@@ -623,7 +602,9 @@ pub struct CheckoutConfirmSharedPaymentToken {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_email: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmSharedPaymentTokenCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2027_01::models::common::types::AddressInput,
@@ -650,7 +631,6 @@ impl CheckoutConfirmSharedPaymentToken {
         Self {
             custom_field_data: None,
             product_id: presence_rs::Presence::Absent,
-            product_price_id: presence_rs::Presence::Absent,
             amount: presence_rs::Presence::Absent,
             seats: presence_rs::Presence::Absent,
             units: presence_rs::Presence::Absent,
@@ -688,17 +668,6 @@ impl CheckoutConfirmSharedPaymentToken {
     #[allow(clippy::should_implement_trait)]
     pub fn product_id(mut self, value: crate::v2027_01::models::common::ids::ProductId) -> Self {
         self.product_id = presence_rs::Presence::Some(value);
-        self
-    }
-
-    /// ID of the product price to checkout. Must correspond to a price present
-    /// in the checkout's product list.
-    #[allow(clippy::should_implement_trait)]
-    pub fn product_price_id(
-        mut self,
-        value: crate::v2027_01::models::common::ids::ProductPriceId,
-    ) -> Self {
-        self.product_price_id = presence_rs::Presence::Some(value);
         self
     }
 
@@ -753,8 +722,11 @@ impl CheckoutConfirmSharedPaymentToken {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmSharedPaymentTokenCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 
@@ -827,11 +799,6 @@ pub struct CheckoutConfirmStripe {
     pub product_id: presence_rs::Presence<
         crate::v2027_01::models::common::ids::ProductId,
     >,
-    ///ID of the product price to checkout. Must correspond to a price present in the checkout's product list.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub product_price_id: presence_rs::Presence<
-        crate::v2027_01::models::common::ids::ProductPriceId,
-    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub amount: presence_rs::Presence<
         crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmStripeAmount,
@@ -855,7 +822,9 @@ pub struct CheckoutConfirmStripe {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_email: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmStripeCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2027_01::models::common::types::AddressInput,
@@ -903,17 +872,6 @@ impl CheckoutConfirmStripe {
     #[allow(clippy::should_implement_trait)]
     pub fn product_id(mut self, value: crate::v2027_01::models::common::ids::ProductId) -> Self {
         self.product_id = presence_rs::Presence::Some(value);
-        self
-    }
-
-    /// ID of the product price to checkout. Must correspond to a price present
-    /// in the checkout's product list.
-    #[allow(clippy::should_implement_trait)]
-    pub fn product_price_id(
-        mut self,
-        value: crate::v2027_01::models::common::ids::ProductPriceId,
-    ) -> Self {
-        self.product_price_id = presence_rs::Presence::Some(value);
         self
     }
 
@@ -968,8 +926,11 @@ impl CheckoutConfirmStripe {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmStripeCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 
@@ -1029,8 +990,6 @@ impl CheckoutConfirmStripe {
 pub struct CheckoutDiscountFixedOnceForeverDurationRequired {
     pub duration: crate::v2027_01::models::common::enums::DiscountDuration,
     pub r#type: crate::v2027_01::models::common::enums::DiscountType,
-    pub amount: i64,
-    pub currency: String,
     /// Map of currency to fixed amount to discount from the total.
     pub amounts: std::collections::BTreeMap<String, i64>,
     /// The ID of the object.
@@ -1045,8 +1004,6 @@ pub struct CheckoutDiscountFixedOnceForeverDurationRequired {
 pub struct CheckoutDiscountFixedOnceForeverDuration {
     pub duration: crate::v2027_01::models::common::enums::DiscountDuration,
     pub r#type: crate::v2027_01::models::common::enums::DiscountType,
-    pub amount: i64,
-    pub currency: String,
     /// Map of currency to fixed amount to discount from the total.
     pub amounts: std::collections::BTreeMap<String, i64>,
     /// The ID of the object.
@@ -1063,8 +1020,6 @@ impl CheckoutDiscountFixedOnceForeverDuration {
         Self {
             duration: required.duration,
             r#type: required.r#type,
-            amount: required.amount,
-            currency: required.currency,
             amounts: required.amounts,
             id: required.id,
             name: required.name,
@@ -1077,8 +1032,6 @@ pub struct CheckoutDiscountFixedRepeatDurationRequired {
     pub duration: crate::v2027_01::models::common::enums::DiscountDuration,
     pub duration_in_months: i64,
     pub r#type: crate::v2027_01::models::common::enums::DiscountType,
-    pub amount: i64,
-    pub currency: String,
     /// Map of currency to fixed amount to discount from the total.
     pub amounts: std::collections::BTreeMap<String, i64>,
     /// The ID of the object.
@@ -1095,8 +1048,6 @@ pub struct CheckoutDiscountFixedRepeatDuration {
     pub duration: crate::v2027_01::models::common::enums::DiscountDuration,
     pub duration_in_months: i64,
     pub r#type: crate::v2027_01::models::common::enums::DiscountType,
-    pub amount: i64,
-    pub currency: String,
     /// Map of currency to fixed amount to discount from the total.
     pub amounts: std::collections::BTreeMap<String, i64>,
     /// The ID of the object.
@@ -1114,8 +1065,6 @@ impl CheckoutDiscountFixedRepeatDuration {
             duration: required.duration,
             duration_in_months: required.duration_in_months,
             r#type: required.r#type,
-            amount: required.amount,
-            currency: required.currency,
             amounts: required.amounts,
             id: required.id,
             name: required.name,
@@ -1335,8 +1284,13 @@ pub struct CheckoutProductRequired {
     pub is_archived: bool,
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the product. None for
+    /// products not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the product.
+    pub is_current: bool,
     /// List of prices for this product.
-    pub prices: Vec<crate::v2027_01::models::checkouts::unions::CheckoutProductPricesItemsUnion>,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of benefits granted by the product.
     pub benefits: Vec<crate::v2027_01::models::common::unions::BenefitPublic>,
     /// List of medias associated to the product.
@@ -1405,8 +1359,16 @@ pub struct CheckoutProduct {
     pub is_archived: bool,
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the product. None for
+    /// products not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the product.
+    pub is_current: bool,
     /// List of prices for this product.
-    pub prices: Vec<crate::v2027_01::models::checkouts::unions::CheckoutProductPricesItemsUnion>,
+    pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of benefits granted by the product.
     pub benefits: Vec<crate::v2027_01::models::common::unions::BenefitPublic>,
     /// List of medias associated to the product.
@@ -1431,6 +1393,8 @@ impl CheckoutProduct {
             is_recurring: required.is_recurring,
             is_archived: required.is_archived,
             organization_id: required.organization_id,
+            catalog_id: required.catalog_id,
+            is_current: required.is_current,
             prices: required.prices,
             benefits: required.benefits,
             medias: required.medias,
@@ -1582,7 +1546,9 @@ pub struct CheckoutProductsCreate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_ip_address: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2027_01::models::checkouts::newtypes::CheckoutProductsCreateCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2027_01::models::common::types::AddressInput,
@@ -1899,8 +1865,11 @@ impl CheckoutProductsCreate {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2027_01::models::checkouts::newtypes::CheckoutProductsCreateCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 
@@ -2164,7 +2133,9 @@ pub struct CheckoutProductsExternalCreate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_ip_address: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2027_01::models::checkouts::newtypes::CheckoutProductsExternalCreateCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2027_01::models::common::types::AddressInput,
@@ -2481,8 +2452,11 @@ impl CheckoutProductsExternalCreate {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2027_01::models::checkouts::newtypes::CheckoutProductsExternalCreateCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 
@@ -2603,130 +2577,149 @@ impl CheckoutProductsExternalCreate {
 }
 #[derive(Debug, Clone)]
 pub struct CheckoutPublicRequired {
-    ///The ID of the object.
+    /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::ClientSecretId,
-    ///Creation timestamp of the object.
+    /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
-    ///Last modification timestamp of the object.
+    /// Last modification timestamp of the object.
     pub modified_at: Option<jiff::Timestamp>,
-    ///Payment processor used.
+    /// Payment processor used.
     pub payment_processor: crate::v2027_01::models::common::enums::PaymentProcessor,
-    ///
     ///        Status of the checkout session.
     ///
     ///        - Open: the checkout session was opened.
-    ///        - Expired: the checkout session was expired and is no more accessible.
-    ///        - Confirmed: the user on the checkout session clicked Pay. This is not indicative of the payment's success status.
-    ///        - Failed: the checkout definitely failed for technical reasons and cannot be retried. In most cases, this state is never reached.
-    ///        - Succeeded: the payment on the checkout was performed successfully.
-    ///
+    ///        - Expired: the checkout session was expired and is no more
+    ///          accessible.
+    ///        - Confirmed: the user on the checkout session clicked Pay. This
+    ///          is not indicative of the payment's success status.
+    ///        - Failed: the checkout definitely failed for technical reasons
+    ///          and cannot be retried. In most cases, this state is never
+    ///          reached.
+    ///        - Succeeded: the payment on the checkout was performed
+    ///          successfully.
     pub status: crate::v2027_01::models::checkouts::enums::CheckoutStatus,
-    ///Client secret used to update and complete the checkout session from the client.
+    /// Client secret used to update and complete the checkout session from the
+    /// client.
     pub client_secret: String,
-    ///URL where the customer can access the checkout session.
+    /// URL where the customer can access the checkout session.
     pub url: String,
-    ///Expiration date and time of the checkout session.
+    /// Expiration date and time of the checkout session.
     pub expires_at: jiff::Timestamp,
-    ///URL where the customer will be redirected after a successful payment.
+    /// URL where the customer will be redirected after a successful payment.
     pub success_url: String,
-    ///When set, a back button will be shown in the checkout to return to this URL.
+    /// When set, a back button will be shown in the checkout to return to this
+    /// URL.
     pub return_url: Option<String>,
-    ///When checkout is embedded, represents the Origin of the page embedding the checkout. Used as a security measure to send messages only to the embedding page.
+    /// When checkout is embedded, represents the Origin of the page embedding
+    /// the checkout. Used as a security measure to send messages only to the
+    /// embedding page.
     pub embed_origin: Option<String>,
-    ///Amount in cents, before discounts and taxes.
+    /// Amount in cents, before discounts and taxes.
     pub amount: i64,
-    ///Predefined number of units (works with unit-based pricing only)
+    /// Predefined number of units (works with unit-based pricing only)
     pub units: Option<i64>,
-    ///Minimum number of units (works with unit-based pricing only)
+    /// Minimum number of units (works with unit-based pricing only)
     pub min_units: Option<i64>,
-    ///Maximum number of units (works with unit-based pricing only)
+    /// Maximum number of units (works with unit-based pricing only)
     pub max_units: Option<i64>,
-    ///Discount amount in cents.
+    /// Discount amount in cents.
     pub discount_amount: i64,
-    ///Amount in cents, after discounts but before taxes.
+    /// Amount in cents, after discounts but before taxes.
     pub net_amount: i64,
-    ///Sales tax amount in cents. If `null`, it means there is no enough information yet to calculate it.
+    /// Sales tax amount in cents. If `null`, it means there is no enough
+    /// information yet to calculate it.
     pub tax_amount: Option<i64>,
-    ///Tax behavior of the checkout. `inclusive` means the price includes tax, `exclusive` means tax is added on top. If `null`, tax is not yet calculated.
+    /// Tax behavior of the checkout. `inclusive` means the price includes tax,
+    /// `exclusive` means tax is added on top. If `null`, tax is not yet
+    /// calculated.
     pub tax_behavior: Option<crate::v2027_01::models::checkouts::enums::TaxBehavior>,
-    ///Amount in cents, after discounts and taxes.
+    /// Amount in cents, after discounts and taxes.
     pub total_amount: i64,
-    ///Currency code of the checkout session.
+    /// Currency code of the checkout session.
     pub currency: String,
-    ///Whether to enable the trial period for the checkout session. If `false`, the trial period will be disabled, even if the selected product has a trial configured.
+    /// Whether to enable the trial period for the checkout session. If `false`,
+    /// the trial period will be disabled, even if the selected product has a
+    /// trial configured.
     pub allow_trial: Option<bool>,
-    ///Interval unit of the trial period, if any. This value is either set from the checkout, if `trial_interval` is set, or from the selected product.
-    pub active_trial_interval: Option<
-        crate::v2027_01::models::common::enums::TrialInterval,
-    >,
-    ///Number of interval units of the trial period, if any. This value is either set from the checkout, if `trial_interval_count` is set, or from the selected product.
+    /// Interval unit of the trial period, if any. This value is either set from
+    /// the checkout, if `trial_interval` is set, or from the selected product.
+    pub active_trial_interval: Option<crate::v2027_01::models::common::enums::TrialInterval>,
+    /// Number of interval units of the trial period, if any. This value is
+    /// either set from the checkout, if `trial_interval_count` is set, or from
+    /// the selected product.
     pub active_trial_interval_count: Option<i64>,
-    ///End date and time of the trial period, if any.
+    /// End date and time of the trial period, if any.
     pub trial_end: Option<jiff::Timestamp>,
-    ///ID of the organization owning the checkout session.
+    /// ID of the organization owning the checkout session.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
-    ///ID of the product to checkout.
+    /// ID of the product to checkout.
     pub product_id: Option<crate::v2027_01::models::common::ids::ProductId>,
-    ///ID of the product price to checkout.
-    pub product_price_id: Option<crate::v2027_01::models::common::ids::ProductPriceId>,
-    ///ID of the discount applied to the checkout.
+    /// ID of the discount applied to the checkout.
     pub discount_id: Option<crate::v2027_01::models::common::ids::DiscountId>,
-    ///Whether to allow the customer to apply discount codes. If you apply a discount through `discount_id`, it'll still be applied, but the customer won't be able to change it.
+    /// Whether to allow the customer to apply discount codes. If you apply a
+    /// discount through `discount_id`, it'll still be applied, but the customer
+    /// won't be able to change it.
     pub allow_discount_codes: bool,
-    ///Whether to require the customer to fill their full billing address, instead of just the country. Customers in the US will always be required to fill their full address, regardless of this setting. If you preset the billing address, this setting will be automatically set to `true`.
+    /// Whether to require the customer to fill their full billing address,
+    /// instead of just the country. Customers in the US will always be required
+    /// to fill their full address, regardless of this setting. If you preset
+    /// the billing address, this setting will be automatically set to `true`.
     pub require_billing_address: bool,
-    ///Whether the discount is applicable to the checkout. Typically, free and custom prices are not discountable.
+    /// Whether the discount is applicable to the checkout. Typically, free and
+    /// custom prices are not discountable.
     pub is_discount_applicable: bool,
-    ///Whether the product price is free, regardless of discounts.
+    /// Whether the product price is free, regardless of discounts.
     pub is_free_product_price: bool,
-    ///Whether the checkout requires payment, e.g. in case of free products or discounts that cover the total amount.
+    /// Whether the checkout requires payment, e.g. in case of free products or
+    /// discounts that cover the total amount.
     pub is_payment_required: bool,
-    ///Whether the checkout requires setting up a payment method, regardless of the amount, e.g. subscriptions that have first free cycles.
+    /// Whether the checkout requires setting up a payment method, regardless of
+    /// the amount, e.g. subscriptions that have first free cycles.
     pub is_payment_setup_required: bool,
-    ///Whether the checkout requires a payment form, whether because of a payment or payment method setup.
+    /// Whether the checkout requires a payment form, whether because of a
+    /// payment or payment method setup.
     pub is_payment_form_required: bool,
     pub customer_id: Option<crate::v2027_01::models::common::ids::CustomerId>,
-    ///Whether the customer is a business or an individual. If `true`, the customer will be required to fill their full billing address and billing name.
+    /// Whether the customer is a business or an individual. If `true`, the
+    /// customer will be required to fill their full billing address and billing
+    /// name.
     pub is_business_customer: bool,
-    ///Name of the customer.
+    /// Name of the customer.
     pub customer_name: Option<String>,
-    ///Email address of the customer.
+    /// Email address of the customer.
     pub customer_email: Option<String>,
     pub customer_ip_address: Option<String>,
     pub customer_billing_name: Option<String>,
-    pub customer_billing_address: Option<
-        crate::v2027_01::models::common::types::Address,
-    >,
+    pub customer_billing_address: Option<crate::v2027_01::models::common::types::Address>,
     pub customer_tax_id: Option<String>,
-    ///Payment method type selected by the customer in the checkout form, e.g. `card`, `apple_pay` or `upi`.
+    /// Payment method type selected by the customer in the checkout form, e.g.
+    /// `card`, `apple_pay` or `upi`.
     pub payment_method_type: Option<String>,
     pub payment_processor_metadata: std::collections::BTreeMap<String, String>,
-    ///Determine which billing address fields should be disabled, optional or required in the checkout form.
-    pub billing_address_fields: crate::v2027_01::models::checkouts::types::CheckoutBillingAddressFields,
-    ///List of products available to select.
+    /// Determine which billing address fields should be disabled, optional or
+    /// required in the checkout form.
+    pub billing_address_fields:
+        crate::v2027_01::models::checkouts::types::CheckoutBillingAddressFields,
+    /// List of products available to select.
     pub products: Vec<crate::v2027_01::models::checkouts::types::CheckoutProduct>,
-    ///Product selected to checkout.
+    /// Product selected to checkout.
     pub product: Option<crate::v2027_01::models::checkouts::types::CheckoutProduct>,
-    ///Price of the selected product.
-    pub product_price: Option<
-        crate::v2027_01::models::checkouts::unions::CheckoutPublicProductPriceAnyOf0Union,
-    >,
-    ///Mapping of product IDs to their list of prices.
+    /// Price of the selected product.
+    pub product_price: Option<crate::v2027_01::models::common::unions::ProductPrice>,
+    /// Mapping of product IDs to their list of prices.
     pub prices: Option<
         std::collections::BTreeMap<
             crate::v2027_01::models::common::ids::ClientSecretPricesId,
-            Vec<
-                crate::v2027_01::models::checkouts::unions::CheckoutPublicPricesAnyOf0AdditionalPropertiesItemsUnion,
-            >,
+            Vec<crate::v2027_01::models::common::unions::ProductPrice>,
         >,
     >,
-    pub discount: Option<
-        crate::v2027_01::models::checkouts::unions::CheckoutPublicDiscountAnyOf0Union,
-    >,
+    pub discount:
+        Option<crate::v2027_01::models::checkouts::unions::CheckoutPublicDiscountAnyOf0Union>,
     pub organization: crate::v2027_01::models::checkouts::types::CheckoutOrganization,
-    pub attached_custom_fields: Option<
-        Vec<crate::v2027_01::models::common::types::AttachedCustomField>,
-    >,
+    pub attached_custom_fields:
+        Option<Vec<crate::v2027_01::models::common::types::AttachedCustomField>>,
+    /// Payment method types to offer in the payment form.
+    pub payment_method_types: Vec<String>,
 }
 /// Checkout session data retrieved using the client secret.
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
@@ -2859,11 +2852,6 @@ pub struct CheckoutPublic {
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
     )]
     pub product_id: Option<crate::v2027_01::models::common::ids::ProductId>,
-    ///ID of the product price to checkout.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub product_price_id: Option<crate::v2027_01::models::common::ids::ProductPriceId>,
     ///ID of the discount applied to the checkout.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
@@ -2938,9 +2926,7 @@ pub struct CheckoutPublic {
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
     )]
-    pub product_price: Option<
-        crate::v2027_01::models::checkouts::unions::CheckoutPublicProductPriceAnyOf0Union,
-    >,
+    pub product_price: Option<crate::v2027_01::models::common::unions::ProductPrice>,
     ///Mapping of product IDs to their list of prices.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
@@ -2948,9 +2934,7 @@ pub struct CheckoutPublic {
     pub prices: Option<
         std::collections::BTreeMap<
             crate::v2027_01::models::common::ids::ClientSecretPricesId,
-            Vec<
-                crate::v2027_01::models::checkouts::unions::CheckoutPublicPricesAnyOf0AdditionalPropertiesItemsUnion,
-            >,
+            Vec<crate::v2027_01::models::common::unions::ProductPrice>,
         >,
     >,
     #[serde(
@@ -2966,6 +2950,8 @@ pub struct CheckoutPublic {
     pub attached_custom_fields: Option<
         Vec<crate::v2027_01::models::common::types::AttachedCustomField>,
     >,
+    ///Payment method types to offer in the payment form.
+    pub payment_method_types: Vec<String>,
 }
 #[allow(clippy::type_complexity)]
 impl CheckoutPublic {
@@ -3002,7 +2988,6 @@ impl CheckoutPublic {
             trial_end: required.trial_end,
             organization_id: required.organization_id,
             product_id: required.product_id,
-            product_price_id: required.product_price_id,
             discount_id: required.discount_id,
             allow_discount_codes: required.allow_discount_codes,
             require_billing_address: required.require_billing_address,
@@ -3030,6 +3015,7 @@ impl CheckoutPublic {
             discount: required.discount,
             organization: required.organization,
             attached_custom_fields: required.attached_custom_fields,
+            payment_method_types: required.payment_method_types,
         }
     }
 
@@ -3077,120 +3063,137 @@ impl CheckoutPublic {
 }
 #[derive(Debug, Clone)]
 pub struct CheckoutPublicConfirmedRequired {
-    ///The ID of the object.
+    /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::CheckoutPublicConfirmedId,
-    ///Creation timestamp of the object.
+    /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
-    ///Last modification timestamp of the object.
+    /// Last modification timestamp of the object.
     pub modified_at: Option<jiff::Timestamp>,
-    ///Payment processor used.
+    /// Payment processor used.
     pub payment_processor: crate::v2027_01::models::common::enums::PaymentProcessor,
-    ///Client secret used to update and complete the checkout session from the client.
+    /// Client secret used to update and complete the checkout session from the
+    /// client.
     pub client_secret: String,
-    ///URL where the customer can access the checkout session.
+    /// URL where the customer can access the checkout session.
     pub url: String,
-    ///Expiration date and time of the checkout session.
+    /// Expiration date and time of the checkout session.
     pub expires_at: jiff::Timestamp,
-    ///URL where the customer will be redirected after a successful payment.
+    /// URL where the customer will be redirected after a successful payment.
     pub success_url: String,
-    ///When set, a back button will be shown in the checkout to return to this URL.
+    /// When set, a back button will be shown in the checkout to return to this
+    /// URL.
     pub return_url: Option<String>,
-    ///When checkout is embedded, represents the Origin of the page embedding the checkout. Used as a security measure to send messages only to the embedding page.
+    /// When checkout is embedded, represents the Origin of the page embedding
+    /// the checkout. Used as a security measure to send messages only to the
+    /// embedding page.
     pub embed_origin: Option<String>,
-    ///Amount in cents, before discounts and taxes.
+    /// Amount in cents, before discounts and taxes.
     pub amount: i64,
-    ///Predefined number of units (works with unit-based pricing only)
+    /// Predefined number of units (works with unit-based pricing only)
     pub units: Option<i64>,
-    ///Minimum number of units (works with unit-based pricing only)
+    /// Minimum number of units (works with unit-based pricing only)
     pub min_units: Option<i64>,
-    ///Maximum number of units (works with unit-based pricing only)
+    /// Maximum number of units (works with unit-based pricing only)
     pub max_units: Option<i64>,
-    ///Discount amount in cents.
+    /// Discount amount in cents.
     pub discount_amount: i64,
-    ///Amount in cents, after discounts but before taxes.
+    /// Amount in cents, after discounts but before taxes.
     pub net_amount: i64,
-    ///Sales tax amount in cents. If `null`, it means there is no enough information yet to calculate it.
+    /// Sales tax amount in cents. If `null`, it means there is no enough
+    /// information yet to calculate it.
     pub tax_amount: Option<i64>,
-    ///Tax behavior of the checkout. `inclusive` means the price includes tax, `exclusive` means tax is added on top. If `null`, tax is not yet calculated.
+    /// Tax behavior of the checkout. `inclusive` means the price includes tax,
+    /// `exclusive` means tax is added on top. If `null`, tax is not yet
+    /// calculated.
     pub tax_behavior: Option<crate::v2027_01::models::checkouts::enums::TaxBehavior>,
-    ///Amount in cents, after discounts and taxes.
+    /// Amount in cents, after discounts and taxes.
     pub total_amount: i64,
-    ///Currency code of the checkout session.
+    /// Currency code of the checkout session.
     pub currency: String,
-    ///Whether to enable the trial period for the checkout session. If `false`, the trial period will be disabled, even if the selected product has a trial configured.
+    /// Whether to enable the trial period for the checkout session. If `false`,
+    /// the trial period will be disabled, even if the selected product has a
+    /// trial configured.
     pub allow_trial: Option<bool>,
-    ///Interval unit of the trial period, if any. This value is either set from the checkout, if `trial_interval` is set, or from the selected product.
-    pub active_trial_interval: Option<
-        crate::v2027_01::models::common::enums::TrialInterval,
-    >,
-    ///Number of interval units of the trial period, if any. This value is either set from the checkout, if `trial_interval_count` is set, or from the selected product.
+    /// Interval unit of the trial period, if any. This value is either set from
+    /// the checkout, if `trial_interval` is set, or from the selected product.
+    pub active_trial_interval: Option<crate::v2027_01::models::common::enums::TrialInterval>,
+    /// Number of interval units of the trial period, if any. This value is
+    /// either set from the checkout, if `trial_interval_count` is set, or from
+    /// the selected product.
     pub active_trial_interval_count: Option<i64>,
-    ///End date and time of the trial period, if any.
+    /// End date and time of the trial period, if any.
     pub trial_end: Option<jiff::Timestamp>,
-    ///ID of the organization owning the checkout session.
+    /// ID of the organization owning the checkout session.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
-    ///ID of the product to checkout.
+    /// ID of the product to checkout.
     pub product_id: Option<crate::v2027_01::models::common::ids::ProductId>,
-    ///ID of the product price to checkout.
-    pub product_price_id: Option<crate::v2027_01::models::common::ids::ProductPriceId>,
-    ///ID of the discount applied to the checkout.
+    /// ID of the discount applied to the checkout.
     pub discount_id: Option<crate::v2027_01::models::common::ids::DiscountId>,
-    ///Whether to allow the customer to apply discount codes. If you apply a discount through `discount_id`, it'll still be applied, but the customer won't be able to change it.
+    /// Whether to allow the customer to apply discount codes. If you apply a
+    /// discount through `discount_id`, it'll still be applied, but the customer
+    /// won't be able to change it.
     pub allow_discount_codes: bool,
-    ///Whether to require the customer to fill their full billing address, instead of just the country. Customers in the US will always be required to fill their full address, regardless of this setting. If you preset the billing address, this setting will be automatically set to `true`.
+    /// Whether to require the customer to fill their full billing address,
+    /// instead of just the country. Customers in the US will always be required
+    /// to fill their full address, regardless of this setting. If you preset
+    /// the billing address, this setting will be automatically set to `true`.
     pub require_billing_address: bool,
-    ///Whether the discount is applicable to the checkout. Typically, free and custom prices are not discountable.
+    /// Whether the discount is applicable to the checkout. Typically, free and
+    /// custom prices are not discountable.
     pub is_discount_applicable: bool,
-    ///Whether the product price is free, regardless of discounts.
+    /// Whether the product price is free, regardless of discounts.
     pub is_free_product_price: bool,
-    ///Whether the checkout requires payment, e.g. in case of free products or discounts that cover the total amount.
+    /// Whether the checkout requires payment, e.g. in case of free products or
+    /// discounts that cover the total amount.
     pub is_payment_required: bool,
-    ///Whether the checkout requires setting up a payment method, regardless of the amount, e.g. subscriptions that have first free cycles.
+    /// Whether the checkout requires setting up a payment method, regardless of
+    /// the amount, e.g. subscriptions that have first free cycles.
     pub is_payment_setup_required: bool,
-    ///Whether the checkout requires a payment form, whether because of a payment or payment method setup.
+    /// Whether the checkout requires a payment form, whether because of a
+    /// payment or payment method setup.
     pub is_payment_form_required: bool,
     pub customer_id: Option<crate::v2027_01::models::common::ids::CustomerId>,
-    ///Whether the customer is a business or an individual. If `true`, the customer will be required to fill their full billing address and billing name.
+    /// Whether the customer is a business or an individual. If `true`, the
+    /// customer will be required to fill their full billing address and billing
+    /// name.
     pub is_business_customer: bool,
-    ///Name of the customer.
+    /// Name of the customer.
     pub customer_name: Option<String>,
-    ///Email address of the customer.
+    /// Email address of the customer.
     pub customer_email: Option<String>,
     pub customer_ip_address: Option<String>,
     pub customer_billing_name: Option<String>,
-    pub customer_billing_address: Option<
-        crate::v2027_01::models::common::types::Address,
-    >,
+    pub customer_billing_address: Option<crate::v2027_01::models::common::types::Address>,
     pub customer_tax_id: Option<String>,
-    ///Payment method type selected by the customer in the checkout form, e.g. `card`, `apple_pay` or `upi`.
+    /// Payment method type selected by the customer in the checkout form, e.g.
+    /// `card`, `apple_pay` or `upi`.
     pub payment_method_type: Option<String>,
     pub payment_processor_metadata: std::collections::BTreeMap<String, String>,
-    ///Determine which billing address fields should be disabled, optional or required in the checkout form.
-    pub billing_address_fields: crate::v2027_01::models::checkouts::types::CheckoutBillingAddressFields,
-    ///List of products available to select.
+    /// Determine which billing address fields should be disabled, optional or
+    /// required in the checkout form.
+    pub billing_address_fields:
+        crate::v2027_01::models::checkouts::types::CheckoutBillingAddressFields,
+    /// List of products available to select.
     pub products: Vec<crate::v2027_01::models::checkouts::types::CheckoutProduct>,
-    ///Product selected to checkout.
+    /// Product selected to checkout.
     pub product: Option<crate::v2027_01::models::checkouts::types::CheckoutProduct>,
-    ///Price of the selected product.
-    pub product_price: Option<
-        crate::v2027_01::models::checkouts::unions::CheckoutPublicConfirmedProductPriceAnyOf0Union,
-    >,
-    ///Mapping of product IDs to their list of prices.
+    /// Price of the selected product.
+    pub product_price: Option<crate::v2027_01::models::common::unions::ProductPrice>,
+    /// Mapping of product IDs to their list of prices.
     pub prices: Option<
         std::collections::BTreeMap<
             crate::v2027_01::models::common::ids::CheckoutPublicConfirmedPricesId,
-            Vec<
-                crate::v2027_01::models::checkouts::unions::CheckoutPublicConfirmedPricesAnyOf0AdditionalPropertiesItemsUnion,
-            >,
+            Vec<crate::v2027_01::models::common::unions::ProductPrice>,
         >,
     >,
     pub discount: Option<
         crate::v2027_01::models::checkouts::unions::CheckoutPublicConfirmedDiscountAnyOf0Union,
     >,
     pub organization: crate::v2027_01::models::checkouts::types::CheckoutOrganization,
-    pub attached_custom_fields: Option<
-        Vec<crate::v2027_01::models::common::types::AttachedCustomField>,
-    >,
+    pub attached_custom_fields:
+        Option<Vec<crate::v2027_01::models::common::types::AttachedCustomField>>,
+    /// Payment method types to offer in the payment form.
+    pub payment_method_types: Vec<String>,
     pub customer_session_token: Option<String>,
 }
 /// Checkout session data retrieved using the client secret after confirmation.
@@ -3318,11 +3321,6 @@ pub struct CheckoutPublicConfirmed {
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
     )]
     pub product_id: Option<crate::v2027_01::models::common::ids::ProductId>,
-    ///ID of the product price to checkout.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub product_price_id: Option<crate::v2027_01::models::common::ids::ProductPriceId>,
     ///ID of the discount applied to the checkout.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
@@ -3397,9 +3395,7 @@ pub struct CheckoutPublicConfirmed {
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
     )]
-    pub product_price: Option<
-        crate::v2027_01::models::checkouts::unions::CheckoutPublicConfirmedProductPriceAnyOf0Union,
-    >,
+    pub product_price: Option<crate::v2027_01::models::common::unions::ProductPrice>,
     ///Mapping of product IDs to their list of prices.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
@@ -3407,9 +3403,7 @@ pub struct CheckoutPublicConfirmed {
     pub prices: Option<
         std::collections::BTreeMap<
             crate::v2027_01::models::common::ids::CheckoutPublicConfirmedPricesId,
-            Vec<
-                crate::v2027_01::models::checkouts::unions::CheckoutPublicConfirmedPricesAnyOf0AdditionalPropertiesItemsUnion,
-            >,
+            Vec<crate::v2027_01::models::common::unions::ProductPrice>,
         >,
     >,
     #[serde(
@@ -3425,6 +3419,8 @@ pub struct CheckoutPublicConfirmed {
     pub attached_custom_fields: Option<
         Vec<crate::v2027_01::models::common::types::AttachedCustomField>,
     >,
+    ///Payment method types to offer in the payment form.
+    pub payment_method_types: Vec<String>,
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
     )]
@@ -3465,7 +3461,6 @@ impl CheckoutPublicConfirmed {
             trial_end: required.trial_end,
             organization_id: required.organization_id,
             product_id: required.product_id,
-            product_price_id: required.product_price_id,
             discount_id: required.discount_id,
             allow_discount_codes: required.allow_discount_codes,
             require_billing_address: required.require_billing_address,
@@ -3493,6 +3488,7 @@ impl CheckoutPublicConfirmed {
             discount: required.discount,
             organization: required.organization,
             attached_custom_fields: required.attached_custom_fields,
+            payment_method_types: required.payment_method_types,
             customer_session_token: required.customer_session_token,
         }
     }
@@ -3564,11 +3560,6 @@ pub struct CheckoutUpdate {
     pub product_id: presence_rs::Presence<
         crate::v2027_01::models::common::ids::ProductId,
     >,
-    ///ID of the product price to checkout. Must correspond to a price present in the checkout's product list.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub product_price_id: presence_rs::Presence<
-        crate::v2027_01::models::common::ids::ProductPriceId,
-    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub amount: presence_rs::Presence<
         crate::v2027_01::models::checkouts::newtypes::CheckoutAmount,
@@ -3592,7 +3583,9 @@ pub struct CheckoutUpdate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_email: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2027_01::models::checkouts::newtypes::CheckoutCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2027_01::models::common::types::AddressInput,
@@ -3714,17 +3707,6 @@ impl CheckoutUpdate {
         self
     }
 
-    /// ID of the product price to checkout. Must correspond to a price present
-    /// in the checkout's product list.
-    #[allow(clippy::should_implement_trait)]
-    pub fn product_price_id(
-        mut self,
-        value: crate::v2027_01::models::common::ids::ProductPriceId,
-    ) -> Self {
-        self.product_price_id = presence_rs::Presence::Some(value);
-        self
-    }
-
     #[allow(clippy::should_implement_trait)]
     pub fn amount(
         mut self,
@@ -3776,8 +3758,11 @@ impl CheckoutUpdate {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2027_01::models::checkouts::newtypes::CheckoutCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 
@@ -3976,11 +3961,6 @@ pub struct CheckoutUpdatePublic {
     pub product_id: presence_rs::Presence<
         crate::v2027_01::models::common::ids::ProductId,
     >,
-    ///ID of the product price to checkout. Must correspond to a price present in the checkout's product list.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub product_price_id: presence_rs::Presence<
-        crate::v2027_01::models::common::ids::ProductPriceId,
-    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub amount: presence_rs::Presence<
         crate::v2027_01::models::checkouts::newtypes::CheckoutUpdatePublicAmount,
@@ -4004,7 +3984,9 @@ pub struct CheckoutUpdatePublic {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_email: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2027_01::models::checkouts::newtypes::CheckoutUpdatePublicCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2027_01::models::common::types::AddressInput,
@@ -4049,17 +4031,6 @@ impl CheckoutUpdatePublic {
     #[allow(clippy::should_implement_trait)]
     pub fn product_id(mut self, value: crate::v2027_01::models::common::ids::ProductId) -> Self {
         self.product_id = presence_rs::Presence::Some(value);
-        self
-    }
-
-    /// ID of the product price to checkout. Must correspond to a price present
-    /// in the checkout's product list.
-    #[allow(clippy::should_implement_trait)]
-    pub fn product_price_id(
-        mut self,
-        value: crate::v2027_01::models::common::ids::ProductPriceId,
-    ) -> Self {
-        self.product_price_id = presence_rs::Presence::Some(value);
         self
     }
 
@@ -4114,8 +4085,11 @@ impl CheckoutUpdatePublic {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2027_01::models::checkouts::newtypes::CheckoutUpdatePublicCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 

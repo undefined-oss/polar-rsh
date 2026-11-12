@@ -2211,7 +2211,9 @@ pub struct CheckoutPriceCreate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_ip_address: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2026_04::models::common::newtypes::CheckoutPriceCreateCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2026_04::models::common::types::AddressInput,
@@ -2512,8 +2514,11 @@ impl CheckoutPriceCreate {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2026_04::models::common::newtypes::CheckoutPriceCreateCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 
@@ -2751,7 +2756,9 @@ pub struct CheckoutProductCreate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_ip_address: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2026_04::models::common::newtypes::CheckoutProductCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2026_04::models::common::types::AddressInput,
@@ -3057,8 +3064,11 @@ impl CheckoutProductCreate {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2026_04::models::common::newtypes::CheckoutProductCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 
@@ -5208,173 +5218,6 @@ impl CustomerTeam {
         value: crate::v2026_04::models::common::ids::DefaultPaymentMethodId,
     ) -> Self {
         self.default_payment_method_id = presence_rs::Presence::Some(value);
-        self
-    }
-}
-#[derive(Debug, Clone)]
-pub struct DeprecatedWebhookEndpointCreateWithSecretRequired {
-    /// The URL where the webhook events will be sent.
-    pub url:
-        crate::v2026_04::models::common::newtypes::DeprecatedWebhookEndpointCreateWithSecretUrl,
-    /// The format of the webhook payload.
-    pub format: crate::v2026_04::models::webhooks::enums::WebhookFormat,
-    /// The events that will trigger the webhook.
-    pub events: Vec<crate::v2026_04::models::webhooks::enums::WebhookEventType>,
-}
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-pub struct DeprecatedWebhookEndpointCreateWithSecret {
-    /// The URL where the webhook events will be sent.
-    pub url:
-        crate::v2026_04::models::common::newtypes::DeprecatedWebhookEndpointCreateWithSecretUrl,
-    /// An optional name for the webhook endpoint to help organize and identify
-    /// it.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name: presence_rs::Presence<String>,
-    /// The API version that'll be used in event payloads.
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::v2026_04::models::common::serde_helpers::deserialize_optional_value"
-    )]
-    pub api_version: Option<
-        crate::v2026_04::models::common::enums::DeprecatedWebhookEndpointCreateWithSecretApiVersion,
-    >,
-    /// The format of the webhook payload.
-    pub format: crate::v2026_04::models::webhooks::enums::WebhookFormat,
-    /// The events that will trigger the webhook.
-    pub events: Vec<crate::v2026_04::models::webhooks::enums::WebhookEventType>,
-    /// The organization ID associated with the webhook endpoint. **Required
-    /// unless you use an organization token.**
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub organization_id:
-        presence_rs::Presence<crate::v2026_04::models::common::ids::OrganizationId>,
-}
-#[allow(clippy::type_complexity)]
-impl DeprecatedWebhookEndpointCreateWithSecret {
-    pub fn new(required: DeprecatedWebhookEndpointCreateWithSecretRequired) -> Self {
-        Self {
-            url: required.url,
-            name: presence_rs::Presence::Absent,
-            api_version: None,
-            format: required.format,
-            events: required.events,
-            organization_id: presence_rs::Presence::Absent,
-        }
-    }
-
-    /// An optional name for the webhook endpoint to help organize and identify
-    /// it.
-    #[allow(clippy::should_implement_trait)]
-    pub fn name(mut self, value: impl Into<String>) -> Self {
-        self.name = presence_rs::Presence::Some(value.into());
-        self
-    }
-
-    /// The API version that'll be used in event payloads.
-    #[allow(clippy::should_implement_trait)]
-    pub fn api_version(
-        mut self,
-        value: crate::v2026_04::models::common::enums::DeprecatedWebhookEndpointCreateWithSecretApiVersion,
-    ) -> Self {
-        self.api_version = Some(value);
-        self
-    }
-
-    /// The organization ID associated with the webhook endpoint. **Required
-    /// unless you use an organization token.**
-    #[allow(clippy::should_implement_trait)]
-    pub fn organization_id(
-        mut self,
-        value: crate::v2026_04::models::common::ids::OrganizationId,
-    ) -> Self {
-        self.organization_id = presence_rs::Presence::Some(value);
-        self
-    }
-}
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-#[derive(Default)]
-pub struct DeprecatedWebhookEndpointUpdateWithSecret {
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub url: presence_rs::Presence<
-        crate::v2026_04::models::common::newtypes::DeprecatedWebhookEndpointUpdateWithSecretUrl,
-    >,
-    /// An optional name for the webhook endpoint to help organize and identify
-    /// it.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name: presence_rs::Presence<String>,
-    /// The API version that'll be used in event payloads.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub api_version: presence_rs::Presence<
-        crate::v2026_04::models::common::enums::DeprecatedWebhookEndpointUpdateWithSecretApiVersion,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub format: presence_rs::Presence<crate::v2026_04::models::webhooks::enums::WebhookFormat>,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub events:
-        presence_rs::Presence<Vec<crate::v2026_04::models::webhooks::enums::WebhookEventType>>,
-    /// Whether the webhook endpoint is enabled.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub enabled: presence_rs::Presence<bool>,
-}
-#[allow(clippy::type_complexity)]
-impl DeprecatedWebhookEndpointUpdateWithSecret {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn url(
-        mut self,
-        value: crate::v2026_04::models::common::newtypes::DeprecatedWebhookEndpointUpdateWithSecretUrl,
-    ) -> Self {
-        self.url = presence_rs::Presence::Some(value);
-        self
-    }
-
-    /// An optional name for the webhook endpoint to help organize and identify
-    /// it.
-    #[allow(clippy::should_implement_trait)]
-    pub fn name(mut self, value: impl Into<String>) -> Self {
-        self.name = presence_rs::Presence::Some(value.into());
-        self
-    }
-
-    /// The API version that'll be used in event payloads.
-    #[allow(clippy::should_implement_trait)]
-    pub fn api_version(
-        mut self,
-        value: crate::v2026_04::models::common::enums::DeprecatedWebhookEndpointUpdateWithSecretApiVersion,
-    ) -> Self {
-        self.api_version = presence_rs::Presence::Some(value);
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn format(
-        mut self,
-        value: crate::v2026_04::models::webhooks::enums::WebhookFormat,
-    ) -> Self {
-        self.format = presence_rs::Presence::Some(value);
-        self
-    }
-
-    #[allow(clippy::should_implement_trait)]
-    pub fn events(
-        mut self,
-        value: Vec<crate::v2026_04::models::webhooks::enums::WebhookEventType>,
-    ) -> Self {
-        self.events = presence_rs::Presence::Some(value);
-        self
-    }
-
-    /// Whether the webhook endpoint is enabled.
-    #[allow(clippy::should_implement_trait)]
-    pub fn enabled(mut self, value: bool) -> Self {
-        self.enabled = presence_rs::Presence::Some(value);
         self
     }
 }

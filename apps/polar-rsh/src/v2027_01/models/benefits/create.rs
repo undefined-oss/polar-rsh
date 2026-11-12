@@ -21,18 +21,22 @@ pub enum BenefitsCreateError<TransportError> {
     UnexpectedStatus { status: http::StatusCode, body: bytes::Bytes },
     #[error("request timed out")]
     Timeout(#[source] tokio::time::error::Elapsed),
+    /// Organization benefit limit reached.
+    #[error("{message}: {0}", message = "Organization benefit limit reached.")]
+    NotPermitted(#[source] crate::v2027_01::models::common::types::NotPermitted),
     /// Validation Error
     #[error("{message}: {0}", message = "Validation Error")]
     HttpValidationError(#[source] crate::v2027_01::models::common::types::HttpValidationError),
 }
 pub(super) type BenefitsCreateErrors = (
     crate::v2027_01::error::RequestFailure,
+    crate::v2027_01::models::common::types::NotPermitted,
     crate::v2027_01::models::common::types::HttpValidationError,
 );
 impl<T> From<eros::ErrorUnion<BenefitsCreateErrors>> for BenefitsCreateError<T> {
     fn from(error: eros::ErrorUnion<BenefitsCreateErrors>) -> Self {
         match error.into_enum() {
-            eros::E2::A(error) => match error {
+            eros::E3::A(error) => match error {
                 crate::v2027_01::error::RequestFailure::BuildRequest(error) => {
                     Self::BuildRequest(error)
                 }
@@ -48,7 +52,8 @@ impl<T> From<eros::ErrorUnion<BenefitsCreateErrors>> for BenefitsCreateError<T> 
                 }
                 crate::v2027_01::error::RequestFailure::Timeout(error) => Self::Timeout(error),
             },
-            eros::E2::B(error) => Self::HttpValidationError(error),
+            eros::E3::B(error) => Self::NotPermitted(error),
+            eros::E3::C(error) => Self::HttpValidationError(error),
         }
     }
 }
@@ -109,6 +114,15 @@ where
                     crate::v2027_01::models::common::unions::Benefit,
                 >(&body_slice)
                 .map_err(|error| eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))),
+                http::StatusCode::FORBIDDEN => {
+                    let error = serde_json::from_slice::<
+                        crate::v2027_01::models::common::types::NotPermitted,
+                    >(&body_slice)
+                    .map_err(|error| {
+                        eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
+                    })?;
+                    Err(eros::ErrorUnion::new(error))
+                }
                 http::StatusCode::UNPROCESSABLE_ENTITY => {
                     let error = serde_json::from_slice::<
                         crate::v2027_01::models::common::types::HttpValidationError,

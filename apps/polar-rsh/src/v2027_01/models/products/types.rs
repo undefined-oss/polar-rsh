@@ -78,7 +78,7 @@ pub struct ProductCreateOneTimeRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct ProductCreateOneTime {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -172,7 +172,8 @@ impl ProductCreateOneTime {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -284,7 +285,7 @@ pub struct ProductCreateRecurringRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct ProductCreateRecurring {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -399,7 +400,8 @@ impl ProductCreateRecurring {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -561,7 +563,7 @@ impl ProductNotDeletable {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct ProductUpdate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -645,7 +647,8 @@ impl ProductUpdate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());

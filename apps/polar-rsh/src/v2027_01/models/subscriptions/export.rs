@@ -11,6 +11,8 @@ pub struct SubscriptionsExportParams {
     /// Columns to include in the CSV, in order. Defaults to email, started_at,
     /// product, amount, currency, status and recurring_interval.
     pub columns: Vec<crate::v2027_01::models::subscriptions::enums::SubscriptionExportColumn>,
+    /// Filter by product external ID.
+    pub external_product_id: Vec<String>,
     /// Filter by organization ID.
     pub organization_id: Vec<crate::v2027_01::models::common::ids::OrganizationId>,
     /// Filter by product ID.
@@ -36,6 +38,9 @@ impl crate::v2027_01::query::EncodeQuery for SubscriptionsExportParams {
         }
         for value in &self.columns {
             params.push(("columns", value.to_string()));
+        }
+        for value in &self.external_product_id {
+            params.push(("external_product_id", value.to_string()));
         }
         for value in &self.organization_id {
             params.push(("organization_id", value.to_string()));

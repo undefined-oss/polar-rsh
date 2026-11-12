@@ -31,7 +31,8 @@ pub struct MeterCreateRequired {
 #[serde(deny_unknown_fields)]
 pub struct MeterCreate {
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     /// Key-value object allowing you to store additional information.
@@ -101,7 +102,8 @@ impl MeterCreate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -216,7 +218,8 @@ impl MeterQuantity {
 #[derive(Default)]
 pub struct MeterUpdate {
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     /// Key-value object allowing you to store additional information.
@@ -275,7 +278,8 @@ impl MeterUpdate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());

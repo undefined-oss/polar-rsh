@@ -348,6 +348,75 @@ impl<'de> serde::Deserialize<'de> for CheckoutPriceCreateAmount {
     derive_more::Deref,
 )]
 #[serde(transparent)]
+pub struct CheckoutPriceCreateCustomerBillingName(String);
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum CheckoutPriceCreateCustomerBillingNameValidationError {
+    #[error("must contain at most 256 characters")]
+    TooLong,
+}
+impl CheckoutPriceCreateCustomerBillingName {
+    /// Validate a value.
+    pub fn try_new(
+        value: impl Into<String>,
+    ) -> Result<Self, CheckoutPriceCreateCustomerBillingNameValidationError> {
+        Self::try_from(value.into())
+    }
+
+    /// Take the underlying value.
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+}
+impl TryFrom<String> for CheckoutPriceCreateCustomerBillingName {
+    type Error = CheckoutPriceCreateCustomerBillingNameValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        let length = value.chars().count() as u64;
+        if length > 256u64 {
+            return Err(CheckoutPriceCreateCustomerBillingNameValidationError::TooLong);
+        }
+        Ok(Self(value))
+    }
+}
+impl From<CheckoutPriceCreateCustomerBillingName> for String {
+    fn from(value: CheckoutPriceCreateCustomerBillingName) -> Self {
+        value.0
+    }
+}
+impl<'de> serde::Deserialize<'de> for CheckoutPriceCreateCustomerBillingName {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <String as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+impl TryFrom<&str> for CheckoutPriceCreateCustomerBillingName {
+    type Error = CheckoutPriceCreateCustomerBillingNameValidationError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::try_from(value.to_owned())
+    }
+}
+impl AsRef<str> for CheckoutPriceCreateCustomerBillingName {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Eq,
+    Ord,
+    Hash,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref,
+)]
+#[serde(transparent)]
 pub struct CheckoutPriceCreateCustomerMetadataKey(String);
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum CheckoutPriceCreateCustomerMetadataKeyValidationError {
@@ -1319,6 +1388,75 @@ impl<'de> serde::Deserialize<'de> for CheckoutProductAmount {
     {
         let value = <u64 as serde::Deserialize>::deserialize(deserializer)?;
         Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Eq,
+    Ord,
+    Hash,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref,
+)]
+#[serde(transparent)]
+pub struct CheckoutProductCustomerBillingName(String);
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum CheckoutProductCustomerBillingNameValidationError {
+    #[error("must contain at most 256 characters")]
+    TooLong,
+}
+impl CheckoutProductCustomerBillingName {
+    /// Validate a value.
+    pub fn try_new(
+        value: impl Into<String>,
+    ) -> Result<Self, CheckoutProductCustomerBillingNameValidationError> {
+        Self::try_from(value.into())
+    }
+
+    /// Take the underlying value.
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+}
+impl TryFrom<String> for CheckoutProductCustomerBillingName {
+    type Error = CheckoutProductCustomerBillingNameValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        let length = value.chars().count() as u64;
+        if length > 256u64 {
+            return Err(CheckoutProductCustomerBillingNameValidationError::TooLong);
+        }
+        Ok(Self(value))
+    }
+}
+impl From<CheckoutProductCustomerBillingName> for String {
+    fn from(value: CheckoutProductCustomerBillingName) -> Self {
+        value.0
+    }
+}
+impl<'de> serde::Deserialize<'de> for CheckoutProductCustomerBillingName {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <String as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+impl TryFrom<&str> for CheckoutProductCustomerBillingName {
+    type Error = CheckoutProductCustomerBillingNameValidationError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::try_from(value.to_owned())
+    }
+}
+impl AsRef<str> for CheckoutProductCustomerBillingName {
+    fn as_ref(&self) -> &str {
+        &self.0
     }
 }
 #[derive(
@@ -3779,142 +3917,6 @@ impl<'de> serde::Deserialize<'de> for CustomFieldTextPropertiesMinLength {
     {
         let value = <u64 as serde::Deserialize>::deserialize(deserializer)?;
         Self::try_from(value).map_err(serde::de::Error::custom)
-    }
-}
-/// The URL where the webhook events will be sent.
-#[derive(
-    Debug,
-    Clone,
-    PartialEq,
-    PartialOrd,
-    Eq,
-    Ord,
-    Hash,
-    serde::Serialize,
-    derive_more::Display,
-    derive_more::Deref,
-)]
-#[serde(transparent)]
-pub struct DeprecatedWebhookEndpointCreateWithSecretUrl(url::Url);
-#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
-pub enum DeprecatedWebhookEndpointCreateWithSecretUrlValidationError {
-    #[error("must contain at least 1 characters")]
-    TooShort,
-    #[error("must contain at most 2083 characters")]
-    TooLong,
-}
-impl DeprecatedWebhookEndpointCreateWithSecretUrl {
-    /// Validate a value.
-    pub fn try_new(
-        value: url::Url,
-    ) -> Result<Self, DeprecatedWebhookEndpointCreateWithSecretUrlValidationError> {
-        Self::try_from(value)
-    }
-
-    /// Take the underlying value.
-    pub fn into_inner(self) -> url::Url {
-        self.0
-    }
-}
-impl TryFrom<url::Url> for DeprecatedWebhookEndpointCreateWithSecretUrl {
-    type Error = DeprecatedWebhookEndpointCreateWithSecretUrlValidationError;
-
-    fn try_from(value: url::Url) -> Result<Self, Self::Error> {
-        let length = value.as_str().chars().count() as u64;
-        if length < 1u64 {
-            return Err(DeprecatedWebhookEndpointCreateWithSecretUrlValidationError::TooShort);
-        }
-        if length > 2083u64 {
-            return Err(DeprecatedWebhookEndpointCreateWithSecretUrlValidationError::TooLong);
-        }
-        Ok(Self(value))
-    }
-}
-impl From<DeprecatedWebhookEndpointCreateWithSecretUrl> for url::Url {
-    fn from(value: DeprecatedWebhookEndpointCreateWithSecretUrl) -> Self {
-        value.0
-    }
-}
-impl<'de> serde::Deserialize<'de> for DeprecatedWebhookEndpointCreateWithSecretUrl {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let value = <url::Url as serde::Deserialize>::deserialize(deserializer)?;
-        Self::try_from(value).map_err(serde::de::Error::custom)
-    }
-}
-impl AsRef<url::Url> for DeprecatedWebhookEndpointCreateWithSecretUrl {
-    fn as_ref(&self) -> &url::Url {
-        &self.0
-    }
-}
-/// The URL where the webhook events will be sent.
-#[derive(
-    Debug,
-    Clone,
-    PartialEq,
-    PartialOrd,
-    Eq,
-    Ord,
-    Hash,
-    serde::Serialize,
-    derive_more::Display,
-    derive_more::Deref,
-)]
-#[serde(transparent)]
-pub struct DeprecatedWebhookEndpointUpdateWithSecretUrl(url::Url);
-#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
-pub enum DeprecatedWebhookEndpointUpdateWithSecretUrlValidationError {
-    #[error("must contain at least 1 characters")]
-    TooShort,
-    #[error("must contain at most 2083 characters")]
-    TooLong,
-}
-impl DeprecatedWebhookEndpointUpdateWithSecretUrl {
-    /// Validate a value.
-    pub fn try_new(
-        value: url::Url,
-    ) -> Result<Self, DeprecatedWebhookEndpointUpdateWithSecretUrlValidationError> {
-        Self::try_from(value)
-    }
-
-    /// Take the underlying value.
-    pub fn into_inner(self) -> url::Url {
-        self.0
-    }
-}
-impl TryFrom<url::Url> for DeprecatedWebhookEndpointUpdateWithSecretUrl {
-    type Error = DeprecatedWebhookEndpointUpdateWithSecretUrlValidationError;
-
-    fn try_from(value: url::Url) -> Result<Self, Self::Error> {
-        let length = value.as_str().chars().count() as u64;
-        if length < 1u64 {
-            return Err(DeprecatedWebhookEndpointUpdateWithSecretUrlValidationError::TooShort);
-        }
-        if length > 2083u64 {
-            return Err(DeprecatedWebhookEndpointUpdateWithSecretUrlValidationError::TooLong);
-        }
-        Ok(Self(value))
-    }
-}
-impl From<DeprecatedWebhookEndpointUpdateWithSecretUrl> for url::Url {
-    fn from(value: DeprecatedWebhookEndpointUpdateWithSecretUrl) -> Self {
-        value.0
-    }
-}
-impl<'de> serde::Deserialize<'de> for DeprecatedWebhookEndpointUpdateWithSecretUrl {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let value = <url::Url as serde::Deserialize>::deserialize(deserializer)?;
-        Self::try_from(value).map_err(serde::de::Error::custom)
-    }
-}
-impl AsRef<url::Url> for DeprecatedWebhookEndpointUpdateWithSecretUrl {
-    fn as_ref(&self) -> &url::Url {
-        &self.0
     }
 }
 #[derive(

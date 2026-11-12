@@ -63,7 +63,7 @@ impl<T> CheckoutLinksCreateError<T> {
 /// **Scopes**: `checkout_links:write`
 pub struct CheckoutLinksCreate<'a, ClientService> {
     pub(super) client: &'a PolarClient<ClientService>,
-    pub(super) payload: crate::v2027_01::models::checkout_links::unions::CheckoutLinkCreate,
+    pub(super) payload: crate::v2027_01::models::checkout_links::types::CheckoutLinkCreateProducts,
     pub(super) options: RequestOptions,
 }
 impl<'a, ClientService> CheckoutLinksCreate<'a, ClientService> {
