@@ -2211,7 +2211,9 @@ pub struct CheckoutPriceCreate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_ip_address: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2026_10::models::common::newtypes::CheckoutPriceCreateCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2026_10::models::common::types::AddressInput,
@@ -2512,8 +2514,11 @@ impl CheckoutPriceCreate {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2026_10::models::common::newtypes::CheckoutPriceCreateCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 
@@ -2751,7 +2756,9 @@ pub struct CheckoutProductCreate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_ip_address: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_name: presence_rs::Presence<String>,
+    pub customer_billing_name: presence_rs::Presence<
+        crate::v2026_10::models::common::newtypes::CheckoutProductCustomerBillingName,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_billing_address: presence_rs::Presence<
         crate::v2026_10::models::common::types::AddressInput,
@@ -3057,8 +3064,11 @@ impl CheckoutProductCreate {
     }
 
     #[allow(clippy::should_implement_trait)]
-    pub fn customer_billing_name(mut self, value: impl Into<String>) -> Self {
-        self.customer_billing_name = presence_rs::Presence::Some(value.into());
+    pub fn customer_billing_name(
+        mut self,
+        value: crate::v2026_10::models::common::newtypes::CheckoutProductCustomerBillingName,
+    ) -> Self {
+        self.customer_billing_name = presence_rs::Presence::Some(value);
         self
     }
 

@@ -14,6 +14,8 @@ pub struct MetricsExportParams {
     pub customer_id: Vec<crate::v2027_01::models::common::ids::CustomerId>,
     /// End date.
     pub end_date: jiff::civil::Date,
+    /// Filter by product external ID.
+    pub external_product_id: Vec<String>,
     /// Interval between two timestamps.
     pub interval: crate::v2027_01::models::common::enums::TimeInterval,
     /// List of metric slugs to include in the export. If not provided, all
@@ -43,6 +45,7 @@ impl MetricsExportParams {
             billing_type: Default::default(),
             customer_id: Default::default(),
             end_date: required.end_date,
+            external_product_id: Default::default(),
             interval: required.interval,
             metrics: Default::default(),
             organization_id: Default::default(),
@@ -64,6 +67,9 @@ impl crate::v2027_01::query::EncodeQuery for MetricsExportParams {
             params.push(("customer_id", value.to_string()));
         }
         params.push(("end_date", self.end_date.to_string()));
+        for value in &self.external_product_id {
+            params.push(("external_product_id", value.to_string()));
+        }
         params.push(("interval", self.interval.to_string()));
         for value in &self.metrics {
             params.push(("metrics", value.to_string()));

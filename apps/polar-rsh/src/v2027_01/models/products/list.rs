@@ -8,6 +8,10 @@ use crate::v2027_01::{
 pub struct ProductsListParams {
     /// Filter products granting specific benefit.
     pub benefit_id: Vec<crate::v2027_01::models::common::ids::BenefitId>,
+    /// Filter by catalog ID.
+    pub catalog_id: Vec<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Filter by catalog status.
+    pub catalog_status: Vec<crate::v2027_01::models::common::enums::CatalogStatus>,
     /// Filter by product external ID.
     pub external_id: Vec<String>,
     /// Filter by product ID.
@@ -48,6 +52,12 @@ impl crate::v2027_01::query::EncodeQuery for ProductsListParams {
         let mut params = Vec::new();
         for value in &self.benefit_id {
             params.push(("benefit_id", value.to_string()));
+        }
+        for value in &self.catalog_id {
+            params.push(("catalog_id", value.to_string()));
+        }
+        for value in &self.catalog_status {
+            params.push(("catalog_status", value.to_string()));
         }
         for value in &self.external_id {
             params.push(("external_id", value.to_string()));

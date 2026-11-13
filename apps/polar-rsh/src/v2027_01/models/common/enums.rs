@@ -168,6 +168,34 @@ impl AsRef<str> for BenefitVisibility {
     }
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
+pub enum CatalogStatus {
+    #[serde(rename = "draft")]
+    Draft,
+    #[serde(rename = "live")]
+    Live,
+    #[serde(rename = "archived")]
+    Archived,
+}
+impl CatalogStatus {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Draft => "draft",
+            Self::Live => "live",
+            Self::Archived => "archived",
+        }
+    }
+}
+impl ::std::fmt::Display for CatalogStatus {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+impl AsRef<str> for CatalogStatus {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
 pub enum CountryAlpha2 {
     #[serde(rename = "AD")]
     Ad,
@@ -1966,39 +1994,6 @@ impl AsRef<str> for FilterOperator {
         self.as_str()
     }
 }
-/// Legacy organization status values kept for backward compatibility in schemas
-/// using OrganizationPublicBase.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
-pub enum LegacyOrganizationStatus {
-    #[serde(rename = "created")]
-    Created,
-    #[serde(rename = "under_review")]
-    UnderReview,
-    #[serde(rename = "denied")]
-    Denied,
-    #[serde(rename = "active")]
-    Active,
-}
-impl LegacyOrganizationStatus {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::Created => "created",
-            Self::UnderReview => "under_review",
-            Self::Denied => "denied",
-            Self::Active => "active",
-        }
-    }
-}
-impl ::std::fmt::Display for LegacyOrganizationStatus {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-impl AsRef<str> for LegacyOrganizationStatus {
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
-}
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
 pub enum MemberRole {
     #[serde(rename = "owner")]
@@ -2626,31 +2621,6 @@ impl ::std::fmt::Display for ProductPriceSource {
     }
 }
 impl AsRef<str> for ProductPriceSource {
-    fn as_ref(&self) -> &str {
-        self.as_str()
-    }
-}
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
-pub enum ProductPriceType {
-    #[serde(rename = "one_time")]
-    OneTime,
-    #[serde(rename = "recurring")]
-    Recurring,
-}
-impl ProductPriceType {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Self::OneTime => "one_time",
-            Self::Recurring => "recurring",
-        }
-    }
-}
-impl ::std::fmt::Display for ProductPriceType {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        f.write_str(self.as_str())
-    }
-}
-impl AsRef<str> for ProductPriceType {
     fn as_ref(&self) -> &str {
         self.as_str()
     }

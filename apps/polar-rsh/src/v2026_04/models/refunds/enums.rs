@@ -51,6 +51,10 @@ pub enum RefundReason {
     SatisfactionGuarantee,
     #[serde(rename = "dispute_prevention")]
     DisputePrevention,
+    #[serde(rename = "tax_refund")]
+    TaxRefund,
+    #[serde(rename = "vat_reverse_charge_correction")]
+    VatReverseChargeCorrection,
     #[serde(rename = "other")]
     Other,
 }
@@ -63,6 +67,8 @@ impl RefundReason {
             Self::ServiceDisruption => "service_disruption",
             Self::SatisfactionGuarantee => "satisfaction_guarantee",
             Self::DisputePrevention => "dispute_prevention",
+            Self::TaxRefund => "tax_refund",
+            Self::VatReverseChargeCorrection => "vat_reverse_charge_correction",
             Self::Other => "other",
         }
     }
