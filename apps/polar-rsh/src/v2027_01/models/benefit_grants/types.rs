@@ -436,6 +436,125 @@ impl BenefitGitHubRepositorySubscriberProperties {
         }
     }
 }
+#[derive(Debug, Clone)]
+pub struct BenefitGrantAlreadyExistsRequired {
+    pub detail: String,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(thiserror::Error)]
+#[error("{self:?}")]
+pub struct BenefitGrantAlreadyExists {
+    pub error: monostate::MustBe!("BenefitGrantAlreadyExists"),
+    pub detail: String,
+}
+#[allow(clippy::type_complexity)]
+impl BenefitGrantAlreadyExists {
+    pub fn new(required: BenefitGrantAlreadyExistsRequired) -> Self {
+        Self { error: Default::default(), detail: required.detail }
+    }
+}
+#[derive(Debug, Clone)]
+pub struct BenefitGrantCreateRequired {
+    /// The ID of the customer.
+    pub customer_id: crate::v2027_01::models::common::ids::CustomerId,
+    /// The ID of the benefit.
+    pub benefit_id: crate::v2027_01::models::common::ids::BenefitId,
+}
+/// Manually grant a benefit using Polar IDs.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+pub struct BenefitGrantCreate {
+    /// The ID of the customer.
+    pub customer_id: crate::v2027_01::models::common::ids::CustomerId,
+    /// The ID of the benefit.
+    pub benefit_id: crate::v2027_01::models::common::ids::BenefitId,
+    /// The ID of the member receiving the benefit. If not provided, the benefit
+    /// is granted to the customer's owner.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub member_id: presence_rs::Presence<crate::v2027_01::models::common::ids::MemberId>,
+}
+#[allow(clippy::type_complexity)]
+impl BenefitGrantCreate {
+    pub fn new(required: BenefitGrantCreateRequired) -> Self {
+        Self {
+            customer_id: required.customer_id,
+            benefit_id: required.benefit_id,
+            member_id: presence_rs::Presence::Absent,
+        }
+    }
+
+    /// The ID of the member receiving the benefit. If not provided, the benefit
+    /// is granted to the customer's owner.
+    #[allow(clippy::should_implement_trait)]
+    pub fn member_id(mut self, value: crate::v2027_01::models::common::ids::MemberId) -> Self {
+        self.member_id = presence_rs::Presence::Some(value);
+        self
+    }
+}
+#[derive(Debug, Clone)]
+pub struct BenefitGrantCreateExternalRequired {
+    ///The ID of the customer in your system.
+    pub external_customer_id: crate::v2027_01::models::benefit_grants::newtypes::BenefitGrantCreateExternalExternalCustomerId,
+    ///The ID of the benefit in your system. Resolves to the current version of the benefit.
+    pub external_benefit_id: String,
+}
+/// Manually grant a benefit using external IDs.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+pub struct BenefitGrantCreateExternal {
+    ///The ID of the customer in your system.
+    pub external_customer_id: crate::v2027_01::models::benefit_grants::newtypes::BenefitGrantCreateExternalExternalCustomerId,
+    ///The ID of the benefit in your system. Resolves to the current version of the benefit.
+    pub external_benefit_id: String,
+    ///The ID of the member in your system, scoped to the customer. If not provided, the benefit is granted to the customer's owner.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub external_member_id: presence_rs::Presence<
+        crate::v2027_01::models::benefit_grants::newtypes::BenefitGrantCreateExternalExternalMemberId,
+    >,
+    ///The ID of the organization owning the customer and benefit. **Required unless your credential identifies one organization.** Omit this field when using an organization token.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub organization_id: presence_rs::Presence<
+        crate::v2027_01::models::common::ids::OrganizationId,
+    >,
+}
+#[allow(clippy::type_complexity)]
+impl BenefitGrantCreateExternal {
+    pub fn new(required: BenefitGrantCreateExternalRequired) -> Self {
+        Self {
+            external_customer_id: required.external_customer_id,
+            external_benefit_id: required.external_benefit_id,
+            external_member_id: presence_rs::Presence::Absent,
+            organization_id: presence_rs::Presence::Absent,
+        }
+    }
+
+    /// The ID of the member in your system, scoped to the customer. If not
+    /// provided, the benefit is granted to the customer's owner.
+    #[allow(clippy::should_implement_trait)]
+    pub fn external_member_id(
+        mut self,
+        value: crate::v2027_01::models::benefit_grants::newtypes::BenefitGrantCreateExternalExternalMemberId,
+    ) -> Self {
+        self.external_member_id = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// The ID of the organization owning the customer and benefit. **Required
+    /// unless your credential identifies one organization.** Omit this field
+    /// when using an organization token.
+    #[allow(clippy::should_implement_trait)]
+    pub fn organization_id(
+        mut self,
+        value: crate::v2027_01::models::common::ids::OrganizationId,
+    ) -> Self {
+        self.organization_id = presence_rs::Presence::Some(value);
+        self
+    }
+}
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
@@ -830,6 +949,10 @@ impl BenefitSubscriberOrganization {
 }
 #[derive(Debug, Clone)]
 pub struct CustomerBenefitGrantCustomRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -852,6 +975,16 @@ pub struct CustomerBenefitGrantCustomRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct CustomerBenefitGrantCustom {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -893,6 +1026,8 @@ pub struct CustomerBenefitGrantCustom {
 impl CustomerBenefitGrantCustom {
     pub fn new(required: CustomerBenefitGrantCustomRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -942,6 +1077,10 @@ impl CustomerBenefitGrantCustomUpdate {
 }
 #[derive(Debug, Clone)]
 pub struct CustomerBenefitGrantDiscordRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -964,6 +1103,16 @@ pub struct CustomerBenefitGrantDiscordRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct CustomerBenefitGrantDiscord {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1009,6 +1158,8 @@ pub struct CustomerBenefitGrantDiscord {
 impl CustomerBenefitGrantDiscord {
     pub fn new(required: CustomerBenefitGrantDiscordRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -1093,6 +1244,10 @@ impl CustomerBenefitGrantDiscordUpdate {
 }
 #[derive(Debug, Clone)]
 pub struct CustomerBenefitGrantDownloadablesRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1115,6 +1270,16 @@ pub struct CustomerBenefitGrantDownloadablesRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct CustomerBenefitGrantDownloadables {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1156,6 +1321,8 @@ pub struct CustomerBenefitGrantDownloadables {
 impl CustomerBenefitGrantDownloadables {
     pub fn new(required: CustomerBenefitGrantDownloadablesRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -1205,6 +1372,10 @@ impl CustomerBenefitGrantDownloadablesUpdate {
 }
 #[derive(Debug, Clone)]
 pub struct CustomerBenefitGrantFeatureFlagRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1227,6 +1398,16 @@ pub struct CustomerBenefitGrantFeatureFlagRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct CustomerBenefitGrantFeatureFlag {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1268,6 +1449,8 @@ pub struct CustomerBenefitGrantFeatureFlag {
 impl CustomerBenefitGrantFeatureFlag {
     pub fn new(required: CustomerBenefitGrantFeatureFlagRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -1317,6 +1500,10 @@ impl CustomerBenefitGrantFeatureFlagUpdate {
 }
 #[derive(Debug, Clone)]
 pub struct CustomerBenefitGrantGitHubRepositoryRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1339,6 +1526,16 @@ pub struct CustomerBenefitGrantGitHubRepositoryRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct CustomerBenefitGrantGitHubRepository {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1384,6 +1581,8 @@ pub struct CustomerBenefitGrantGitHubRepository {
 impl CustomerBenefitGrantGitHubRepository {
     pub fn new(required: CustomerBenefitGrantGitHubRepositoryRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -1466,6 +1665,10 @@ impl CustomerBenefitGrantGitHubRepositoryUpdate {
 }
 #[derive(Debug, Clone)]
 pub struct CustomerBenefitGrantLicenseKeysRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1488,6 +1691,16 @@ pub struct CustomerBenefitGrantLicenseKeysRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct CustomerBenefitGrantLicenseKeys {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1529,6 +1742,8 @@ pub struct CustomerBenefitGrantLicenseKeys {
 impl CustomerBenefitGrantLicenseKeys {
     pub fn new(required: CustomerBenefitGrantLicenseKeysRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -1604,6 +1819,10 @@ impl CustomerBenefitGrantMember {
 }
 #[derive(Debug, Clone)]
 pub struct CustomerBenefitGrantMeterCreditRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1627,6 +1846,16 @@ pub struct CustomerBenefitGrantMeterCreditRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct CustomerBenefitGrantMeterCredit {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1669,6 +1898,8 @@ pub struct CustomerBenefitGrantMeterCredit {
 impl CustomerBenefitGrantMeterCredit {
     pub fn new(required: CustomerBenefitGrantMeterCreditRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -1718,6 +1949,10 @@ impl CustomerBenefitGrantMeterCreditUpdate {
 }
 #[derive(Debug, Clone)]
 pub struct CustomerBenefitGrantSlackSharedChannelRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1742,6 +1977,16 @@ pub struct CustomerBenefitGrantSlackSharedChannelRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct CustomerBenefitGrantSlackSharedChannel {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1785,6 +2030,8 @@ pub struct CustomerBenefitGrantSlackSharedChannel {
 impl CustomerBenefitGrantSlackSharedChannel {
     pub fn new(required: CustomerBenefitGrantSlackSharedChannelRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,

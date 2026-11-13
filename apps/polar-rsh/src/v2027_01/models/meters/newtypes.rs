@@ -1,3 +1,72 @@
+/// The label for the custom unit, e.g. 'request'. Required when unit is
+/// 'custom'.
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Eq,
+    Ord,
+    Hash,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref,
+)]
+#[serde(transparent)]
+pub struct MeterCustomLabel(String);
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum MeterCustomLabelValidationError {
+    #[error("must contain at most 32 characters")]
+    TooLong,
+}
+impl MeterCustomLabel {
+    /// Validate a value.
+    pub fn try_new(value: impl Into<String>) -> Result<Self, MeterCustomLabelValidationError> {
+        Self::try_from(value.into())
+    }
+
+    /// Take the underlying value.
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+}
+impl TryFrom<String> for MeterCustomLabel {
+    type Error = MeterCustomLabelValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        let length = value.chars().count() as u64;
+        if length > 32u64 {
+            return Err(MeterCustomLabelValidationError::TooLong);
+        }
+        Ok(Self(value))
+    }
+}
+impl From<MeterCustomLabel> for String {
+    fn from(value: MeterCustomLabel) -> Self {
+        value.0
+    }
+}
+impl<'de> serde::Deserialize<'de> for MeterCustomLabel {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <String as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+impl TryFrom<&str> for MeterCustomLabel {
+    type Error = MeterCustomLabelValidationError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::try_from(value.to_owned())
+    }
+}
+impl AsRef<str> for MeterCustomLabel {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
 /// The multiplier to convert from the base unit to display scale, e.g. 1000 to
 /// display per 1000 units. Defaults to 1 when not provided.
 #[derive(
@@ -220,6 +289,8 @@ pub struct MeterName(String);
 pub enum MeterNameValidationError {
     #[error("must contain at least 3 characters")]
     TooShort,
+    #[error("must contain at most 128 characters")]
+    TooLong,
 }
 impl MeterName {
     /// Validate a value.
@@ -239,6 +310,9 @@ impl TryFrom<String> for MeterName {
         let length = value.chars().count() as u64;
         if length < 3u64 {
             return Err(MeterNameValidationError::TooShort);
+        }
+        if length > 128u64 {
+            return Err(MeterNameValidationError::TooLong);
         }
         Ok(Self(value))
     }

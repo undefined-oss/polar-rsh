@@ -1,6 +1,8 @@
 {
   "generated": {
     "#/paths/~1v1~1benefit-grants~1/get": "crate::models::benefit_grants::BenefitGrantsList",
+    "#/paths/~1v1~1benefit-grants~1/post": "crate::models::benefit_grants::BenefitGrantsCreate",
+    "#/paths/~1v1~1benefit-grants~1{id}/delete": "crate::models::benefit_grants::BenefitGrantsRevoke",
     "#/paths/~1v1~1benefits~1/get": "crate::models::benefits::BenefitsList",
     "#/paths/~1v1~1benefits~1/post": "crate::models::benefits::BenefitsCreate",
     "#/paths/~1v1~1benefits~1{id}/delete": "crate::models::benefits::BenefitsDelete",

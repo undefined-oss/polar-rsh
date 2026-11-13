@@ -207,7 +207,7 @@ pub enum CheckoutForbiddenError {
     NotOpenCheckout(crate::v2027_01::models::checkouts::types::NotOpenCheckout),
     NotPermitted(crate::v2027_01::models::common::types::NotPermitted),
     PaymentNotReady(crate::v2027_01::models::common::types::PaymentNotReady),
-    TrialAlreadyRedeemed(crate::v2027_01::models::checkouts::types::TrialAlreadyRedeemed),
+    TrialAlreadyRedeemed(crate::v2027_01::models::common::types::TrialAlreadyRedeemed),
     DiscountRedemptionLimitReached(
         crate::v2027_01::models::checkouts::types::DiscountRedemptionLimitReached,
     ),
