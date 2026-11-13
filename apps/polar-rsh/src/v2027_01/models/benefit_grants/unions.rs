@@ -1,5 +1,13 @@
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(untagged)]
+pub enum BenefitGrantsCreateRequestUnion {
+    BenefitGrantCreate(crate::v2027_01::models::benefit_grants::types::BenefitGrantCreate),
+    BenefitGrantCreateExternal(
+        crate::v2027_01::models::benefit_grants::types::BenefitGrantCreateExternal,
+    ),
+}
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
 pub enum CustomerBenefitGrant {
     CustomerBenefitGrantDiscord(
         crate::v2027_01::models::benefit_grants::types::CustomerBenefitGrantDiscord,

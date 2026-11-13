@@ -4232,22 +4232,3 @@ impl SharedPaymentTokenError {
         Self { error: Default::default(), detail: required.detail }
     }
 }
-#[derive(Debug, Clone)]
-pub struct TrialAlreadyRedeemedRequired {
-    pub detail: String,
-}
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-#[derive(thiserror::Error)]
-#[error("{self:?}")]
-pub struct TrialAlreadyRedeemed {
-    pub error: monostate::MustBe!("TrialAlreadyRedeemed"),
-    pub detail: String,
-}
-#[allow(clippy::type_complexity)]
-impl TrialAlreadyRedeemed {
-    pub fn new(required: TrialAlreadyRedeemedRequired) -> Self {
-        Self { error: Default::default(), detail: required.detail }
-    }
-}

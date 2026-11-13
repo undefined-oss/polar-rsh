@@ -355,6 +355,13 @@ pub struct ProductCreateRecurring {
     pub trial_interval_count: presence_rs::Presence<
         crate::v2027_01::models::products::newtypes::ProductCreateRecurringTrialIntervalCount,
     >,
+    ///Whether customers must provide a payment method to start a trial. If `false`, customers can start a trial without entering payment details.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub trial_payment_setup_required: Option<bool>,
     ///The recurring interval of the product.
     pub recurring_interval: crate::v2027_01::models::common::enums::RecurringInterval,
     ///Number of interval units of the subscription. If this is set to 1 the charge will happen every interval (e.g. every month), if set to 2 it will be every other month, and so on.
@@ -392,6 +399,7 @@ impl ProductCreateRecurring {
             organization_id: presence_rs::Presence::Absent,
             trial_interval: presence_rs::Presence::Absent,
             trial_interval_count: presence_rs::Presence::Absent,
+            trial_payment_setup_required: None,
             recurring_interval: required.recurring_interval,
             recurring_interval_count: None,
             meter_interval: presence_rs::Presence::Absent,
@@ -497,6 +505,14 @@ impl ProductCreateRecurring {
         value: crate::v2027_01::models::products::newtypes::ProductCreateRecurringTrialIntervalCount,
     ) -> Self {
         self.trial_interval_count = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// Whether customers must provide a payment method to start a trial. If
+    /// `false`, customers can start a trial without entering payment details.
+    #[allow(clippy::should_implement_trait)]
+    pub fn trial_payment_setup_required(mut self, value: bool) -> Self {
+        self.trial_payment_setup_required = Some(value);
         self
     }
 
@@ -639,6 +655,9 @@ pub struct ProductUpdate {
     pub attached_custom_fields: presence_rs::Presence<
         Vec<crate::v2027_01::models::products::types::AttachedCustomFieldCreate>,
     >,
+    ///Whether customers must provide a payment method to start a trial. If `false`, customers can start a trial without entering payment details.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub trial_payment_setup_required: presence_rs::Presence<bool>,
 }
 #[allow(clippy::type_complexity)]
 impl ProductUpdate {
@@ -782,6 +801,14 @@ impl ProductUpdate {
         value: Vec<crate::v2027_01::models::products::types::AttachedCustomFieldCreate>,
     ) -> Self {
         self.attached_custom_fields = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// Whether customers must provide a payment method to start a trial. If
+    /// `false`, customers can start a trial without entering payment details.
+    #[allow(clippy::should_implement_trait)]
+    pub fn trial_payment_setup_required(mut self, value: bool) -> Self {
+        self.trial_payment_setup_required = presence_rs::Presence::Some(value);
         self
     }
 }

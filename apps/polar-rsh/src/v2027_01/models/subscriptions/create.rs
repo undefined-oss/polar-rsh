@@ -24,15 +24,25 @@ pub enum SubscriptionsCreateError<TransportError> {
     /// Validation Error
     #[error("{message}: {0}", message = "Validation Error")]
     HttpValidationError(#[source] crate::v2027_01::models::common::types::HttpValidationError),
+    /// Conflict
+    #[error("{message}: {0}", message = "Conflict")]
+    AlreadyActiveSubscription(
+        #[source] crate::v2027_01::models::subscriptions::types::AlreadyActiveSubscription,
+    ),
+    /// Conflict
+    #[error("{message}: {0}", message = "Conflict")]
+    TrialAlreadyRedeemed(#[source] crate::v2027_01::models::common::types::TrialAlreadyRedeemed),
 }
 pub(super) type SubscriptionsCreateErrors = (
     crate::v2027_01::error::RequestFailure,
     crate::v2027_01::models::common::types::HttpValidationError,
+    crate::v2027_01::models::subscriptions::types::AlreadyActiveSubscription,
+    crate::v2027_01::models::common::types::TrialAlreadyRedeemed,
 );
 impl<T> From<eros::ErrorUnion<SubscriptionsCreateErrors>> for SubscriptionsCreateError<T> {
     fn from(error: eros::ErrorUnion<SubscriptionsCreateErrors>) -> Self {
         match error.into_enum() {
-            eros::E2::A(error) => match error {
+            eros::E4::A(error) => match error {
                 crate::v2027_01::error::RequestFailure::BuildRequest(error) => {
                     Self::BuildRequest(error)
                 }
@@ -48,7 +58,9 @@ impl<T> From<eros::ErrorUnion<SubscriptionsCreateErrors>> for SubscriptionsCreat
                 }
                 crate::v2027_01::error::RequestFailure::Timeout(error) => Self::Timeout(error),
             },
-            eros::E2::B(error) => Self::HttpValidationError(error),
+            eros::E4::B(error) => Self::HttpValidationError(error),
+            eros::E4::C(error) => Self::AlreadyActiveSubscription(error),
+            eros::E4::D(error) => Self::TrialAlreadyRedeemed(error),
         }
     }
 }
@@ -60,8 +72,9 @@ impl<T> SubscriptionsCreateError<T> {
 }
 /// Create a subscription programmatically.
 ///
-/// This endpoint only allows to create subscription on free products.
-/// For paid products, use the checkout flow.
+/// Supports free products and paid products with a trial that does not require
+/// upfront payment setup. Paid subscriptions start with the product's
+/// configured trial period. For other paid products, use the checkout flow.
 ///
 /// No initial order will be created and no confirmation email will be sent.
 ///
@@ -108,29 +121,65 @@ where
                 .into_body()
                 .collect()
                 .await
-                .map_err(|error| eros::ErrorUnion::new(RequestFailure::ReadBody(error.into())))?
+                .map_err(|error| eros::ErrorUnion::new(
+                    RequestFailure::ReadBody(error.into()),
+                ))?
                 .to_bytes();
             match response_code {
-                http::StatusCode::CREATED => serde_json::from_slice::<
-                    crate::v2027_01::models::subscriptions::types::Subscription,
-                >(&body_slice)
-                .map_err(|error| eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))),
+                http::StatusCode::CREATED => {
+                    serde_json::from_slice::<
+                        crate::v2027_01::models::subscriptions::types::Subscription,
+                    >(&body_slice)
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))
+                }
+                http::StatusCode::CONFLICT => {
+                    #[derive(serde::Deserialize)]
+                    #[serde(untagged)]
+                    enum ResponseError {
+                        Payload0(
+                            crate::v2027_01::models::subscriptions::types::AlreadyActiveSubscription,
+                        ),
+                        Payload1(
+                            crate::v2027_01::models::common::types::TrialAlreadyRedeemed,
+                        ),
+                    }
+                    let error = serde_json::from_slice::<ResponseError>(&body_slice)
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))?;
+                    Err(
+                        match error {
+                            ResponseError::Payload0(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                            ResponseError::Payload1(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                        },
+                    )
+                }
                 http::StatusCode::UNPROCESSABLE_ENTITY => {
                     let error = serde_json::from_slice::<
                         crate::v2027_01::models::common::types::HttpValidationError,
                     >(&body_slice)
-                    .map_err(|error| {
-                        eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
-                    })?;
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))?;
                     Err(eros::ErrorUnion::new(error))
                 }
-                _ => Err(eros::ErrorUnion::new(RequestFailure::UnexpectedStatus {
-                    status: response_code,
-                    body: body_slice,
-                })),
+                _ => {
+                    Err(
+                        eros::ErrorUnion::new(RequestFailure::UnexpectedStatus {
+                            status: response_code,
+                            body: body_slice,
+                        }),
+                    )
+                }
             }
         }
-        .await;
+            .await;
         result.map_err(Into::into)
     }
 

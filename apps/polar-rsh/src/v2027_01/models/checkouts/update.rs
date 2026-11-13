@@ -65,7 +65,7 @@ pub enum CheckoutsUpdateError<TransportError> {
         message = "The checkout is expired, the customer already has an active subscription, or \
                    the organization is not ready to accept payments."
     )]
-    TrialAlreadyRedeemed(#[source] crate::v2027_01::models::checkouts::types::TrialAlreadyRedeemed),
+    TrialAlreadyRedeemed(#[source] crate::v2027_01::models::common::types::TrialAlreadyRedeemed),
     /// The checkout is expired, the customer already has an active
     /// subscription, or the organization is not ready to accept payments.
     #[error(
@@ -87,7 +87,7 @@ pub(super) type CheckoutsUpdateErrors = (
     crate::v2027_01::models::checkouts::types::NotOpenCheckout,
     crate::v2027_01::models::common::types::NotPermitted,
     crate::v2027_01::models::common::types::PaymentNotReady,
-    crate::v2027_01::models::checkouts::types::TrialAlreadyRedeemed,
+    crate::v2027_01::models::common::types::TrialAlreadyRedeemed,
     crate::v2027_01::models::checkouts::types::DiscountRedemptionLimitReached,
     crate::v2027_01::models::common::types::HttpValidationError,
 );
@@ -199,7 +199,7 @@ where
                             crate::v2027_01::models::common::types::PaymentNotReady,
                         ),
                         Payload4(
-                            crate::v2027_01::models::checkouts::types::TrialAlreadyRedeemed,
+                            crate::v2027_01::models::common::types::TrialAlreadyRedeemed,
                         ),
                         Payload5(
                             crate::v2027_01::models::checkouts::types::DiscountRedemptionLimitReached,

@@ -1,4 +1,23 @@
 #[derive(Debug, Clone)]
+pub struct AlreadyActiveSubscriptionRequired {
+    pub detail: String,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(thiserror::Error)]
+#[error("{self:?}")]
+pub struct AlreadyActiveSubscription {
+    pub error: monostate::MustBe!("AlreadyActiveSubscription"),
+    pub detail: String,
+}
+#[allow(clippy::type_complexity)]
+impl AlreadyActiveSubscription {
+    pub fn new(required: AlreadyActiveSubscriptionRequired) -> Self {
+        Self { error: Default::default(), detail: required.detail }
+    }
+}
+#[derive(Debug, Clone)]
 pub struct AlreadyCanceledSubscriptionRequired {
     pub detail: String,
 }
@@ -682,8 +701,9 @@ impl SubscriptionCancel {
 }
 #[derive(Debug, Clone)]
 pub struct SubscriptionCreateCustomerRequired {
-    /// The ID of the recurring product to subscribe to. Must be a free product,
-    /// otherwise the customer should go through a checkout flow.
+    /// The ID of the recurring product to subscribe to. Must be a free product
+    /// or have a trial with no upfront payment setup required. Otherwise, the
+    /// customer should go through a checkout flow.
     pub product_id: crate::v2027_01::models::common::ids::ProductId,
     /// The ID of the customer to create the subscription for.
     pub customer_id: crate::v2027_01::models::common::ids::CustomerId,
@@ -715,9 +735,9 @@ pub struct SubscriptionCreateCustomer {
             crate::v2027_01::models::subscriptions::unions::SubscriptionCreateCustomerMetadataAdditionalPropertiesUnion,
         >,
     >,
-    ///The ID of the recurring product to subscribe to. Must be a free product, otherwise the customer should go through a checkout flow.
+    ///The ID of the recurring product to subscribe to. Must be a free product or have a trial with no upfront payment setup required. Otherwise, the customer should go through a checkout flow.
     pub product_id: crate::v2027_01::models::common::ids::ProductId,
-    ///The currency of the subscription. The product must have a free price in this currency. If not set, the organization's default currency is used.
+    ///The currency of the subscription. The product must have a free price in this currency or have a trial with no upfront payment setup required. If not set, the organization's default currency is used.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub currency: presence_rs::Presence<
         crate::v2027_01::models::common::enums::PresentmentCurrency,
@@ -760,7 +780,8 @@ impl SubscriptionCreateCustomer {
     }
 
     /// The currency of the subscription. The product must have a free price in
-    /// this currency. If not set, the organization's default currency is used.
+    /// this currency or have a trial with no upfront payment setup required. If
+    /// not set, the organization's default currency is used.
     #[allow(clippy::should_implement_trait)]
     pub fn currency(
         mut self,
@@ -772,8 +793,9 @@ impl SubscriptionCreateCustomer {
 }
 #[derive(Debug, Clone)]
 pub struct SubscriptionCreateExternalCustomerRequired {
-    /// The ID of the recurring product to subscribe to. Must be a free product,
-    /// otherwise the customer should go through a checkout flow.
+    /// The ID of the recurring product to subscribe to. Must be a free product
+    /// or have a trial with no upfront payment setup required. Otherwise, the
+    /// customer should go through a checkout flow.
     pub product_id: crate::v2027_01::models::common::ids::ProductId,
     /// The ID of the customer in your system to create the subscription for. It
     /// must already exist in Polar.
@@ -806,9 +828,9 @@ pub struct SubscriptionCreateExternalCustomer {
             crate::v2027_01::models::subscriptions::unions::SubscriptionCreateExternalCustomerMetadataAdditionalPropertiesUnion,
         >,
     >,
-    ///The ID of the recurring product to subscribe to. Must be a free product, otherwise the customer should go through a checkout flow.
+    ///The ID of the recurring product to subscribe to. Must be a free product or have a trial with no upfront payment setup required. Otherwise, the customer should go through a checkout flow.
     pub product_id: crate::v2027_01::models::common::ids::ProductId,
-    ///The currency of the subscription. The product must have a free price in this currency. If not set, the organization's default currency is used.
+    ///The currency of the subscription. The product must have a free price in this currency or have a trial with no upfront payment setup required. If not set, the organization's default currency is used.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub currency: presence_rs::Presence<
         crate::v2027_01::models::common::enums::PresentmentCurrency,
@@ -851,7 +873,8 @@ impl SubscriptionCreateExternalCustomer {
     }
 
     /// The currency of the subscription. The product must have a free price in
-    /// this currency. If not set, the organization's default currency is used.
+    /// this currency or have a trial with no upfront payment setup required. If
+    /// not set, the organization's default currency is used.
     #[allow(clippy::should_implement_trait)]
     pub fn currency(
         mut self,

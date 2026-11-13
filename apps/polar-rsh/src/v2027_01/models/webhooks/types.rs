@@ -19,6 +19,10 @@ impl AmbiguousExternalWebhookEndpointId {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantCustomWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -45,6 +49,16 @@ pub struct BenefitGrantCustomWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantCustomWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -100,6 +114,8 @@ pub struct BenefitGrantCustomWebhook {
 impl BenefitGrantCustomWebhook {
     pub fn new(required: BenefitGrantCustomWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -172,6 +188,10 @@ impl BenefitGrantCustomWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantDiscordWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -198,6 +218,16 @@ pub struct BenefitGrantDiscordWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantDiscordWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -254,6 +284,8 @@ pub struct BenefitGrantDiscordWebhook {
 impl BenefitGrantDiscordWebhook {
     pub fn new(required: BenefitGrantDiscordWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -326,6 +358,10 @@ impl BenefitGrantDiscordWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantDownloadablesWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -352,6 +388,16 @@ pub struct BenefitGrantDownloadablesWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantDownloadablesWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -408,6 +454,8 @@ pub struct BenefitGrantDownloadablesWebhook {
 impl BenefitGrantDownloadablesWebhook {
     pub fn new(required: BenefitGrantDownloadablesWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -480,6 +528,10 @@ impl BenefitGrantDownloadablesWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantFeatureFlagWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -506,6 +558,16 @@ pub struct BenefitGrantFeatureFlagWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantFeatureFlagWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -562,6 +624,8 @@ pub struct BenefitGrantFeatureFlagWebhook {
 impl BenefitGrantFeatureFlagWebhook {
     pub fn new(required: BenefitGrantFeatureFlagWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -634,6 +698,10 @@ impl BenefitGrantFeatureFlagWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantGitHubRepositoryWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -660,6 +728,16 @@ pub struct BenefitGrantGitHubRepositoryWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantGitHubRepositoryWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -716,6 +794,8 @@ pub struct BenefitGrantGitHubRepositoryWebhook {
 impl BenefitGrantGitHubRepositoryWebhook {
     pub fn new(required: BenefitGrantGitHubRepositoryWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -788,6 +868,10 @@ impl BenefitGrantGitHubRepositoryWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantLicenseKeysWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -814,6 +898,16 @@ pub struct BenefitGrantLicenseKeysWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantLicenseKeysWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -870,6 +964,8 @@ pub struct BenefitGrantLicenseKeysWebhook {
 impl BenefitGrantLicenseKeysWebhook {
     pub fn new(required: BenefitGrantLicenseKeysWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -942,6 +1038,10 @@ impl BenefitGrantLicenseKeysWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantMeterCreditWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -969,6 +1069,16 @@ pub struct BenefitGrantMeterCreditWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantMeterCreditWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1026,6 +1136,8 @@ pub struct BenefitGrantMeterCreditWebhook {
 impl BenefitGrantMeterCreditWebhook {
     pub fn new(required: BenefitGrantMeterCreditWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -1098,6 +1210,10 @@ impl BenefitGrantMeterCreditWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantSlackSharedChannelWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1125,6 +1241,16 @@ pub struct BenefitGrantSlackSharedChannelWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantSlackSharedChannelWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1182,6 +1308,8 @@ pub struct BenefitGrantSlackSharedChannelWebhook {
 impl BenefitGrantSlackSharedChannelWebhook {
     pub fn new(required: BenefitGrantSlackSharedChannelWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,

@@ -1111,6 +1111,10 @@ impl BenefitGitHubRepositoryPublic {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1137,6 +1141,16 @@ pub struct BenefitGrantRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrant {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was permanently revoked manually, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1189,6 +1203,8 @@ pub struct BenefitGrant {
 impl BenefitGrant {
     pub fn new(required: BenefitGrantRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -5473,6 +5489,9 @@ pub struct ProductRequired {
     pub is_archived: bool,
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// Whether customers must provide a payment method to start a trial. If
+    /// `false`, customers can start a trial without entering payment details.
+    pub trial_payment_setup_required: bool,
     /// ID of the catalog that introduced this version of the product. None for
     /// products not managed by declarative config.
     pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
@@ -5557,6 +5576,9 @@ pub struct Product {
     pub is_archived: bool,
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// Whether customers must provide a payment method to start a trial. If
+    /// `false`, customers can start a trial without entering payment details.
+    pub trial_payment_setup_required: bool,
     /// ID of the catalog that introduced this version of the product. None for
     /// products not managed by declarative config.
     #[serde(
@@ -5603,6 +5625,7 @@ impl Product {
             is_recurring: required.is_recurring,
             is_archived: required.is_archived,
             organization_id: required.organization_id,
+            trial_payment_setup_required: required.trial_payment_setup_required,
             catalog_id: required.catalog_id,
             is_current: required.is_current,
             external_id: required.external_id,
@@ -7755,6 +7778,25 @@ pub struct TiersInput {
 impl TiersInput {
     pub fn new(required: TiersInputRequired) -> Self {
         Self { r#type: required.r#type, tiers: required.tiers }
+    }
+}
+#[derive(Debug, Clone)]
+pub struct TrialAlreadyRedeemedRequired {
+    pub detail: String,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(thiserror::Error)]
+#[error("{self:?}")]
+pub struct TrialAlreadyRedeemed {
+    pub error: monostate::MustBe!("TrialAlreadyRedeemed"),
+    pub detail: String,
+}
+#[allow(clippy::type_complexity)]
+impl TrialAlreadyRedeemed {
+    pub fn new(required: TrialAlreadyRedeemedRequired) -> Self {
+        Self { error: Default::default(), detail: required.detail }
     }
 }
 #[derive(Debug, Clone)]
