@@ -19,7 +19,7 @@ pub struct DiscountFixedCreateRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct DiscountFixedCreate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -120,7 +120,8 @@ impl DiscountFixedCreate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -246,8 +247,7 @@ pub struct DiscountFixedOnceForeverDurationRequired {
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource. It must start with a
-    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
+    /// within the organization for this type of resource.
     pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
@@ -289,8 +289,7 @@ pub struct DiscountFixedOnceForeverDuration {
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource. It must start with a
-    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
+    /// within the organization for this type of resource.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
     )]
@@ -500,7 +499,7 @@ pub struct DiscountPercentageCreateRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct DiscountPercentageCreate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource.
+    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
@@ -601,7 +600,8 @@ impl DiscountPercentageCreate {
     }
 
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
+    /// within the organization for this type of resource. It must start with a
+    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
         self.external_id = presence_rs::Presence::Some(value.into());
@@ -728,8 +728,7 @@ pub struct DiscountPercentageOnceForeverDurationRequired {
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource. It must start with a
-    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
+    /// within the organization for this type of resource.
     pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
@@ -772,8 +771,7 @@ pub struct DiscountPercentageOnceForeverDuration {
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource. It must start with a
-    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
+    /// within the organization for this type of resource.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
     )]

@@ -6,6 +6,10 @@ use crate::v2027_01::{
 };
 #[derive(Debug, Clone, Default)]
 pub struct MetersListParams {
+    /// Filter by catalog ID.
+    pub catalog_id: Vec<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Filter by catalog status.
+    pub catalog_status: Vec<crate::v2027_01::models::common::enums::CatalogStatus>,
     /// Filter by meter external ID.
     pub external_id: Vec<String>,
     /// Filter on archived meters.
@@ -37,6 +41,12 @@ impl crate::v2027_01::query::EncodeQuery for MetersListParams {
     #[allow(clippy::vec_init_then_push)]
     fn scalar_params(&self) -> Vec<(&'static str, String)> {
         let mut params = Vec::new();
+        for value in &self.catalog_id {
+            params.push(("catalog_id", value.to_string()));
+        }
+        for value in &self.catalog_status {
+            params.push(("catalog_status", value.to_string()));
+        }
         for value in &self.external_id {
             params.push(("external_id", value.to_string()));
         }

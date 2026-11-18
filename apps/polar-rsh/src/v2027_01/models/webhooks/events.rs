@@ -7,6 +7,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "checkout.created")]
     CheckoutCreated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::checkouts::types::Checkout>,
@@ -16,6 +23,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "checkout.updated")]
     CheckoutUpdated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::checkouts::types::Checkout>,
@@ -29,6 +43,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "checkout.expired")]
     CheckoutExpired {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::checkouts::types::Checkout>,
@@ -43,6 +64,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "customer.created")]
     CustomerCreated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::common::unions::Customer>,
@@ -57,6 +85,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "customer.updated")]
     CustomerUpdated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::common::unions::Customer>,
@@ -66,6 +101,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "customer.deleted")]
     CustomerDeleted {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::common::unions::Customer>,
@@ -81,6 +123,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "customer.state_changed")]
     CustomerStateChanged {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::customers::unions::CustomerState>,
@@ -92,6 +141,13 @@ pub enum WebhookPayload {
     /// the seat.
     #[serde(rename = "customer_seat.assigned")]
     CustomerSeatAssigned {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::common::types::CustomerSeat>,
@@ -102,6 +158,13 @@ pub enum WebhookPayload {
     /// claims their access.
     #[serde(rename = "customer_seat.claimed")]
     CustomerSeatClaimed {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::common::types::CustomerSeat>,
@@ -113,6 +176,13 @@ pub enum WebhookPayload {
     /// canceled.
     #[serde(rename = "customer_seat.revoked")]
     CustomerSeatRevoked {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::common::types::CustomerSeat>,
@@ -127,6 +197,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "member.created")]
     MemberCreated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::common::types::Member>,
@@ -139,6 +216,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "member.updated")]
     MemberUpdated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::common::types::Member>,
@@ -151,6 +235,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "member.deleted")]
     MemberDeleted {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::common::types::Member>,
@@ -176,6 +267,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "order.created")]
     OrderCreated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::orders::types::Order>,
@@ -190,6 +288,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "order.updated")]
     OrderUpdated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::orders::types::Order>,
@@ -202,6 +307,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "order.paid")]
     OrderPaid {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::orders::types::Order>,
@@ -211,6 +323,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "order.refunded")]
     OrderRefunded {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::orders::types::Order>,
@@ -223,6 +342,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "subscription.created")]
     SubscriptionCreated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::subscriptions::types::Subscription>,
@@ -240,6 +366,13 @@ pub enum WebhookPayload {
     /// Renewals are skipped.
     #[serde(rename = "subscription.updated")]
     SubscriptionUpdated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::subscriptions::types::Subscription>,
@@ -251,6 +384,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "subscription.active")]
     SubscriptionActive {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::subscriptions::types::Subscription>,
@@ -261,6 +401,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "subscription.canceled")]
     SubscriptionCanceled {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::subscriptions::types::Subscription>,
@@ -275,6 +422,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "subscription.uncanceled")]
     SubscriptionUncanceled {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::subscriptions::types::Subscription>,
@@ -292,6 +446,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "subscription.cycled")]
     SubscriptionCycled {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::subscriptions::types::Subscription>,
@@ -306,6 +467,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "subscription.revoked")]
     SubscriptionRevoked {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::subscriptions::types::Subscription>,
@@ -323,6 +491,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "subscription.past_due")]
     SubscriptionPastDue {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::subscriptions::types::Subscription>,
@@ -337,6 +512,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "subscription.paused")]
     SubscriptionPaused {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::subscriptions::types::Subscription>,
@@ -350,6 +532,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "subscription.resumed")]
     SubscriptionResumed {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::subscriptions::types::Subscription>,
@@ -364,6 +553,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "subscription.migrated")]
     SubscriptionMigrated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::subscriptions::types::Subscription>,
@@ -377,6 +573,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "refund.created")]
     RefundCreated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::refunds::types::Refund>,
@@ -386,6 +589,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Full
     #[serde(rename = "refund.updated")]
     RefundUpdated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::refunds::types::Refund>,
@@ -395,6 +605,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "product.created")]
     ProductCreated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::common::types::Product>,
@@ -404,6 +621,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "product.updated")]
     ProductUpdated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::common::types::Product>,
@@ -413,6 +637,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "discount.created")]
     DiscountCreated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::discounts::unions::Discount>,
@@ -422,6 +653,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "discount.updated")]
     DiscountUpdated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::discounts::unions::Discount>,
@@ -431,6 +669,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "discount.deleted")]
     DiscountDeleted {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::discounts::unions::Discount>,
@@ -440,6 +685,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "organization.updated")]
     OrganizationUpdated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::organizations::types::Organization>,
@@ -449,6 +701,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "benefit.created")]
     BenefitCreated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::common::unions::Benefit>,
@@ -458,6 +717,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "benefit.updated")]
     BenefitUpdated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::common::unions::Benefit>,
@@ -467,6 +733,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "benefit_grant.created")]
     BenefitGrantCreated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::webhooks::unions::BenefitGrantWebhook>,
@@ -476,6 +749,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "benefit_grant.updated")]
     BenefitGrantUpdated {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::webhooks::unions::BenefitGrantWebhook>,
@@ -486,6 +766,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "benefit_grant.cycled")]
     BenefitGrantCycled {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::webhooks::unions::BenefitGrantWebhook>,
@@ -495,6 +782,13 @@ pub enum WebhookPayload {
     /// **Discord & Slack support:** Basic
     #[serde(rename = "benefit_grant.revoked")]
     BenefitGrantRevoked {
+        /// The ID of the event. Use it to discard duplicate deliveries.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        event_id: Option<crate::v2027_01::models::common::ids::EventId>,
         timestamp: jiff::Timestamp,
         api_version: String,
         data: Box<crate::v2027_01::models::webhooks::unions::BenefitGrantWebhook>,

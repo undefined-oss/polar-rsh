@@ -29,5 +29,4 @@ pub mod products;
 pub mod refunds;
 pub mod seats;
 pub mod subscriptions;
-pub mod wallets;
 pub mod webhooks;

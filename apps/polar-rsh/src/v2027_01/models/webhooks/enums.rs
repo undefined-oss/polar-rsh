@@ -31,6 +31,35 @@ impl AsRef<str> for WebhookEndpointCreateApiVersion {
         self.as_str()
     }
 }
+/// The format of the webhook payload.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
+pub enum WebhookEndpointCreateFormat {
+    #[serde(rename = "raw")]
+    Raw,
+    #[serde(rename = "discord")]
+    Discord,
+    #[serde(rename = "slack")]
+    Slack,
+}
+impl WebhookEndpointCreateFormat {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Raw => "raw",
+            Self::Discord => "discord",
+            Self::Slack => "slack",
+        }
+    }
+}
+impl ::std::fmt::Display for WebhookEndpointCreateFormat {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+impl AsRef<str> for WebhookEndpointCreateFormat {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
 pub enum WebhookEndpointUpdateApiVersion {
     #[serde(rename = "2026-04")]
@@ -55,6 +84,35 @@ impl ::std::fmt::Display for WebhookEndpointUpdateApiVersion {
     }
 }
 impl AsRef<str> for WebhookEndpointUpdateApiVersion {
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+/// The format of the webhook payload.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
+pub enum WebhookEndpointUpdateFormat {
+    #[serde(rename = "raw")]
+    Raw,
+    #[serde(rename = "discord")]
+    Discord,
+    #[serde(rename = "slack")]
+    Slack,
+}
+impl WebhookEndpointUpdateFormat {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Raw => "raw",
+            Self::Discord => "discord",
+            Self::Slack => "slack",
+        }
+    }
+}
+impl ::std::fmt::Display for WebhookEndpointUpdateFormat {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+impl AsRef<str> for WebhookEndpointUpdateFormat {
     fn as_ref(&self) -> &str {
         self.as_str()
     }
@@ -212,6 +270,8 @@ pub enum WebhookFormat {
     Discord,
     #[serde(rename = "slack")]
     Slack,
+    #[serde(rename = "mcp")]
+    Mcp,
 }
 impl WebhookFormat {
     pub fn as_str(&self) -> &'static str {
@@ -219,6 +279,7 @@ impl WebhookFormat {
             Self::Raw => "raw",
             Self::Discord => "discord",
             Self::Slack => "slack",
+            Self::Mcp => "mcp",
         }
     }
 }

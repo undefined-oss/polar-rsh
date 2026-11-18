@@ -69,7 +69,8 @@ pub struct MeterCreate {
     /// The label for the custom unit, e.g. 'request'. Required when unit is
     /// 'custom'.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub custom_label: presence_rs::Presence<String>,
+    pub custom_label:
+        presence_rs::Presence<crate::v2027_01::models::meters::newtypes::MeterCustomLabel>,
     /// The multiplier to convert from the base unit to display scale, e.g. 1000
     /// to display per 1000 units. Defaults to 1 when not provided.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
@@ -143,8 +144,11 @@ impl MeterCreate {
     /// The label for the custom unit, e.g. 'request'. Required when unit is
     /// 'custom'.
     #[allow(clippy::should_implement_trait)]
-    pub fn custom_label(mut self, value: impl Into<String>) -> Self {
-        self.custom_label = presence_rs::Presence::Some(value.into());
+    pub fn custom_label(
+        mut self,
+        value: crate::v2027_01::models::meters::newtypes::MeterCustomLabel,
+    ) -> Self {
+        self.custom_label = presence_rs::Presence::Some(value);
         self
     }
 
@@ -252,7 +256,8 @@ pub struct MeterUpdate {
     pub unit: presence_rs::Presence<crate::v2027_01::models::common::enums::MeterUnit>,
     /// The label for the custom unit. Required when unit is 'custom'.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub custom_label: presence_rs::Presence<String>,
+    pub custom_label:
+        presence_rs::Presence<crate::v2027_01::models::meters::newtypes::MeterCustomLabel>,
     /// The multiplier to convert from base unit to display scale. Required when
     /// unit is 'custom'.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
@@ -325,8 +330,11 @@ impl MeterUpdate {
 
     /// The label for the custom unit. Required when unit is 'custom'.
     #[allow(clippy::should_implement_trait)]
-    pub fn custom_label(mut self, value: impl Into<String>) -> Self {
-        self.custom_label = presence_rs::Presence::Some(value.into());
+    pub fn custom_label(
+        mut self,
+        value: crate::v2027_01::models::meters::newtypes::MeterCustomLabel,
+    ) -> Self {
+        self.custom_label = presence_rs::Presence::Some(value);
         self
     }
 

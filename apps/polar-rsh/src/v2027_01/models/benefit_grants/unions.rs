@@ -1,5 +1,23 @@
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(untagged)]
+pub enum BenefitGrantsCreateRequestUnion {
+    BenefitGrantCreate(crate::v2027_01::models::benefit_grants::types::BenefitGrantCreate),
+    BenefitGrantCreateExternal(
+        crate::v2027_01::models::benefit_grants::types::BenefitGrantCreateExternal,
+    ),
+}
+/// Proration behavior applied when customer updates their subscription from the
+/// portal.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
+pub enum BenefitSubscriberOrganizationProrationBehaviorUnion {
+    SubscriptionProrationBehavior(
+        crate::v2027_01::models::common::enums::SubscriptionProrationBehavior,
+    ),
+    Auto(monostate::MustBe!("auto")),
+}
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
 pub enum CustomerBenefitGrant {
     CustomerBenefitGrantDiscord(
         crate::v2027_01::models::benefit_grants::types::CustomerBenefitGrantDiscord,

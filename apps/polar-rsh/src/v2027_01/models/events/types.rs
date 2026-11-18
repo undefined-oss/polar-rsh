@@ -1548,6 +1548,250 @@ impl BenefitGrantedEvent {
     }
 }
 #[derive(Debug, Clone)]
+pub struct BenefitManuallyGrantedEventRequired {
+    /// The ID of the object.
+    pub id: crate::v2027_01::models::common::ids::EventId,
+    /// The timestamp of the event.
+    pub timestamp: jiff::Timestamp,
+    /// The ID of the organization owning the event.
+    pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the customer in your Polar organization associated with the event.
+    pub customer_id: Option<crate::v2027_01::models::common::ids::CustomerId>,
+    /// The customer associated with the event.
+    pub customer: Option<crate::v2027_01::models::common::unions::Customer>,
+    /// ID of the customer in your system associated with the event.
+    pub external_customer_id: Option<String>,
+    /// Human readable label of the event type.
+    pub label: String,
+    pub metadata: crate::v2027_01::models::events::types::BenefitGrantMetadata,
+}
+/// An event created by Polar when a benefit grant is created manually.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+pub struct BenefitManuallyGrantedEvent {
+    /// The ID of the object.
+    pub id: crate::v2027_01::models::common::ids::EventId,
+    /// The timestamp of the event.
+    pub timestamp: jiff::Timestamp,
+    /// The ID of the organization owning the event.
+    pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the customer in your Polar organization associated with the event.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub customer_id: Option<crate::v2027_01::models::common::ids::CustomerId>,
+    /// The customer associated with the event.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub customer: Option<crate::v2027_01::models::common::unions::Customer>,
+    /// ID of the customer in your system associated with the event.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub external_customer_id: Option<String>,
+    /// ID of the member within the customer's organization who performed the
+    /// action inside B2B.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub member_id: presence_rs::Presence<crate::v2027_01::models::common::ids::MemberId>,
+    /// ID of the member in your system within the customer's organization who
+    /// performed the action inside B2B.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub external_member_id: presence_rs::Presence<String>,
+    /// Number of direct child events linked to this event.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub child_count: Option<i64>,
+    /// The ID of the parent event.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub parent_id: presence_rs::Presence<crate::v2027_01::models::common::ids::EventId>,
+    /// Human readable label of the event type.
+    pub label: String,
+    /// The source of the event. `system` events are created by Polar. `user`
+    /// events are the one you create through our ingestion API.
+    pub source: monostate::MustBe!("system"),
+    /// The name of the event.
+    pub name: monostate::MustBe!("benefit.manually_granted"),
+    pub metadata: crate::v2027_01::models::events::types::BenefitGrantMetadata,
+}
+#[allow(clippy::type_complexity)]
+impl BenefitManuallyGrantedEvent {
+    pub fn new(required: BenefitManuallyGrantedEventRequired) -> Self {
+        Self {
+            id: required.id,
+            timestamp: required.timestamp,
+            organization_id: required.organization_id,
+            customer_id: required.customer_id,
+            customer: required.customer,
+            external_customer_id: required.external_customer_id,
+            member_id: presence_rs::Presence::Absent,
+            external_member_id: presence_rs::Presence::Absent,
+            child_count: None,
+            parent_id: presence_rs::Presence::Absent,
+            label: required.label,
+            source: Default::default(),
+            name: Default::default(),
+            metadata: required.metadata,
+        }
+    }
+
+    /// ID of the member within the customer's organization who performed the
+    /// action inside B2B.
+    #[allow(clippy::should_implement_trait)]
+    pub fn member_id(mut self, value: crate::v2027_01::models::common::ids::MemberId) -> Self {
+        self.member_id = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// ID of the member in your system within the customer's organization who
+    /// performed the action inside B2B.
+    #[allow(clippy::should_implement_trait)]
+    pub fn external_member_id(mut self, value: impl Into<String>) -> Self {
+        self.external_member_id = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// Number of direct child events linked to this event.
+    #[allow(clippy::should_implement_trait)]
+    pub fn child_count(mut self, value: i64) -> Self {
+        self.child_count = Some(value);
+        self
+    }
+
+    /// The ID of the parent event.
+    #[allow(clippy::should_implement_trait)]
+    pub fn parent_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.parent_id = presence_rs::Presence::Some(value);
+        self
+    }
+}
+#[derive(Debug, Clone)]
+pub struct BenefitManuallyRevokedEventRequired {
+    /// The ID of the object.
+    pub id: crate::v2027_01::models::common::ids::EventId,
+    /// The timestamp of the event.
+    pub timestamp: jiff::Timestamp,
+    /// The ID of the organization owning the event.
+    pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the customer in your Polar organization associated with the event.
+    pub customer_id: Option<crate::v2027_01::models::common::ids::CustomerId>,
+    /// The customer associated with the event.
+    pub customer: Option<crate::v2027_01::models::common::unions::Customer>,
+    /// ID of the customer in your system associated with the event.
+    pub external_customer_id: Option<String>,
+    /// Human readable label of the event type.
+    pub label: String,
+    pub metadata: crate::v2027_01::models::events::types::BenefitGrantMetadata,
+}
+/// An event created by Polar when a benefit grant is manually revoked.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+pub struct BenefitManuallyRevokedEvent {
+    /// The ID of the object.
+    pub id: crate::v2027_01::models::common::ids::EventId,
+    /// The timestamp of the event.
+    pub timestamp: jiff::Timestamp,
+    /// The ID of the organization owning the event.
+    pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the customer in your Polar organization associated with the event.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub customer_id: Option<crate::v2027_01::models::common::ids::CustomerId>,
+    /// The customer associated with the event.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub customer: Option<crate::v2027_01::models::common::unions::Customer>,
+    /// ID of the customer in your system associated with the event.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub external_customer_id: Option<String>,
+    /// ID of the member within the customer's organization who performed the
+    /// action inside B2B.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub member_id: presence_rs::Presence<crate::v2027_01::models::common::ids::MemberId>,
+    /// ID of the member in your system within the customer's organization who
+    /// performed the action inside B2B.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub external_member_id: presence_rs::Presence<String>,
+    /// Number of direct child events linked to this event.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub child_count: Option<i64>,
+    /// The ID of the parent event.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub parent_id: presence_rs::Presence<crate::v2027_01::models::common::ids::EventId>,
+    /// Human readable label of the event type.
+    pub label: String,
+    /// The source of the event. `system` events are created by Polar. `user`
+    /// events are the one you create through our ingestion API.
+    pub source: monostate::MustBe!("system"),
+    /// The name of the event.
+    pub name: monostate::MustBe!("benefit.manually_revoked"),
+    pub metadata: crate::v2027_01::models::events::types::BenefitGrantMetadata,
+}
+#[allow(clippy::type_complexity)]
+impl BenefitManuallyRevokedEvent {
+    pub fn new(required: BenefitManuallyRevokedEventRequired) -> Self {
+        Self {
+            id: required.id,
+            timestamp: required.timestamp,
+            organization_id: required.organization_id,
+            customer_id: required.customer_id,
+            customer: required.customer,
+            external_customer_id: required.external_customer_id,
+            member_id: presence_rs::Presence::Absent,
+            external_member_id: presence_rs::Presence::Absent,
+            child_count: None,
+            parent_id: presence_rs::Presence::Absent,
+            label: required.label,
+            source: Default::default(),
+            name: Default::default(),
+            metadata: required.metadata,
+        }
+    }
+
+    /// ID of the member within the customer's organization who performed the
+    /// action inside B2B.
+    #[allow(clippy::should_implement_trait)]
+    pub fn member_id(mut self, value: crate::v2027_01::models::common::ids::MemberId) -> Self {
+        self.member_id = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// ID of the member in your system within the customer's organization who
+    /// performed the action inside B2B.
+    #[allow(clippy::should_implement_trait)]
+    pub fn external_member_id(mut self, value: impl Into<String>) -> Self {
+        self.external_member_id = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// Number of direct child events linked to this event.
+    #[allow(clippy::should_implement_trait)]
+    pub fn child_count(mut self, value: i64) -> Self {
+        self.child_count = Some(value);
+        self
+    }
+
+    /// The ID of the parent event.
+    #[allow(clippy::should_implement_trait)]
+    pub fn parent_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.parent_id = presence_rs::Presence::Some(value);
+        self
+    }
+}
+#[derive(Debug, Clone)]
 pub struct BenefitRevokedEventRequired {
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::EventId,
@@ -1621,6 +1865,128 @@ pub struct BenefitRevokedEvent {
 #[allow(clippy::type_complexity)]
 impl BenefitRevokedEvent {
     pub fn new(required: BenefitRevokedEventRequired) -> Self {
+        Self {
+            id: required.id,
+            timestamp: required.timestamp,
+            organization_id: required.organization_id,
+            customer_id: required.customer_id,
+            customer: required.customer,
+            external_customer_id: required.external_customer_id,
+            member_id: presence_rs::Presence::Absent,
+            external_member_id: presence_rs::Presence::Absent,
+            child_count: None,
+            parent_id: presence_rs::Presence::Absent,
+            label: required.label,
+            source: Default::default(),
+            name: Default::default(),
+            metadata: required.metadata,
+        }
+    }
+
+    /// ID of the member within the customer's organization who performed the
+    /// action inside B2B.
+    #[allow(clippy::should_implement_trait)]
+    pub fn member_id(mut self, value: crate::v2027_01::models::common::ids::MemberId) -> Self {
+        self.member_id = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// ID of the member in your system within the customer's organization who
+    /// performed the action inside B2B.
+    #[allow(clippy::should_implement_trait)]
+    pub fn external_member_id(mut self, value: impl Into<String>) -> Self {
+        self.external_member_id = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// Number of direct child events linked to this event.
+    #[allow(clippy::should_implement_trait)]
+    pub fn child_count(mut self, value: i64) -> Self {
+        self.child_count = Some(value);
+        self
+    }
+
+    /// The ID of the parent event.
+    #[allow(clippy::should_implement_trait)]
+    pub fn parent_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.parent_id = presence_rs::Presence::Some(value);
+        self
+    }
+}
+#[derive(Debug, Clone)]
+pub struct BenefitUnrevokedEventRequired {
+    /// The ID of the object.
+    pub id: crate::v2027_01::models::common::ids::EventId,
+    /// The timestamp of the event.
+    pub timestamp: jiff::Timestamp,
+    /// The ID of the organization owning the event.
+    pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the customer in your Polar organization associated with the event.
+    pub customer_id: Option<crate::v2027_01::models::common::ids::CustomerId>,
+    /// The customer associated with the event.
+    pub customer: Option<crate::v2027_01::models::common::unions::Customer>,
+    /// ID of the customer in your system associated with the event.
+    pub external_customer_id: Option<String>,
+    /// Human readable label of the event type.
+    pub label: String,
+    pub metadata: crate::v2027_01::models::events::types::BenefitGrantMetadata,
+}
+/// An event created by Polar when a manual revocation is cleared.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+pub struct BenefitUnrevokedEvent {
+    /// The ID of the object.
+    pub id: crate::v2027_01::models::common::ids::EventId,
+    /// The timestamp of the event.
+    pub timestamp: jiff::Timestamp,
+    /// The ID of the organization owning the event.
+    pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the customer in your Polar organization associated with the event.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub customer_id: Option<crate::v2027_01::models::common::ids::CustomerId>,
+    /// The customer associated with the event.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub customer: Option<crate::v2027_01::models::common::unions::Customer>,
+    /// ID of the customer in your system associated with the event.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub external_customer_id: Option<String>,
+    /// ID of the member within the customer's organization who performed the
+    /// action inside B2B.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub member_id: presence_rs::Presence<crate::v2027_01::models::common::ids::MemberId>,
+    /// ID of the member in your system within the customer's organization who
+    /// performed the action inside B2B.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub external_member_id: presence_rs::Presence<String>,
+    /// Number of direct child events linked to this event.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub child_count: Option<i64>,
+    /// The ID of the parent event.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub parent_id: presence_rs::Presence<crate::v2027_01::models::common::ids::EventId>,
+    /// Human readable label of the event type.
+    pub label: String,
+    /// The source of the event. `system` events are created by Polar. `user`
+    /// events are the one you create through our ingestion API.
+    pub source: monostate::MustBe!("system"),
+    /// The name of the event.
+    pub name: monostate::MustBe!("benefit.unrevoked"),
+    pub metadata: crate::v2027_01::models::events::types::BenefitGrantMetadata,
+}
+#[allow(clippy::type_complexity)]
+impl BenefitUnrevokedEvent {
+    pub fn new(required: BenefitUnrevokedEventRequired) -> Self {
         Self {
             id: required.id,
             timestamp: required.timestamp,

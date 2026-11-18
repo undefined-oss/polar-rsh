@@ -6,6 +6,8 @@ use crate::v2027_01::{
 };
 #[derive(Debug, Clone, Default)]
 pub struct WebhooksListWebhookEndpointsParams {
+    /// Filter by webhook payload format.
+    pub format: Vec<crate::v2027_01::models::webhooks::enums::WebhookFormat>,
     /// Filter by organization ID.
     pub organization_id: Vec<crate::v2027_01::models::common::ids::OrganizationId>,
     /// Page number, defaults to 1.
@@ -18,6 +20,9 @@ impl crate::v2027_01::query::EncodeQuery for WebhooksListWebhookEndpointsParams 
     #[allow(clippy::vec_init_then_push)]
     fn scalar_params(&self) -> Vec<(&'static str, String)> {
         let mut params = Vec::new();
+        for value in &self.format {
+            params.push(("format", value.to_string()));
+        }
         for value in &self.organization_id {
             params.push(("organization_id", value.to_string()));
         }

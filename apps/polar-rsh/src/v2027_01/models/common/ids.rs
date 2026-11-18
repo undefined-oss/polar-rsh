@@ -569,28 +569,6 @@ impl ::std::default::Default for CustomerStateMeterId {
         Self(uuid::Uuid::new_v4())
     }
 }
-/// The metric dashboard ID.
-#[derive(
-    Debug,
-    Clone,
-    Copy,
-    Display,
-    Eq,
-    From,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    Deref,
-    Hash,
-    Deserialize,
-    Serialize,
-)]
-pub struct DashboardId(uuid::Uuid);
-impl ::std::default::Default for DashboardId {
-    fn default() -> Self {
-        Self(uuid::Uuid::new_v4())
-    }
-}
 /// The ID of the customer's default payment method, if any. Use the payment
 /// methods endpoint to retrieve its details.
 #[derive(
@@ -1074,7 +1052,8 @@ impl ::std::default::Default for PaymentId {
         Self(uuid::Uuid::new_v4())
     }
 }
-/// ID of an existing saved payment method.
+/// ID of the payment method to charge. Must belong to the order's customer.
+/// Falls back to the customer's default payment method when unset.
 #[derive(
     Debug,
     Clone,
@@ -1358,28 +1337,6 @@ impl ::std::default::Default for SubscriptionId {
 )]
 pub struct ValidatedLicenseKeyId(uuid::Uuid);
 impl ::std::default::Default for ValidatedLicenseKeyId {
-    fn default() -> Self {
-        Self(uuid::Uuid::new_v4())
-    }
-}
-/// The wallet ID.
-#[derive(
-    Debug,
-    Clone,
-    Copy,
-    Display,
-    Eq,
-    From,
-    Ord,
-    PartialEq,
-    PartialOrd,
-    Deref,
-    Hash,
-    Deserialize,
-    Serialize,
-)]
-pub struct WalletId(uuid::Uuid);
-impl ::std::default::Default for WalletId {
     fn default() -> Self {
         Self(uuid::Uuid::new_v4())
     }

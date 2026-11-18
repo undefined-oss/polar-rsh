@@ -230,61 +230,6 @@ impl CustomerOrder {
         self
     }
 }
-/// Schema to confirm a retry payment using either a saved payment method or a
-/// new confirmation token.
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-#[derive(Default)]
-pub struct CustomerOrderConfirmPayment {
-    /// ID of the Stripe confirmation token for new payment methods.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub confirmation_token_id: presence_rs::Presence<String>,
-    /// ID of an existing saved payment method.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub payment_method_id:
-        presence_rs::Presence<crate::v2027_01::models::common::ids::PaymentMethodId>,
-    /// Payment processor used.
-    #[serde(
-        default,
-        skip_serializing_if = "Option::is_none",
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
-    )]
-    pub payment_processor: Option<crate::v2027_01::models::common::enums::PaymentProcessor>,
-}
-#[allow(clippy::type_complexity)]
-impl CustomerOrderConfirmPayment {
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    /// ID of the Stripe confirmation token for new payment methods.
-    #[allow(clippy::should_implement_trait)]
-    pub fn confirmation_token_id(mut self, value: impl Into<String>) -> Self {
-        self.confirmation_token_id = presence_rs::Presence::Some(value.into());
-        self
-    }
-
-    /// ID of an existing saved payment method.
-    #[allow(clippy::should_implement_trait)]
-    pub fn payment_method_id(
-        mut self,
-        value: crate::v2027_01::models::common::ids::PaymentMethodId,
-    ) -> Self {
-        self.payment_method_id = presence_rs::Presence::Some(value);
-        self
-    }
-
-    /// Payment processor used.
-    #[allow(clippy::should_implement_trait)]
-    pub fn payment_processor(
-        mut self,
-        value: crate::v2027_01::models::common::enums::PaymentProcessor,
-    ) -> Self {
-        self.payment_processor = Some(value);
-        self
-    }
-}
 #[derive(Debug, Clone)]
 pub struct CustomerOrderInvoiceRequired {
     /// The URL to the invoice.
@@ -302,78 +247,6 @@ pub struct CustomerOrderInvoice {
 impl CustomerOrderInvoice {
     pub fn new(required: CustomerOrderInvoiceRequired) -> Self {
         Self { url: required.url }
-    }
-}
-#[derive(Debug, Clone)]
-pub struct CustomerOrderPaymentConfirmationRequired {
-    /// Payment status after confirmation.
-    pub status: String,
-}
-/// Response after confirming a retry payment.
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-pub struct CustomerOrderPaymentConfirmation {
-    /// Payment status after confirmation.
-    pub status: String,
-    /// Client secret for handling additional actions.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub client_secret: presence_rs::Presence<String>,
-    /// Error message if confirmation failed.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub error: presence_rs::Presence<String>,
-}
-#[allow(clippy::type_complexity)]
-impl CustomerOrderPaymentConfirmation {
-    pub fn new(required: CustomerOrderPaymentConfirmationRequired) -> Self {
-        Self {
-            status: required.status,
-            client_secret: presence_rs::Presence::Absent,
-            error: presence_rs::Presence::Absent,
-        }
-    }
-
-    /// Client secret for handling additional actions.
-    #[allow(clippy::should_implement_trait)]
-    pub fn client_secret(mut self, value: impl Into<String>) -> Self {
-        self.client_secret = presence_rs::Presence::Some(value.into());
-        self
-    }
-
-    /// Error message if confirmation failed.
-    #[allow(clippy::should_implement_trait)]
-    pub fn error(mut self, value: impl Into<String>) -> Self {
-        self.error = presence_rs::Presence::Some(value.into());
-        self
-    }
-}
-#[derive(Debug, Clone)]
-pub struct CustomerOrderPaymentStatusRequired {
-    /// Current payment status.
-    pub status: String,
-}
-/// Payment status for an order.
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-pub struct CustomerOrderPaymentStatus {
-    /// Current payment status.
-    pub status: String,
-    /// Error message if payment failed.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub error: presence_rs::Presence<String>,
-}
-#[allow(clippy::type_complexity)]
-impl CustomerOrderPaymentStatus {
-    pub fn new(required: CustomerOrderPaymentStatusRequired) -> Self {
-        Self { status: required.status, error: presence_rs::Presence::Absent }
-    }
-
-    /// Error message if payment failed.
-    #[allow(clippy::should_implement_trait)]
-    pub fn error(mut self, value: impl Into<String>) -> Self {
-        self.error = presence_rs::Presence::Some(value.into());
-        self
     }
 }
 #[derive(Debug, Clone)]
@@ -789,8 +662,8 @@ pub struct CustomerOrderUpdate {
     /// The name of the customer that should appear on the invoice.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub billing_name: presence_rs::Presence<String>,
-    /// The address of the customer that should appear on the invoice. Country
-    /// and state fields cannot be updated.
+    /// The address of the customer that should appear on the invoice. Address
+    /// fields used for tax calculation cannot be updated.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub billing_address:
         presence_rs::Presence<crate::v2027_01::models::common::types::AddressInput>,
@@ -808,8 +681,8 @@ impl CustomerOrderUpdate {
         self
     }
 
-    /// The address of the customer that should appear on the invoice. Country
-    /// and state fields cannot be updated.
+    /// The address of the customer that should appear on the invoice. Address
+    /// fields used for tax calculation cannot be updated.
     #[allow(clippy::should_implement_trait)]
     pub fn billing_address(
         mut self,
@@ -817,25 +690,6 @@ impl CustomerOrderUpdate {
     ) -> Self {
         self.billing_address = presence_rs::Presence::Some(value);
         self
-    }
-}
-#[derive(Debug, Clone)]
-pub struct ManualRetryLimitExceededRequired {
-    pub detail: String,
-}
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-#[derive(thiserror::Error)]
-#[error("{self:?}")]
-pub struct ManualRetryLimitExceeded {
-    pub error: monostate::MustBe!("ManualRetryLimitExceeded"),
-    pub detail: String,
-}
-#[allow(clippy::type_complexity)]
-impl ManualRetryLimitExceeded {
-    pub fn new(required: ManualRetryLimitExceededRequired) -> Self {
-        Self { error: Default::default(), detail: required.detail }
     }
 }
 #[derive(Debug, Clone)]
@@ -1670,25 +1524,6 @@ impl OrderNotEligibleForInvoice {
     }
 }
 #[derive(Debug, Clone)]
-pub struct OrderNotEligibleForRetryRequired {
-    pub detail: String,
-}
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-#[derive(thiserror::Error)]
-#[error("{self:?}")]
-pub struct OrderNotEligibleForRetry {
-    pub error: monostate::MustBe!("OrderNotEligibleForRetry"),
-    pub detail: String,
-}
-#[allow(clippy::type_complexity)]
-impl OrderNotEligibleForRetry {
-    pub fn new(required: OrderNotEligibleForRetryRequired) -> Self {
-        Self { error: Default::default(), detail: required.detail }
-    }
-}
-#[derive(Debug, Clone)]
 pub struct OrderProductRequired {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The ID of the object.
@@ -2104,8 +1939,8 @@ pub struct OrderUpdate {
     /// The name of the customer that should appear on the invoice.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub billing_name: presence_rs::Presence<String>,
-    /// The address of the customer that should appear on the invoice. Country
-    /// and state fields cannot be updated.
+    /// The address of the customer that should appear on the invoice. Address
+    /// fields used for tax calculation cannot be updated.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub billing_address:
         presence_rs::Presence<crate::v2027_01::models::common::types::AddressInput>,
@@ -2123,8 +1958,8 @@ impl OrderUpdate {
         self
     }
 
-    /// The address of the customer that should appear on the invoice. Country
-    /// and state fields cannot be updated.
+    /// The address of the customer that should appear on the invoice. Address
+    /// fields used for tax calculation cannot be updated.
     #[allow(clippy::should_implement_trait)]
     pub fn billing_address(
         mut self,
@@ -2150,25 +1985,6 @@ pub struct OrganizationNotReadyForPayments {
 #[allow(clippy::type_complexity)]
 impl OrganizationNotReadyForPayments {
     pub fn new(required: OrganizationNotReadyForPaymentsRequired) -> Self {
-        Self { error: Default::default(), detail: required.detail }
-    }
-}
-#[derive(Debug, Clone)]
-pub struct PaymentAlreadyInProgressRequired {
-    pub detail: String,
-}
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-#[derive(thiserror::Error)]
-#[error("{self:?}")]
-pub struct PaymentAlreadyInProgress {
-    pub error: monostate::MustBe!("PaymentAlreadyInProgress"),
-    pub detail: String,
-}
-#[allow(clippy::type_complexity)]
-impl PaymentAlreadyInProgress {
-    pub fn new(required: PaymentAlreadyInProgressRequired) -> Self {
         Self { error: Default::default(), detail: required.detail }
     }
 }

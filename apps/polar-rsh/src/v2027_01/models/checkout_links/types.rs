@@ -13,6 +13,10 @@ pub struct CheckoutLinkRequired {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Payment processor used.
     pub payment_processor: crate::v2027_01::models::common::enums::PaymentProcessor,
+    /// Whether customers must provide a payment method to start a trial. If
+    /// `false`, customers can start a trial without entering payment details.
+    /// If `null`, the product's setting is used.
+    pub trial_payment_setup_required: Option<bool>,
     /// Client secret used to access the checkout link.
     pub client_secret: String,
     /// URL where the customer will be redirected after a successful payment.
@@ -81,6 +85,13 @@ pub struct CheckoutLink {
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Payment processor used.
     pub payment_processor: crate::v2027_01::models::common::enums::PaymentProcessor,
+    /// Whether customers must provide a payment method to start a trial. If
+    /// `false`, customers can start a trial without entering payment details.
+    /// If `null`, the product's setting is used.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub trial_payment_setup_required: Option<bool>,
     /// Client secret used to access the checkout link.
     pub client_secret: String,
     /// URL where the customer will be redirected after a successful payment.
@@ -154,6 +165,7 @@ impl CheckoutLink {
             trial_interval_count: required.trial_interval_count,
             metadata: required.metadata,
             payment_processor: required.payment_processor,
+            trial_payment_setup_required: required.trial_payment_setup_required,
             client_secret: required.client_secret,
             success_url: required.success_url,
             return_url: required.return_url,
@@ -212,6 +224,9 @@ pub struct CheckoutLinkCreateProducts {
     pub trial_interval_count: presence_rs::Presence<
         crate::v2027_01::models::checkout_links::newtypes::CheckoutLinkCreateProductsTrialIntervalCount,
     >,
+    ///Whether customers must provide a payment method to start a trial. If `false`, customers can start a trial without entering payment details. If `null`, the product's setting is used.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub trial_payment_setup_required: presence_rs::Presence<bool>,
     ///Payment processor to use. Currently only Stripe is supported.
     pub payment_processor: monostate::MustBe!("stripe"),
     ///Optional label to distinguish links internally
@@ -266,6 +281,7 @@ impl CheckoutLinkCreateProducts {
             metadata: None,
             trial_interval: presence_rs::Presence::Absent,
             trial_interval_count: presence_rs::Presence::Absent,
+            trial_payment_setup_required: presence_rs::Presence::Absent,
             payment_processor: Default::default(),
             label: presence_rs::Presence::Absent,
             allow_discount_codes: None,
@@ -319,6 +335,15 @@ impl CheckoutLinkCreateProducts {
         value: crate::v2027_01::models::checkout_links::newtypes::CheckoutLinkCreateProductsTrialIntervalCount,
     ) -> Self {
         self.trial_interval_count = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// Whether customers must provide a payment method to start a trial. If
+    /// `false`, customers can start a trial without entering payment details.
+    /// If `null`, the product's setting is used.
+    #[allow(clippy::should_implement_trait)]
+    pub fn trial_payment_setup_required(mut self, value: bool) -> Self {
+        self.trial_payment_setup_required = presence_rs::Presence::Some(value);
         self
     }
 
@@ -587,6 +612,9 @@ pub struct CheckoutLinkUpdate {
             crate::v2027_01::models::checkout_links::unions::CheckoutLinkUpdateMetadataAdditionalPropertiesUnion,
         >,
     >,
+    ///Whether customers must provide a payment method to start a trial. If `false`, customers can start a trial without entering payment details. If `null`, the product's setting is used.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub trial_payment_setup_required: presence_rs::Presence<bool>,
     ///List of products that will be available to select at checkout.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub products: presence_rs::Presence<
@@ -672,6 +700,15 @@ impl CheckoutLinkUpdate {
         >,
     ) -> Self {
         self.metadata = Some(value);
+        self
+    }
+
+    /// Whether customers must provide a payment method to start a trial. If
+    /// `false`, customers can start a trial without entering payment details.
+    /// If `null`, the product's setting is used.
+    #[allow(clippy::should_implement_trait)]
+    pub fn trial_payment_setup_required(mut self, value: bool) -> Self {
+        self.trial_payment_setup_required = presence_rs::Presence::Some(value);
         self
     }
 

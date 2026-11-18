@@ -1,40 +1,16 @@
-pub mod confirm_retry_payment;
 pub mod generate_invoice;
 pub mod get;
-pub mod get_payment_status;
 pub mod invoice;
 pub mod list;
 pub mod receipt;
 pub mod update;
-pub use self::{
-    confirm_retry_payment::*, generate_invoice::*, get::*, get_payment_status::*, invoice::*,
-    list::*, receipt::*, update::*,
-};
+pub use self::{generate_invoice::*, get::*, invoice::*, list::*, receipt::*, update::*};
 pub struct CustomerPortalOrders<'a, ClientService> {
     client: &'a crate::v2026_04::client::PolarClient<ClientService>,
 }
 impl<'a, ClientService> CustomerPortalOrders<'a, ClientService> {
     pub(crate) fn new(client: &'a crate::v2026_04::client::PolarClient<ClientService>) -> Self {
         Self { client }
-    }
-
-    /// Confirm a retry payment using a Stripe confirmation token.
-    ///
-    /// **Scopes**: `customer_portal:write`
-    pub fn confirm_retry_payment(
-        &self,
-        id: crate::v2026_04::models::common::ids::OrderId,
-        payload: crate::v2026_04::models::orders::types::CustomerOrderConfirmPayment,
-    ) -> crate::v2026_04::models::customer_portal::orders::CustomerPortalOrdersConfirmRetryPayment<
-        'a,
-        ClientService,
-    >{
-        crate::v2026_04::models::customer_portal::orders::CustomerPortalOrdersConfirmRetryPayment {
-            client: self.client,
-            options: crate::v2026_04::client::RequestOptions::default(),
-            id,
-            payload,
-        }
     }
 
     /// Trigger generation of an order's invoice.
@@ -63,23 +39,6 @@ impl<'a, ClientService> CustomerPortalOrders<'a, ClientService> {
     ) -> crate::v2026_04::models::customer_portal::orders::CustomerPortalOrdersGet<'a, ClientService>
     {
         crate::v2026_04::models::customer_portal::orders::CustomerPortalOrdersGet {
-            client: self.client,
-            options: crate::v2026_04::client::RequestOptions::default(),
-            id,
-        }
-    }
-
-    /// Get the current payment status for an order.
-    ///
-    /// **Scopes**: `customer_portal:read` `customer_portal:write`
-    pub fn get_payment_status(
-        &self,
-        id: crate::v2026_04::models::common::ids::OrderId,
-    ) -> crate::v2026_04::models::customer_portal::orders::CustomerPortalOrdersGetPaymentStatus<
-        'a,
-        ClientService,
-    > {
-        crate::v2026_04::models::customer_portal::orders::CustomerPortalOrdersGetPaymentStatus {
             client: self.client,
             options: crate::v2026_04::client::RequestOptions::default(),
             id,
