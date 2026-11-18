@@ -210,7 +210,8 @@ pub struct OrganizationRequired {
     pub avatar_url: Option<String>,
     /// Proration behavior applied when customer updates their subscription from
     /// the portal.
-    pub proration_behavior: crate::v2027_01::models::common::enums::SubscriptionProrationBehavior,
+    pub proration_behavior:
+        crate::v2027_01::models::organizations::unions::OrganizationProrationBehaviorUnion,
     /// Whether customers can update their subscriptions from the customer
     /// portal.
     pub allow_customer_updates: bool,
@@ -290,7 +291,8 @@ pub struct Organization {
     pub avatar_url: Option<String>,
     /// Proration behavior applied when customer updates their subscription from
     /// the portal.
-    pub proration_behavior: crate::v2027_01::models::common::enums::SubscriptionProrationBehavior,
+    pub proration_behavior:
+        crate::v2027_01::models::organizations::unions::OrganizationProrationBehaviorUnion,
     /// Whether customers can update their subscriptions from the customer
     /// portal.
     pub allow_customer_updates: bool,
@@ -979,6 +981,14 @@ pub struct OrganizationFeatureSettings {
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
     )]
     pub config_as_code_enabled: Option<bool>,
+    /// If this organization's metered usage is billed from the reducer instead
+    /// of the legacy billing entries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub reducer_billing_enabled: Option<bool>,
 }
 #[allow(clippy::type_complexity)]
 impl OrganizationFeatureSettings {
@@ -1088,6 +1098,14 @@ impl OrganizationFeatureSettings {
         self.config_as_code_enabled = Some(value);
         self
     }
+
+    /// If this organization's metered usage is billed from the reducer instead
+    /// of the legacy billing entries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn reducer_billing_enabled(mut self, value: bool) -> Self {
+        self.reducer_billing_enabled = Some(value);
+        self
+    }
 }
 /// Feature settings that organizations can update themselves.
 ///
@@ -1167,7 +1185,7 @@ impl OrganizationSocialLink {
 #[derive(Debug, Clone)]
 pub struct OrganizationSubscriptionSettingsRequired {
     pub allow_multiple_subscriptions: bool,
-    pub proration_behavior: crate::v2027_01::models::organizations::enums::OrganizationSubscriptionSettingsProrationBehavior,
+    pub proration_behavior: crate::v2027_01::models::organizations::unions::OrganizationSubscriptionSettingsProrationBehaviorUnion,
     pub benefit_revocation_grace_period: i64,
     pub prevent_trial_abuse: bool,
     pub allow_customer_updates: bool,
@@ -1177,7 +1195,7 @@ pub struct OrganizationSubscriptionSettingsRequired {
 #[serde(deny_unknown_fields)]
 pub struct OrganizationSubscriptionSettings {
     pub allow_multiple_subscriptions: bool,
-    pub proration_behavior: crate::v2027_01::models::organizations::enums::OrganizationSubscriptionSettingsProrationBehavior,
+    pub proration_behavior: crate::v2027_01::models::organizations::unions::OrganizationSubscriptionSettingsProrationBehaviorUnion,
     pub benefit_revocation_grace_period: i64,
     pub prevent_trial_abuse: bool,
     pub allow_customer_updates: bool,

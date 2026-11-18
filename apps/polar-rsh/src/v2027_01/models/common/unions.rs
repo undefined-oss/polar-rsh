@@ -105,9 +105,7 @@ pub enum Benefit {
         /// The ID of the organization owning the benefit.
         organization_id: crate::v2027_01::models::common::ids::OrganizationId,
         /// An ID from your own system to reference this resource. It must be
-        /// unique within the organization for this type of resource. It must
-        /// start with a letter or digit and contain only letters, digits, `_`,
-        /// `-`, `.` and `:`.
+        /// unique within the organization for this type of resource.
         #[serde(
             deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
         )]
@@ -230,9 +228,7 @@ pub enum Benefit {
         /// The ID of the organization owning the benefit.
         organization_id: crate::v2027_01::models::common::ids::OrganizationId,
         /// An ID from your own system to reference this resource. It must be
-        /// unique within the organization for this type of resource. It must
-        /// start with a letter or digit and contain only letters, digits, `_`,
-        /// `-`, `.` and `:`.
+        /// unique within the organization for this type of resource.
         #[serde(
             deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
         )]
@@ -273,9 +269,7 @@ pub enum Benefit {
         /// The ID of the organization owning the benefit.
         organization_id: crate::v2027_01::models::common::ids::OrganizationId,
         /// An ID from your own system to reference this resource. It must be
-        /// unique within the organization for this type of resource. It must
-        /// start with a letter or digit and contain only letters, digits, `_`,
-        /// `-`, `.` and `:`.
+        /// unique within the organization for this type of resource.
         #[serde(
             deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
         )]
@@ -564,6 +558,14 @@ pub enum CustomField {
         name: String,
         /// The ID of the organization owning the custom field.
         organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+        /// ID of the catalog that introduced this version of the custom field.
+        /// None for custom fields not managed by declarative config.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+        /// Whether this is the current version of the custom field.
+        is_current: bool,
         properties: crate::v2027_01::models::common::types::CustomFieldTextProperties,
     },
     #[serde(rename = "number")]
@@ -585,6 +587,14 @@ pub enum CustomField {
         name: String,
         /// The ID of the organization owning the custom field.
         organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+        /// ID of the catalog that introduced this version of the custom field.
+        /// None for custom fields not managed by declarative config.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+        /// Whether this is the current version of the custom field.
+        is_current: bool,
         properties: crate::v2027_01::models::common::types::CustomFieldNumberProperties,
     },
     #[serde(rename = "date")]
@@ -606,6 +616,14 @@ pub enum CustomField {
         name: String,
         /// The ID of the organization owning the custom field.
         organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+        /// ID of the catalog that introduced this version of the custom field.
+        /// None for custom fields not managed by declarative config.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+        /// Whether this is the current version of the custom field.
+        is_current: bool,
         properties: crate::v2027_01::models::common::types::CustomFieldDateProperties,
     },
     #[serde(rename = "checkbox")]
@@ -627,6 +645,14 @@ pub enum CustomField {
         name: String,
         /// The ID of the organization owning the custom field.
         organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+        /// ID of the catalog that introduced this version of the custom field.
+        /// None for custom fields not managed by declarative config.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+        /// Whether this is the current version of the custom field.
+        is_current: bool,
         properties: crate::v2027_01::models::common::types::CustomFieldCheckboxProperties,
     },
     #[serde(rename = "select")]
@@ -648,6 +674,14 @@ pub enum CustomField {
         name: String,
         /// The ID of the organization owning the custom field.
         organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+        /// ID of the catalog that introduced this version of the custom field.
+        /// None for custom fields not managed by declarative config.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+        /// Whether this is the current version of the custom field.
+        is_current: bool,
         properties: crate::v2027_01::models::common::types::CustomFieldSelectProperties,
     },
 }
@@ -789,6 +823,16 @@ pub enum Customer {
         )]
         avatar_url: Option<String>,
     },
+}
+/// Proration behavior applied when customer updates their subscription from the
+/// portal.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
+pub enum CustomerOrganizationProrationBehaviorUnion {
+    SubscriptionProrationBehavior(
+        crate::v2027_01::models::common::enums::SubscriptionProrationBehavior,
+    ),
+    Auto(monostate::MustBe!("auto")),
 }
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(untagged)]

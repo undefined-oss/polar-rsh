@@ -9,14 +9,13 @@ pub mod orders;
 pub mod organizations;
 pub mod seats;
 pub mod subscriptions;
-pub mod wallets;
 pub use self::{
     benefit_grants::CustomerPortalBenefitGrants, customer_meters::CustomerPortalCustomerMeters,
     customer_session::CustomerPortalCustomerSession, customers::CustomerPortalCustomers,
     downloadables::CustomerPortalDownloadables, license_keys::CustomerPortalLicenseKeys,
     members::CustomerPortalMembers, orders::CustomerPortalOrders,
     organizations::CustomerPortalOrganizations, seats::CustomerPortalSeats,
-    subscriptions::CustomerPortalSubscriptions, wallets::CustomerPortalWallets,
+    subscriptions::CustomerPortalSubscriptions,
 };
 pub struct CustomerPortal<'a, ClientService> {
     client: &'a crate::v2026_10::client::PolarClient<ClientService>,
@@ -133,12 +132,5 @@ impl<'a, ClientService> CustomerPortal<'a, ClientService> {
         crate::v2026_10::models::customer_portal::subscriptions::CustomerPortalSubscriptions::new(
             self.client,
         )
-    }
-
-    pub fn wallets(
-        &self,
-    ) -> crate::v2026_10::models::customer_portal::wallets::CustomerPortalWallets<'a, ClientService>
-    {
-        crate::v2026_10::models::customer_portal::wallets::CustomerPortalWallets::new(self.client)
     }
 }

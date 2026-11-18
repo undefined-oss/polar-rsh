@@ -19,6 +19,10 @@ impl AmbiguousExternalWebhookEndpointId {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantCustomWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -45,6 +49,16 @@ pub struct BenefitGrantCustomWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantCustomWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -100,6 +114,8 @@ pub struct BenefitGrantCustomWebhook {
 impl BenefitGrantCustomWebhook {
     pub fn new(required: BenefitGrantCustomWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -172,6 +188,10 @@ impl BenefitGrantCustomWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantDiscordWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -198,6 +218,16 @@ pub struct BenefitGrantDiscordWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantDiscordWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -254,6 +284,8 @@ pub struct BenefitGrantDiscordWebhook {
 impl BenefitGrantDiscordWebhook {
     pub fn new(required: BenefitGrantDiscordWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -326,6 +358,10 @@ impl BenefitGrantDiscordWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantDownloadablesWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -352,6 +388,16 @@ pub struct BenefitGrantDownloadablesWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantDownloadablesWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -408,6 +454,8 @@ pub struct BenefitGrantDownloadablesWebhook {
 impl BenefitGrantDownloadablesWebhook {
     pub fn new(required: BenefitGrantDownloadablesWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -480,6 +528,10 @@ impl BenefitGrantDownloadablesWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantFeatureFlagWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -506,6 +558,16 @@ pub struct BenefitGrantFeatureFlagWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantFeatureFlagWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -562,6 +624,8 @@ pub struct BenefitGrantFeatureFlagWebhook {
 impl BenefitGrantFeatureFlagWebhook {
     pub fn new(required: BenefitGrantFeatureFlagWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -634,6 +698,10 @@ impl BenefitGrantFeatureFlagWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantGitHubRepositoryWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -660,6 +728,16 @@ pub struct BenefitGrantGitHubRepositoryWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantGitHubRepositoryWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -716,6 +794,8 @@ pub struct BenefitGrantGitHubRepositoryWebhook {
 impl BenefitGrantGitHubRepositoryWebhook {
     pub fn new(required: BenefitGrantGitHubRepositoryWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -788,6 +868,10 @@ impl BenefitGrantGitHubRepositoryWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantLicenseKeysWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -814,6 +898,16 @@ pub struct BenefitGrantLicenseKeysWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantLicenseKeysWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -870,6 +964,8 @@ pub struct BenefitGrantLicenseKeysWebhook {
 impl BenefitGrantLicenseKeysWebhook {
     pub fn new(required: BenefitGrantLicenseKeysWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -942,6 +1038,10 @@ impl BenefitGrantLicenseKeysWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantMeterCreditWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -969,6 +1069,16 @@ pub struct BenefitGrantMeterCreditWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantMeterCreditWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1026,6 +1136,8 @@ pub struct BenefitGrantMeterCreditWebhook {
 impl BenefitGrantMeterCreditWebhook {
     pub fn new(required: BenefitGrantMeterCreditWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -1098,6 +1210,10 @@ impl BenefitGrantMeterCreditWebhook {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantSlackSharedChannelWebhookRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1125,6 +1241,16 @@ pub struct BenefitGrantSlackSharedChannelWebhookRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrantSlackSharedChannelWebhook {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1182,6 +1308,8 @@ pub struct BenefitGrantSlackSharedChannelWebhook {
 impl BenefitGrantSlackSharedChannelWebhook {
     pub fn new(required: BenefitGrantSlackSharedChannelWebhookRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -1265,6 +1393,13 @@ pub struct WebhookBenefitCreatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookBenefitCreatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("benefit.created"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1274,11 +1409,19 @@ pub struct WebhookBenefitCreatedPayload {
 impl WebhookBenefitCreatedPayload {
     pub fn new(required: WebhookBenefitCreatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1294,6 +1437,13 @@ pub struct WebhookBenefitGrantCreatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookBenefitGrantCreatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("benefit_grant.created"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1303,11 +1453,19 @@ pub struct WebhookBenefitGrantCreatedPayload {
 impl WebhookBenefitGrantCreatedPayload {
     pub fn new(required: WebhookBenefitGrantCreatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1324,6 +1482,13 @@ pub struct WebhookBenefitGrantCycledPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookBenefitGrantCycledPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("benefit_grant.cycled"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1333,11 +1498,19 @@ pub struct WebhookBenefitGrantCycledPayload {
 impl WebhookBenefitGrantCycledPayload {
     pub fn new(required: WebhookBenefitGrantCycledPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1353,6 +1526,13 @@ pub struct WebhookBenefitGrantRevokedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookBenefitGrantRevokedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("benefit_grant.revoked"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1362,11 +1542,19 @@ pub struct WebhookBenefitGrantRevokedPayload {
 impl WebhookBenefitGrantRevokedPayload {
     pub fn new(required: WebhookBenefitGrantRevokedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1382,6 +1570,13 @@ pub struct WebhookBenefitGrantUpdatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookBenefitGrantUpdatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("benefit_grant.updated"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1391,11 +1586,19 @@ pub struct WebhookBenefitGrantUpdatedPayload {
 impl WebhookBenefitGrantUpdatedPayload {
     pub fn new(required: WebhookBenefitGrantUpdatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1411,6 +1614,13 @@ pub struct WebhookBenefitUpdatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookBenefitUpdatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("benefit.updated"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1420,11 +1630,19 @@ pub struct WebhookBenefitUpdatedPayload {
 impl WebhookBenefitUpdatedPayload {
     pub fn new(required: WebhookBenefitUpdatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1440,6 +1658,13 @@ pub struct WebhookCheckoutCreatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookCheckoutCreatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("checkout.created"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1449,11 +1674,19 @@ pub struct WebhookCheckoutCreatedPayload {
 impl WebhookCheckoutCreatedPayload {
     pub fn new(required: WebhookCheckoutCreatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1473,6 +1706,13 @@ pub struct WebhookCheckoutExpiredPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookCheckoutExpiredPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("checkout.expired"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1482,11 +1722,19 @@ pub struct WebhookCheckoutExpiredPayload {
 impl WebhookCheckoutExpiredPayload {
     pub fn new(required: WebhookCheckoutExpiredPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1502,6 +1750,13 @@ pub struct WebhookCheckoutUpdatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookCheckoutUpdatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("checkout.updated"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1511,11 +1766,19 @@ pub struct WebhookCheckoutUpdatedPayload {
 impl WebhookCheckoutUpdatedPayload {
     pub fn new(required: WebhookCheckoutUpdatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1536,6 +1799,13 @@ pub struct WebhookCustomerCreatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookCustomerCreatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("customer.created"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1545,11 +1815,19 @@ pub struct WebhookCustomerCreatedPayload {
 impl WebhookCustomerCreatedPayload {
     pub fn new(required: WebhookCustomerCreatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1565,6 +1843,13 @@ pub struct WebhookCustomerDeletedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookCustomerDeletedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("customer.deleted"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1574,11 +1859,19 @@ pub struct WebhookCustomerDeletedPayload {
 impl WebhookCustomerDeletedPayload {
     pub fn new(required: WebhookCustomerDeletedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1596,6 +1889,13 @@ pub struct WebhookCustomerSeatAssignedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookCustomerSeatAssignedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("customer_seat.assigned"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1605,11 +1905,19 @@ pub struct WebhookCustomerSeatAssignedPayload {
 impl WebhookCustomerSeatAssignedPayload {
     pub fn new(required: WebhookCustomerSeatAssignedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1626,6 +1934,13 @@ pub struct WebhookCustomerSeatClaimedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookCustomerSeatClaimedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("customer_seat.claimed"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1635,11 +1950,19 @@ pub struct WebhookCustomerSeatClaimedPayload {
 impl WebhookCustomerSeatClaimedPayload {
     pub fn new(required: WebhookCustomerSeatClaimedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1656,6 +1979,13 @@ pub struct WebhookCustomerSeatRevokedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookCustomerSeatRevokedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("customer_seat.revoked"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1665,11 +1995,19 @@ pub struct WebhookCustomerSeatRevokedPayload {
 impl WebhookCustomerSeatRevokedPayload {
     pub fn new(required: WebhookCustomerSeatRevokedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1691,6 +2029,13 @@ pub struct WebhookCustomerStateChangedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookCustomerStateChangedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("customer.state_changed"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1700,11 +2045,19 @@ pub struct WebhookCustomerStateChangedPayload {
 impl WebhookCustomerStateChangedPayload {
     pub fn new(required: WebhookCustomerStateChangedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1725,6 +2078,13 @@ pub struct WebhookCustomerUpdatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookCustomerUpdatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("customer.updated"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1734,11 +2094,19 @@ pub struct WebhookCustomerUpdatedPayload {
 impl WebhookCustomerUpdatedPayload {
     pub fn new(required: WebhookCustomerUpdatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1818,6 +2186,13 @@ pub struct WebhookDiscountCreatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookDiscountCreatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("discount.created"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1827,11 +2202,19 @@ pub struct WebhookDiscountCreatedPayload {
 impl WebhookDiscountCreatedPayload {
     pub fn new(required: WebhookDiscountCreatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1847,6 +2230,13 @@ pub struct WebhookDiscountDeletedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookDiscountDeletedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("discount.deleted"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1856,11 +2246,19 @@ pub struct WebhookDiscountDeletedPayload {
 impl WebhookDiscountDeletedPayload {
     pub fn new(required: WebhookDiscountDeletedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1876,6 +2274,13 @@ pub struct WebhookDiscountUpdatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookDiscountUpdatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("discount.updated"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -1885,11 +2290,19 @@ pub struct WebhookDiscountUpdatedPayload {
 impl WebhookDiscountUpdatedPayload {
     pub fn new(required: WebhookDiscountUpdatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -1998,7 +2411,7 @@ pub struct WebhookEndpointCreateRequired {
     /// The URL where the webhook events will be sent.
     pub url: crate::v2027_01::models::webhooks::newtypes::WebhookEndpointUrl,
     /// The format of the webhook payload.
-    pub format: crate::v2027_01::models::webhooks::enums::WebhookFormat,
+    pub format: crate::v2027_01::models::webhooks::enums::WebhookEndpointCreateFormat,
     /// The events that will trigger the webhook.
     pub events: Vec<crate::v2027_01::models::webhooks::enums::WebhookEventType>,
 }
@@ -2022,7 +2435,7 @@ pub struct WebhookEndpointCreate {
     pub api_version:
         Option<crate::v2027_01::models::webhooks::enums::WebhookEndpointCreateApiVersion>,
     /// The format of the webhook payload.
-    pub format: crate::v2027_01::models::webhooks::enums::WebhookFormat,
+    pub format: crate::v2027_01::models::webhooks::enums::WebhookEndpointCreateFormat,
     /// The events that will trigger the webhook.
     pub events: Vec<crate::v2027_01::models::webhooks::enums::WebhookEventType>,
     /// The organization ID associated with the webhook endpoint. **Required
@@ -2091,7 +2504,9 @@ pub struct WebhookEndpointUpdate {
         crate::v2027_01::models::webhooks::enums::WebhookEndpointUpdateApiVersion,
     >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub format: presence_rs::Presence<crate::v2027_01::models::webhooks::enums::WebhookFormat>,
+    pub format: presence_rs::Presence<
+        crate::v2027_01::models::webhooks::enums::WebhookEndpointUpdateFormat,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub events:
         presence_rs::Presence<Vec<crate::v2027_01::models::webhooks::enums::WebhookEventType>>,
@@ -2135,7 +2550,7 @@ impl WebhookEndpointUpdate {
     #[allow(clippy::should_implement_trait)]
     pub fn format(
         mut self,
-        value: crate::v2027_01::models::webhooks::enums::WebhookFormat,
+        value: crate::v2027_01::models::webhooks::enums::WebhookEndpointUpdateFormat,
     ) -> Self {
         self.format = presence_rs::Presence::Some(value);
         self
@@ -2273,6 +2688,13 @@ pub struct WebhookMemberCreatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookMemberCreatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("member.created"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2282,11 +2704,19 @@ pub struct WebhookMemberCreatedPayload {
 impl WebhookMemberCreatedPayload {
     pub fn new(required: WebhookMemberCreatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2305,6 +2735,13 @@ pub struct WebhookMemberDeletedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookMemberDeletedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("member.deleted"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2314,11 +2751,19 @@ pub struct WebhookMemberDeletedPayload {
 impl WebhookMemberDeletedPayload {
     pub fn new(required: WebhookMemberDeletedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2337,6 +2782,13 @@ pub struct WebhookMemberUpdatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookMemberUpdatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("member.updated"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2346,11 +2798,19 @@ pub struct WebhookMemberUpdatedPayload {
 impl WebhookMemberUpdatedPayload {
     pub fn new(required: WebhookMemberUpdatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2380,6 +2840,13 @@ pub struct WebhookOrderCreatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookOrderCreatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("order.created"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2389,11 +2856,19 @@ pub struct WebhookOrderCreatedPayload {
 impl WebhookOrderCreatedPayload {
     pub fn new(required: WebhookOrderCreatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2412,6 +2887,13 @@ pub struct WebhookOrderPaidPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookOrderPaidPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("order.paid"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2421,11 +2903,19 @@ pub struct WebhookOrderPaidPayload {
 impl WebhookOrderPaidPayload {
     pub fn new(required: WebhookOrderPaidPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2441,6 +2931,13 @@ pub struct WebhookOrderRefundedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookOrderRefundedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("order.refunded"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2450,11 +2947,19 @@ pub struct WebhookOrderRefundedPayload {
 impl WebhookOrderRefundedPayload {
     pub fn new(required: WebhookOrderRefundedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2475,6 +2980,13 @@ pub struct WebhookOrderUpdatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookOrderUpdatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("order.updated"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2484,11 +2996,19 @@ pub struct WebhookOrderUpdatedPayload {
 impl WebhookOrderUpdatedPayload {
     pub fn new(required: WebhookOrderUpdatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2504,6 +3024,13 @@ pub struct WebhookOrganizationUpdatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookOrganizationUpdatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("organization.updated"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2513,11 +3040,19 @@ pub struct WebhookOrganizationUpdatedPayload {
 impl WebhookOrganizationUpdatedPayload {
     pub fn new(required: WebhookOrganizationUpdatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2533,6 +3068,13 @@ pub struct WebhookProductCreatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookProductCreatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("product.created"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2542,11 +3084,19 @@ pub struct WebhookProductCreatedPayload {
 impl WebhookProductCreatedPayload {
     pub fn new(required: WebhookProductCreatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2562,6 +3112,13 @@ pub struct WebhookProductUpdatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookProductUpdatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("product.updated"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2571,11 +3128,19 @@ pub struct WebhookProductUpdatedPayload {
 impl WebhookProductUpdatedPayload {
     pub fn new(required: WebhookProductUpdatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2591,6 +3156,13 @@ pub struct WebhookRefundCreatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookRefundCreatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("refund.created"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2600,11 +3172,19 @@ pub struct WebhookRefundCreatedPayload {
 impl WebhookRefundCreatedPayload {
     pub fn new(required: WebhookRefundCreatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2620,6 +3200,13 @@ pub struct WebhookRefundUpdatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookRefundUpdatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("refund.updated"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2629,11 +3216,19 @@ pub struct WebhookRefundUpdatedPayload {
 impl WebhookRefundUpdatedPayload {
     pub fn new(required: WebhookRefundUpdatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2651,6 +3246,13 @@ pub struct WebhookSubscriptionActivePayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookSubscriptionActivePayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("subscription.active"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2660,11 +3262,19 @@ pub struct WebhookSubscriptionActivePayload {
 impl WebhookSubscriptionActivePayload {
     pub fn new(required: WebhookSubscriptionActivePayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2681,6 +3291,13 @@ pub struct WebhookSubscriptionCanceledPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookSubscriptionCanceledPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("subscription.canceled"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2690,11 +3307,19 @@ pub struct WebhookSubscriptionCanceledPayload {
 impl WebhookSubscriptionCanceledPayload {
     pub fn new(required: WebhookSubscriptionCanceledPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2713,6 +3338,13 @@ pub struct WebhookSubscriptionCreatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookSubscriptionCreatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("subscription.created"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2722,11 +3354,19 @@ pub struct WebhookSubscriptionCreatedPayload {
 impl WebhookSubscriptionCreatedPayload {
     pub fn new(required: WebhookSubscriptionCreatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2750,6 +3390,13 @@ pub struct WebhookSubscriptionCycledPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookSubscriptionCycledPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("subscription.cycled"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2759,11 +3406,19 @@ pub struct WebhookSubscriptionCycledPayload {
 impl WebhookSubscriptionCycledPayload {
     pub fn new(required: WebhookSubscriptionCycledPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2788,6 +3443,13 @@ pub struct WebhookSubscriptionMigratedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookSubscriptionMigratedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("subscription.migrated"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2801,6 +3463,7 @@ pub struct WebhookSubscriptionMigratedPayload {
 impl WebhookSubscriptionMigratedPayload {
     pub fn new(required: WebhookSubscriptionMigratedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
@@ -2808,6 +3471,13 @@ impl WebhookSubscriptionMigratedPayload {
             provider: required.provider,
             provider_subscription_id: required.provider_subscription_id,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2831,6 +3501,13 @@ pub struct WebhookSubscriptionPastDuePayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookSubscriptionPastDuePayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("subscription.past_due"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2840,11 +3517,19 @@ pub struct WebhookSubscriptionPastDuePayload {
 impl WebhookSubscriptionPastDuePayload {
     pub fn new(required: WebhookSubscriptionPastDuePayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2865,6 +3550,13 @@ pub struct WebhookSubscriptionPausedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookSubscriptionPausedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("subscription.paused"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2874,11 +3566,19 @@ pub struct WebhookSubscriptionPausedPayload {
 impl WebhookSubscriptionPausedPayload {
     pub fn new(required: WebhookSubscriptionPausedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2896,6 +3596,13 @@ pub struct WebhookSubscriptionResumedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookSubscriptionResumedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("subscription.resumed"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2905,11 +3612,19 @@ pub struct WebhookSubscriptionResumedPayload {
 impl WebhookSubscriptionResumedPayload {
     pub fn new(required: WebhookSubscriptionResumedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2930,6 +3645,13 @@ pub struct WebhookSubscriptionRevokedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookSubscriptionRevokedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("subscription.revoked"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2939,11 +3661,19 @@ pub struct WebhookSubscriptionRevokedPayload {
 impl WebhookSubscriptionRevokedPayload {
     pub fn new(required: WebhookSubscriptionRevokedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -2963,6 +3693,13 @@ pub struct WebhookSubscriptionUncanceledPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookSubscriptionUncanceledPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("subscription.uncanceled"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -2972,11 +3709,19 @@ pub struct WebhookSubscriptionUncanceledPayload {
 impl WebhookSubscriptionUncanceledPayload {
     pub fn new(required: WebhookSubscriptionUncanceledPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -3000,6 +3745,13 @@ pub struct WebhookSubscriptionUpdatedPayloadRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct WebhookSubscriptionUpdatedPayload {
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub event_id: Option<crate::v2027_01::models::common::ids::EventId>,
     pub r#type: monostate::MustBe!("subscription.updated"),
     pub timestamp: jiff::Timestamp,
     pub api_version: String,
@@ -3009,10 +3761,18 @@ pub struct WebhookSubscriptionUpdatedPayload {
 impl WebhookSubscriptionUpdatedPayload {
     pub fn new(required: WebhookSubscriptionUpdatedPayloadRequired) -> Self {
         Self {
+            event_id: None,
             r#type: Default::default(),
             timestamp: required.timestamp,
             api_version: required.api_version,
             data: required.data,
         }
+    }
+
+    /// The ID of the event. Use it to discard duplicate deliveries.
+    #[allow(clippy::should_implement_trait)]
+    pub fn event_id(mut self, value: crate::v2027_01::models::common::ids::EventId) -> Self {
+        self.event_id = Some(value);
+        self
     }
 }

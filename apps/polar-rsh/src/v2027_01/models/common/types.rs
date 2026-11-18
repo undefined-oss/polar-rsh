@@ -754,8 +754,7 @@ pub struct BenefitFeatureFlagRequired {
     /// The ID of the organization owning the benefit.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource. It must start with a
-    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
+    /// within the organization for this type of resource.
     pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
@@ -797,8 +796,7 @@ pub struct BenefitFeatureFlag {
     /// The ID of the organization owning the benefit.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource. It must start with a
-    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
+    /// within the organization for this type of resource.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
     )]
@@ -931,8 +929,7 @@ pub struct BenefitGitHubRepositoryRequired {
     /// The ID of the organization owning the benefit.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource. It must start with a
-    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
+    /// within the organization for this type of resource.
     pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
@@ -973,8 +970,7 @@ pub struct BenefitGitHubRepository {
     /// The ID of the organization owning the benefit.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource. It must start with a
-    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
+    /// within the organization for this type of resource.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
     )]
@@ -1111,6 +1107,10 @@ impl BenefitGitHubRepositoryPublic {
 }
 #[derive(Debug, Clone)]
 pub struct BenefitGrantRequired {
+    /// When the manual grant was requested, if applicable.
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1137,6 +1137,16 @@ pub struct BenefitGrantRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct BenefitGrant {
+    /// When the manual grant was requested, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_granted_at: Option<jiff::Timestamp>,
+    /// When this grant was manually revoked, if applicable.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub manually_revoked_at: Option<jiff::Timestamp>,
     /// Creation timestamp of the object.
     pub created_at: jiff::Timestamp,
     /// Last modification timestamp of the object.
@@ -1189,6 +1199,8 @@ pub struct BenefitGrant {
 impl BenefitGrant {
     pub fn new(required: BenefitGrantRequired) -> Self {
         Self {
+            manually_granted_at: required.manually_granted_at,
+            manually_revoked_at: required.manually_revoked_at,
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
@@ -1835,8 +1847,7 @@ pub struct BenefitMeterCreditRequired {
     /// The ID of the organization owning the benefit.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource. It must start with a
-    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
+    /// within the organization for this type of resource.
     pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// The visibility of the benefit in the customer portal.
@@ -1877,8 +1888,7 @@ pub struct BenefitMeterCredit {
     /// The ID of the organization owning the benefit.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
     /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource. It must start with a
-    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
+    /// within the organization for this type of resource.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
     )]
@@ -2312,6 +2322,11 @@ pub struct CustomFieldCheckboxRequired {
     pub name: String,
     /// The ID of the organization owning the custom field.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the custom field. None
+    /// for custom fields not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the custom field.
+    pub is_current: bool,
     pub properties: crate::v2027_01::models::common::types::CustomFieldCheckboxProperties,
 }
 /// Schema for a custom field of type checkbox.
@@ -2337,6 +2352,14 @@ pub struct CustomFieldCheckbox {
     pub name: String,
     /// The ID of the organization owning the custom field.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the custom field. None
+    /// for custom fields not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the custom field.
+    pub is_current: bool,
     pub properties: crate::v2027_01::models::common::types::CustomFieldCheckboxProperties,
 }
 #[allow(clippy::type_complexity)]
@@ -2351,6 +2374,8 @@ impl CustomFieldCheckbox {
             slug: required.slug,
             name: required.name,
             organization_id: required.organization_id,
+            catalog_id: required.catalog_id,
+            is_current: required.is_current,
             properties: required.properties,
         }
     }
@@ -2433,6 +2458,11 @@ pub struct CustomFieldDateRequired {
     pub name: String,
     /// The ID of the organization owning the custom field.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the custom field. None
+    /// for custom fields not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the custom field.
+    pub is_current: bool,
     pub properties: crate::v2027_01::models::common::types::CustomFieldDateProperties,
 }
 /// Schema for a custom field of type date.
@@ -2458,6 +2488,14 @@ pub struct CustomFieldDate {
     pub name: String,
     /// The ID of the organization owning the custom field.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the custom field. None
+    /// for custom fields not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the custom field.
+    pub is_current: bool,
     pub properties: crate::v2027_01::models::common::types::CustomFieldDateProperties,
 }
 #[allow(clippy::type_complexity)]
@@ -2472,6 +2510,8 @@ impl CustomFieldDate {
             slug: required.slug,
             name: required.name,
             organization_id: required.organization_id,
+            catalog_id: required.catalog_id,
+            is_current: required.is_current,
             properties: required.properties,
         }
     }
@@ -2582,6 +2622,11 @@ pub struct CustomFieldNumberRequired {
     pub name: String,
     /// The ID of the organization owning the custom field.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the custom field. None
+    /// for custom fields not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the custom field.
+    pub is_current: bool,
     pub properties: crate::v2027_01::models::common::types::CustomFieldNumberProperties,
 }
 /// Schema for a custom field of type number.
@@ -2607,6 +2652,14 @@ pub struct CustomFieldNumber {
     pub name: String,
     /// The ID of the organization owning the custom field.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the custom field. None
+    /// for custom fields not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the custom field.
+    pub is_current: bool,
     pub properties: crate::v2027_01::models::common::types::CustomFieldNumberProperties,
 }
 #[allow(clippy::type_complexity)]
@@ -2621,6 +2674,8 @@ impl CustomFieldNumber {
             slug: required.slug,
             name: required.name,
             organization_id: required.organization_id,
+            catalog_id: required.catalog_id,
+            is_current: required.is_current,
             properties: required.properties,
         }
     }
@@ -2732,6 +2787,11 @@ pub struct CustomFieldSelectRequired {
     pub name: String,
     /// The ID of the organization owning the custom field.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the custom field. None
+    /// for custom fields not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the custom field.
+    pub is_current: bool,
     pub properties: crate::v2027_01::models::common::types::CustomFieldSelectProperties,
 }
 /// Schema for a custom field of type select.
@@ -2757,6 +2817,14 @@ pub struct CustomFieldSelect {
     pub name: String,
     /// The ID of the organization owning the custom field.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the custom field. None
+    /// for custom fields not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the custom field.
+    pub is_current: bool,
     pub properties: crate::v2027_01::models::common::types::CustomFieldSelectProperties,
 }
 #[allow(clippy::type_complexity)]
@@ -2771,6 +2839,8 @@ impl CustomFieldSelect {
             slug: required.slug,
             name: required.name,
             organization_id: required.organization_id,
+            catalog_id: required.catalog_id,
+            is_current: required.is_current,
             properties: required.properties,
         }
     }
@@ -2879,6 +2949,11 @@ pub struct CustomFieldTextRequired {
     pub name: String,
     /// The ID of the organization owning the custom field.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the custom field. None
+    /// for custom fields not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the custom field.
+    pub is_current: bool,
     pub properties: crate::v2027_01::models::common::types::CustomFieldTextProperties,
 }
 /// Schema for a custom field of type text.
@@ -2904,6 +2979,14 @@ pub struct CustomFieldText {
     pub name: String,
     /// The ID of the organization owning the custom field.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the custom field. None
+    /// for custom fields not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the custom field.
+    pub is_current: bool,
     pub properties: crate::v2027_01::models::common::types::CustomFieldTextProperties,
 }
 #[allow(clippy::type_complexity)]
@@ -2918,6 +3001,8 @@ impl CustomFieldText {
             slug: required.slug,
             name: required.name,
             organization_id: required.organization_id,
+            catalog_id: required.catalog_id,
+            is_current: required.is_current,
             properties: required.properties,
         }
     }
@@ -3197,7 +3282,8 @@ pub struct CustomerOrganizationRequired {
     pub avatar_url: Option<String>,
     /// Proration behavior applied when customer updates their subscription from
     /// the portal.
-    pub proration_behavior: crate::v2027_01::models::common::enums::SubscriptionProrationBehavior,
+    pub proration_behavior:
+        crate::v2027_01::models::common::unions::CustomerOrganizationProrationBehaviorUnion,
     /// Whether customers can update their subscriptions from the customer
     /// portal.
     pub allow_customer_updates: bool,
@@ -3230,7 +3316,8 @@ pub struct CustomerOrganization {
     pub avatar_url: Option<String>,
     /// Proration behavior applied when customer updates their subscription from
     /// the portal.
-    pub proration_behavior: crate::v2027_01::models::common::enums::SubscriptionProrationBehavior,
+    pub proration_behavior:
+        crate::v2027_01::models::common::unions::CustomerOrganizationProrationBehaviorUnion,
     /// Whether customers can update their subscriptions from the customer
     /// portal.
     pub allow_customer_updates: bool,
@@ -4933,6 +5020,11 @@ pub struct MeterRequired {
     pub aggregation: crate::v2027_01::models::common::unions::MeterAggregationUnion,
     /// The ID of the organization owning the meter.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// ID of the catalog that introduced this version of the meter. None for
+    /// meters not managed by declarative config.
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the meter.
+    pub is_current: bool,
 }
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 #[allow(clippy::type_complexity)]
@@ -4973,6 +5065,14 @@ pub struct Meter {
     /// Whether the meter is archived and the time it was archived.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub archived_at: presence_rs::Presence<jiff::Timestamp>,
+    /// ID of the catalog that introduced this version of the meter. None for
+    /// meters not managed by declarative config.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
+    /// Whether this is the current version of the meter.
+    pub is_current: bool,
 }
 #[allow(clippy::type_complexity)]
 impl Meter {
@@ -4991,6 +5091,8 @@ impl Meter {
             aggregation: required.aggregation,
             organization_id: required.organization_id,
             archived_at: presence_rs::Presence::Absent,
+            catalog_id: required.catalog_id,
+            is_current: required.is_current,
         }
     }
 
@@ -5473,6 +5575,9 @@ pub struct ProductRequired {
     pub is_archived: bool,
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// Whether customers must provide a payment method to start a trial. If
+    /// `false`, customers can start a trial without entering payment details.
+    pub trial_payment_setup_required: bool,
     /// ID of the catalog that introduced this version of the product. None for
     /// products not managed by declarative config.
     pub catalog_id: Option<crate::v2027_01::models::common::ids::CatalogId>,
@@ -5557,6 +5662,9 @@ pub struct Product {
     pub is_archived: bool,
     /// The ID of the organization owning the product.
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+    /// Whether customers must provide a payment method to start a trial. If
+    /// `false`, customers can start a trial without entering payment details.
+    pub trial_payment_setup_required: bool,
     /// ID of the catalog that introduced this version of the product. None for
     /// products not managed by declarative config.
     #[serde(
@@ -5603,6 +5711,7 @@ impl Product {
             is_recurring: required.is_recurring,
             is_archived: required.is_archived,
             organization_id: required.organization_id,
+            trial_payment_setup_required: required.trial_payment_setup_required,
             catalog_id: required.catalog_id,
             is_current: required.is_current,
             external_id: required.external_id,
@@ -7755,6 +7864,25 @@ pub struct TiersInput {
 impl TiersInput {
     pub fn new(required: TiersInputRequired) -> Self {
         Self { r#type: required.r#type, tiers: required.tiers }
+    }
+}
+#[derive(Debug, Clone)]
+pub struct TrialAlreadyRedeemedRequired {
+    pub detail: String,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(thiserror::Error)]
+#[error("{self:?}")]
+pub struct TrialAlreadyRedeemed {
+    pub error: monostate::MustBe!("TrialAlreadyRedeemed"),
+    pub detail: String,
+}
+#[allow(clippy::type_complexity)]
+impl TrialAlreadyRedeemed {
+    pub fn new(required: TrialAlreadyRedeemedRequired) -> Self {
+        Self { error: Default::default(), detail: required.detail }
     }
 }
 #[derive(Debug, Clone)]

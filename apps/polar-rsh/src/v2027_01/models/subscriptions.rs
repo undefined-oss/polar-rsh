@@ -1,6 +1,5 @@
 pub mod create;
 pub mod enums;
-pub mod export;
 pub mod get;
 pub mod list;
 pub mod newtypes;
@@ -9,8 +8,7 @@ pub mod types;
 pub mod unions;
 pub mod update;
 pub use self::{
-    create::*, enums::*, export::*, get::*, list::*, newtypes::*, revoke::*, types::*, unions::*,
-    update::*,
+    create::*, enums::*, get::*, list::*, newtypes::*, revoke::*, types::*, unions::*, update::*,
 };
 pub struct Subscriptions<'a, ClientService> {
     client: &'a crate::v2027_01::client::PolarClient<ClientService>,
@@ -22,8 +20,10 @@ impl<'a, ClientService> Subscriptions<'a, ClientService> {
 
     /// Create a subscription programmatically.
     ///
-    /// This endpoint only allows to create subscription on free products.
-    /// For paid products, use the checkout flow.
+    /// Supports free products and paid products with a trial that does not
+    /// require upfront payment setup. Paid subscriptions start with the
+    /// product's configured trial period. For other paid products, use the
+    /// checkout flow.
     ///
     /// No initial order will be created and no confirmation email will be sent.
     ///
@@ -36,19 +36,6 @@ impl<'a, ClientService> Subscriptions<'a, ClientService> {
             client: self.client,
             options: crate::v2027_01::client::RequestOptions::default(),
             payload,
-        }
-    }
-
-    /// Export subscriptions as a CSV file.
-    ///
-    /// **Scopes**: `subscriptions:read` `subscriptions:write`
-    pub fn export(
-        &self,
-    ) -> crate::v2027_01::models::subscriptions::SubscriptionsExport<'a, ClientService> {
-        crate::v2027_01::models::subscriptions::SubscriptionsExport {
-            client: self.client,
-            options: crate::v2027_01::client::RequestOptions::default(),
-            params: None,
         }
     }
 

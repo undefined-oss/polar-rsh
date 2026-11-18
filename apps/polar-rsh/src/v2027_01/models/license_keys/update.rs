@@ -24,6 +24,12 @@ pub enum LicenseKeysUpdateError<TransportError> {
     /// Not authorized to manage license key.
     #[error("{message}: {0}", message = "Not authorized to manage license key.")]
     Unauthorized(#[source] crate::v2027_01::models::license_keys::types::Unauthorized),
+    /// Cannot reactivate a license key for a manually revoked benefit grant.
+    #[error(
+        "{message}: {0}",
+        message = "Cannot reactivate a license key for a manually revoked benefit grant."
+    )]
+    NotPermitted(#[source] crate::v2027_01::models::common::types::NotPermitted),
     /// License key not found.
     #[error("{message}: {0}", message = "License key not found.")]
     ResourceNotFound(#[source] crate::v2027_01::models::common::types::ResourceNotFound),
@@ -34,13 +40,14 @@ pub enum LicenseKeysUpdateError<TransportError> {
 pub(super) type LicenseKeysUpdateErrors = (
     crate::v2027_01::error::RequestFailure,
     crate::v2027_01::models::license_keys::types::Unauthorized,
+    crate::v2027_01::models::common::types::NotPermitted,
     crate::v2027_01::models::common::types::ResourceNotFound,
     crate::v2027_01::models::common::types::HttpValidationError,
 );
 impl<T> From<eros::ErrorUnion<LicenseKeysUpdateErrors>> for LicenseKeysUpdateError<T> {
     fn from(error: eros::ErrorUnion<LicenseKeysUpdateErrors>) -> Self {
         match error.into_enum() {
-            eros::E4::A(error) => match error {
+            eros::E5::A(error) => match error {
                 crate::v2027_01::error::RequestFailure::BuildRequest(error) => {
                     Self::BuildRequest(error)
                 }
@@ -56,9 +63,10 @@ impl<T> From<eros::ErrorUnion<LicenseKeysUpdateErrors>> for LicenseKeysUpdateErr
                 }
                 crate::v2027_01::error::RequestFailure::Timeout(error) => Self::Timeout(error),
             },
-            eros::E4::B(error) => Self::Unauthorized(error),
-            eros::E4::C(error) => Self::ResourceNotFound(error),
-            eros::E4::D(error) => Self::HttpValidationError(error),
+            eros::E5::B(error) => Self::Unauthorized(error),
+            eros::E5::C(error) => Self::NotPermitted(error),
+            eros::E5::D(error) => Self::ResourceNotFound(error),
+            eros::E5::E(error) => Self::HttpValidationError(error),
         }
     }
 }
@@ -123,6 +131,15 @@ where
                 http::StatusCode::UNAUTHORIZED => {
                     let error = serde_json::from_slice::<
                         crate::v2027_01::models::license_keys::types::Unauthorized,
+                    >(&body_slice)
+                    .map_err(|error| {
+                        eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
+                    })?;
+                    Err(eros::ErrorUnion::new(error))
+                }
+                http::StatusCode::FORBIDDEN => {
+                    let error = serde_json::from_slice::<
+                        crate::v2027_01::models::common::types::NotPermitted,
                     >(&body_slice)
                     .map_err(|error| {
                         eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))

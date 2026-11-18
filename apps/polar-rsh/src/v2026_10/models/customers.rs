@@ -2,7 +2,6 @@ pub mod create;
 pub mod delete;
 pub mod delete_external;
 pub mod enums;
-pub mod export;
 pub mod get;
 pub mod get_external;
 pub mod get_state;
@@ -17,10 +16,9 @@ pub mod unions;
 pub mod update;
 pub mod update_external;
 pub use self::{
-    create::*, delete::*, delete_external::*, enums::*, export::*, get::*, get_external::*,
-    get_state::*, get_state_external::*, list::*, list_payment_methods::*,
-    list_payment_methods_external::*, members::CustomersMembers, newtypes::*, types::*, unions::*,
-    update::*, update_external::*,
+    create::*, delete::*, delete_external::*, enums::*, get::*, get_external::*, get_state::*,
+    get_state_external::*, list::*, list_payment_methods::*, list_payment_methods_external::*,
+    members::CustomersMembers, newtypes::*, types::*, unions::*, update::*, update_external::*,
 };
 pub struct Customers<'a, ClientService> {
     client: &'a crate::v2026_10::client::PolarClient<ClientService>,
@@ -93,17 +91,6 @@ impl<'a, ClientService> Customers<'a, ClientService> {
             options: crate::v2026_10::client::RequestOptions::default(),
             params: None,
             external_id,
-        }
-    }
-
-    /// Export customers as a CSV file.
-    ///
-    /// **Scopes**: `customers:read` `customers:write`
-    pub fn export(&self) -> crate::v2026_10::models::customers::CustomersExport<'a, ClientService> {
-        crate::v2026_10::models::customers::CustomersExport {
-            client: self.client,
-            options: crate::v2026_10::client::RequestOptions::default(),
-            params: None,
         }
     }
 

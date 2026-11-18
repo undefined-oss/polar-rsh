@@ -155,6 +155,16 @@ pub enum SubscriptionUpdateBaseMetadataAdditionalPropertiesUnion {
     Number(f64),
     Boolean(bool),
 }
+/// Determine how to handle the proration billing. If not provided, will use the
+/// default organization setting.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
+pub enum SubscriptionUpdateBaseProrationBehaviorUnion {
+    SubscriptionProrationBehavior(
+        crate::v2027_01::models::common::enums::SubscriptionProrationBehavior,
+    ),
+    Auto(monostate::MustBe!("auto")),
+}
 /// Set or extend the trial period of the subscription. If set to `now`, the
 /// trial will end immediately and the first billing cycle will be charged
 /// synchronously. The subscription remains trialing if the payment fails.
@@ -163,6 +173,26 @@ pub enum SubscriptionUpdateBaseMetadataAdditionalPropertiesUnion {
 pub enum SubscriptionUpdateBaseTrialEndUnion {
     String(jiff::Timestamp),
     Now(monostate::MustBe!("now")),
+}
+/// Determine how to handle the proration billing. If not provided, will use the
+/// default organization setting.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
+pub enum SubscriptionUpdateSeatsProrationBehaviorUnion {
+    SubscriptionProrationBehavior(
+        crate::v2027_01::models::common::enums::SubscriptionProrationBehavior,
+    ),
+    Auto(monostate::MustBe!("auto")),
+}
+/// Determine how to handle the proration billing. If not provided, will use the
+/// default organization setting.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
+pub enum SubscriptionUpdateUnitsProrationBehaviorUnion {
+    SubscriptionProrationBehavior(
+        crate::v2027_01::models::common::enums::SubscriptionProrationBehavior,
+    ),
+    Auto(monostate::MustBe!("auto")),
 }
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(untagged)]

@@ -387,6 +387,153 @@ pub enum SystemEvent {
         source: monostate::MustBe!("system"),
         metadata: crate::v2027_01::models::events::types::BenefitGrantMetadata,
     },
+    #[serde(rename = "benefit.manually_granted")]
+    BenefitManuallyGranted {
+        /// The ID of the object.
+        id: crate::v2027_01::models::common::ids::EventId,
+        /// The timestamp of the event.
+        timestamp: jiff::Timestamp,
+        /// The ID of the organization owning the event.
+        organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+        /// ID of the customer in your Polar organization associated with the
+        /// event.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        customer_id: Option<crate::v2027_01::models::common::ids::CustomerId>,
+        /// The customer associated with the event.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        customer: Option<crate::v2027_01::models::common::unions::Customer>,
+        /// ID of the customer in your system associated with the event.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        external_customer_id: Option<String>,
+        /// ID of the member within the customer's organization who performed
+        /// the action inside B2B.
+        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+        member_id: presence_rs::Presence<crate::v2027_01::models::common::ids::MemberId>,
+        /// ID of the member in your system within the customer's organization
+        /// who performed the action inside B2B.
+        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+        external_member_id: presence_rs::Presence<String>,
+        /// Number of direct child events linked to this event.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        child_count: Option<i64>,
+        /// The ID of the parent event.
+        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+        parent_id: presence_rs::Presence<crate::v2027_01::models::common::ids::EventId>,
+        /// Human readable label of the event type.
+        label: String,
+        /// The source of the event. `system` events are created by Polar.
+        /// `user` events are the one you create through our ingestion API.
+        source: monostate::MustBe!("system"),
+        metadata: crate::v2027_01::models::events::types::BenefitGrantMetadata,
+    },
+    #[serde(rename = "benefit.manually_revoked")]
+    BenefitManuallyRevoked {
+        /// The ID of the object.
+        id: crate::v2027_01::models::common::ids::EventId,
+        /// The timestamp of the event.
+        timestamp: jiff::Timestamp,
+        /// The ID of the organization owning the event.
+        organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+        /// ID of the customer in your Polar organization associated with the
+        /// event.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        customer_id: Option<crate::v2027_01::models::common::ids::CustomerId>,
+        /// The customer associated with the event.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        customer: Option<crate::v2027_01::models::common::unions::Customer>,
+        /// ID of the customer in your system associated with the event.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        external_customer_id: Option<String>,
+        /// ID of the member within the customer's organization who performed
+        /// the action inside B2B.
+        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+        member_id: presence_rs::Presence<crate::v2027_01::models::common::ids::MemberId>,
+        /// ID of the member in your system within the customer's organization
+        /// who performed the action inside B2B.
+        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+        external_member_id: presence_rs::Presence<String>,
+        /// Number of direct child events linked to this event.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        child_count: Option<i64>,
+        /// The ID of the parent event.
+        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+        parent_id: presence_rs::Presence<crate::v2027_01::models::common::ids::EventId>,
+        /// Human readable label of the event type.
+        label: String,
+        /// The source of the event. `system` events are created by Polar.
+        /// `user` events are the one you create through our ingestion API.
+        source: monostate::MustBe!("system"),
+        metadata: crate::v2027_01::models::events::types::BenefitGrantMetadata,
+    },
+    #[serde(rename = "benefit.unrevoked")]
+    BenefitUnrevoked {
+        /// The ID of the object.
+        id: crate::v2027_01::models::common::ids::EventId,
+        /// The timestamp of the event.
+        timestamp: jiff::Timestamp,
+        /// The ID of the organization owning the event.
+        organization_id: crate::v2027_01::models::common::ids::OrganizationId,
+        /// ID of the customer in your Polar organization associated with the
+        /// event.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        customer_id: Option<crate::v2027_01::models::common::ids::CustomerId>,
+        /// The customer associated with the event.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        customer: Option<crate::v2027_01::models::common::unions::Customer>,
+        /// ID of the customer in your system associated with the event.
+        #[serde(
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+        )]
+        external_customer_id: Option<String>,
+        /// ID of the member within the customer's organization who performed
+        /// the action inside B2B.
+        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+        member_id: presence_rs::Presence<crate::v2027_01::models::common::ids::MemberId>,
+        /// ID of the member in your system within the customer's organization
+        /// who performed the action inside B2B.
+        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+        external_member_id: presence_rs::Presence<String>,
+        /// Number of direct child events linked to this event.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        child_count: Option<i64>,
+        /// The ID of the parent event.
+        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+        parent_id: presence_rs::Presence<crate::v2027_01::models::common::ids::EventId>,
+        /// Human readable label of the event type.
+        label: String,
+        /// The source of the event. `system` events are created by Polar.
+        /// `user` events are the one you create through our ingestion API.
+        source: monostate::MustBe!("system"),
+        metadata: crate::v2027_01::models::events::types::BenefitGrantMetadata,
+    },
     #[serde(rename = "subscription.created")]
     SubscriptionCreated {
         /// The ID of the object.

@@ -1969,7 +1969,7 @@ pub struct WebhookEndpointCreateRequired {
     /// The URL where the webhook events will be sent.
     pub url: crate::v2026_10::models::webhooks::newtypes::WebhookEndpointUrl,
     /// The format of the webhook payload.
-    pub format: crate::v2026_10::models::webhooks::enums::WebhookFormat,
+    pub format: crate::v2026_10::models::webhooks::enums::WebhookEndpointCreateFormat,
     /// The events that will trigger the webhook.
     pub events: Vec<crate::v2026_10::models::webhooks::enums::WebhookEventType>,
 }
@@ -1993,7 +1993,7 @@ pub struct WebhookEndpointCreate {
     pub api_version:
         Option<crate::v2026_10::models::webhooks::enums::WebhookEndpointCreateApiVersion>,
     /// The format of the webhook payload.
-    pub format: crate::v2026_10::models::webhooks::enums::WebhookFormat,
+    pub format: crate::v2026_10::models::webhooks::enums::WebhookEndpointCreateFormat,
     /// The events that will trigger the webhook.
     pub events: Vec<crate::v2026_10::models::webhooks::enums::WebhookEventType>,
     /// The organization ID associated with the webhook endpoint. **Required
@@ -2062,7 +2062,9 @@ pub struct WebhookEndpointUpdate {
         crate::v2026_10::models::webhooks::enums::WebhookEndpointUpdateApiVersion,
     >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub format: presence_rs::Presence<crate::v2026_10::models::webhooks::enums::WebhookFormat>,
+    pub format: presence_rs::Presence<
+        crate::v2026_10::models::webhooks::enums::WebhookEndpointUpdateFormat,
+    >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub events:
         presence_rs::Presence<Vec<crate::v2026_10::models::webhooks::enums::WebhookEventType>>,
@@ -2106,7 +2108,7 @@ impl WebhookEndpointUpdate {
     #[allow(clippy::should_implement_trait)]
     pub fn format(
         mut self,
-        value: crate::v2026_10::models::webhooks::enums::WebhookFormat,
+        value: crate::v2026_10::models::webhooks::enums::WebhookEndpointUpdateFormat,
     ) -> Self {
         self.format = presence_rs::Presence::Some(value);
         self

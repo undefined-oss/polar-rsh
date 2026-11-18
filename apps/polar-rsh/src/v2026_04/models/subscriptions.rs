@@ -1,6 +1,5 @@
 pub mod create;
 pub mod enums;
-pub mod export;
 pub mod get;
 pub mod list;
 pub mod newtypes;
@@ -9,8 +8,7 @@ pub mod types;
 pub mod unions;
 pub mod update;
 pub use self::{
-    create::*, enums::*, export::*, get::*, list::*, newtypes::*, revoke::*, types::*, unions::*,
-    update::*,
+    create::*, enums::*, get::*, list::*, newtypes::*, revoke::*, types::*, unions::*, update::*,
 };
 pub struct Subscriptions<'a, ClientService> {
     client: &'a crate::v2026_04::client::PolarClient<ClientService>,
@@ -36,19 +34,6 @@ impl<'a, ClientService> Subscriptions<'a, ClientService> {
             client: self.client,
             options: crate::v2026_04::client::RequestOptions::default(),
             payload,
-        }
-    }
-
-    /// Export subscriptions as a CSV file.
-    ///
-    /// **Scopes**: `subscriptions:read` `subscriptions:write`
-    pub fn export(
-        &self,
-    ) -> crate::v2026_04::models::subscriptions::SubscriptionsExport<'a, ClientService> {
-        crate::v2026_04::models::subscriptions::SubscriptionsExport {
-            client: self.client,
-            options: crate::v2026_04::client::RequestOptions::default(),
-            params: None,
         }
     }
 

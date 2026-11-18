@@ -1198,7 +1198,8 @@ pub struct CheckoutOrganizationRequired {
     pub avatar_url: Option<String>,
     /// Proration behavior applied when customer updates their subscription from
     /// the portal.
-    pub proration_behavior: crate::v2027_01::models::common::enums::SubscriptionProrationBehavior,
+    pub proration_behavior:
+        crate::v2027_01::models::checkouts::unions::CheckoutOrganizationProrationBehaviorUnion,
     /// Whether customers can update their subscriptions from the customer
     /// portal.
     pub allow_customer_updates: bool,
@@ -1228,7 +1229,8 @@ pub struct CheckoutOrganization {
     pub avatar_url: Option<String>,
     /// Proration behavior applied when customer updates their subscription from
     /// the portal.
-    pub proration_behavior: crate::v2027_01::models::common::enums::SubscriptionProrationBehavior,
+    pub proration_behavior:
+        crate::v2027_01::models::checkouts::unions::CheckoutOrganizationProrationBehaviorUnion,
     /// Whether customers can update their subscriptions from the customer
     /// portal.
     pub allow_customer_updates: bool,
@@ -4229,25 +4231,6 @@ pub struct SharedPaymentTokenError {
 #[allow(clippy::type_complexity)]
 impl SharedPaymentTokenError {
     pub fn new(required: SharedPaymentTokenErrorRequired) -> Self {
-        Self { error: Default::default(), detail: required.detail }
-    }
-}
-#[derive(Debug, Clone)]
-pub struct TrialAlreadyRedeemedRequired {
-    pub detail: String,
-}
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-#[derive(thiserror::Error)]
-#[error("{self:?}")]
-pub struct TrialAlreadyRedeemed {
-    pub error: monostate::MustBe!("TrialAlreadyRedeemed"),
-    pub detail: String,
-}
-#[allow(clippy::type_complexity)]
-impl TrialAlreadyRedeemed {
-    pub fn new(required: TrialAlreadyRedeemedRequired) -> Self {
         Self { error: Default::default(), detail: required.detail }
     }
 }

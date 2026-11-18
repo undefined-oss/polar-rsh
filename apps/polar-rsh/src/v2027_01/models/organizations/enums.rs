@@ -160,7 +160,7 @@ impl AsRef<str> for OrganizationStatus {
     }
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
-pub enum OrganizationSubscriptionSettingsProrationBehavior {
+pub enum OrganizationSubscriptionSettingsProrationBehaviorAnyOf0 {
     #[serde(rename = "invoice")]
     Invoice,
     #[serde(rename = "prorate")]
@@ -168,7 +168,7 @@ pub enum OrganizationSubscriptionSettingsProrationBehavior {
     #[serde(rename = "next_period")]
     NextPeriod,
 }
-impl OrganizationSubscriptionSettingsProrationBehavior {
+impl OrganizationSubscriptionSettingsProrationBehaviorAnyOf0 {
     pub fn as_str(&self) -> &'static str {
         match self {
             Self::Invoice => "invoice",
@@ -177,12 +177,12 @@ impl OrganizationSubscriptionSettingsProrationBehavior {
         }
     }
 }
-impl ::std::fmt::Display for OrganizationSubscriptionSettingsProrationBehavior {
+impl ::std::fmt::Display for OrganizationSubscriptionSettingsProrationBehaviorAnyOf0 {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         f.write_str(self.as_str())
     }
 }
-impl AsRef<str> for OrganizationSubscriptionSettingsProrationBehavior {
+impl AsRef<str> for OrganizationSubscriptionSettingsProrationBehaviorAnyOf0 {
     fn as_ref(&self) -> &str {
         self.as_str()
     }

@@ -1,4 +1,4 @@
-/// Display name for the dashboard.
+/// The ID of the customer in your system.
 #[derive(
     Debug,
     Clone,
@@ -12,17 +12,17 @@
     derive_more::Deref,
 )]
 #[serde(transparent)]
-pub struct MetricDashboardCreateName(String);
+pub struct BenefitGrantCreateExternalExternalCustomerId(String);
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
-pub enum MetricDashboardCreateNameValidationError {
+pub enum BenefitGrantCreateExternalExternalCustomerIdValidationError {
     #[error("must contain at least 1 characters")]
     TooShort,
 }
-impl MetricDashboardCreateName {
+impl BenefitGrantCreateExternalExternalCustomerId {
     /// Validate a value.
     pub fn try_new(
         value: impl Into<String>,
-    ) -> Result<Self, MetricDashboardCreateNameValidationError> {
+    ) -> Result<Self, BenefitGrantCreateExternalExternalCustomerIdValidationError> {
         Self::try_from(value.into())
     }
 
@@ -31,23 +31,23 @@ impl MetricDashboardCreateName {
         self.0
     }
 }
-impl TryFrom<String> for MetricDashboardCreateName {
-    type Error = MetricDashboardCreateNameValidationError;
+impl TryFrom<String> for BenefitGrantCreateExternalExternalCustomerId {
+    type Error = BenefitGrantCreateExternalExternalCustomerIdValidationError;
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
         let length = value.chars().count() as u64;
         if length < 1u64 {
-            return Err(MetricDashboardCreateNameValidationError::TooShort);
+            return Err(BenefitGrantCreateExternalExternalCustomerIdValidationError::TooShort);
         }
         Ok(Self(value))
     }
 }
-impl From<MetricDashboardCreateName> for String {
-    fn from(value: MetricDashboardCreateName) -> Self {
+impl From<BenefitGrantCreateExternalExternalCustomerId> for String {
+    fn from(value: BenefitGrantCreateExternalExternalCustomerId) -> Self {
         value.0
     }
 }
-impl<'de> serde::Deserialize<'de> for MetricDashboardCreateName {
+impl<'de> serde::Deserialize<'de> for BenefitGrantCreateExternalExternalCustomerId {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
@@ -56,19 +56,20 @@ impl<'de> serde::Deserialize<'de> for MetricDashboardCreateName {
         Self::try_from(value).map_err(serde::de::Error::custom)
     }
 }
-impl TryFrom<&str> for MetricDashboardCreateName {
-    type Error = MetricDashboardCreateNameValidationError;
+impl TryFrom<&str> for BenefitGrantCreateExternalExternalCustomerId {
+    type Error = BenefitGrantCreateExternalExternalCustomerIdValidationError;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         Self::try_from(value.to_owned())
     }
 }
-impl AsRef<str> for MetricDashboardCreateName {
+impl AsRef<str> for BenefitGrantCreateExternalExternalCustomerId {
     fn as_ref(&self) -> &str {
         &self.0
     }
 }
-/// Display name for the dashboard.
+/// The ID of the member in your system, scoped to the customer. If not
+/// provided, the benefit is granted to the customer's owner.
 #[derive(
     Debug,
     Clone,
@@ -82,17 +83,17 @@ impl AsRef<str> for MetricDashboardCreateName {
     derive_more::Deref,
 )]
 #[serde(transparent)]
-pub struct MetricDashboardUpdateName(String);
+pub struct BenefitGrantCreateExternalExternalMemberId(String);
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
-pub enum MetricDashboardUpdateNameValidationError {
+pub enum BenefitGrantCreateExternalExternalMemberIdValidationError {
     #[error("must contain at least 1 characters")]
     TooShort,
 }
-impl MetricDashboardUpdateName {
+impl BenefitGrantCreateExternalExternalMemberId {
     /// Validate a value.
     pub fn try_new(
         value: impl Into<String>,
-    ) -> Result<Self, MetricDashboardUpdateNameValidationError> {
+    ) -> Result<Self, BenefitGrantCreateExternalExternalMemberIdValidationError> {
         Self::try_from(value.into())
     }
 
@@ -101,23 +102,23 @@ impl MetricDashboardUpdateName {
         self.0
     }
 }
-impl TryFrom<String> for MetricDashboardUpdateName {
-    type Error = MetricDashboardUpdateNameValidationError;
+impl TryFrom<String> for BenefitGrantCreateExternalExternalMemberId {
+    type Error = BenefitGrantCreateExternalExternalMemberIdValidationError;
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
         let length = value.chars().count() as u64;
         if length < 1u64 {
-            return Err(MetricDashboardUpdateNameValidationError::TooShort);
+            return Err(BenefitGrantCreateExternalExternalMemberIdValidationError::TooShort);
         }
         Ok(Self(value))
     }
 }
-impl From<MetricDashboardUpdateName> for String {
-    fn from(value: MetricDashboardUpdateName) -> Self {
+impl From<BenefitGrantCreateExternalExternalMemberId> for String {
+    fn from(value: BenefitGrantCreateExternalExternalMemberId) -> Self {
         value.0
     }
 }
-impl<'de> serde::Deserialize<'de> for MetricDashboardUpdateName {
+impl<'de> serde::Deserialize<'de> for BenefitGrantCreateExternalExternalMemberId {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
@@ -126,14 +127,14 @@ impl<'de> serde::Deserialize<'de> for MetricDashboardUpdateName {
         Self::try_from(value).map_err(serde::de::Error::custom)
     }
 }
-impl TryFrom<&str> for MetricDashboardUpdateName {
-    type Error = MetricDashboardUpdateNameValidationError;
+impl TryFrom<&str> for BenefitGrantCreateExternalExternalMemberId {
+    type Error = BenefitGrantCreateExternalExternalMemberIdValidationError;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
         Self::try_from(value.to_owned())
     }
 }
-impl AsRef<str> for MetricDashboardUpdateName {
+impl AsRef<str> for BenefitGrantCreateExternalExternalMemberId {
     fn as_ref(&self) -> &str {
         &self.0
     }
