@@ -1448,7 +1448,7 @@ checksum = "f6b464fbc74e149a392436b17d523f769e057cb6877f6a5c4618bc6f11800548"
 
 [[package]]
 name = "polar-rsh"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "base64",
  "bytes",
@@ -1477,7 +1477,7 @@ dependencies = [
 
 [[package]]
 name = "polar-sdk-playground"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "base64",
  "blake3",
