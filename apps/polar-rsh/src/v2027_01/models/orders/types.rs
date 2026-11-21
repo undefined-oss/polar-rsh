@@ -664,9 +664,12 @@ pub struct CustomerOrderUpdate {
     pub billing_name: presence_rs::Presence<String>,
     /// The address of the customer that should appear on the invoice. Address
     /// fields used for tax calculation cannot be updated.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub billing_address:
-        presence_rs::Presence<crate::v2027_01::models::common::types::AddressInput>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub billing_address: Option<crate::v2027_01::models::common::types::AddressInput>,
 }
 #[allow(clippy::type_complexity)]
 impl CustomerOrderUpdate {
@@ -688,7 +691,7 @@ impl CustomerOrderUpdate {
         mut self,
         value: crate::v2027_01::models::common::types::AddressInput,
     ) -> Self {
-        self.billing_address = presence_rs::Presence::Some(value);
+        self.billing_address = Some(value);
         self
     }
 }
@@ -1941,9 +1944,12 @@ pub struct OrderUpdate {
     pub billing_name: presence_rs::Presence<String>,
     /// The address of the customer that should appear on the invoice. Address
     /// fields used for tax calculation cannot be updated.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub billing_address:
-        presence_rs::Presence<crate::v2027_01::models::common::types::AddressInput>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub billing_address: Option<crate::v2027_01::models::common::types::AddressInput>,
 }
 #[allow(clippy::type_complexity)]
 impl OrderUpdate {
@@ -1965,7 +1971,7 @@ impl OrderUpdate {
         mut self,
         value: crate::v2027_01::models::common::types::AddressInput,
     ) -> Self {
-        self.billing_address = presence_rs::Presence::Some(value);
+        self.billing_address = Some(value);
         self
     }
 }

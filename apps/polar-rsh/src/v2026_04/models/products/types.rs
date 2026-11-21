@@ -576,16 +576,6 @@ pub struct ProductUpdate {
     ///The description of the product.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub description: presence_rs::Presence<String>,
-    ///The recurring interval of the product. If `None`, the product is a one-time purchase. **Can only be set on legacy recurring products. Once set, it can't be changed.**
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub recurring_interval: presence_rs::Presence<
-        crate::v2026_04::models::common::enums::RecurringInterval,
-    >,
-    ///Number of interval units of the subscription. If this is set to 1 the charge will happen every interval (e.g. every month), if set to 2 it will be every other month, and so on. Once set, it can't be changed.**
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub recurring_interval_count: presence_rs::Presence<
-        crate::v2026_04::models::products::newtypes::ProductRecurringIntervalCount,
-    >,
     ///Whether the product is archived. If `true`, the product won't be available for purchase anymore. Existing customers will still have access to their benefits, and subscriptions will continue normally.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub is_archived: presence_rs::Presence<bool>,
@@ -609,6 +599,16 @@ pub struct ProductUpdate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub attached_custom_fields: presence_rs::Presence<
         Vec<crate::v2026_04::models::products::types::AttachedCustomFieldCreate>,
+    >,
+    ///The recurring interval of the product. If `None`, the product is a one-time purchase. **Can only be set on legacy recurring products. Once set, it can't be changed.**
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub recurring_interval: presence_rs::Presence<
+        crate::v2026_04::models::common::enums::RecurringInterval,
+    >,
+    ///Number of interval units of the subscription. If this is set to 1 the charge will happen every interval (e.g. every month), if set to 2 it will be every other month, and so on. Once set, it can't be changed.**
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub recurring_interval_count: presence_rs::Presence<
+        crate::v2026_04::models::products::newtypes::ProductRecurringIntervalCount,
     >,
 }
 #[allow(clippy::type_complexity)]
@@ -673,30 +673,6 @@ impl ProductUpdate {
         self
     }
 
-    /// The recurring interval of the product. If `None`, the product is a
-    /// one-time purchase. **Can only be set on legacy recurring products. Once
-    /// set, it can't be changed.**
-    #[allow(clippy::should_implement_trait)]
-    pub fn recurring_interval(
-        mut self,
-        value: crate::v2026_04::models::common::enums::RecurringInterval,
-    ) -> Self {
-        self.recurring_interval = presence_rs::Presence::Some(value);
-        self
-    }
-
-    /// Number of interval units of the subscription. If this is set to 1 the
-    /// charge will happen every interval (e.g. every month), if set to 2 it
-    /// will be every other month, and so on. Once set, it can't be changed.**
-    #[allow(clippy::should_implement_trait)]
-    pub fn recurring_interval_count(
-        mut self,
-        value: crate::v2026_04::models::products::newtypes::ProductRecurringIntervalCount,
-    ) -> Self {
-        self.recurring_interval_count = presence_rs::Presence::Some(value);
-        self
-    }
-
     /// Whether the product is archived. If `true`, the product won't be
     /// available for purchase anymore. Existing customers will still have
     /// access to their benefits, and subscriptions will continue normally.
@@ -744,6 +720,30 @@ impl ProductUpdate {
         value: Vec<crate::v2026_04::models::products::types::AttachedCustomFieldCreate>,
     ) -> Self {
         self.attached_custom_fields = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// The recurring interval of the product. If `None`, the product is a
+    /// one-time purchase. **Can only be set on legacy recurring products. Once
+    /// set, it can't be changed.**
+    #[allow(clippy::should_implement_trait)]
+    pub fn recurring_interval(
+        mut self,
+        value: crate::v2026_04::models::common::enums::RecurringInterval,
+    ) -> Self {
+        self.recurring_interval = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// Number of interval units of the subscription. If this is set to 1 the
+    /// charge will happen every interval (e.g. every month), if set to 2 it
+    /// will be every other month, and so on. Once set, it can't be changed.**
+    #[allow(clippy::should_implement_trait)]
+    pub fn recurring_interval_count(
+        mut self,
+        value: crate::v2026_04::models::products::newtypes::ProductRecurringIntervalCount,
+    ) -> Self {
+        self.recurring_interval_count = presence_rs::Presence::Some(value);
         self
     }
 }

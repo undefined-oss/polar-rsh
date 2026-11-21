@@ -1190,7 +1190,7 @@ pub enum ProductUpdateMetadataAdditionalPropertiesUnion {
 }
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "amount_type", deny_unknown_fields)]
-pub enum ProductUpdatePricesAnyOf0ItemsAnyOf1Union {
+pub enum ProductUpdatePricesItemsAnyOf1Union {
     #[serde(rename = "fixed")]
     Fixed {
         /// The currency in which the customer will be charged.
@@ -1752,7 +1752,7 @@ pub enum ProductUpdatePricesAnyOf0ItemsAnyOf1Union {
 }
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(untagged)]
-pub enum ProductUpdatePricesAnyOf0ItemsUnion {
+pub enum ProductUpdatePricesItemsUnion {
     ExistingProductPrice(crate::v2027_01::models::products::types::ExistingProductPrice),
-    Variant(crate::v2027_01::models::products::unions::ProductUpdatePricesAnyOf0ItemsAnyOf1Union),
+    Variant(crate::v2027_01::models::products::unions::ProductUpdatePricesItemsAnyOf1Union),
 }

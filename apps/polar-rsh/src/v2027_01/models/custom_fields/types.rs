@@ -506,17 +506,31 @@ pub struct CustomFieldUpdateCheckbox {
             crate::v2027_01::models::custom_fields::unions::CustomFieldUpdateCheckboxMetadataAdditionalPropertiesUnion,
         >,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name: presence_rs::Presence<
+    ///Name of the custom field.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub name: Option<
         crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateCheckboxName,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub slug: presence_rs::Presence<
+    ///Identifier of the custom field. It'll be used as key when storing the value. Must be unique across the organization.It can only contain ASCII letters, numbers and hyphens.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub slug: Option<
         crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateCheckboxSlug,
     >,
     pub r#type: monostate::MustBe!("checkbox"),
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub properties: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub properties: Option<
         crate::v2027_01::models::common::types::CustomFieldCheckboxProperties,
     >,
 }
@@ -549,21 +563,25 @@ impl CustomFieldUpdateCheckbox {
         self
     }
 
+    /// Name of the custom field.
     #[allow(clippy::should_implement_trait)]
     pub fn name(
         mut self,
         value: crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateCheckboxName,
     ) -> Self {
-        self.name = presence_rs::Presence::Some(value);
+        self.name = Some(value);
         self
     }
 
+    /// Identifier of the custom field. It'll be used as key when storing the
+    /// value. Must be unique across the organization.It can only contain ASCII
+    /// letters, numbers and hyphens.
     #[allow(clippy::should_implement_trait)]
     pub fn slug(
         mut self,
         value: crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateCheckboxSlug,
     ) -> Self {
-        self.slug = presence_rs::Presence::Some(value);
+        self.slug = Some(value);
         self
     }
 
@@ -572,7 +590,7 @@ impl CustomFieldUpdateCheckbox {
         mut self,
         value: crate::v2027_01::models::common::types::CustomFieldCheckboxProperties,
     ) -> Self {
-        self.properties = presence_rs::Presence::Some(value);
+        self.properties = Some(value);
         self
     }
 }
@@ -604,17 +622,31 @@ pub struct CustomFieldUpdateDate {
             crate::v2027_01::models::custom_fields::unions::CustomFieldUpdateDateMetadataAdditionalPropertiesUnion,
         >,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name: presence_rs::Presence<
+    ///Name of the custom field.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub name: Option<
         crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateDateName,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub slug: presence_rs::Presence<
+    ///Identifier of the custom field. It'll be used as key when storing the value. Must be unique across the organization.It can only contain ASCII letters, numbers and hyphens.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub slug: Option<
         crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateDateSlug,
     >,
     pub r#type: monostate::MustBe!("date"),
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub properties: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub properties: Option<
         crate::v2027_01::models::common::types::CustomFieldDateProperties,
     >,
 }
@@ -647,21 +679,25 @@ impl CustomFieldUpdateDate {
         self
     }
 
+    /// Name of the custom field.
     #[allow(clippy::should_implement_trait)]
     pub fn name(
         mut self,
         value: crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateDateName,
     ) -> Self {
-        self.name = presence_rs::Presence::Some(value);
+        self.name = Some(value);
         self
     }
 
+    /// Identifier of the custom field. It'll be used as key when storing the
+    /// value. Must be unique across the organization.It can only contain ASCII
+    /// letters, numbers and hyphens.
     #[allow(clippy::should_implement_trait)]
     pub fn slug(
         mut self,
         value: crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateDateSlug,
     ) -> Self {
-        self.slug = presence_rs::Presence::Some(value);
+        self.slug = Some(value);
         self
     }
 
@@ -670,7 +706,7 @@ impl CustomFieldUpdateDate {
         mut self,
         value: crate::v2027_01::models::common::types::CustomFieldDateProperties,
     ) -> Self {
-        self.properties = presence_rs::Presence::Some(value);
+        self.properties = Some(value);
         self
     }
 }
@@ -702,17 +738,31 @@ pub struct CustomFieldUpdateNumber {
             crate::v2027_01::models::custom_fields::unions::CustomFieldUpdateNumberMetadataAdditionalPropertiesUnion,
         >,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name: presence_rs::Presence<
+    ///Name of the custom field.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub name: Option<
         crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateNumberName,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub slug: presence_rs::Presence<
+    ///Identifier of the custom field. It'll be used as key when storing the value. Must be unique across the organization.It can only contain ASCII letters, numbers and hyphens.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub slug: Option<
         crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateNumberSlug,
     >,
     pub r#type: monostate::MustBe!("number"),
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub properties: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub properties: Option<
         crate::v2027_01::models::common::types::CustomFieldNumberProperties,
     >,
 }
@@ -745,21 +795,25 @@ impl CustomFieldUpdateNumber {
         self
     }
 
+    /// Name of the custom field.
     #[allow(clippy::should_implement_trait)]
     pub fn name(
         mut self,
         value: crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateNumberName,
     ) -> Self {
-        self.name = presence_rs::Presence::Some(value);
+        self.name = Some(value);
         self
     }
 
+    /// Identifier of the custom field. It'll be used as key when storing the
+    /// value. Must be unique across the organization.It can only contain ASCII
+    /// letters, numbers and hyphens.
     #[allow(clippy::should_implement_trait)]
     pub fn slug(
         mut self,
         value: crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateNumberSlug,
     ) -> Self {
-        self.slug = presence_rs::Presence::Some(value);
+        self.slug = Some(value);
         self
     }
 
@@ -768,7 +822,7 @@ impl CustomFieldUpdateNumber {
         mut self,
         value: crate::v2027_01::models::common::types::CustomFieldNumberProperties,
     ) -> Self {
-        self.properties = presence_rs::Presence::Some(value);
+        self.properties = Some(value);
         self
     }
 }
@@ -800,17 +854,31 @@ pub struct CustomFieldUpdateSelect {
             crate::v2027_01::models::custom_fields::unions::CustomFieldUpdateSelectMetadataAdditionalPropertiesUnion,
         >,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name: presence_rs::Presence<
+    ///Name of the custom field.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub name: Option<
         crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateSelectName,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub slug: presence_rs::Presence<
+    ///Identifier of the custom field. It'll be used as key when storing the value. Must be unique across the organization.It can only contain ASCII letters, numbers and hyphens.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub slug: Option<
         crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateSelectSlug,
     >,
     pub r#type: monostate::MustBe!("select"),
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub properties: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub properties: Option<
         crate::v2027_01::models::common::types::CustomFieldSelectProperties,
     >,
 }
@@ -843,21 +911,25 @@ impl CustomFieldUpdateSelect {
         self
     }
 
+    /// Name of the custom field.
     #[allow(clippy::should_implement_trait)]
     pub fn name(
         mut self,
         value: crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateSelectName,
     ) -> Self {
-        self.name = presence_rs::Presence::Some(value);
+        self.name = Some(value);
         self
     }
 
+    /// Identifier of the custom field. It'll be used as key when storing the
+    /// value. Must be unique across the organization.It can only contain ASCII
+    /// letters, numbers and hyphens.
     #[allow(clippy::should_implement_trait)]
     pub fn slug(
         mut self,
         value: crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateSelectSlug,
     ) -> Self {
-        self.slug = presence_rs::Presence::Some(value);
+        self.slug = Some(value);
         self
     }
 
@@ -866,7 +938,7 @@ impl CustomFieldUpdateSelect {
         mut self,
         value: crate::v2027_01::models::common::types::CustomFieldSelectProperties,
     ) -> Self {
-        self.properties = presence_rs::Presence::Some(value);
+        self.properties = Some(value);
         self
     }
 }
@@ -898,17 +970,31 @@ pub struct CustomFieldUpdateText {
             crate::v2027_01::models::custom_fields::unions::CustomFieldUpdateTextMetadataAdditionalPropertiesUnion,
         >,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name: presence_rs::Presence<
+    ///Name of the custom field.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub name: Option<
         crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateTextName,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub slug: presence_rs::Presence<
+    ///Identifier of the custom field. It'll be used as key when storing the value. Must be unique across the organization.It can only contain ASCII letters, numbers and hyphens.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub slug: Option<
         crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateTextSlug,
     >,
     pub r#type: monostate::MustBe!("text"),
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub properties: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub properties: Option<
         crate::v2027_01::models::common::types::CustomFieldTextProperties,
     >,
 }
@@ -941,21 +1027,25 @@ impl CustomFieldUpdateText {
         self
     }
 
+    /// Name of the custom field.
     #[allow(clippy::should_implement_trait)]
     pub fn name(
         mut self,
         value: crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateTextName,
     ) -> Self {
-        self.name = presence_rs::Presence::Some(value);
+        self.name = Some(value);
         self
     }
 
+    /// Identifier of the custom field. It'll be used as key when storing the
+    /// value. Must be unique across the organization.It can only contain ASCII
+    /// letters, numbers and hyphens.
     #[allow(clippy::should_implement_trait)]
     pub fn slug(
         mut self,
         value: crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateTextSlug,
     ) -> Self {
-        self.slug = presence_rs::Presence::Some(value);
+        self.slug = Some(value);
         self
     }
 
@@ -964,7 +1054,7 @@ impl CustomFieldUpdateText {
         mut self,
         value: crate::v2027_01::models::common::types::CustomFieldTextProperties,
     ) -> Self {
-        self.properties = presence_rs::Presence::Some(value);
+        self.properties = Some(value);
         self
     }
 }

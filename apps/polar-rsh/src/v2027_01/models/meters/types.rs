@@ -33,8 +33,12 @@ pub struct MeterCreate {
     /// An ID from your own system to reference this resource. It must be unique
     /// within the organization for this type of resource. It must start with a
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     /// Key-value object allowing you to store additional information.
     ///
     /// The key must be a string with a maximum length of **40 characters**.
@@ -90,7 +94,7 @@ pub struct MeterCreate {
 impl MeterCreate {
     pub fn new(required: MeterCreateRequired) -> Self {
         Self {
-            external_id: presence_rs::Presence::Absent,
+            external_id: None,
             metadata: None,
             name: required.name,
             unit: None,
@@ -107,7 +111,7 @@ impl MeterCreate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -249,11 +253,19 @@ pub struct MeterUpdate {
         >,
     >,
     /// The name of the meter. Will be shown on customer's invoices and usage.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name: presence_rs::Presence<crate::v2027_01::models::meters::newtypes::MeterName>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub name: Option<crate::v2027_01::models::meters::newtypes::MeterName>,
     /// The unit of the meter.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub unit: presence_rs::Presence<crate::v2027_01::models::common::enums::MeterUnit>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub unit: Option<crate::v2027_01::models::common::enums::MeterUnit>,
     /// The label for the custom unit. Required when unit is 'custom'.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub custom_label:
@@ -264,17 +276,27 @@ pub struct MeterUpdate {
     pub custom_multiplier:
         presence_rs::Presence<crate::v2027_01::models::meters::newtypes::MeterCustomMultiplier>,
     /// The filter to apply on events that'll be used to calculate the meter.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub filter: presence_rs::Presence<crate::v2027_01::models::common::types::Filter>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub filter: Option<crate::v2027_01::models::common::types::Filter>,
     /// The aggregation to apply on the filtered events to calculate the meter.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub aggregation: presence_rs::Presence<
-        crate::v2027_01::models::meters::unions::MeterUpdateAggregationAnyOf0Union,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub aggregation: Option<crate::v2027_01::models::meters::unions::MeterUpdateAggregationUnion>,
     /// Whether the meter is archived. Archived meters are no longer used for
     /// billing.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub is_archived: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub is_archived: Option<bool>,
 }
 #[allow(clippy::type_complexity)]
 impl MeterUpdate {
@@ -317,14 +339,14 @@ impl MeterUpdate {
     /// The name of the meter. Will be shown on customer's invoices and usage.
     #[allow(clippy::should_implement_trait)]
     pub fn name(mut self, value: crate::v2027_01::models::meters::newtypes::MeterName) -> Self {
-        self.name = presence_rs::Presence::Some(value);
+        self.name = Some(value);
         self
     }
 
     /// The unit of the meter.
     #[allow(clippy::should_implement_trait)]
     pub fn unit(mut self, value: crate::v2027_01::models::common::enums::MeterUnit) -> Self {
-        self.unit = presence_rs::Presence::Some(value);
+        self.unit = Some(value);
         self
     }
 
@@ -352,7 +374,7 @@ impl MeterUpdate {
     /// The filter to apply on events that'll be used to calculate the meter.
     #[allow(clippy::should_implement_trait)]
     pub fn filter(mut self, value: crate::v2027_01::models::common::types::Filter) -> Self {
-        self.filter = presence_rs::Presence::Some(value);
+        self.filter = Some(value);
         self
     }
 
@@ -360,9 +382,9 @@ impl MeterUpdate {
     #[allow(clippy::should_implement_trait)]
     pub fn aggregation(
         mut self,
-        value: crate::v2027_01::models::meters::unions::MeterUpdateAggregationAnyOf0Union,
+        value: crate::v2027_01::models::meters::unions::MeterUpdateAggregationUnion,
     ) -> Self {
-        self.aggregation = presence_rs::Presence::Some(value);
+        self.aggregation = Some(value);
         self
     }
 
@@ -370,7 +392,7 @@ impl MeterUpdate {
     /// billing.
     #[allow(clippy::should_implement_trait)]
     pub fn is_archived(mut self, value: bool) -> Self {
-        self.is_archived = presence_rs::Presence::Some(value);
+        self.is_archived = Some(value);
         self
     }
 }

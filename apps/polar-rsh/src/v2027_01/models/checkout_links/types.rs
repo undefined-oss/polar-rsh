@@ -616,18 +616,28 @@ pub struct CheckoutLinkUpdate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub trial_payment_setup_required: presence_rs::Presence<bool>,
     ///List of products that will be available to select at checkout.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub products: presence_rs::Presence<
-        Vec<crate::v2027_01::models::common::ids::ProductId>,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub products: Option<Vec<crate::v2027_01::models::common::ids::ProductId>>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub label: presence_rs::Presence<String>,
     ///Whether to allow the customer to apply discount codes. If you apply a discount through `discount_id`, it'll still be applied, but the customer won't be able to change it.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub allow_discount_codes: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub allow_discount_codes: Option<bool>,
     ///Whether to require the customer to fill their full billing address, instead of just the country. Customers in the US will always be required to fill their full address, regardless of this setting.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub require_billing_address: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub require_billing_address: Option<bool>,
     ///ID of the discount to apply to the checkout. If the discount is not applicable anymore when opening the checkout link, it'll be ignored.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub discount_id: presence_rs::Presence<
@@ -715,7 +725,7 @@ impl CheckoutLinkUpdate {
     /// List of products that will be available to select at checkout.
     #[allow(clippy::should_implement_trait)]
     pub fn products(mut self, value: Vec<crate::v2027_01::models::common::ids::ProductId>) -> Self {
-        self.products = presence_rs::Presence::Some(value);
+        self.products = Some(value);
         self
     }
 
@@ -730,7 +740,7 @@ impl CheckoutLinkUpdate {
     /// won't be able to change it.
     #[allow(clippy::should_implement_trait)]
     pub fn allow_discount_codes(mut self, value: bool) -> Self {
-        self.allow_discount_codes = presence_rs::Presence::Some(value);
+        self.allow_discount_codes = Some(value);
         self
     }
 
@@ -739,7 +749,7 @@ impl CheckoutLinkUpdate {
     /// to fill their full address, regardless of this setting.
     #[allow(clippy::should_implement_trait)]
     pub fn require_billing_address(mut self, value: bool) -> Self {
-        self.require_billing_address = presence_rs::Presence::Some(value);
+        self.require_billing_address = Some(value);
         self
     }
 

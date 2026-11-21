@@ -1596,7 +1596,7 @@ pub enum CheckoutUpdateCustomFieldDataAdditionalPropertiesUnion {
 }
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(untagged)]
-pub enum CheckoutUpdateCustomerMetadataAnyOf0AdditionalPropertiesUnion {
+pub enum CheckoutUpdateCustomerMetadataAdditionalPropertiesUnion {
     String(crate::v2027_01::models::checkouts::newtypes::CheckoutCustomerMetadataValueString),
     Integer(i64),
     Number(f64),

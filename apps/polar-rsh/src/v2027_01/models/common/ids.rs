@@ -1052,8 +1052,7 @@ impl ::std::default::Default for PaymentId {
         Self(uuid::Uuid::new_v4())
     }
 }
-/// ID of the payment method to charge. Must belong to the order's customer.
-/// Falls back to the customer's default payment method when unset.
+/// ID of the payment method pinned to the subscription, if any.
 #[derive(
     Debug,
     Clone,

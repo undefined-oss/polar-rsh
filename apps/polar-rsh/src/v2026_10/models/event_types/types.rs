@@ -68,8 +68,8 @@ pub struct EventTypeUpdateRequired {
 pub struct EventTypeUpdate {
     /// The label for the event type.
     pub label: crate::v2026_10::models::event_types::newtypes::EventTypeLabel,
-    /// Property path to extract dynamic label from event metadata (e.g.,
-    /// 'subject' or 'metadata.subject').
+    /// Property path to extract a dynamic label from event metadata (e.g.,
+    /// 'subject' or 'metadata.subject'). Set to `null` to clear it.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub label_property_selector: presence_rs::Presence<
         crate::v2026_10::models::event_types::newtypes::EventTypeLabelPropertySelector,
@@ -81,8 +81,8 @@ impl EventTypeUpdate {
         Self { label: required.label, label_property_selector: presence_rs::Presence::Absent }
     }
 
-    /// Property path to extract dynamic label from event metadata (e.g.,
-    /// 'subject' or 'metadata.subject').
+    /// Property path to extract a dynamic label from event metadata (e.g.,
+    /// 'subject' or 'metadata.subject'). Set to `null` to clear it.
     #[allow(clippy::should_implement_trait)]
     pub fn label_property_selector(
         mut self,

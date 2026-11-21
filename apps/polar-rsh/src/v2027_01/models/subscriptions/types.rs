@@ -44,8 +44,12 @@ pub struct CustomerSubscriptionCancel {
     /// Cancel an active subscription once the current period ends.
     ///
     /// Or uncancel a subscription currently set to be revoked at period end.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub cancel_at_period_end: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub cancel_at_period_end: Option<bool>,
     /// Customers reason for cancellation.
     ///
     /// * `too_expensive`: Too expensive for the customer.
@@ -75,7 +79,7 @@ impl CustomerSubscriptionCancel {
     /// Or uncancel a subscription currently set to be revoked at period end.
     #[allow(clippy::should_implement_trait)]
     pub fn cancel_at_period_end(mut self, value: bool) -> Self {
-        self.cancel_at_period_end = presence_rs::Presence::Some(value);
+        self.cancel_at_period_end = Some(value);
         self
     }
 
@@ -1318,13 +1322,19 @@ pub struct SubscriptionUpdateBase {
         >,
     >,
     ///Update subscription to another product.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub product_id: presence_rs::Presence<
-        crate::v2027_01::models::common::ids::ProductId,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub product_id: Option<crate::v2027_01::models::common::ids::ProductId>,
     ///Determine how to handle the proration billing. If not provided, will use the default organization setting.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub proration_behavior: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub proration_behavior: Option<
         crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateBaseProrationBehaviorUnion,
     >,
     ///Update the subscription to apply a new discount. If set to `null`, the discount will be removed. The change will be applied on the next billing cycle.
@@ -1333,8 +1343,12 @@ pub struct SubscriptionUpdateBase {
         crate::v2027_01::models::common::ids::DiscountId,
     >,
     ///Set or extend the trial period of the subscription. If set to `now`, the trial will end immediately and the first billing cycle will be charged synchronously. The subscription remains trialing if the payment fails.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub trial_end: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub trial_end: Option<
         crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateBaseTrialEndUnion,
     >,
 }
@@ -1370,7 +1384,7 @@ impl SubscriptionUpdateBase {
     /// Update subscription to another product.
     #[allow(clippy::should_implement_trait)]
     pub fn product_id(mut self, value: crate::v2027_01::models::common::ids::ProductId) -> Self {
-        self.product_id = presence_rs::Presence::Some(value);
+        self.product_id = Some(value);
         self
     }
 
@@ -1381,7 +1395,7 @@ impl SubscriptionUpdateBase {
         mut self,
         value: crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateBaseProrationBehaviorUnion,
     ) -> Self {
-        self.proration_behavior = presence_rs::Presence::Some(value);
+        self.proration_behavior = Some(value);
         self
     }
 
@@ -1402,7 +1416,7 @@ impl SubscriptionUpdateBase {
         mut self,
         value: crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateBaseTrialEndUnion,
     ) -> Self {
-        self.trial_end = presence_rs::Presence::Some(value);
+        self.trial_end = Some(value);
         self
     }
 }
@@ -1472,15 +1486,19 @@ pub struct SubscriptionUpdateSeats {
     ///Update the number of seats for this subscription.
     pub seats: crate::v2027_01::models::subscriptions::newtypes::SubscriptionUpdateSeatsSeats,
     ///Determine how to handle the proration billing. If not provided, will use the default organization setting.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub proration_behavior: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub proration_behavior: Option<
         crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateSeatsProrationBehaviorUnion,
     >,
 }
 #[allow(clippy::type_complexity)]
 impl SubscriptionUpdateSeats {
     pub fn new(required: SubscriptionUpdateSeatsRequired) -> Self {
-        Self { seats: required.seats, proration_behavior: presence_rs::Presence::Absent }
+        Self { seats: required.seats, proration_behavior: None }
     }
 
     /// Determine how to handle the proration billing. If not provided, will use
@@ -1490,7 +1508,7 @@ impl SubscriptionUpdateSeats {
         mut self,
         value: crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateSeatsProrationBehaviorUnion,
     ) -> Self {
-        self.proration_behavior = presence_rs::Presence::Some(value);
+        self.proration_behavior = Some(value);
         self
     }
 }
@@ -1506,15 +1524,19 @@ pub struct SubscriptionUpdateUnits {
     ///Update the number of units for this subscription.
     pub units: crate::v2027_01::models::subscriptions::newtypes::SubscriptionUpdateUnitsUnits,
     ///Determine how to handle the proration billing. If not provided, will use the default organization setting.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub proration_behavior: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub proration_behavior: Option<
         crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateUnitsProrationBehaviorUnion,
     >,
 }
 #[allow(clippy::type_complexity)]
 impl SubscriptionUpdateUnits {
     pub fn new(required: SubscriptionUpdateUnitsRequired) -> Self {
-        Self { units: required.units, proration_behavior: presence_rs::Presence::Absent }
+        Self { units: required.units, proration_behavior: None }
     }
 
     /// Determine how to handle the proration billing. If not provided, will use
@@ -1524,7 +1546,7 @@ impl SubscriptionUpdateUnits {
         mut self,
         value: crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateUnitsProrationBehaviorUnion,
     ) -> Self {
-        self.proration_behavior = presence_rs::Presence::Some(value);
+        self.proration_behavior = Some(value);
         self
     }
 }
