@@ -72,6 +72,8 @@ pub enum PaymentTrigger {
     RetryPaymentMethodUpdate,
     #[serde(rename = "retry_admin")]
     RetryAdmin,
+    #[serde(rename = "retry_payment_alert")]
+    RetryPaymentAlert,
 }
 impl PaymentTrigger {
     pub fn as_str(&self) -> &'static str {
@@ -82,6 +84,7 @@ impl PaymentTrigger {
             Self::RetryCustomer => "retry_customer",
             Self::RetryPaymentMethodUpdate => "retry_payment_method_update",
             Self::RetryAdmin => "retry_admin",
+            Self::RetryPaymentAlert => "retry_payment_alert",
         }
     }
 }

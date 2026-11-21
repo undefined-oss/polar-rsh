@@ -2052,8 +2052,7 @@ impl WebhookEndpointCreate {
 pub struct WebhookEndpointUpdate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub url: presence_rs::Presence<crate::v2026_10::models::webhooks::newtypes::WebhookEndpointUrl>,
-    /// An optional name for the webhook endpoint to help organize and identify
-    /// it.
+    /// An optional name for the webhook endpoint. Set to `null` to clear it.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub name: presence_rs::Presence<String>,
     /// The API version that'll be used in event payloads.
@@ -2087,8 +2086,7 @@ impl WebhookEndpointUpdate {
         self
     }
 
-    /// An optional name for the webhook endpoint to help organize and identify
-    /// it.
+    /// An optional name for the webhook endpoint. Set to `null` to clear it.
     #[allow(clippy::should_implement_trait)]
     pub fn name(mut self, value: impl Into<String>) -> Self {
         self.name = presence_rs::Presence::Some(value.into());

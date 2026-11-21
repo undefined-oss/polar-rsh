@@ -810,9 +810,12 @@ impl LicenseKeySubscription {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct LicenseKeyUpdate {
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub status:
-        presence_rs::Presence<crate::v2027_01::models::license_keys::enums::LicenseKeyStatus>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub status: Option<crate::v2027_01::models::license_keys::enums::LicenseKeyStatus>,
     #[serde(
         default,
         skip_serializing_if = "Option::is_none",
@@ -841,7 +844,7 @@ impl LicenseKeyUpdate {
         mut self,
         value: crate::v2027_01::models::license_keys::enums::LicenseKeyStatus,
     ) -> Self {
-        self.status = presence_rs::Presence::Some(value);
+        self.status = Some(value);
         self
     }
 

@@ -24,6 +24,11 @@ pub enum RefundsCreateError<TransportError> {
     /// Order is already fully refunded.
     #[error("{message}: {0}", message = "Order is already fully refunded.")]
     RefundedAlready(#[source] crate::v2026_10::models::refunds::types::RefundedAlready),
+    /// Stripe already refunded the payment at its own expense.
+    #[error("{message}: {0}", message = "Stripe already refunded the payment at its own expense.")]
+    RefundPaymentAlreadyRefundedByStripe(
+        #[source] crate::v2026_10::models::refunds::types::RefundPaymentAlreadyRefundedByStripe,
+    ),
     /// Validation Error
     #[error("{message}: {0}", message = "Validation Error")]
     HttpValidationError(#[source] crate::v2026_10::models::common::types::HttpValidationError),
@@ -31,12 +36,13 @@ pub enum RefundsCreateError<TransportError> {
 pub(super) type RefundsCreateErrors = (
     crate::v2026_10::error::RequestFailure,
     crate::v2026_10::models::refunds::types::RefundedAlready,
+    crate::v2026_10::models::refunds::types::RefundPaymentAlreadyRefundedByStripe,
     crate::v2026_10::models::common::types::HttpValidationError,
 );
 impl<T> From<eros::ErrorUnion<RefundsCreateErrors>> for RefundsCreateError<T> {
     fn from(error: eros::ErrorUnion<RefundsCreateErrors>) -> Self {
         match error.into_enum() {
-            eros::E3::A(error) => match error {
+            eros::E4::A(error) => match error {
                 crate::v2026_10::error::RequestFailure::BuildRequest(error) => {
                     Self::BuildRequest(error)
                 }
@@ -52,8 +58,9 @@ impl<T> From<eros::ErrorUnion<RefundsCreateErrors>> for RefundsCreateError<T> {
                 }
                 crate::v2026_10::error::RequestFailure::Timeout(error) => Self::Timeout(error),
             },
-            eros::E3::B(error) => Self::RefundedAlready(error),
-            eros::E3::C(error) => Self::HttpValidationError(error),
+            eros::E4::B(error) => Self::RefundedAlready(error),
+            eros::E4::C(error) => Self::RefundPaymentAlreadyRefundedByStripe(error),
+            eros::E4::D(error) => Self::HttpValidationError(error),
         }
     }
 }
@@ -106,38 +113,57 @@ where
                 .into_body()
                 .collect()
                 .await
-                .map_err(|error| eros::ErrorUnion::new(RequestFailure::ReadBody(error.into())))?
+                .map_err(|error| eros::ErrorUnion::new(
+                    RequestFailure::ReadBody(error.into()),
+                ))?
                 .to_bytes();
             match response_code {
-                http::StatusCode::CREATED => serde_json::from_slice::<
-                    crate::v2026_10::models::refunds::types::Refund,
-                >(&body_slice)
-                .map_err(|error| eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))),
+                http::StatusCode::CREATED => {
+                    serde_json::from_slice::<
+                        crate::v2026_10::models::refunds::types::Refund,
+                    >(&body_slice)
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))
+                }
                 http::StatusCode::FORBIDDEN => {
                     let error = serde_json::from_slice::<
                         crate::v2026_10::models::refunds::types::RefundedAlready,
                     >(&body_slice)
-                    .map_err(|error| {
-                        eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
-                    })?;
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))?;
+                    Err(eros::ErrorUnion::new(error))
+                }
+                http::StatusCode::CONFLICT => {
+                    let error = serde_json::from_slice::<
+                        crate::v2026_10::models::refunds::types::RefundPaymentAlreadyRefundedByStripe,
+                    >(&body_slice)
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))?;
                     Err(eros::ErrorUnion::new(error))
                 }
                 http::StatusCode::UNPROCESSABLE_ENTITY => {
                     let error = serde_json::from_slice::<
                         crate::v2026_10::models::common::types::HttpValidationError,
                     >(&body_slice)
-                    .map_err(|error| {
-                        eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
-                    })?;
+                        .map_err(|error| eros::ErrorUnion::new(
+                            RequestFailure::DecodeResponse(error),
+                        ))?;
                     Err(eros::ErrorUnion::new(error))
                 }
-                _ => Err(eros::ErrorUnion::new(RequestFailure::UnexpectedStatus {
-                    status: response_code,
-                    body: body_slice,
-                })),
+                _ => {
+                    Err(
+                        eros::ErrorUnion::new(RequestFailure::UnexpectedStatus {
+                            status: response_code,
+                            body: body_slice,
+                        }),
+                    )
+                }
             }
         }
-        .await;
+            .await;
         result.map_err(Into::into)
     }
 

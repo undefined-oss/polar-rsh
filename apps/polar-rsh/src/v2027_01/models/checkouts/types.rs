@@ -575,26 +575,45 @@ pub struct CheckoutConfirmSharedPaymentToken {
         >,
     >,
     ///ID of the product to checkout. Must be present in the checkout's product list.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub product_id: presence_rs::Presence<
-        crate::v2027_01::models::common::ids::ProductId,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub amount: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub product_id: Option<crate::v2027_01::models::common::ids::ProductId>,
+    ///Amount in cents, before discounts and taxes. Only useful for custom prices, it'll be ignored for fixed and free prices.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub amount: Option<
         crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmSharedPaymentTokenAmount,
     >,
     ///Number of seats for seat-based pricing.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub seats: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub seats: Option<
         crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmSharedPaymentTokenSeats,
     >,
     ///Number of units for unit-based pricing.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub units: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub units: Option<
         crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmSharedPaymentTokenUnits,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub is_business_customer: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub is_business_customer: Option<bool>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_name: presence_rs::Presence<
         crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmSharedPaymentTokenCustomerName,
@@ -605,8 +624,13 @@ pub struct CheckoutConfirmSharedPaymentToken {
     pub customer_billing_name: presence_rs::Presence<
         crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmSharedPaymentTokenCustomerBillingName,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_address: presence_rs::Presence<
+    ///Billing address of the customer.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub customer_billing_address: Option<
         crate::v2027_01::models::common::types::AddressInput,
     >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
@@ -620,8 +644,12 @@ pub struct CheckoutConfirmSharedPaymentToken {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub discount_code: presence_rs::Presence<String>,
     ///Disable the trial period for the checkout session. It's mainly useful when the trial is blocked because the customer already redeemed one.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub allow_trial: presence_rs::Presence<monostate::MustBe!(false)>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub allow_trial: Option<monostate::MustBe!(false)>,
     ///ID of the Stripe shared payment token (`spt_...`).
     pub shared_payment_token_id: String,
 }
@@ -630,20 +658,20 @@ impl CheckoutConfirmSharedPaymentToken {
     pub fn new(required: CheckoutConfirmSharedPaymentTokenRequired) -> Self {
         Self {
             custom_field_data: None,
-            product_id: presence_rs::Presence::Absent,
-            amount: presence_rs::Presence::Absent,
-            seats: presence_rs::Presence::Absent,
-            units: presence_rs::Presence::Absent,
-            is_business_customer: presence_rs::Presence::Absent,
+            product_id: None,
+            amount: None,
+            seats: None,
+            units: None,
+            is_business_customer: None,
             customer_name: presence_rs::Presence::Absent,
             customer_email: presence_rs::Presence::Absent,
             customer_billing_name: presence_rs::Presence::Absent,
-            customer_billing_address: presence_rs::Presence::Absent,
+            customer_billing_address: None,
             customer_tax_id: presence_rs::Presence::Absent,
             locale: presence_rs::Presence::Absent,
             payment_method_type: presence_rs::Presence::Absent,
             discount_code: presence_rs::Presence::Absent,
-            allow_trial: presence_rs::Presence::Absent,
+            allow_trial: None,
             shared_payment_token_id: required.shared_payment_token_id,
         }
     }
@@ -667,16 +695,18 @@ impl CheckoutConfirmSharedPaymentToken {
     /// list.
     #[allow(clippy::should_implement_trait)]
     pub fn product_id(mut self, value: crate::v2027_01::models::common::ids::ProductId) -> Self {
-        self.product_id = presence_rs::Presence::Some(value);
+        self.product_id = Some(value);
         self
     }
 
+    /// Amount in cents, before discounts and taxes. Only useful for custom
+    /// prices, it'll be ignored for fixed and free prices.
     #[allow(clippy::should_implement_trait)]
     pub fn amount(
         mut self,
         value: crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmSharedPaymentTokenAmount,
     ) -> Self {
-        self.amount = presence_rs::Presence::Some(value);
+        self.amount = Some(value);
         self
     }
 
@@ -686,7 +716,7 @@ impl CheckoutConfirmSharedPaymentToken {
         mut self,
         value: crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmSharedPaymentTokenSeats,
     ) -> Self {
-        self.seats = presence_rs::Presence::Some(value);
+        self.seats = Some(value);
         self
     }
 
@@ -696,13 +726,13 @@ impl CheckoutConfirmSharedPaymentToken {
         mut self,
         value: crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmSharedPaymentTokenUnits,
     ) -> Self {
-        self.units = presence_rs::Presence::Some(value);
+        self.units = Some(value);
         self
     }
 
     #[allow(clippy::should_implement_trait)]
     pub fn is_business_customer(mut self, value: bool) -> Self {
-        self.is_business_customer = presence_rs::Presence::Some(value);
+        self.is_business_customer = Some(value);
         self
     }
 
@@ -730,12 +760,13 @@ impl CheckoutConfirmSharedPaymentToken {
         self
     }
 
+    /// Billing address of the customer.
     #[allow(clippy::should_implement_trait)]
     pub fn customer_billing_address(
         mut self,
         value: crate::v2027_01::models::common::types::AddressInput,
     ) -> Self {
-        self.customer_billing_address = presence_rs::Presence::Some(value);
+        self.customer_billing_address = Some(value);
         self
     }
 
@@ -770,7 +801,7 @@ impl CheckoutConfirmSharedPaymentToken {
     /// when the trial is blocked because the customer already redeemed one.
     #[allow(clippy::should_implement_trait)]
     pub fn allow_trial(mut self, value: monostate::MustBe!(false)) -> Self {
-        self.allow_trial = presence_rs::Presence::Some(value);
+        self.allow_trial = Some(value);
         self
     }
 }
@@ -795,26 +826,45 @@ pub struct CheckoutConfirmStripe {
         >,
     >,
     ///ID of the product to checkout. Must be present in the checkout's product list.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub product_id: presence_rs::Presence<
-        crate::v2027_01::models::common::ids::ProductId,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub amount: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub product_id: Option<crate::v2027_01::models::common::ids::ProductId>,
+    ///Amount in cents, before discounts and taxes. Only useful for custom prices, it'll be ignored for fixed and free prices.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub amount: Option<
         crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmStripeAmount,
     >,
     ///Number of seats for seat-based pricing.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub seats: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub seats: Option<
         crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmStripeSeats,
     >,
     ///Number of units for unit-based pricing.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub units: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub units: Option<
         crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmStripeUnits,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub is_business_customer: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub is_business_customer: Option<bool>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_name: presence_rs::Presence<
         crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmStripeCustomerName,
@@ -825,8 +875,13 @@ pub struct CheckoutConfirmStripe {
     pub customer_billing_name: presence_rs::Presence<
         crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmStripeCustomerBillingName,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_address: presence_rs::Presence<
+    ///Billing address of the customer.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub customer_billing_address: Option<
         crate::v2027_01::models::common::types::AddressInput,
     >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
@@ -840,11 +895,19 @@ pub struct CheckoutConfirmStripe {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub discount_code: presence_rs::Presence<String>,
     ///Disable the trial period for the checkout session. It's mainly useful when the trial is blocked because the customer already redeemed one.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub allow_trial: presence_rs::Presence<monostate::MustBe!(false)>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub allow_trial: Option<monostate::MustBe!(false)>,
     ///ID of the Stripe confirmation token. Required for fixed prices and custom prices.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub confirmation_token_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub confirmation_token_id: Option<String>,
 }
 #[allow(clippy::type_complexity)]
 impl CheckoutConfirmStripe {
@@ -871,16 +934,18 @@ impl CheckoutConfirmStripe {
     /// list.
     #[allow(clippy::should_implement_trait)]
     pub fn product_id(mut self, value: crate::v2027_01::models::common::ids::ProductId) -> Self {
-        self.product_id = presence_rs::Presence::Some(value);
+        self.product_id = Some(value);
         self
     }
 
+    /// Amount in cents, before discounts and taxes. Only useful for custom
+    /// prices, it'll be ignored for fixed and free prices.
     #[allow(clippy::should_implement_trait)]
     pub fn amount(
         mut self,
         value: crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmStripeAmount,
     ) -> Self {
-        self.amount = presence_rs::Presence::Some(value);
+        self.amount = Some(value);
         self
     }
 
@@ -890,7 +955,7 @@ impl CheckoutConfirmStripe {
         mut self,
         value: crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmStripeSeats,
     ) -> Self {
-        self.seats = presence_rs::Presence::Some(value);
+        self.seats = Some(value);
         self
     }
 
@@ -900,13 +965,13 @@ impl CheckoutConfirmStripe {
         mut self,
         value: crate::v2027_01::models::checkouts::newtypes::CheckoutConfirmStripeUnits,
     ) -> Self {
-        self.units = presence_rs::Presence::Some(value);
+        self.units = Some(value);
         self
     }
 
     #[allow(clippy::should_implement_trait)]
     pub fn is_business_customer(mut self, value: bool) -> Self {
-        self.is_business_customer = presence_rs::Presence::Some(value);
+        self.is_business_customer = Some(value);
         self
     }
 
@@ -934,12 +999,13 @@ impl CheckoutConfirmStripe {
         self
     }
 
+    /// Billing address of the customer.
     #[allow(clippy::should_implement_trait)]
     pub fn customer_billing_address(
         mut self,
         value: crate::v2027_01::models::common::types::AddressInput,
     ) -> Self {
-        self.customer_billing_address = presence_rs::Presence::Some(value);
+        self.customer_billing_address = Some(value);
         self
     }
 
@@ -974,7 +1040,7 @@ impl CheckoutConfirmStripe {
     /// when the trial is blocked because the customer already redeemed one.
     #[allow(clippy::should_implement_trait)]
     pub fn allow_trial(mut self, value: monostate::MustBe!(false)) -> Self {
-        self.allow_trial = presence_rs::Presence::Some(value);
+        self.allow_trial = Some(value);
         self
     }
 
@@ -982,7 +1048,7 @@ impl CheckoutConfirmStripe {
     /// custom prices.
     #[allow(clippy::should_implement_trait)]
     pub fn confirmation_token_id(mut self, value: impl Into<String>) -> Self {
-        self.confirmation_token_id = presence_rs::Presence::Some(value.into());
+        self.confirmation_token_id = Some(value.into());
         self
     }
 }
@@ -3558,26 +3624,39 @@ pub struct CheckoutUpdate {
         >,
     >,
     ///ID of the product to checkout. Must be present in the checkout's product list.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub product_id: presence_rs::Presence<
-        crate::v2027_01::models::common::ids::ProductId,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub amount: presence_rs::Presence<
-        crate::v2027_01::models::checkouts::newtypes::CheckoutAmount,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub product_id: Option<crate::v2027_01::models::common::ids::ProductId>,
+    ///Amount in cents, before discounts and taxes. Only useful for custom prices, it'll be ignored for fixed and free prices.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub amount: Option<crate::v2027_01::models::checkouts::newtypes::CheckoutAmount>,
     ///Number of seats for seat-based pricing.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub seats: presence_rs::Presence<
-        crate::v2027_01::models::checkouts::newtypes::CheckoutSeats,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub seats: Option<crate::v2027_01::models::checkouts::newtypes::CheckoutSeats>,
     ///Number of units for unit-based pricing.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub units: presence_rs::Presence<
-        crate::v2027_01::models::checkouts::newtypes::CheckoutUnits,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub is_business_customer: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub units: Option<crate::v2027_01::models::checkouts::newtypes::CheckoutUnits>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub is_business_customer: Option<bool>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_name: presence_rs::Presence<
         crate::v2027_01::models::checkouts::newtypes::CheckoutCustomerName,
@@ -3588,8 +3667,13 @@ pub struct CheckoutUpdate {
     pub customer_billing_name: presence_rs::Presence<
         crate::v2027_01::models::checkouts::newtypes::CheckoutCustomerBillingName,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_address: presence_rs::Presence<
+    ///Billing address of the customer.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub customer_billing_address: Option<
         crate::v2027_01::models::common::types::AddressInput,
     >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
@@ -3628,24 +3712,38 @@ pub struct CheckoutUpdate {
             crate::v2027_01::models::checkouts::unions::CheckoutUpdateMetadataAdditionalPropertiesUnion,
         >,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub currency: presence_rs::Presence<
-        crate::v2027_01::models::common::enums::PresentmentCurrency,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub currency: Option<crate::v2027_01::models::common::enums::PresentmentCurrency>,
     ///ID of the discount to apply to the checkout.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub discount_id: presence_rs::Presence<
         crate::v2027_01::models::common::ids::DiscountId,
     >,
     ///Whether to allow the customer to apply discount codes. If you apply a discount through `discount_id`, it'll still be applied, but the customer won't be able to change it.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub allow_discount_codes: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub allow_discount_codes: Option<bool>,
     ///Whether to require the customer to fill their full billing address, instead of just the country. Customers in the US will always be required to fill their full address, regardless of this setting. If you preset the billing address, this setting will be automatically set to `true`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub require_billing_address: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub require_billing_address: Option<bool>,
     ///Whether to enable the trial period for the checkout session. If `false`, the trial period will be disabled, even if the selected product has a trial configured.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub allow_trial: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub allow_trial: Option<bool>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_ip_address: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information that'll be copied to the created customer.
@@ -3659,11 +3757,15 @@ pub struct CheckoutUpdate {
     ///* A boolean
     ///
     ///You can store up to **50 key-value pairs**.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_metadata: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub customer_metadata: Option<
         std::collections::BTreeMap<
             crate::v2027_01::models::checkouts::newtypes::CheckoutCustomerMetadataKey,
-            crate::v2027_01::models::checkouts::unions::CheckoutUpdateCustomerMetadataAnyOf0AdditionalPropertiesUnion,
+            crate::v2027_01::models::checkouts::unions::CheckoutUpdateCustomerMetadataAdditionalPropertiesUnion,
         >,
     >,
     ///URL where the customer will be redirected after a successful payment.You can add the `checkout_id={CHECKOUT_ID}` query parameter to retrieve the checkout session id.
@@ -3705,16 +3807,18 @@ impl CheckoutUpdate {
     /// list.
     #[allow(clippy::should_implement_trait)]
     pub fn product_id(mut self, value: crate::v2027_01::models::common::ids::ProductId) -> Self {
-        self.product_id = presence_rs::Presence::Some(value);
+        self.product_id = Some(value);
         self
     }
 
+    /// Amount in cents, before discounts and taxes. Only useful for custom
+    /// prices, it'll be ignored for fixed and free prices.
     #[allow(clippy::should_implement_trait)]
     pub fn amount(
         mut self,
         value: crate::v2027_01::models::checkouts::newtypes::CheckoutAmount,
     ) -> Self {
-        self.amount = presence_rs::Presence::Some(value);
+        self.amount = Some(value);
         self
     }
 
@@ -3724,7 +3828,7 @@ impl CheckoutUpdate {
         mut self,
         value: crate::v2027_01::models::checkouts::newtypes::CheckoutSeats,
     ) -> Self {
-        self.seats = presence_rs::Presence::Some(value);
+        self.seats = Some(value);
         self
     }
 
@@ -3734,13 +3838,13 @@ impl CheckoutUpdate {
         mut self,
         value: crate::v2027_01::models::checkouts::newtypes::CheckoutUnits,
     ) -> Self {
-        self.units = presence_rs::Presence::Some(value);
+        self.units = Some(value);
         self
     }
 
     #[allow(clippy::should_implement_trait)]
     pub fn is_business_customer(mut self, value: bool) -> Self {
-        self.is_business_customer = presence_rs::Presence::Some(value);
+        self.is_business_customer = Some(value);
         self
     }
 
@@ -3768,12 +3872,13 @@ impl CheckoutUpdate {
         self
     }
 
+    /// Billing address of the customer.
     #[allow(clippy::should_implement_trait)]
     pub fn customer_billing_address(
         mut self,
         value: crate::v2027_01::models::common::types::AddressInput,
     ) -> Self {
-        self.customer_billing_address = presence_rs::Presence::Some(value);
+        self.customer_billing_address = Some(value);
         self
     }
 
@@ -3837,7 +3942,7 @@ impl CheckoutUpdate {
         mut self,
         value: crate::v2027_01::models::common::enums::PresentmentCurrency,
     ) -> Self {
-        self.currency = presence_rs::Presence::Some(value);
+        self.currency = Some(value);
         self
     }
 
@@ -3853,7 +3958,7 @@ impl CheckoutUpdate {
     /// won't be able to change it.
     #[allow(clippy::should_implement_trait)]
     pub fn allow_discount_codes(mut self, value: bool) -> Self {
-        self.allow_discount_codes = presence_rs::Presence::Some(value);
+        self.allow_discount_codes = Some(value);
         self
     }
 
@@ -3863,7 +3968,7 @@ impl CheckoutUpdate {
     /// the billing address, this setting will be automatically set to `true`.
     #[allow(clippy::should_implement_trait)]
     pub fn require_billing_address(mut self, value: bool) -> Self {
-        self.require_billing_address = presence_rs::Presence::Some(value);
+        self.require_billing_address = Some(value);
         self
     }
 
@@ -3872,7 +3977,7 @@ impl CheckoutUpdate {
     /// trial configured.
     #[allow(clippy::should_implement_trait)]
     pub fn allow_trial(mut self, value: bool) -> Self {
-        self.allow_trial = presence_rs::Presence::Some(value);
+        self.allow_trial = Some(value);
         self
     }
 
@@ -3899,10 +4004,10 @@ impl CheckoutUpdate {
         mut self,
         value: std::collections::BTreeMap<
             crate::v2027_01::models::checkouts::newtypes::CheckoutCustomerMetadataKey,
-            crate::v2027_01::models::checkouts::unions::CheckoutUpdateCustomerMetadataAnyOf0AdditionalPropertiesUnion,
+            crate::v2027_01::models::checkouts::unions::CheckoutUpdateCustomerMetadataAdditionalPropertiesUnion,
         >,
     ) -> Self {
-        self.customer_metadata = presence_rs::Presence::Some(value);
+        self.customer_metadata = Some(value);
         self
     }
 
@@ -3959,26 +4064,45 @@ pub struct CheckoutUpdatePublic {
         >,
     >,
     ///ID of the product to checkout. Must be present in the checkout's product list.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub product_id: presence_rs::Presence<
-        crate::v2027_01::models::common::ids::ProductId,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub amount: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub product_id: Option<crate::v2027_01::models::common::ids::ProductId>,
+    ///Amount in cents, before discounts and taxes. Only useful for custom prices, it'll be ignored for fixed and free prices.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub amount: Option<
         crate::v2027_01::models::checkouts::newtypes::CheckoutUpdatePublicAmount,
     >,
     ///Number of seats for seat-based pricing.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub seats: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub seats: Option<
         crate::v2027_01::models::checkouts::newtypes::CheckoutUpdatePublicSeats,
     >,
     ///Number of units for unit-based pricing.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub units: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub units: Option<
         crate::v2027_01::models::checkouts::newtypes::CheckoutUpdatePublicUnits,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub is_business_customer: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub is_business_customer: Option<bool>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub customer_name: presence_rs::Presence<
         crate::v2027_01::models::checkouts::newtypes::CheckoutUpdatePublicCustomerName,
@@ -3989,8 +4113,13 @@ pub struct CheckoutUpdatePublic {
     pub customer_billing_name: presence_rs::Presence<
         crate::v2027_01::models::checkouts::newtypes::CheckoutUpdatePublicCustomerBillingName,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_billing_address: presence_rs::Presence<
+    ///Billing address of the customer.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub customer_billing_address: Option<
         crate::v2027_01::models::common::types::AddressInput,
     >,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
@@ -4004,8 +4133,12 @@ pub struct CheckoutUpdatePublic {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub discount_code: presence_rs::Presence<String>,
     ///Disable the trial period for the checkout session. It's mainly useful when the trial is blocked because the customer already redeemed one.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub allow_trial: presence_rs::Presence<monostate::MustBe!(false)>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub allow_trial: Option<monostate::MustBe!(false)>,
 }
 #[allow(clippy::type_complexity)]
 impl CheckoutUpdatePublic {
@@ -4032,16 +4165,18 @@ impl CheckoutUpdatePublic {
     /// list.
     #[allow(clippy::should_implement_trait)]
     pub fn product_id(mut self, value: crate::v2027_01::models::common::ids::ProductId) -> Self {
-        self.product_id = presence_rs::Presence::Some(value);
+        self.product_id = Some(value);
         self
     }
 
+    /// Amount in cents, before discounts and taxes. Only useful for custom
+    /// prices, it'll be ignored for fixed and free prices.
     #[allow(clippy::should_implement_trait)]
     pub fn amount(
         mut self,
         value: crate::v2027_01::models::checkouts::newtypes::CheckoutUpdatePublicAmount,
     ) -> Self {
-        self.amount = presence_rs::Presence::Some(value);
+        self.amount = Some(value);
         self
     }
 
@@ -4051,7 +4186,7 @@ impl CheckoutUpdatePublic {
         mut self,
         value: crate::v2027_01::models::checkouts::newtypes::CheckoutUpdatePublicSeats,
     ) -> Self {
-        self.seats = presence_rs::Presence::Some(value);
+        self.seats = Some(value);
         self
     }
 
@@ -4061,13 +4196,13 @@ impl CheckoutUpdatePublic {
         mut self,
         value: crate::v2027_01::models::checkouts::newtypes::CheckoutUpdatePublicUnits,
     ) -> Self {
-        self.units = presence_rs::Presence::Some(value);
+        self.units = Some(value);
         self
     }
 
     #[allow(clippy::should_implement_trait)]
     pub fn is_business_customer(mut self, value: bool) -> Self {
-        self.is_business_customer = presence_rs::Presence::Some(value);
+        self.is_business_customer = Some(value);
         self
     }
 
@@ -4095,12 +4230,13 @@ impl CheckoutUpdatePublic {
         self
     }
 
+    /// Billing address of the customer.
     #[allow(clippy::should_implement_trait)]
     pub fn customer_billing_address(
         mut self,
         value: crate::v2027_01::models::common::types::AddressInput,
     ) -> Self {
-        self.customer_billing_address = presence_rs::Presence::Some(value);
+        self.customer_billing_address = Some(value);
         self
     }
 
@@ -4135,7 +4271,7 @@ impl CheckoutUpdatePublic {
     /// when the trial is blocked because the customer already redeemed one.
     #[allow(clippy::should_implement_trait)]
     pub fn allow_trial(mut self, value: monostate::MustBe!(false)) -> Self {
-        self.allow_trial = presence_rs::Presence::Some(value);
+        self.allow_trial = Some(value);
         self
     }
 }

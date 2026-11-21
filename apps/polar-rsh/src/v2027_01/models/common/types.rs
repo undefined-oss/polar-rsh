@@ -3798,6 +3798,8 @@ pub struct CustomerSubscriptionRequired {
         Option<crate::v2027_01::models::common::enums::CustomerCancellationReason>,
     pub customer_cancellation_comment: Option<String>,
     pub product: crate::v2027_01::models::common::types::CustomerSubscriptionProduct,
+    /// ID of the payment method pinned to the subscription, if any.
+    pub payment_method_id: Option<crate::v2027_01::models::common::ids::PaymentMethodId>,
     /// List of enabled prices for the subscription.
     pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of meters associated with the subscription.
@@ -3929,6 +3931,11 @@ pub struct CustomerSubscription {
     )]
     pub customer_cancellation_comment: Option<String>,
     pub product: crate::v2027_01::models::common::types::CustomerSubscriptionProduct,
+    /// ID of the payment method pinned to the subscription, if any.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub payment_method_id: Option<crate::v2027_01::models::common::ids::PaymentMethodId>,
     /// List of enabled prices for the subscription.
     pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of meters associated with the subscription.
@@ -3976,6 +3983,7 @@ impl CustomerSubscription {
             customer_cancellation_reason: required.customer_cancellation_reason,
             customer_cancellation_comment: required.customer_cancellation_comment,
             product: required.product,
+            payment_method_id: required.payment_method_id,
             prices: required.prices,
             meters: required.meters,
             pending_update: required.pending_update,

@@ -855,69 +855,6 @@ impl AsRef<str> for ProductName {
         &self.0
     }
 }
-/// Number of interval units of the subscription. If this is set to 1 the charge
-/// will happen every interval (e.g. every month), if set to 2 it will be every
-/// other month, and so on. Once set, it can't be changed.**
-#[derive(
-    Debug,
-    Clone,
-    PartialEq,
-    PartialOrd,
-    Copy,
-    Eq,
-    Ord,
-    Hash,
-    serde::Serialize,
-    derive_more::Display,
-    derive_more::Deref,
-)]
-#[serde(transparent)]
-pub struct ProductRecurringIntervalCount(u64);
-#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
-pub enum ProductRecurringIntervalCountValidationError {
-    #[error("must be at least 1")]
-    BelowMinimum,
-    #[error("must be at most 999")]
-    AboveMaximum,
-}
-impl ProductRecurringIntervalCount {
-    /// Validate a value.
-    pub fn try_new(value: u64) -> Result<Self, ProductRecurringIntervalCountValidationError> {
-        Self::try_from(value)
-    }
-
-    /// Take the underlying value.
-    pub fn into_inner(self) -> u64 {
-        self.0
-    }
-}
-impl TryFrom<u64> for ProductRecurringIntervalCount {
-    type Error = ProductRecurringIntervalCountValidationError;
-
-    fn try_from(value: u64) -> Result<Self, Self::Error> {
-        if i128::from(value) < 1i128 {
-            return Err(ProductRecurringIntervalCountValidationError::BelowMinimum);
-        }
-        if i128::from(value) > 999i128 {
-            return Err(ProductRecurringIntervalCountValidationError::AboveMaximum);
-        }
-        Ok(Self(value))
-    }
-}
-impl From<ProductRecurringIntervalCount> for u64 {
-    fn from(value: ProductRecurringIntervalCount) -> Self {
-        value.0
-    }
-}
-impl<'de> serde::Deserialize<'de> for ProductRecurringIntervalCount {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let value = <u64 as serde::Deserialize>::deserialize(deserializer)?;
-        Self::try_from(value).map_err(serde::de::Error::custom)
-    }
-}
 /// The number of interval units for the trial period.
 #[derive(
     Debug,

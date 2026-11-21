@@ -60,6 +60,7 @@ impl AsRef<str> for WebhookEndpointCreateFormat {
         self.as_str()
     }
 }
+/// The API version that'll be used in event payloads.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Deserialize, Serialize)]
 pub enum WebhookEndpointUpdateApiVersion {
     #[serde(rename = "2026-04")]

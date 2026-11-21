@@ -989,6 +989,14 @@ pub struct OrganizationFeatureSettings {
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
     )]
     pub reducer_billing_enabled: Option<bool>,
+    /// If this organization can migrate its billing from Lemon Squeezy to
+    /// Polar.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub lemon_squeezy_migration_enabled: Option<bool>,
 }
 #[allow(clippy::type_complexity)]
 impl OrganizationFeatureSettings {
@@ -1106,6 +1114,14 @@ impl OrganizationFeatureSettings {
         self.reducer_billing_enabled = Some(value);
         self
     }
+
+    /// If this organization can migrate its billing from Lemon Squeezy to
+    /// Polar.
+    #[allow(clippy::should_implement_trait)]
+    pub fn lemon_squeezy_migration_enabled(mut self, value: bool) -> Self {
+        self.lemon_squeezy_migration_enabled = Some(value);
+        self
+    }
 }
 /// Feature settings that organizations can update themselves.
 ///
@@ -1124,8 +1140,12 @@ pub struct OrganizationFeatureSettingsUpdate {
     )]
     pub checkout_localization_enabled: Option<bool>,
     /// Ordered list of metric slugs shown on the dashboard overview.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub overview_metrics: presence_rs::Presence<Vec<String>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub overview_metrics: Option<Vec<String>>,
 }
 #[allow(clippy::type_complexity)]
 impl OrganizationFeatureSettingsUpdate {
@@ -1143,7 +1163,7 @@ impl OrganizationFeatureSettingsUpdate {
     /// Ordered list of metric slugs shown on the dashboard overview.
     #[allow(clippy::should_implement_trait)]
     pub fn overview_metrics(mut self, value: Vec<String>) -> Self {
-        self.overview_metrics = presence_rs::Presence::Some(value);
+        self.overview_metrics = Some(value);
         self
     }
 }
@@ -1217,9 +1237,12 @@ impl OrganizationSubscriptionSettings {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct OrganizationUpdate {
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name:
-        presence_rs::Presence<crate::v2027_01::models::organizations::newtypes::OrganizationName>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub name: Option<crate::v2027_01::models::organizations::newtypes::OrganizationName>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub avatar_url: presence_rs::Presence<
         crate::v2027_01::models::organizations::newtypes::OrganizationAvatarUrl,
@@ -1233,54 +1256,95 @@ pub struct OrganizationUpdate {
         crate::v2027_01::models::organizations::newtypes::OrganizationWebsite,
     >,
     /// Links to social profiles.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub socials: presence_rs::Presence<
-        Vec<crate::v2027_01::models::organizations::types::OrganizationSocialLink>,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub socials: Option<Vec<crate::v2027_01::models::organizations::types::OrganizationSocialLink>>,
     /// Additional, private, business details Polar needs about active
     /// organizations for compliance (KYC).
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub details: presence_rs::Presence<
-        crate::v2027_01::models::organizations::types::OrganizationDetailsInput,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub details: Option<crate::v2027_01::models::organizations::types::OrganizationDetailsInput>,
     /// Two-letter country code (ISO 3166-1 alpha-2).
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub country: presence_rs::Presence<crate::v2027_01::models::common::enums::CountryAlpha2Input>,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub feature_settings: presence_rs::Presence<
-        crate::v2027_01::models::organizations::types::OrganizationFeatureSettingsUpdate,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub subscription_settings: presence_rs::Presence<
-        crate::v2027_01::models::organizations::types::OrganizationSubscriptionSettings,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_email_settings: presence_rs::Presence<
-        crate::v2027_01::models::organizations::types::OrganizationCustomerEmailSettings,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_portal_settings: presence_rs::Presence<
-        crate::v2027_01::models::common::types::OrganizationCustomerPortalSettings,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub dispute_settings: presence_rs::Presence<
-        crate::v2027_01::models::organizations::types::OrganizationDisputeSettingsUpdate,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub embed_hosts: presence_rs::Presence<Vec<String>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub feature_settings:
+        Option<crate::v2027_01::models::organizations::types::OrganizationFeatureSettingsUpdate>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub subscription_settings:
+        Option<crate::v2027_01::models::organizations::types::OrganizationSubscriptionSettings>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub customer_email_settings:
+        Option<crate::v2027_01::models::organizations::types::OrganizationCustomerEmailSettings>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub customer_portal_settings:
+        Option<crate::v2027_01::models::common::types::OrganizationCustomerPortalSettings>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub dispute_settings:
+        Option<crate::v2027_01::models::organizations::types::OrganizationDisputeSettingsUpdate>,
+    /// Hosts allowed to embed this organization's checkout. An entry is a host
+    /// and an optional port, without a scheme: HTTPS is always allowed, and
+    /// HTTP too for local hosts — `localhost`, any `.localhost` or `.local`
+    /// name, and loopback or private addresses. `*.example.com` matches any
+    /// subdomain, but not `example.com` itself. An app origin such as
+    /// `chrome-extension://abcdef` carries its scheme, having no host to match
+    /// on.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub embed_hosts: Option<Vec<String>>,
     /// Default presentment currency for the organization
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
     pub default_presentment_currency:
-        presence_rs::Presence<crate::v2027_01::models::common::enums::PresentmentCurrency>,
+        Option<crate::v2027_01::models::common::enums::PresentmentCurrency>,
     /// Default tax behavior applied on products.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub default_tax_behavior:
-        presence_rs::Presence<crate::v2027_01::models::common::enums::TaxBehaviorOption>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub default_tax_behavior: Option<crate::v2027_01::models::common::enums::TaxBehaviorOption>,
     /// Whether members must access this organization through its SSO
     /// connection. Turning this on requires an active SSO session for this
     /// organization and at least one enabled SSO connection.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub sso_enforced: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub sso_enforced: Option<bool>,
 }
 #[allow(clippy::type_complexity)]
 impl OrganizationUpdate {
@@ -1293,7 +1357,7 @@ impl OrganizationUpdate {
         mut self,
         value: crate::v2027_01::models::organizations::newtypes::OrganizationName,
     ) -> Self {
-        self.name = presence_rs::Presence::Some(value);
+        self.name = Some(value);
         self
     }
 
@@ -1329,7 +1393,7 @@ impl OrganizationUpdate {
         mut self,
         value: Vec<crate::v2027_01::models::organizations::types::OrganizationSocialLink>,
     ) -> Self {
-        self.socials = presence_rs::Presence::Some(value);
+        self.socials = Some(value);
         self
     }
 
@@ -1340,7 +1404,7 @@ impl OrganizationUpdate {
         mut self,
         value: crate::v2027_01::models::organizations::types::OrganizationDetailsInput,
     ) -> Self {
-        self.details = presence_rs::Presence::Some(value);
+        self.details = Some(value);
         self
     }
 
@@ -1359,7 +1423,7 @@ impl OrganizationUpdate {
         mut self,
         value: crate::v2027_01::models::organizations::types::OrganizationFeatureSettingsUpdate,
     ) -> Self {
-        self.feature_settings = presence_rs::Presence::Some(value);
+        self.feature_settings = Some(value);
         self
     }
 
@@ -1368,7 +1432,7 @@ impl OrganizationUpdate {
         mut self,
         value: crate::v2027_01::models::organizations::types::OrganizationSubscriptionSettings,
     ) -> Self {
-        self.subscription_settings = presence_rs::Presence::Some(value);
+        self.subscription_settings = Some(value);
         self
     }
 
@@ -1377,7 +1441,7 @@ impl OrganizationUpdate {
         mut self,
         value: crate::v2027_01::models::organizations::types::OrganizationCustomerEmailSettings,
     ) -> Self {
-        self.customer_email_settings = presence_rs::Presence::Some(value);
+        self.customer_email_settings = Some(value);
         self
     }
 
@@ -1386,7 +1450,7 @@ impl OrganizationUpdate {
         mut self,
         value: crate::v2027_01::models::common::types::OrganizationCustomerPortalSettings,
     ) -> Self {
-        self.customer_portal_settings = presence_rs::Presence::Some(value);
+        self.customer_portal_settings = Some(value);
         self
     }
 
@@ -1395,13 +1459,20 @@ impl OrganizationUpdate {
         mut self,
         value: crate::v2027_01::models::organizations::types::OrganizationDisputeSettingsUpdate,
     ) -> Self {
-        self.dispute_settings = presence_rs::Presence::Some(value);
+        self.dispute_settings = Some(value);
         self
     }
 
+    /// Hosts allowed to embed this organization's checkout. An entry is a host
+    /// and an optional port, without a scheme: HTTPS is always allowed, and
+    /// HTTP too for local hosts — `localhost`, any `.localhost` or `.local`
+    /// name, and loopback or private addresses. `*.example.com` matches any
+    /// subdomain, but not `example.com` itself. An app origin such as
+    /// `chrome-extension://abcdef` carries its scheme, having no host to match
+    /// on.
     #[allow(clippy::should_implement_trait)]
     pub fn embed_hosts(mut self, value: Vec<String>) -> Self {
-        self.embed_hosts = presence_rs::Presence::Some(value);
+        self.embed_hosts = Some(value);
         self
     }
 
@@ -1411,7 +1482,7 @@ impl OrganizationUpdate {
         mut self,
         value: crate::v2027_01::models::common::enums::PresentmentCurrency,
     ) -> Self {
-        self.default_presentment_currency = presence_rs::Presence::Some(value);
+        self.default_presentment_currency = Some(value);
         self
     }
 
@@ -1421,7 +1492,7 @@ impl OrganizationUpdate {
         mut self,
         value: crate::v2027_01::models::common::enums::TaxBehaviorOption,
     ) -> Self {
-        self.default_tax_behavior = presence_rs::Presence::Some(value);
+        self.default_tax_behavior = Some(value);
         self
     }
 
@@ -1430,7 +1501,7 @@ impl OrganizationUpdate {
     /// organization and at least one enabled SSO connection.
     #[allow(clippy::should_implement_trait)]
     pub fn sso_enforced(mut self, value: bool) -> Self {
-        self.sso_enforced = presence_rs::Presence::Some(value);
+        self.sso_enforced = Some(value);
         self
     }
 }
