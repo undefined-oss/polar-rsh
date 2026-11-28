@@ -100,12 +100,19 @@ impl CustomerPortalMemberCreate {
 #[derive(Default)]
 pub struct CustomerPortalMemberUpdate {
     /// The new name for the member.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name:
-        presence_rs::Presence<crate::v2027_01::models::members::newtypes::CustomerPortalMemberName>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub name: Option<crate::v2027_01::models::members::newtypes::CustomerPortalMemberName>,
     /// The new role for the member.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub role: presence_rs::Presence<crate::v2027_01::models::common::enums::MemberRole>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub role: Option<crate::v2027_01::models::common::enums::MemberRole>,
 }
 #[allow(clippy::type_complexity)]
 impl CustomerPortalMemberUpdate {
@@ -119,14 +126,14 @@ impl CustomerPortalMemberUpdate {
         mut self,
         value: crate::v2027_01::models::members::newtypes::CustomerPortalMemberName,
     ) -> Self {
-        self.name = presence_rs::Presence::Some(value);
+        self.name = Some(value);
         self
     }
 
     /// The new role for the member.
     #[allow(clippy::should_implement_trait)]
     pub fn role(mut self, value: crate::v2027_01::models::common::enums::MemberRole) -> Self {
-        self.role = presence_rs::Presence::Some(value);
+        self.role = Some(value);
         self
     }
 }

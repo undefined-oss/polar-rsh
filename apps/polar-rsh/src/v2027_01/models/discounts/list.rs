@@ -6,8 +6,6 @@ use crate::v2027_01::{
 };
 #[derive(Debug, Clone, Default)]
 pub struct DiscountsListParams {
-    /// Filter by discount external ID.
-    pub external_id: Vec<String>,
     /// Filter by organization ID.
     pub organization_id: Vec<crate::v2027_01::models::common::ids::OrganizationId>,
     /// Filter by name.
@@ -29,9 +27,6 @@ impl crate::v2027_01::query::EncodeQuery for DiscountsListParams {
     #[allow(clippy::vec_init_then_push)]
     fn scalar_params(&self) -> Vec<(&'static str, String)> {
         let mut params = Vec::new();
-        for value in &self.external_id {
-            params.push(("external_id", value.to_string()));
-        }
         for value in &self.organization_id {
             params.push(("organization_id", value.to_string()));
         }

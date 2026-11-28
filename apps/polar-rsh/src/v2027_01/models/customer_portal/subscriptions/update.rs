@@ -25,87 +25,135 @@ pub enum CustomerPortalSubscriptionsUpdateError<TransportError> {
     #[error("{message}: {0}", message = "Payment required to apply the subscription update.")]
     PaymentFailed(#[source] crate::v2027_01::models::common::types::PaymentFailed),
     /// Customer subscription is already canceled or will be at the end of the
-    /// period, the user lacks billing permissions, or pausing/resuming is not
-    /// enabled for the organization.
+    /// period, the user lacks billing permissions, pausing/resuming is not
+    /// enabled for the organization, or the organization can't renew
+    /// subscriptions.
     #[error(
         "{message}: {0}",
         message = "Customer subscription is already canceled or will be at the end of the period, \
-                   the user lacks billing permissions, or pausing/resuming is not enabled for the \
-                   organization."
+                   the user lacks billing permissions, pausing/resuming is not enabled for the \
+                   organization, or the organization can't renew subscriptions."
     )]
     AlreadyCanceledSubscription(
         #[source] crate::v2027_01::models::subscriptions::types::AlreadyCanceledSubscription,
     ),
     /// Customer subscription is already canceled or will be at the end of the
-    /// period, the user lacks billing permissions, or pausing/resuming is not
-    /// enabled for the organization.
+    /// period, the user lacks billing permissions, pausing/resuming is not
+    /// enabled for the organization, or the organization can't renew
+    /// subscriptions.
     #[error(
         "{message}: {0}",
         message = "Customer subscription is already canceled or will be at the end of the period, \
-                   the user lacks billing permissions, or pausing/resuming is not enabled for the \
-                   organization."
+                   the user lacks billing permissions, pausing/resuming is not enabled for the \
+                   organization, or the organization can't renew subscriptions."
     )]
     PauseResumeNotAllowed(
         #[source] crate::v2027_01::models::subscriptions::types::PauseResumeNotAllowed,
     ),
     /// Customer subscription is already canceled or will be at the end of the
-    /// period, the user lacks billing permissions, or pausing/resuming is not
-    /// enabled for the organization.
+    /// period, the user lacks billing permissions, pausing/resuming is not
+    /// enabled for the organization, or the organization can't renew
+    /// subscriptions.
     #[error(
         "{message}: {0}",
         message = "Customer subscription is already canceled or will be at the end of the period, \
-                   the user lacks billing permissions, or pausing/resuming is not enabled for the \
-                   organization."
+                   the user lacks billing permissions, pausing/resuming is not enabled for the \
+                   organization, or the organization can't renew subscriptions."
     )]
     UpdateSubscriptionPlanNotAllowed(
         #[source] crate::v2027_01::models::subscriptions::types::UpdateSubscriptionPlanNotAllowed,
     ),
     /// Customer subscription is already canceled or will be at the end of the
-    /// period, the user lacks billing permissions, or pausing/resuming is not
-    /// enabled for the organization.
+    /// period, the user lacks billing permissions, pausing/resuming is not
+    /// enabled for the organization, or the organization can't renew
+    /// subscriptions.
     #[error(
         "{message}: {0}",
         message = "Customer subscription is already canceled or will be at the end of the period, \
-                   the user lacks billing permissions, or pausing/resuming is not enabled for the \
-                   organization."
+                   the user lacks billing permissions, pausing/resuming is not enabled for the \
+                   organization, or the organization can't renew subscriptions."
     )]
     UpdateSubscriptionSeatsNotAllowed(
         #[source] crate::v2027_01::models::subscriptions::types::UpdateSubscriptionSeatsNotAllowed,
     ),
     /// Customer subscription is already canceled or will be at the end of the
-    /// period, the user lacks billing permissions, or pausing/resuming is not
-    /// enabled for the organization.
+    /// period, the user lacks billing permissions, pausing/resuming is not
+    /// enabled for the organization, or the organization can't renew
+    /// subscriptions.
     #[error(
         "{message}: {0}",
         message = "Customer subscription is already canceled or will be at the end of the period, \
-                   the user lacks billing permissions, or pausing/resuming is not enabled for the \
-                   organization."
+                   the user lacks billing permissions, pausing/resuming is not enabled for the \
+                   organization, or the organization can't renew subscriptions."
     )]
     UpdateSubscriptionUnitsNotAllowed(
         #[source] crate::v2027_01::models::subscriptions::types::UpdateSubscriptionUnitsNotAllowed,
     ),
+    /// Customer subscription is already canceled or will be at the end of the
+    /// period, the user lacks billing permissions, pausing/resuming is not
+    /// enabled for the organization, or the organization can't renew
+    /// subscriptions.
+    #[error(
+        "{message}: {0}",
+        message = "Customer subscription is already canceled or will be at the end of the period, \
+                   the user lacks billing permissions, pausing/resuming is not enabled for the \
+                   organization, or the organization can't renew subscriptions."
+    )]
+    PaymentNotReady(#[source] crate::v2027_01::models::common::types::PaymentNotReady),
     /// Customer subscription was not found.
     #[error("{message}: {0}", message = "Customer subscription was not found.")]
     ResourceNotFound(#[source] crate::v2027_01::models::common::types::ResourceNotFound),
-    /// The subscription has no payment method to charge, or is not scheduled to
-    /// be canceled.
+    /// The subscription has no payment method to charge, is not scheduled to be
+    /// canceled, or can't be reactivated: its trial hasn't ended without
+    /// converting, or the customer has no payment method or complete billing
+    /// address.
     #[error(
         "{message}: {0}",
-        message = "The subscription has no payment method to charge, or is not scheduled to be \
-                   canceled."
+        message = "The subscription has no payment method to charge, is not scheduled to be \
+                   canceled, or can't be reactivated: its trial hasn't ended without converting, \
+                   or the customer has no payment method or complete billing address."
     )]
     PaymentMethodRequired(
         #[source] crate::v2027_01::models::subscriptions::types::PaymentMethodRequired,
     ),
-    /// The subscription has no payment method to charge, or is not scheduled to
-    /// be canceled.
+    /// The subscription has no payment method to charge, is not scheduled to be
+    /// canceled, or can't be reactivated: its trial hasn't ended without
+    /// converting, or the customer has no payment method or complete billing
+    /// address.
     #[error(
         "{message}: {0}",
-        message = "The subscription has no payment method to charge, or is not scheduled to be \
-                   canceled."
+        message = "The subscription has no payment method to charge, is not scheduled to be \
+                   canceled, or can't be reactivated: its trial hasn't ended without converting, \
+                   or the customer has no payment method or complete billing address."
     )]
     SubscriptionNotScheduledToCancel(
         #[source] crate::v2027_01::models::subscriptions::types::SubscriptionNotScheduledToCancel,
+    ),
+    /// The subscription has no payment method to charge, is not scheduled to be
+    /// canceled, or can't be reactivated: its trial hasn't ended without
+    /// converting, or the customer has no payment method or complete billing
+    /// address.
+    #[error(
+        "{message}: {0}",
+        message = "The subscription has no payment method to charge, is not scheduled to be \
+                   canceled, or can't be reactivated: its trial hasn't ended without converting, \
+                   or the customer has no payment method or complete billing address."
+    )]
+    NotTrialEndedSubscription(
+        #[source] crate::v2027_01::models::subscriptions::types::NotTrialEndedSubscription,
+    ),
+    /// The subscription has no payment method to charge, is not scheduled to be
+    /// canceled, or can't be reactivated: its trial hasn't ended without
+    /// converting, or the customer has no payment method or complete billing
+    /// address.
+    #[error(
+        "{message}: {0}",
+        message = "The subscription has no payment method to charge, is not scheduled to be \
+                   canceled, or can't be reactivated: its trial hasn't ended without converting, \
+                   or the customer has no payment method or complete billing address."
+    )]
+    MissingBillingDetails(
+        #[source] crate::v2027_01::models::subscriptions::types::MissingBillingDetails,
     ),
     /// Validation Error
     #[error("{message}: {0}", message = "Validation Error")]
@@ -119,9 +167,12 @@ pub(super) type CustomerPortalSubscriptionsUpdateErrors = (
     crate::v2027_01::models::subscriptions::types::UpdateSubscriptionPlanNotAllowed,
     crate::v2027_01::models::subscriptions::types::UpdateSubscriptionSeatsNotAllowed,
     crate::v2027_01::models::subscriptions::types::UpdateSubscriptionUnitsNotAllowed,
+    crate::v2027_01::models::common::types::PaymentNotReady,
     crate::v2027_01::models::common::types::ResourceNotFound,
     crate::v2027_01::models::subscriptions::types::PaymentMethodRequired,
     crate::v2027_01::models::subscriptions::types::SubscriptionNotScheduledToCancel,
+    crate::v2027_01::models::subscriptions::types::NotTrialEndedSubscription,
+    crate::v2027_01::models::subscriptions::types::MissingBillingDetails,
     crate::v2027_01::models::common::types::HttpValidationError,
 );
 impl<T> From<eros::ErrorUnion<CustomerPortalSubscriptionsUpdateErrors>>
@@ -129,7 +180,7 @@ impl<T> From<eros::ErrorUnion<CustomerPortalSubscriptionsUpdateErrors>>
 {
     fn from(error: eros::ErrorUnion<CustomerPortalSubscriptionsUpdateErrors>) -> Self {
         match error.into_enum() {
-            eros::E11::A(error) => match error {
+            eros::E14::A(error) => match error {
                 crate::v2027_01::error::RequestFailure::BuildRequest(error) => {
                     Self::BuildRequest(error)
                 }
@@ -145,16 +196,19 @@ impl<T> From<eros::ErrorUnion<CustomerPortalSubscriptionsUpdateErrors>>
                 }
                 crate::v2027_01::error::RequestFailure::Timeout(error) => Self::Timeout(error),
             },
-            eros::E11::B(error) => Self::PaymentFailed(error),
-            eros::E11::C(error) => Self::AlreadyCanceledSubscription(error),
-            eros::E11::D(error) => Self::PauseResumeNotAllowed(error),
-            eros::E11::E(error) => Self::UpdateSubscriptionPlanNotAllowed(error),
-            eros::E11::F(error) => Self::UpdateSubscriptionSeatsNotAllowed(error),
-            eros::E11::G(error) => Self::UpdateSubscriptionUnitsNotAllowed(error),
-            eros::E11::H(error) => Self::ResourceNotFound(error),
-            eros::E11::I(error) => Self::PaymentMethodRequired(error),
-            eros::E11::J(error) => Self::SubscriptionNotScheduledToCancel(error),
-            eros::E11::K(error) => Self::HttpValidationError(error),
+            eros::E14::B(error) => Self::PaymentFailed(error),
+            eros::E14::C(error) => Self::AlreadyCanceledSubscription(error),
+            eros::E14::D(error) => Self::PauseResumeNotAllowed(error),
+            eros::E14::E(error) => Self::UpdateSubscriptionPlanNotAllowed(error),
+            eros::E14::F(error) => Self::UpdateSubscriptionSeatsNotAllowed(error),
+            eros::E14::G(error) => Self::UpdateSubscriptionUnitsNotAllowed(error),
+            eros::E14::H(error) => Self::PaymentNotReady(error),
+            eros::E14::I(error) => Self::ResourceNotFound(error),
+            eros::E14::J(error) => Self::PaymentMethodRequired(error),
+            eros::E14::K(error) => Self::SubscriptionNotScheduledToCancel(error),
+            eros::E14::L(error) => Self::NotTrialEndedSubscription(error),
+            eros::E14::M(error) => Self::MissingBillingDetails(error),
+            eros::E14::N(error) => Self::HttpValidationError(error),
         }
     }
 }
@@ -256,6 +310,9 @@ where
                         Payload4(
                             crate::v2027_01::models::subscriptions::types::UpdateSubscriptionUnitsNotAllowed,
                         ),
+                        Payload5(
+                            crate::v2027_01::models::common::types::PaymentNotReady,
+                        ),
                     }
                     let error = serde_json::from_slice::<ResponseError>(&body_slice)
                         .map_err(|error| eros::ErrorUnion::new(
@@ -276,6 +333,9 @@ where
                                 eros::ErrorUnion::new(error)
                             }
                             ResponseError::Payload4(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                            ResponseError::Payload5(error) => {
                                 eros::ErrorUnion::new(error)
                             }
                         },
@@ -300,6 +360,12 @@ where
                         Payload1(
                             crate::v2027_01::models::subscriptions::types::SubscriptionNotScheduledToCancel,
                         ),
+                        Payload2(
+                            crate::v2027_01::models::subscriptions::types::NotTrialEndedSubscription,
+                        ),
+                        Payload3(
+                            crate::v2027_01::models::subscriptions::types::MissingBillingDetails,
+                        ),
                     }
                     let error = serde_json::from_slice::<ResponseError>(&body_slice)
                         .map_err(|error| eros::ErrorUnion::new(
@@ -311,6 +377,12 @@ where
                                 eros::ErrorUnion::new(error)
                             }
                             ResponseError::Payload1(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                            ResponseError::Payload2(error) => {
+                                eros::ErrorUnion::new(error)
+                            }
+                            ResponseError::Payload3(error) => {
                                 eros::ErrorUnion::new(error)
                             }
                         },

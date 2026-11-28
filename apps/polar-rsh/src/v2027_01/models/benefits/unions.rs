@@ -4,8 +4,12 @@ pub enum BenefitCreate {
     #[serde(rename = "custom")]
     Custom {
         ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        external_id: presence_rs::Presence<String>,
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        external_id: Option<String>,
         ///Key-value object allowing you to store additional information.
         ///
         ///The key must be a string with a maximum length of **40 characters**.
@@ -45,8 +49,12 @@ pub enum BenefitCreate {
     #[serde(rename = "discord")]
     Discord {
         ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        external_id: presence_rs::Presence<String>,
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        external_id: Option<String>,
         ///Key-value object allowing you to store additional information.
         ///
         ///The key must be a string with a maximum length of **40 characters**.
@@ -86,8 +94,12 @@ pub enum BenefitCreate {
     #[serde(rename = "github_repository")]
     GithubRepository {
         ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        external_id: presence_rs::Presence<String>,
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        external_id: Option<String>,
         ///Key-value object allowing you to store additional information.
         ///
         ///The key must be a string with a maximum length of **40 characters**.
@@ -127,8 +139,12 @@ pub enum BenefitCreate {
     #[serde(rename = "downloadables")]
     Downloadables {
         ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        external_id: presence_rs::Presence<String>,
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        external_id: Option<String>,
         ///Key-value object allowing you to store additional information.
         ///
         ///The key must be a string with a maximum length of **40 characters**.
@@ -168,8 +184,12 @@ pub enum BenefitCreate {
     #[serde(rename = "license_keys")]
     LicenseKeys {
         ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        external_id: presence_rs::Presence<String>,
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        external_id: Option<String>,
         ///Key-value object allowing you to store additional information.
         ///
         ///The key must be a string with a maximum length of **40 characters**.
@@ -209,8 +229,12 @@ pub enum BenefitCreate {
     #[serde(rename = "meter_credit")]
     MeterCredit {
         ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        external_id: presence_rs::Presence<String>,
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        external_id: Option<String>,
         ///Key-value object allowing you to store additional information.
         ///
         ///The key must be a string with a maximum length of **40 characters**.
@@ -250,8 +274,12 @@ pub enum BenefitCreate {
     #[serde(rename = "feature_flag")]
     FeatureFlag {
         ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        external_id: presence_rs::Presence<String>,
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        external_id: Option<String>,
         ///Key-value object allowing you to store additional information.
         ///
         ///The key must be a string with a maximum length of **40 characters**.
@@ -291,8 +319,12 @@ pub enum BenefitCreate {
     #[serde(rename = "slack_shared_channel")]
     SlackSharedChannel {
         ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        external_id: presence_rs::Presence<String>,
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        external_id: Option<String>,
         ///Key-value object allowing you to store additional information.
         ///
         ///The key must be a string with a maximum length of **40 characters**.

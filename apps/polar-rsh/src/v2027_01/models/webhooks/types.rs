@@ -1,23 +1,4 @@
 #[derive(Debug, Clone)]
-pub struct AmbiguousExternalWebhookEndpointIdRequired {
-    pub detail: String,
-}
-#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
-#[allow(clippy::type_complexity)]
-#[serde(deny_unknown_fields)]
-#[derive(thiserror::Error)]
-#[error("{self:?}")]
-pub struct AmbiguousExternalWebhookEndpointId {
-    pub error: monostate::MustBe!("AmbiguousExternalWebhookEndpointID"),
-    pub detail: String,
-}
-#[allow(clippy::type_complexity)]
-impl AmbiguousExternalWebhookEndpointId {
-    pub fn new(required: AmbiguousExternalWebhookEndpointIdRequired) -> Self {
-        Self { error: Default::default(), detail: required.detail }
-    }
-}
-#[derive(Debug, Clone)]
 pub struct BenefitGrantCustomWebhookRequired {
     /// When the manual grant was requested, if applicable.
     pub manually_granted_at: Option<jiff::Timestamp>,
@@ -2315,7 +2296,7 @@ pub struct WebhookEndpointRequired {
     /// Last modification timestamp of the object.
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
-    pub id: crate::v2027_01::models::common::ids::WebhookEndpointId,
+    pub id: crate::v2027_01::models::common::ids::EndpointId,
     /// The URL where the webhook events will be sent.
     pub url: String,
     /// The API version that'll be used in event payloads.
@@ -2354,7 +2335,7 @@ pub struct WebhookEndpoint {
     )]
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
-    pub id: crate::v2027_01::models::common::ids::WebhookEndpointId,
+    pub id: crate::v2027_01::models::common::ids::EndpointId,
     /// The URL where the webhook events will be sent.
     pub url: String,
     /// An optional name for the webhook endpoint to help organize and identify
@@ -2492,27 +2473,45 @@ impl WebhookEndpointCreate {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct WebhookEndpointUpdate {
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub url: presence_rs::Presence<crate::v2027_01::models::webhooks::newtypes::WebhookEndpointUrl>,
-    /// An optional name for the webhook endpoint to help organize and identify
-    /// it.
+    /// The URL where the webhook events will be sent.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub url: Option<crate::v2027_01::models::webhooks::newtypes::WebhookEndpointUrl>,
+    /// An optional name for the webhook endpoint. Set to `null` to clear it.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub name: presence_rs::Presence<String>,
     /// The API version that'll be used in event payloads.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub api_version: presence_rs::Presence<
-        crate::v2027_01::models::webhooks::enums::WebhookEndpointUpdateApiVersion,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub format: presence_rs::Presence<
-        crate::v2027_01::models::webhooks::enums::WebhookEndpointUpdateFormat,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub events:
-        presence_rs::Presence<Vec<crate::v2027_01::models::webhooks::enums::WebhookEventType>>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub api_version:
+        Option<crate::v2027_01::models::webhooks::enums::WebhookEndpointUpdateApiVersion>,
+    /// The format of the webhook payload.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub format: Option<crate::v2027_01::models::webhooks::enums::WebhookEndpointUpdateFormat>,
+    /// The events that will trigger the webhook.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub events: Option<Vec<crate::v2027_01::models::webhooks::enums::WebhookEventType>>,
     /// Whether the webhook endpoint is enabled.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub enabled: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub enabled: Option<bool>,
 }
 #[allow(clippy::type_complexity)]
 impl WebhookEndpointUpdate {
@@ -2520,17 +2519,17 @@ impl WebhookEndpointUpdate {
         Self::default()
     }
 
+    /// The URL where the webhook events will be sent.
     #[allow(clippy::should_implement_trait)]
     pub fn url(
         mut self,
         value: crate::v2027_01::models::webhooks::newtypes::WebhookEndpointUrl,
     ) -> Self {
-        self.url = presence_rs::Presence::Some(value);
+        self.url = Some(value);
         self
     }
 
-    /// An optional name for the webhook endpoint to help organize and identify
-    /// it.
+    /// An optional name for the webhook endpoint. Set to `null` to clear it.
     #[allow(clippy::should_implement_trait)]
     pub fn name(mut self, value: impl Into<String>) -> Self {
         self.name = presence_rs::Presence::Some(value.into());
@@ -2543,32 +2542,34 @@ impl WebhookEndpointUpdate {
         mut self,
         value: crate::v2027_01::models::webhooks::enums::WebhookEndpointUpdateApiVersion,
     ) -> Self {
-        self.api_version = presence_rs::Presence::Some(value);
+        self.api_version = Some(value);
         self
     }
 
+    /// The format of the webhook payload.
     #[allow(clippy::should_implement_trait)]
     pub fn format(
         mut self,
         value: crate::v2027_01::models::webhooks::enums::WebhookEndpointUpdateFormat,
     ) -> Self {
-        self.format = presence_rs::Presence::Some(value);
+        self.format = Some(value);
         self
     }
 
+    /// The events that will trigger the webhook.
     #[allow(clippy::should_implement_trait)]
     pub fn events(
         mut self,
         value: Vec<crate::v2027_01::models::webhooks::enums::WebhookEventType>,
     ) -> Self {
-        self.events = presence_rs::Presence::Some(value);
+        self.events = Some(value);
         self
     }
 
     /// Whether the webhook endpoint is enabled.
     #[allow(clippy::should_implement_trait)]
     pub fn enabled(mut self, value: bool) -> Self {
-        self.enabled = presence_rs::Presence::Some(value);
+        self.enabled = Some(value);
         self
     }
 }

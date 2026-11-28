@@ -21,18 +21,27 @@ pub enum OrdersCreateError<TransportError> {
     UnexpectedStatus { status: http::StatusCode, body: bytes::Bytes },
     #[error("request timed out")]
     Timeout(#[source] tokio::time::error::Elapsed),
+    /// Off-session charges are not enabled for this organization.
+    #[error(
+        "{message}: {0}",
+        message = "Off-session charges are not enabled for this organization."
+    )]
+    OffSessionChargesNotEnabled(
+        #[source] crate::v2027_01::models::orders::types::OffSessionChargesNotEnabled,
+    ),
     /// Validation Error
     #[error("{message}: {0}", message = "Validation Error")]
     HttpValidationError(#[source] crate::v2027_01::models::common::types::HttpValidationError),
 }
 pub(super) type OrdersCreateErrors = (
     crate::v2027_01::error::RequestFailure,
+    crate::v2027_01::models::orders::types::OffSessionChargesNotEnabled,
     crate::v2027_01::models::common::types::HttpValidationError,
 );
 impl<T> From<eros::ErrorUnion<OrdersCreateErrors>> for OrdersCreateError<T> {
     fn from(error: eros::ErrorUnion<OrdersCreateErrors>) -> Self {
         match error.into_enum() {
-            eros::E2::A(error) => match error {
+            eros::E3::A(error) => match error {
                 crate::v2027_01::error::RequestFailure::BuildRequest(error) => {
                     Self::BuildRequest(error)
                 }
@@ -48,7 +57,8 @@ impl<T> From<eros::ErrorUnion<OrdersCreateErrors>> for OrdersCreateError<T> {
                 }
                 crate::v2027_01::error::RequestFailure::Timeout(error) => Self::Timeout(error),
             },
-            eros::E2::B(error) => Self::HttpValidationError(error),
+            eros::E3::B(error) => Self::OffSessionChargesNotEnabled(error),
+            eros::E3::C(error) => Self::HttpValidationError(error),
         }
     }
 }
@@ -62,12 +72,15 @@ impl<T> OrdersCreateError<T> {
 /// method. The order is created with `status=draft` and no invoice number;
 /// call `POST /v1/orders/{id}/finalize` to attempt the charge.
 ///
+/// Reference the customer by `customer_id` or `external_customer_id`, and the
+/// product by `product_id` or `external_product_id`.
+///
 /// The organization must have the `off_session_charges_enabled` feature flag.
 ///
 /// **Scopes**: `orders:write`
 pub struct OrdersCreate<'a, ClientService> {
     pub(super) client: &'a PolarClient<ClientService>,
-    pub(super) payload: crate::v2027_01::models::orders::types::OrderCreate,
+    pub(super) payload: crate::v2027_01::models::orders::unions::OrdersCreateRequestUnion,
     pub(super) options: RequestOptions,
 }
 impl<'a, ClientService> OrdersCreate<'a, ClientService> {
@@ -112,6 +125,15 @@ where
                     crate::v2027_01::models::orders::types::Order,
                 >(&body_slice)
                 .map_err(|error| eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))),
+                http::StatusCode::FORBIDDEN => {
+                    let error = serde_json::from_slice::<
+                        crate::v2027_01::models::orders::types::OffSessionChargesNotEnabled,
+                    >(&body_slice)
+                    .map_err(|error| {
+                        eros::ErrorUnion::new(RequestFailure::DecodeResponse(error))
+                    })?;
+                    Err(eros::ErrorUnion::new(error))
+                }
                 http::StatusCode::UNPROCESSABLE_ENTITY => {
                     let error = serde_json::from_slice::<
                         crate::v2027_01::models::common::types::HttpValidationError,

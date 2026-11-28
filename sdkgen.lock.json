@@ -1,36 +1,36 @@
 {
   "format": 3,
-  "upstream_revision": "7f2ab095c7092dfb900275c019211b296eccd46d",
+  "upstream_revision": "3dca712a981979a8a817038d29034c6b770c5199",
   "versions": {
     "2026-04": {
       "source": "vendor/polar/docs/openapi/2026-04.openapi.json",
-      "observed_hash": "168f82e1f7ec0fa07798b9cba4cf63145e1d9d52440c2c845648f72151a353b9",
+      "observed_hash": "6d8fab76bb1a3a679b5960502bebede7e8a5fec3839c33c477ac761066aa1f59",
       "module_path": "apps/polar-rsh/src/v2026_04",
       "status": "validated",
-      "generated_hash": "168f82e1f7ec0fa07798b9cba4cf63145e1d9d52440c2c845648f72151a353b9",
-      "validated_hash": "168f82e1f7ec0fa07798b9cba4cf63145e1d9d52440c2c845648f72151a353b9",
+      "generated_hash": "6d8fab76bb1a3a679b5960502bebede7e8a5fec3839c33c477ac761066aa1f59",
+      "validated_hash": "6d8fab76bb1a3a679b5960502bebede7e8a5fec3839c33c477ac761066aa1f59",
       "generator_fingerprint": "1c9220fb40d3f2a3707e4cff60dbe7327be68b4a8f7195d5f2ee4b75a43a923e",
-      "validation_fingerprint": "ed9db6f245a2438816092436f86596f65c07f6314257b8d72615b3a8888027ce"
+      "validation_fingerprint": "d5be430196352f612a659101b24e48fe0ce91260d80931817a91338d4af72fa6"
     },
     "2026-10": {
       "source": "vendor/polar/docs/openapi/2026-10.openapi.json",
-      "observed_hash": "5139f39510a28c6d68531a9178da8ae6317b22660d4ab37c9f0e457b182076a7",
+      "observed_hash": "601a521c060afc5492cb051f4f3f43a09efbbcb2f0b06be4cb29d0da0fad24e1",
       "module_path": "apps/polar-rsh/src/v2026_10",
       "status": "validated",
-      "generated_hash": "5139f39510a28c6d68531a9178da8ae6317b22660d4ab37c9f0e457b182076a7",
-      "validated_hash": "5139f39510a28c6d68531a9178da8ae6317b22660d4ab37c9f0e457b182076a7",
+      "generated_hash": "601a521c060afc5492cb051f4f3f43a09efbbcb2f0b06be4cb29d0da0fad24e1",
+      "validated_hash": "601a521c060afc5492cb051f4f3f43a09efbbcb2f0b06be4cb29d0da0fad24e1",
       "generator_fingerprint": "1c9220fb40d3f2a3707e4cff60dbe7327be68b4a8f7195d5f2ee4b75a43a923e",
-      "validation_fingerprint": "ed9db6f245a2438816092436f86596f65c07f6314257b8d72615b3a8888027ce"
+      "validation_fingerprint": "d5be430196352f612a659101b24e48fe0ce91260d80931817a91338d4af72fa6"
     },
     "2027-01": {
       "source": "vendor/polar/docs/openapi/2027-01.openapi.json",
-      "observed_hash": "66581d7d85c1a97459901296f08d2fa806f31b0bb4987e2fa8a6f6c0008bc157",
+      "observed_hash": "0bb9bfb0154e93507d62fd2c73ee9a400b4d28167c7d7eea7893990dc66855aa",
       "module_path": "apps/polar-rsh/src/v2027_01",
       "status": "validated",
-      "generated_hash": "66581d7d85c1a97459901296f08d2fa806f31b0bb4987e2fa8a6f6c0008bc157",
-      "validated_hash": "66581d7d85c1a97459901296f08d2fa806f31b0bb4987e2fa8a6f6c0008bc157",
+      "generated_hash": "0bb9bfb0154e93507d62fd2c73ee9a400b4d28167c7d7eea7893990dc66855aa",
+      "validated_hash": "0bb9bfb0154e93507d62fd2c73ee9a400b4d28167c7d7eea7893990dc66855aa",
       "generator_fingerprint": "1c9220fb40d3f2a3707e4cff60dbe7327be68b4a8f7195d5f2ee4b75a43a923e",
-      "validation_fingerprint": "ed9db6f245a2438816092436f86596f65c07f6314257b8d72615b3a8888027ce"
+      "validation_fingerprint": "d5be430196352f612a659101b24e48fe0ce91260d80931817a91338d4af72fa6"
     }
   }
 }

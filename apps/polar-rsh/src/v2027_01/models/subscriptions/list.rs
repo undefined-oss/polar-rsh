@@ -36,6 +36,9 @@ pub struct SubscriptionsListParams {
     pub organization_id: Vec<crate::v2027_01::models::common::ids::OrganizationId>,
     /// Filter by product ID.
     pub product_id: Vec<crate::v2027_01::models::common::ids::ProductId>,
+    /// Filter by customer name, email or external ID, or a subscription or
+    /// customer ID.
+    pub query: Option<String>,
     /// Only include subscriptions started after this date.
     pub started_after: Option<jiff::Timestamp>,
     /// Only include subscriptions started before this date.
@@ -91,6 +94,9 @@ impl crate::v2027_01::query::EncodeQuery for SubscriptionsListParams {
         }
         for value in &self.product_id {
             params.push(("product_id", value.to_string()));
+        }
+        if let Some(value) = &self.query {
+            params.push(("query", value.to_string()));
         }
         if let Some(value) = &self.started_after {
             params.push(("started_after", value.to_string()));

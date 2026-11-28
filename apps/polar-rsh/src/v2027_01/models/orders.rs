@@ -27,13 +27,16 @@ impl<'a, ClientService> Orders<'a, ClientService> {
     /// method. The order is created with `status=draft` and no invoice number;
     /// call `POST /v1/orders/{id}/finalize` to attempt the charge.
     ///
+    /// Reference the customer by `customer_id` or `external_customer_id`, and
+    /// the product by `product_id` or `external_product_id`.
+    ///
     /// The organization must have the `off_session_charges_enabled` feature
     /// flag.
     ///
     /// **Scopes**: `orders:write`
     pub fn create(
         &self,
-        payload: crate::v2027_01::models::orders::types::OrderCreate,
+        payload: crate::v2027_01::models::orders::unions::OrdersCreateRequestUnion,
     ) -> crate::v2027_01::models::orders::OrdersCreate<'a, ClientService> {
         crate::v2027_01::models::orders::OrdersCreate {
             client: self.client,

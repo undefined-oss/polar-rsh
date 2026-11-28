@@ -76,6 +76,9 @@ impl<T> SubscriptionsCreateError<T> {
 /// upfront payment setup. Paid subscriptions start with the product's
 /// configured trial period. For other paid products, use the checkout flow.
 ///
+/// Reference the customer by Polar ID or external ID. Reference the product by
+/// Polar ID, or by external ID together with an external customer ID.
+///
 /// No initial order will be created and no confirmation email will be sent.
 ///
 /// **Scopes**: `subscriptions:write`

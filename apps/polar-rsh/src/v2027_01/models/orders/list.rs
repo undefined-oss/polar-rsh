@@ -34,6 +34,9 @@ pub struct OrdersListParams {
     pub product_billing_type: Vec<crate::v2027_01::models::common::enums::ProductBillingType>,
     /// Filter by product ID.
     pub product_id: Vec<crate::v2027_01::models::common::ids::ProductId>,
+    /// Filter by customer name, email or external ID, invoice number, or an
+    /// order, customer, subscription or checkout ID.
+    pub query: Option<String>,
     /// Filter by order status.
     pub status: Vec<crate::v2027_01::models::common::enums::OrderStatus>,
     /// Filter by subscription ID.
@@ -84,6 +87,9 @@ impl crate::v2027_01::query::EncodeQuery for OrdersListParams {
         }
         for value in &self.product_id {
             params.push(("product_id", value.to_string()));
+        }
+        if let Some(value) = &self.query {
+            params.push(("query", value.to_string()));
         }
         for value in &self.status {
             params.push(("status", value.to_string()));

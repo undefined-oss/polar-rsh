@@ -6,6 +6,10 @@ use crate::v2027_01::{
 };
 #[derive(Debug, Clone, Default)]
 pub struct CheckoutsListParams {
+    /// Only include checkout sessions created after this date.
+    pub created_after: Option<jiff::Timestamp>,
+    /// Only include checkout sessions created before this date.
+    pub created_before: Option<jiff::Timestamp>,
     /// Filter by customer ID.
     pub customer_id: Vec<crate::v2027_01::models::common::ids::CustomerId>,
     /// Filter by customer external ID.
@@ -37,6 +41,12 @@ impl crate::v2027_01::query::EncodeQuery for CheckoutsListParams {
     #[allow(clippy::vec_init_then_push)]
     fn scalar_params(&self) -> Vec<(&'static str, String)> {
         let mut params = Vec::new();
+        if let Some(value) = &self.created_after {
+            params.push(("created_after", value.to_string()));
+        }
+        if let Some(value) = &self.created_before {
+            params.push(("created_before", value.to_string()));
+        }
         for value in &self.customer_id {
             params.push(("customer_id", value.to_string()));
         }

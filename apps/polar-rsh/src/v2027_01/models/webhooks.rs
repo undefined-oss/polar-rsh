@@ -2,7 +2,6 @@ pub mod create_webhook_endpoint;
 pub mod delete_webhook_endpoint;
 pub mod enums;
 pub mod events;
-pub mod get_external_webhook_endpoint;
 pub mod get_webhook_endpoint;
 pub mod list_webhook_deliveries;
 pub mod list_webhook_endpoints;
@@ -15,10 +14,9 @@ pub mod update_webhook_endpoint;
 pub mod verification;
 pub use self::{
     create_webhook_endpoint::*, delete_webhook_endpoint::*, enums::*, events::*,
-    get_external_webhook_endpoint::*, get_webhook_endpoint::*, list_webhook_deliveries::*,
-    list_webhook_endpoints::*, newtypes::*, redeliver_webhook_event::*,
-    reset_webhook_endpoint_secret::*, types::*, unions::*, update_webhook_endpoint::*,
-    verification::*,
+    get_webhook_endpoint::*, list_webhook_deliveries::*, list_webhook_endpoints::*, newtypes::*,
+    redeliver_webhook_event::*, reset_webhook_endpoint_secret::*, types::*, unions::*,
+    update_webhook_endpoint::*, verification::*,
 };
 pub struct Webhooks<'a, ClientService> {
     client: &'a crate::v2027_01::client::PolarClient<ClientService>,
@@ -53,21 +51,6 @@ impl<'a, ClientService> Webhooks<'a, ClientService> {
             client: self.client,
             options: crate::v2027_01::client::RequestOptions::default(),
             id,
-        }
-    }
-
-    /// Get a webhook endpoint by external ID.
-    ///
-    /// **Scopes**: `webhooks:read` `webhooks:write`
-    pub fn get_external_webhook_endpoint(
-        &self,
-        external_id: String,
-    ) -> crate::v2027_01::models::webhooks::WebhooksGetExternalWebhookEndpoint<'a, ClientService>
-    {
-        crate::v2027_01::models::webhooks::WebhooksGetExternalWebhookEndpoint {
-            client: self.client,
-            options: crate::v2027_01::client::RequestOptions::default(),
-            external_id,
         }
     }
 

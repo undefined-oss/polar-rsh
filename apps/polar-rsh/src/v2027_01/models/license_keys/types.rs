@@ -810,9 +810,12 @@ impl LicenseKeySubscription {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct LicenseKeyUpdate {
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub status:
-        presence_rs::Presence<crate::v2027_01::models::license_keys::enums::LicenseKeyStatus>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub status: Option<crate::v2027_01::models::license_keys::enums::LicenseKeyStatus>,
     #[serde(
         default,
         skip_serializing_if = "Option::is_none",
@@ -841,7 +844,7 @@ impl LicenseKeyUpdate {
         mut self,
         value: crate::v2027_01::models::license_keys::enums::LicenseKeyStatus,
     ) -> Self {
-        self.status = presence_rs::Presence::Some(value);
+        self.status = Some(value);
         self
     }
 
@@ -889,20 +892,47 @@ pub struct LicenseKeyValidateRequired {
 pub struct LicenseKeyValidate {
     pub key: String,
     pub organization_id: crate::v2027_01::models::common::ids::OrganizationId,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub activation_id: presence_rs::Presence<
-        crate::v2027_01::models::common::ids::ActivationId,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub activation_id: Option<crate::v2027_01::models::common::ids::ActivationId>,
+    ///The benefit ID.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub benefit_id: Option<crate::v2027_01::models::common::ids::BenefitId>,
+    ///The ID in your system of the benefit the license key must belong to. Matches every version of the benefit. Can't be combined with `benefit_id`.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_benefit_id: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub customer_id: Option<crate::v2027_01::models::common::ids::CustomerId>,
+    ///The ID in your system of the customer the license key must belong to. Can't be combined with `customer_id`.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_customer_id: Option<
+        crate::v2027_01::models::license_keys::newtypes::LicenseKeyValidateExternalCustomerId,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub benefit_id: presence_rs::Presence<
-        crate::v2027_01::models::common::ids::BenefitId,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub customer_id: presence_rs::Presence<
-        crate::v2027_01::models::common::ids::CustomerId,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub increment_usage: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub increment_usage: Option<
         crate::v2027_01::models::license_keys::newtypes::LicenseKeyValidateIncrementUsage,
     >,
     ///Key-value object allowing you to set conditions that must match when validating the license key.
@@ -934,10 +964,12 @@ impl LicenseKeyValidate {
         Self {
             key: required.key,
             organization_id: required.organization_id,
-            activation_id: presence_rs::Presence::Absent,
-            benefit_id: presence_rs::Presence::Absent,
-            customer_id: presence_rs::Presence::Absent,
-            increment_usage: presence_rs::Presence::Absent,
+            activation_id: None,
+            benefit_id: None,
+            external_benefit_id: None,
+            customer_id: None,
+            external_customer_id: None,
+            increment_usage: None,
             conditions: None,
         }
     }
@@ -947,19 +979,40 @@ impl LicenseKeyValidate {
         mut self,
         value: crate::v2027_01::models::common::ids::ActivationId,
     ) -> Self {
-        self.activation_id = presence_rs::Presence::Some(value);
+        self.activation_id = Some(value);
         self
     }
 
+    /// The benefit ID.
     #[allow(clippy::should_implement_trait)]
     pub fn benefit_id(mut self, value: crate::v2027_01::models::common::ids::BenefitId) -> Self {
-        self.benefit_id = presence_rs::Presence::Some(value);
+        self.benefit_id = Some(value);
+        self
+    }
+
+    /// The ID in your system of the benefit the license key must belong to.
+    /// Matches every version of the benefit. Can't be combined with
+    /// `benefit_id`.
+    #[allow(clippy::should_implement_trait)]
+    pub fn external_benefit_id(mut self, value: impl Into<String>) -> Self {
+        self.external_benefit_id = Some(value.into());
         self
     }
 
     #[allow(clippy::should_implement_trait)]
     pub fn customer_id(mut self, value: crate::v2027_01::models::common::ids::CustomerId) -> Self {
-        self.customer_id = presence_rs::Presence::Some(value);
+        self.customer_id = Some(value);
+        self
+    }
+
+    /// The ID in your system of the customer the license key must belong to.
+    /// Can't be combined with `customer_id`.
+    #[allow(clippy::should_implement_trait)]
+    pub fn external_customer_id(
+        mut self,
+        value: crate::v2027_01::models::license_keys::newtypes::LicenseKeyValidateExternalCustomerId,
+    ) -> Self {
+        self.external_customer_id = Some(value);
         self
     }
 
@@ -968,7 +1021,7 @@ impl LicenseKeyValidate {
         mut self,
         value: crate::v2027_01::models::license_keys::newtypes::LicenseKeyValidateIncrementUsage,
     ) -> Self {
-        self.increment_usage = presence_rs::Presence::Some(value);
+        self.increment_usage = Some(value);
         self
     }
 
