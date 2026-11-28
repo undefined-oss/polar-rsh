@@ -19,6 +19,9 @@ pub enum CustomerSubscriptionUpdate {
     CustomerSubscriptionResume(
         crate::v2027_01::models::subscriptions::types::CustomerSubscriptionResume,
     ),
+    CustomerSubscriptionReactivate(
+        crate::v2027_01::models::subscriptions::types::CustomerSubscriptionReactivate,
+    ),
     CustomerSubscriptionUpdateClear(
         crate::v2027_01::models::subscriptions::types::CustomerSubscriptionUpdateClear,
     ),
@@ -38,6 +41,16 @@ pub enum SubscriptionCreateCustomerMetadataAdditionalPropertiesUnion {
 pub enum SubscriptionCreateExternalCustomerMetadataAdditionalPropertiesUnion {
     String(
         crate::v2027_01::models::subscriptions::newtypes::SubscriptionCreateExternalCustomerMetadataValueString,
+    ),
+    Integer(i64),
+    Number(f64),
+    Boolean(bool),
+}
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(untagged)]
+pub enum SubscriptionCreateExternalMetadataAdditionalPropertiesUnion {
+    String(
+        crate::v2027_01::models::subscriptions::newtypes::SubscriptionCreateExternalMetadataValueString,
     ),
     Integer(i64),
     Number(f64),
@@ -194,7 +207,7 @@ pub enum SubscriptionUpdateUnitsProrationBehaviorUnion {
     ),
     Auto(monostate::MustBe!("auto")),
 }
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize)]
 #[serde(untagged)]
 pub enum SubscriptionsCreateRequestUnion {
     SubscriptionCreateCustomer(
@@ -203,4 +216,58 @@ pub enum SubscriptionsCreateRequestUnion {
     SubscriptionCreateExternalCustomer(
         crate::v2027_01::models::subscriptions::types::SubscriptionCreateExternalCustomer,
     ),
+    SubscriptionCreateExternal(
+        crate::v2027_01::models::subscriptions::types::SubscriptionCreateExternal,
+    ),
+}
+impl<'de> serde::Deserialize<'de> for SubscriptionsCreateRequestUnion {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <serde_json::Value as serde::Deserialize>::deserialize(deserializer)?;
+        let mut matched = None;
+        if let Ok(payload) = serde_json::from_value::<
+            crate::v2027_01::models::subscriptions::types::SubscriptionCreateCustomer,
+        >(value.clone())
+        {
+            if matched.is_some() {
+                return Err(serde::de::Error::custom(concat!(
+                    "ambiguous oneOf value for ",
+                    "SubscriptionsCreateRequestUnion"
+                )));
+            }
+            matched = Some(Self::SubscriptionCreateCustomer(payload));
+        }
+        if let Ok(payload) = serde_json::from_value::<
+            crate::v2027_01::models::subscriptions::types::SubscriptionCreateExternalCustomer,
+        >(value.clone())
+        {
+            if matched.is_some() {
+                return Err(serde::de::Error::custom(concat!(
+                    "ambiguous oneOf value for ",
+                    "SubscriptionsCreateRequestUnion"
+                )));
+            }
+            matched = Some(Self::SubscriptionCreateExternalCustomer(payload));
+        }
+        if let Ok(payload) = serde_json::from_value::<
+            crate::v2027_01::models::subscriptions::types::SubscriptionCreateExternal,
+        >(value.clone())
+        {
+            if matched.is_some() {
+                return Err(serde::de::Error::custom(concat!(
+                    "ambiguous oneOf value for ",
+                    "SubscriptionsCreateRequestUnion"
+                )));
+            }
+            matched = Some(Self::SubscriptionCreateExternal(payload));
+        }
+        matched.ok_or_else(|| {
+            serde::de::Error::custom(concat!(
+                "no matching oneOf variant for ",
+                "SubscriptionsCreateRequestUnion"
+            ))
+        })
+    }
 }

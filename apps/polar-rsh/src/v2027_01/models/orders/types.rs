@@ -50,12 +50,20 @@ pub struct CustomerOrderRequired {
     pub discount_id: Option<crate::v2027_01::models::common::ids::DiscountId>,
     pub subscription_id: Option<crate::v2027_01::models::common::ids::SubscriptionId>,
     pub checkout_id: Option<crate::v2027_01::models::common::ids::CheckoutId>,
+    pub tax_id: Option<(String, crate::v2027_01::models::common::enums::TaxIDFormat)>,
     pub product: Option<crate::v2027_01::models::orders::types::CustomerOrderProduct>,
     pub subscription: Option<crate::v2027_01::models::orders::types::CustomerOrderSubscription>,
     /// Line items composing the order.
     pub items: Vec<crate::v2027_01::models::orders::types::OrderItemSchema>,
     /// A summary description of the order.
     pub description: String,
+    /// Whether the order has a positive amount due after discounts, taxes, and
+    /// applied balance.
+    pub is_payment_required: bool,
+    /// Whether a payment method must be set up for future subscription charges,
+    /// even if the order has no amount due.
+    pub is_payment_setup_required: bool,
+    pub payment_processor_metadata: std::collections::BTreeMap<String, String>,
     /// Amount in cents that can still be refunded (net, before taxes). Accounts
     /// for any applied customer balance and previous refunds.
     pub refundable_amount: i64,
@@ -157,6 +165,10 @@ pub struct CustomerOrder {
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
     )]
+    pub tax_id: Option<(String, crate::v2027_01::models::common::enums::TaxIDFormat)>,
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
     pub product: Option<crate::v2027_01::models::orders::types::CustomerOrderProduct>,
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
@@ -166,6 +178,13 @@ pub struct CustomerOrder {
     pub items: Vec<crate::v2027_01::models::orders::types::OrderItemSchema>,
     /// A summary description of the order.
     pub description: String,
+    /// Whether the order has a positive amount due after discounts, taxes, and
+    /// applied balance.
+    pub is_payment_required: bool,
+    /// Whether a payment method must be set up for future subscription charges,
+    /// even if the order has no amount due.
+    pub is_payment_setup_required: bool,
+    pub payment_processor_metadata: std::collections::BTreeMap<String, String>,
     /// Amount in cents that can still be refunded (net, before taxes). Accounts
     /// for any applied customer balance and previous refunds.
     pub refundable_amount: i64,
@@ -206,10 +225,14 @@ impl CustomerOrder {
             subscription_id: required.subscription_id,
             checkout_id: required.checkout_id,
             next_payment_attempt_at: presence_rs::Presence::Absent,
+            tax_id: required.tax_id,
             product: required.product,
             subscription: required.subscription,
             items: required.items,
             description: required.description,
+            is_payment_required: required.is_payment_required,
+            is_payment_setup_required: required.is_payment_setup_required,
+            payment_processor_metadata: required.payment_processor_metadata,
             refundable_amount: required.refundable_amount,
             refundable_tax_amount: required.refundable_tax_amount,
         }
@@ -231,6 +254,24 @@ impl CustomerOrder {
     }
 }
 #[derive(Debug, Clone)]
+pub struct CustomerOrderCreateRequired {
+    /// ID of the subscription whose trial ended.
+    pub subscription_id: crate::v2027_01::models::common::ids::SubscriptionId,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+pub struct CustomerOrderCreate {
+    /// ID of the subscription whose trial ended.
+    pub subscription_id: crate::v2027_01::models::common::ids::SubscriptionId,
+}
+#[allow(clippy::type_complexity)]
+impl CustomerOrderCreate {
+    pub fn new(required: CustomerOrderCreateRequired) -> Self {
+        Self { subscription_id: required.subscription_id }
+    }
+}
+#[derive(Debug, Clone)]
 pub struct CustomerOrderInvoiceRequired {
     /// The URL to the invoice.
     pub url: String,
@@ -247,6 +288,219 @@ pub struct CustomerOrderInvoice {
 impl CustomerOrderInvoice {
     pub fn new(required: CustomerOrderInvoiceRequired) -> Self {
         Self { url: required.url }
+    }
+}
+#[derive(Debug, Clone)]
+pub struct CustomerOrderPayConfirmationTokenRequired {
+    pub payment_processor: crate::v2027_01::models::common::enums::PaymentProcessor,
+    pub confirmation_token_id: String,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+pub struct CustomerOrderPayConfirmationToken {
+    /// The name of the customer that should appear on the invoice.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub billing_name: presence_rs::Presence<String>,
+    /// The address of the customer that should appear on the invoice. Address
+    /// fields used for tax calculation can only be updated on draft orders.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub billing_address: Option<crate::v2027_01::models::common::types::AddressInput>,
+    /// Tax ID for the billing address on a draft order. Set to null to remove
+    /// it.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub tax_id: presence_rs::Presence<String>,
+    /// Discount code to apply to the draft order. Set to null to remove it.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub discount_code: presence_rs::Presence<String>,
+    pub payment_processor: crate::v2027_01::models::common::enums::PaymentProcessor,
+    pub confirmation_token_id: String,
+}
+#[allow(clippy::type_complexity)]
+impl CustomerOrderPayConfirmationToken {
+    pub fn new(required: CustomerOrderPayConfirmationTokenRequired) -> Self {
+        Self {
+            billing_name: presence_rs::Presence::Absent,
+            billing_address: None,
+            tax_id: presence_rs::Presence::Absent,
+            discount_code: presence_rs::Presence::Absent,
+            payment_processor: required.payment_processor,
+            confirmation_token_id: required.confirmation_token_id,
+        }
+    }
+
+    /// The name of the customer that should appear on the invoice.
+    #[allow(clippy::should_implement_trait)]
+    pub fn billing_name(mut self, value: impl Into<String>) -> Self {
+        self.billing_name = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// The address of the customer that should appear on the invoice. Address
+    /// fields used for tax calculation can only be updated on draft orders.
+    #[allow(clippy::should_implement_trait)]
+    pub fn billing_address(
+        mut self,
+        value: crate::v2027_01::models::common::types::AddressInput,
+    ) -> Self {
+        self.billing_address = Some(value);
+        self
+    }
+
+    /// Tax ID for the billing address on a draft order. Set to null to remove
+    /// it.
+    #[allow(clippy::should_implement_trait)]
+    pub fn tax_id(mut self, value: impl Into<String>) -> Self {
+        self.tax_id = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// Discount code to apply to the draft order. Set to null to remove it.
+    #[allow(clippy::should_implement_trait)]
+    pub fn discount_code(mut self, value: impl Into<String>) -> Self {
+        self.discount_code = presence_rs::Presence::Some(value.into());
+        self
+    }
+}
+#[derive(Debug, Clone)]
+pub struct CustomerOrderPayPaymentMethodRequired {
+    pub payment_method_id: crate::v2027_01::models::common::ids::PaymentMethodId,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+pub struct CustomerOrderPayPaymentMethod {
+    /// The name of the customer that should appear on the invoice.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub billing_name: presence_rs::Presence<String>,
+    /// The address of the customer that should appear on the invoice. Address
+    /// fields used for tax calculation can only be updated on draft orders.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub billing_address: Option<crate::v2027_01::models::common::types::AddressInput>,
+    /// Tax ID for the billing address on a draft order. Set to null to remove
+    /// it.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub tax_id: presence_rs::Presence<String>,
+    /// Discount code to apply to the draft order. Set to null to remove it.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub discount_code: presence_rs::Presence<String>,
+    pub payment_method_id: crate::v2027_01::models::common::ids::PaymentMethodId,
+}
+#[allow(clippy::type_complexity)]
+impl CustomerOrderPayPaymentMethod {
+    pub fn new(required: CustomerOrderPayPaymentMethodRequired) -> Self {
+        Self {
+            billing_name: presence_rs::Presence::Absent,
+            billing_address: None,
+            tax_id: presence_rs::Presence::Absent,
+            discount_code: presence_rs::Presence::Absent,
+            payment_method_id: required.payment_method_id,
+        }
+    }
+
+    /// The name of the customer that should appear on the invoice.
+    #[allow(clippy::should_implement_trait)]
+    pub fn billing_name(mut self, value: impl Into<String>) -> Self {
+        self.billing_name = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// The address of the customer that should appear on the invoice. Address
+    /// fields used for tax calculation can only be updated on draft orders.
+    #[allow(clippy::should_implement_trait)]
+    pub fn billing_address(
+        mut self,
+        value: crate::v2027_01::models::common::types::AddressInput,
+    ) -> Self {
+        self.billing_address = Some(value);
+        self
+    }
+
+    /// Tax ID for the billing address on a draft order. Set to null to remove
+    /// it.
+    #[allow(clippy::should_implement_trait)]
+    pub fn tax_id(mut self, value: impl Into<String>) -> Self {
+        self.tax_id = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// Discount code to apply to the draft order. Set to null to remove it.
+    #[allow(clippy::should_implement_trait)]
+    pub fn discount_code(mut self, value: impl Into<String>) -> Self {
+        self.discount_code = presence_rs::Presence::Some(value.into());
+        self
+    }
+}
+/// Pay a zero-due order that needs no payment method for future charges.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(Default)]
+pub struct CustomerOrderPayWithoutCredentials {
+    /// The name of the customer that should appear on the invoice.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub billing_name: presence_rs::Presence<String>,
+    /// The address of the customer that should appear on the invoice. Address
+    /// fields used for tax calculation can only be updated on draft orders.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub billing_address: Option<crate::v2027_01::models::common::types::AddressInput>,
+    /// Tax ID for the billing address on a draft order. Set to null to remove
+    /// it.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub tax_id: presence_rs::Presence<String>,
+    /// Discount code to apply to the draft order. Set to null to remove it.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub discount_code: presence_rs::Presence<String>,
+}
+#[allow(clippy::type_complexity)]
+impl CustomerOrderPayWithoutCredentials {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// The name of the customer that should appear on the invoice.
+    #[allow(clippy::should_implement_trait)]
+    pub fn billing_name(mut self, value: impl Into<String>) -> Self {
+        self.billing_name = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// The address of the customer that should appear on the invoice. Address
+    /// fields used for tax calculation can only be updated on draft orders.
+    #[allow(clippy::should_implement_trait)]
+    pub fn billing_address(
+        mut self,
+        value: crate::v2027_01::models::common::types::AddressInput,
+    ) -> Self {
+        self.billing_address = Some(value);
+        self
+    }
+
+    /// Tax ID for the billing address on a draft order. Set to null to remove
+    /// it.
+    #[allow(clippy::should_implement_trait)]
+    pub fn tax_id(mut self, value: impl Into<String>) -> Self {
+        self.tax_id = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// Discount code to apply to the draft order. Set to null to remove it.
+    #[allow(clippy::should_implement_trait)]
+    pub fn discount_code(mut self, value: impl Into<String>) -> Self {
+        self.discount_code = presence_rs::Presence::Some(value.into());
+        self
     }
 }
 #[derive(Debug, Clone)]
@@ -663,10 +917,20 @@ pub struct CustomerOrderUpdate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub billing_name: presence_rs::Presence<String>,
     /// The address of the customer that should appear on the invoice. Address
-    /// fields used for tax calculation cannot be updated.
+    /// fields used for tax calculation can only be updated on draft orders.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub billing_address: Option<crate::v2027_01::models::common::types::AddressInput>,
+    /// Tax ID for the billing address on a draft order. Set to null to remove
+    /// it.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub billing_address:
-        presence_rs::Presence<crate::v2027_01::models::common::types::AddressInput>,
+    pub tax_id: presence_rs::Presence<String>,
+    /// Discount code to apply to the draft order. Set to null to remove it.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub discount_code: presence_rs::Presence<String>,
 }
 #[allow(clippy::type_complexity)]
 impl CustomerOrderUpdate {
@@ -682,14 +946,48 @@ impl CustomerOrderUpdate {
     }
 
     /// The address of the customer that should appear on the invoice. Address
-    /// fields used for tax calculation cannot be updated.
+    /// fields used for tax calculation can only be updated on draft orders.
     #[allow(clippy::should_implement_trait)]
     pub fn billing_address(
         mut self,
         value: crate::v2027_01::models::common::types::AddressInput,
     ) -> Self {
-        self.billing_address = presence_rs::Presence::Some(value);
+        self.billing_address = Some(value);
         self
+    }
+
+    /// Tax ID for the billing address on a draft order. Set to null to remove
+    /// it.
+    #[allow(clippy::should_implement_trait)]
+    pub fn tax_id(mut self, value: impl Into<String>) -> Self {
+        self.tax_id = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// Discount code to apply to the draft order. Set to null to remove it.
+    #[allow(clippy::should_implement_trait)]
+    pub fn discount_code(mut self, value: impl Into<String>) -> Self {
+        self.discount_code = presence_rs::Presence::Some(value.into());
+        self
+    }
+}
+#[derive(Debug, Clone)]
+pub struct ManualRetryLimitExceededRequired {
+    pub detail: String,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(thiserror::Error)]
+#[error("{self:?}")]
+pub struct ManualRetryLimitExceeded {
+    pub error: monostate::MustBe!("ManualRetryLimitExceeded"),
+    pub detail: String,
+}
+#[allow(clippy::type_complexity)]
+impl ManualRetryLimitExceeded {
+    pub fn new(required: ManualRetryLimitExceededRequired) -> Self {
+        Self { error: Default::default(), detail: required.detail }
     }
 }
 #[derive(Debug, Clone)]
@@ -1067,10 +1365,6 @@ pub struct OrderCreate {
     pub organization_id: presence_rs::Presence<
         crate::v2027_01::models::common::ids::OrganizationId,
     >,
-    ///The ID of the customer the order is for. Must belong to the order's organization.
-    pub customer_id: crate::v2027_01::models::common::ids::CustomerId,
-    ///The ID of the one-time product to charge for. Must belong to the order's organization. Only fixed-price, free and unit-based products are supported.
-    pub product_id: crate::v2027_01::models::common::ids::ProductId,
     ///The currency to charge in (ISO 4217, lowercase, e.g. `usd`). Defaults to the organization's default currency; specify it to force a different one, or when the product isn't priced in the organization's default currency.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub currency: presence_rs::Presence<String>,
@@ -1089,6 +1383,10 @@ pub struct OrderCreate {
     pub description: presence_rs::Presence<
         crate::v2027_01::models::orders::newtypes::OrderDescription,
     >,
+    ///The ID of the customer the order is for. Must belong to the order's organization.
+    pub customer_id: crate::v2027_01::models::common::ids::CustomerId,
+    ///The ID of the one-time product to charge for. Must belong to the order's organization. Only fixed-price, free and unit-based products are supported.
+    pub product_id: crate::v2027_01::models::common::ids::ProductId,
 }
 #[allow(clippy::type_complexity)]
 impl OrderCreate {
@@ -1097,12 +1395,12 @@ impl OrderCreate {
             custom_field_data: None,
             metadata: None,
             organization_id: presence_rs::Presence::Absent,
-            customer_id: required.customer_id,
-            product_id: required.product_id,
             currency: presence_rs::Presence::Absent,
             amount: presence_rs::Presence::Absent,
             units: presence_rs::Presence::Absent,
             description: presence_rs::Presence::Absent,
+            customer_id: required.customer_id,
+            product_id: required.product_id,
         }
     }
 
@@ -1191,6 +1489,586 @@ impl OrderCreate {
     pub fn description(
         mut self,
         value: crate::v2027_01::models::orders::newtypes::OrderDescription,
+    ) -> Self {
+        self.description = presence_rs::Presence::Some(value);
+        self
+    }
+}
+#[derive(Debug, Clone)]
+pub struct OrderCreateExternalRequired {
+    /// The ID of the customer in your system the order is for. Must belong to
+    /// the order's organization.
+    pub external_customer_id:
+        crate::v2027_01::models::orders::newtypes::OrderCreateExternalExternalCustomerId,
+    /// The ID of the one-time product in your system to charge for. Resolves to
+    /// the current version of the product. Must belong to the order's
+    /// organization. Only fixed-price, free and unit-based products are
+    /// supported.
+    pub external_product_id: String,
+}
+/// Schema to create a draft order for an off-session charge,
+/// referencing the customer and product by their external IDs.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+pub struct OrderCreateExternal {
+    ///Key-value object storing custom field values.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub custom_field_data: Option<
+        std::collections::BTreeMap<
+            String,
+            Option<
+                crate::v2027_01::models::orders::unions::OrderCreateExternalCustomFieldDataAdditionalPropertiesUnion,
+            >,
+        >,
+    >,
+    ///Key-value object allowing you to store additional information.
+    ///
+    ///The key must be a string with a maximum length of **40 characters**.
+    ///The value must be either:
+    ///
+    ///* A string with a maximum length of **500 characters**
+    ///* An integer
+    ///* A floating-point number
+    ///* A boolean
+    ///
+    ///You can store up to **50 key-value pairs**.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub metadata: Option<
+        std::collections::BTreeMap<
+            crate::v2027_01::models::orders::newtypes::OrderCreateExternalMetadataKey,
+            crate::v2027_01::models::orders::unions::OrderCreateExternalMetadataAdditionalPropertiesUnion,
+        >,
+    >,
+    ///The ID of the organization the order belongs to. **Required unless you use an organization token.** The customer and product must belong to this organization.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub organization_id: presence_rs::Presence<
+        crate::v2027_01::models::common::ids::OrganizationId,
+    >,
+    ///The currency to charge in (ISO 4217, lowercase, e.g. `usd`). Defaults to the organization's default currency; specify it to force a different one, or when the product isn't priced in the organization's default currency.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub currency: presence_rs::Presence<String>,
+    ///A custom amount to charge, in the smallest currency unit. Overrides the product's price; defaults to the product's configured price (0 for free products). A positive amount must be at least the currency's minimum. Can't be combined with `units`.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub amount: presence_rs::Presence<
+        crate::v2027_01::models::orders::newtypes::OrderCreateExternalAmount,
+    >,
+    ///The number of units to charge for. Required when the product has unit-based pricing, and rejected otherwise. The amount comes from the price's tiers. Can't be combined with `amount`.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub units: presence_rs::Presence<
+        crate::v2027_01::models::orders::newtypes::OrderCreateExternalUnits,
+    >,
+    ///A custom description for the order's line item, shown on the invoice and receipt (e.g. `5,000 tokens`). Defaults to the product name.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub description: presence_rs::Presence<
+        crate::v2027_01::models::orders::newtypes::OrderCreateExternalDescription,
+    >,
+    ///The ID of the customer in your system the order is for. Must belong to the order's organization.
+    pub external_customer_id: crate::v2027_01::models::orders::newtypes::OrderCreateExternalExternalCustomerId,
+    ///The ID of the one-time product in your system to charge for. Resolves to the current version of the product. Must belong to the order's organization. Only fixed-price, free and unit-based products are supported.
+    pub external_product_id: String,
+}
+#[allow(clippy::type_complexity)]
+impl OrderCreateExternal {
+    pub fn new(required: OrderCreateExternalRequired) -> Self {
+        Self {
+            custom_field_data: None,
+            metadata: None,
+            organization_id: presence_rs::Presence::Absent,
+            currency: presence_rs::Presence::Absent,
+            amount: presence_rs::Presence::Absent,
+            units: presence_rs::Presence::Absent,
+            description: presence_rs::Presence::Absent,
+            external_customer_id: required.external_customer_id,
+            external_product_id: required.external_product_id,
+        }
+    }
+
+    /// Key-value object storing custom field values.
+    #[allow(clippy::should_implement_trait)]
+    pub fn custom_field_data(
+        mut self,
+        value: std::collections::BTreeMap<
+            String,
+            Option<
+                crate::v2027_01::models::orders::unions::OrderCreateExternalCustomFieldDataAdditionalPropertiesUnion,
+            >,
+        >,
+    ) -> Self {
+        self.custom_field_data = Some(value);
+        self
+    }
+
+    /// Key-value object allowing you to store additional information.
+    ///
+    /// The key must be a string with a maximum length of **40 characters**.
+    /// The value must be either:
+    ///
+    /// * A string with a maximum length of **500 characters**
+    /// * An integer
+    /// * A floating-point number
+    /// * A boolean
+    ///
+    /// You can store up to **50 key-value pairs**.
+    #[allow(clippy::should_implement_trait)]
+    pub fn metadata(
+        mut self,
+        value: std::collections::BTreeMap<
+            crate::v2027_01::models::orders::newtypes::OrderCreateExternalMetadataKey,
+            crate::v2027_01::models::orders::unions::OrderCreateExternalMetadataAdditionalPropertiesUnion,
+        >,
+    ) -> Self {
+        self.metadata = Some(value);
+        self
+    }
+
+    /// The ID of the organization the order belongs to. **Required unless you
+    /// use an organization token.** The customer and product must belong to
+    /// this organization.
+    #[allow(clippy::should_implement_trait)]
+    pub fn organization_id(
+        mut self,
+        value: crate::v2027_01::models::common::ids::OrganizationId,
+    ) -> Self {
+        self.organization_id = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// The currency to charge in (ISO 4217, lowercase, e.g. `usd`). Defaults to
+    /// the organization's default currency; specify it to force a different
+    /// one, or when the product isn't priced in the organization's default
+    /// currency.
+    #[allow(clippy::should_implement_trait)]
+    pub fn currency(mut self, value: impl Into<String>) -> Self {
+        self.currency = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// A custom amount to charge, in the smallest currency unit. Overrides the
+    /// product's price; defaults to the product's configured price (0 for free
+    /// products). A positive amount must be at least the currency's minimum.
+    /// Can't be combined with `units`.
+    #[allow(clippy::should_implement_trait)]
+    pub fn amount(
+        mut self,
+        value: crate::v2027_01::models::orders::newtypes::OrderCreateExternalAmount,
+    ) -> Self {
+        self.amount = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// The number of units to charge for. Required when the product has
+    /// unit-based pricing, and rejected otherwise. The amount comes from the
+    /// price's tiers. Can't be combined with `amount`.
+    #[allow(clippy::should_implement_trait)]
+    pub fn units(
+        mut self,
+        value: crate::v2027_01::models::orders::newtypes::OrderCreateExternalUnits,
+    ) -> Self {
+        self.units = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// A custom description for the order's line item, shown on the invoice and
+    /// receipt (e.g. `5,000 tokens`). Defaults to the product name.
+    #[allow(clippy::should_implement_trait)]
+    pub fn description(
+        mut self,
+        value: crate::v2027_01::models::orders::newtypes::OrderCreateExternalDescription,
+    ) -> Self {
+        self.description = presence_rs::Presence::Some(value);
+        self
+    }
+}
+#[derive(Debug, Clone)]
+pub struct OrderCreateExternalCustomerRequired {
+    /// The ID of the customer in your system the order is for. Must belong to
+    /// the order's organization.
+    pub external_customer_id:
+        crate::v2027_01::models::orders::newtypes::OrderCreateExternalCustomerExternalCustomerId,
+    /// The ID of the one-time product to charge for. Must belong to the order's
+    /// organization. Only fixed-price, free and unit-based products are
+    /// supported.
+    pub product_id: crate::v2027_01::models::common::ids::ProductId,
+}
+/// Schema to create a draft order for an off-session charge,
+/// referencing the customer by its external ID.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+pub struct OrderCreateExternalCustomer {
+    ///Key-value object storing custom field values.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub custom_field_data: Option<
+        std::collections::BTreeMap<
+            String,
+            Option<
+                crate::v2027_01::models::orders::unions::OrderCreateExternalCustomerCustomFieldDataAdditionalPropertiesUnion,
+            >,
+        >,
+    >,
+    ///Key-value object allowing you to store additional information.
+    ///
+    ///The key must be a string with a maximum length of **40 characters**.
+    ///The value must be either:
+    ///
+    ///* A string with a maximum length of **500 characters**
+    ///* An integer
+    ///* A floating-point number
+    ///* A boolean
+    ///
+    ///You can store up to **50 key-value pairs**.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub metadata: Option<
+        std::collections::BTreeMap<
+            crate::v2027_01::models::orders::newtypes::OrderCreateExternalCustomerMetadataKey,
+            crate::v2027_01::models::orders::unions::OrderCreateExternalCustomerMetadataAdditionalPropertiesUnion,
+        >,
+    >,
+    ///The ID of the organization the order belongs to. **Required unless you use an organization token.** The customer and product must belong to this organization.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub organization_id: presence_rs::Presence<
+        crate::v2027_01::models::common::ids::OrganizationId,
+    >,
+    ///The currency to charge in (ISO 4217, lowercase, e.g. `usd`). Defaults to the organization's default currency; specify it to force a different one, or when the product isn't priced in the organization's default currency.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub currency: presence_rs::Presence<String>,
+    ///A custom amount to charge, in the smallest currency unit. Overrides the product's price; defaults to the product's configured price (0 for free products). A positive amount must be at least the currency's minimum. Can't be combined with `units`.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub amount: presence_rs::Presence<
+        crate::v2027_01::models::orders::newtypes::OrderCreateExternalCustomerAmount,
+    >,
+    ///The number of units to charge for. Required when the product has unit-based pricing, and rejected otherwise. The amount comes from the price's tiers. Can't be combined with `amount`.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub units: presence_rs::Presence<
+        crate::v2027_01::models::orders::newtypes::OrderCreateExternalCustomerUnits,
+    >,
+    ///A custom description for the order's line item, shown on the invoice and receipt (e.g. `5,000 tokens`). Defaults to the product name.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub description: presence_rs::Presence<
+        crate::v2027_01::models::orders::newtypes::OrderCreateExternalCustomerDescription,
+    >,
+    ///The ID of the customer in your system the order is for. Must belong to the order's organization.
+    pub external_customer_id: crate::v2027_01::models::orders::newtypes::OrderCreateExternalCustomerExternalCustomerId,
+    ///The ID of the one-time product to charge for. Must belong to the order's organization. Only fixed-price, free and unit-based products are supported.
+    pub product_id: crate::v2027_01::models::common::ids::ProductId,
+}
+#[allow(clippy::type_complexity)]
+impl OrderCreateExternalCustomer {
+    pub fn new(required: OrderCreateExternalCustomerRequired) -> Self {
+        Self {
+            custom_field_data: None,
+            metadata: None,
+            organization_id: presence_rs::Presence::Absent,
+            currency: presence_rs::Presence::Absent,
+            amount: presence_rs::Presence::Absent,
+            units: presence_rs::Presence::Absent,
+            description: presence_rs::Presence::Absent,
+            external_customer_id: required.external_customer_id,
+            product_id: required.product_id,
+        }
+    }
+
+    /// Key-value object storing custom field values.
+    #[allow(clippy::should_implement_trait)]
+    pub fn custom_field_data(
+        mut self,
+        value: std::collections::BTreeMap<
+            String,
+            Option<
+                crate::v2027_01::models::orders::unions::OrderCreateExternalCustomerCustomFieldDataAdditionalPropertiesUnion,
+            >,
+        >,
+    ) -> Self {
+        self.custom_field_data = Some(value);
+        self
+    }
+
+    /// Key-value object allowing you to store additional information.
+    ///
+    /// The key must be a string with a maximum length of **40 characters**.
+    /// The value must be either:
+    ///
+    /// * A string with a maximum length of **500 characters**
+    /// * An integer
+    /// * A floating-point number
+    /// * A boolean
+    ///
+    /// You can store up to **50 key-value pairs**.
+    #[allow(clippy::should_implement_trait)]
+    pub fn metadata(
+        mut self,
+        value: std::collections::BTreeMap<
+            crate::v2027_01::models::orders::newtypes::OrderCreateExternalCustomerMetadataKey,
+            crate::v2027_01::models::orders::unions::OrderCreateExternalCustomerMetadataAdditionalPropertiesUnion,
+        >,
+    ) -> Self {
+        self.metadata = Some(value);
+        self
+    }
+
+    /// The ID of the organization the order belongs to. **Required unless you
+    /// use an organization token.** The customer and product must belong to
+    /// this organization.
+    #[allow(clippy::should_implement_trait)]
+    pub fn organization_id(
+        mut self,
+        value: crate::v2027_01::models::common::ids::OrganizationId,
+    ) -> Self {
+        self.organization_id = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// The currency to charge in (ISO 4217, lowercase, e.g. `usd`). Defaults to
+    /// the organization's default currency; specify it to force a different
+    /// one, or when the product isn't priced in the organization's default
+    /// currency.
+    #[allow(clippy::should_implement_trait)]
+    pub fn currency(mut self, value: impl Into<String>) -> Self {
+        self.currency = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// A custom amount to charge, in the smallest currency unit. Overrides the
+    /// product's price; defaults to the product's configured price (0 for free
+    /// products). A positive amount must be at least the currency's minimum.
+    /// Can't be combined with `units`.
+    #[allow(clippy::should_implement_trait)]
+    pub fn amount(
+        mut self,
+        value: crate::v2027_01::models::orders::newtypes::OrderCreateExternalCustomerAmount,
+    ) -> Self {
+        self.amount = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// The number of units to charge for. Required when the product has
+    /// unit-based pricing, and rejected otherwise. The amount comes from the
+    /// price's tiers. Can't be combined with `amount`.
+    #[allow(clippy::should_implement_trait)]
+    pub fn units(
+        mut self,
+        value: crate::v2027_01::models::orders::newtypes::OrderCreateExternalCustomerUnits,
+    ) -> Self {
+        self.units = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// A custom description for the order's line item, shown on the invoice and
+    /// receipt (e.g. `5,000 tokens`). Defaults to the product name.
+    #[allow(clippy::should_implement_trait)]
+    pub fn description(
+        mut self,
+        value: crate::v2027_01::models::orders::newtypes::OrderCreateExternalCustomerDescription,
+    ) -> Self {
+        self.description = presence_rs::Presence::Some(value);
+        self
+    }
+}
+#[derive(Debug, Clone)]
+pub struct OrderCreateExternalProductRequired {
+    /// The ID of the customer the order is for. Must belong to the order's
+    /// organization.
+    pub customer_id: crate::v2027_01::models::common::ids::CustomerId,
+    /// The ID of the one-time product in your system to charge for. Resolves to
+    /// the current version of the product. Must belong to the order's
+    /// organization. Only fixed-price, free and unit-based products are
+    /// supported.
+    pub external_product_id: String,
+}
+/// Schema to create a draft order for an off-session charge,
+/// referencing the product by its external ID.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+pub struct OrderCreateExternalProduct {
+    ///Key-value object storing custom field values.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub custom_field_data: Option<
+        std::collections::BTreeMap<
+            String,
+            Option<
+                crate::v2027_01::models::orders::unions::OrderCreateExternalProductCustomFieldDataAdditionalPropertiesUnion,
+            >,
+        >,
+    >,
+    ///Key-value object allowing you to store additional information.
+    ///
+    ///The key must be a string with a maximum length of **40 characters**.
+    ///The value must be either:
+    ///
+    ///* A string with a maximum length of **500 characters**
+    ///* An integer
+    ///* A floating-point number
+    ///* A boolean
+    ///
+    ///You can store up to **50 key-value pairs**.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub metadata: Option<
+        std::collections::BTreeMap<
+            crate::v2027_01::models::orders::newtypes::OrderCreateExternalProductMetadataKey,
+            crate::v2027_01::models::orders::unions::OrderCreateExternalProductMetadataAdditionalPropertiesUnion,
+        >,
+    >,
+    ///The ID of the organization the order belongs to. **Required unless you use an organization token.** The customer and product must belong to this organization.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub organization_id: presence_rs::Presence<
+        crate::v2027_01::models::common::ids::OrganizationId,
+    >,
+    ///The currency to charge in (ISO 4217, lowercase, e.g. `usd`). Defaults to the organization's default currency; specify it to force a different one, or when the product isn't priced in the organization's default currency.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub currency: presence_rs::Presence<String>,
+    ///A custom amount to charge, in the smallest currency unit. Overrides the product's price; defaults to the product's configured price (0 for free products). A positive amount must be at least the currency's minimum. Can't be combined with `units`.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub amount: presence_rs::Presence<
+        crate::v2027_01::models::orders::newtypes::OrderCreateExternalProductAmount,
+    >,
+    ///The number of units to charge for. Required when the product has unit-based pricing, and rejected otherwise. The amount comes from the price's tiers. Can't be combined with `amount`.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub units: presence_rs::Presence<
+        crate::v2027_01::models::orders::newtypes::OrderCreateExternalProductUnits,
+    >,
+    ///A custom description for the order's line item, shown on the invoice and receipt (e.g. `5,000 tokens`). Defaults to the product name.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub description: presence_rs::Presence<
+        crate::v2027_01::models::orders::newtypes::OrderCreateExternalProductDescription,
+    >,
+    ///The ID of the customer the order is for. Must belong to the order's organization.
+    pub customer_id: crate::v2027_01::models::common::ids::CustomerId,
+    ///The ID of the one-time product in your system to charge for. Resolves to the current version of the product. Must belong to the order's organization. Only fixed-price, free and unit-based products are supported.
+    pub external_product_id: String,
+}
+#[allow(clippy::type_complexity)]
+impl OrderCreateExternalProduct {
+    pub fn new(required: OrderCreateExternalProductRequired) -> Self {
+        Self {
+            custom_field_data: None,
+            metadata: None,
+            organization_id: presence_rs::Presence::Absent,
+            currency: presence_rs::Presence::Absent,
+            amount: presence_rs::Presence::Absent,
+            units: presence_rs::Presence::Absent,
+            description: presence_rs::Presence::Absent,
+            customer_id: required.customer_id,
+            external_product_id: required.external_product_id,
+        }
+    }
+
+    /// Key-value object storing custom field values.
+    #[allow(clippy::should_implement_trait)]
+    pub fn custom_field_data(
+        mut self,
+        value: std::collections::BTreeMap<
+            String,
+            Option<
+                crate::v2027_01::models::orders::unions::OrderCreateExternalProductCustomFieldDataAdditionalPropertiesUnion,
+            >,
+        >,
+    ) -> Self {
+        self.custom_field_data = Some(value);
+        self
+    }
+
+    /// Key-value object allowing you to store additional information.
+    ///
+    /// The key must be a string with a maximum length of **40 characters**.
+    /// The value must be either:
+    ///
+    /// * A string with a maximum length of **500 characters**
+    /// * An integer
+    /// * A floating-point number
+    /// * A boolean
+    ///
+    /// You can store up to **50 key-value pairs**.
+    #[allow(clippy::should_implement_trait)]
+    pub fn metadata(
+        mut self,
+        value: std::collections::BTreeMap<
+            crate::v2027_01::models::orders::newtypes::OrderCreateExternalProductMetadataKey,
+            crate::v2027_01::models::orders::unions::OrderCreateExternalProductMetadataAdditionalPropertiesUnion,
+        >,
+    ) -> Self {
+        self.metadata = Some(value);
+        self
+    }
+
+    /// The ID of the organization the order belongs to. **Required unless you
+    /// use an organization token.** The customer and product must belong to
+    /// this organization.
+    #[allow(clippy::should_implement_trait)]
+    pub fn organization_id(
+        mut self,
+        value: crate::v2027_01::models::common::ids::OrganizationId,
+    ) -> Self {
+        self.organization_id = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// The currency to charge in (ISO 4217, lowercase, e.g. `usd`). Defaults to
+    /// the organization's default currency; specify it to force a different
+    /// one, or when the product isn't priced in the organization's default
+    /// currency.
+    #[allow(clippy::should_implement_trait)]
+    pub fn currency(mut self, value: impl Into<String>) -> Self {
+        self.currency = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// A custom amount to charge, in the smallest currency unit. Overrides the
+    /// product's price; defaults to the product's configured price (0 for free
+    /// products). A positive amount must be at least the currency's minimum.
+    /// Can't be combined with `units`.
+    #[allow(clippy::should_implement_trait)]
+    pub fn amount(
+        mut self,
+        value: crate::v2027_01::models::orders::newtypes::OrderCreateExternalProductAmount,
+    ) -> Self {
+        self.amount = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// The number of units to charge for. Required when the product has
+    /// unit-based pricing, and rejected otherwise. The amount comes from the
+    /// price's tiers. Can't be combined with `amount`.
+    #[allow(clippy::should_implement_trait)]
+    pub fn units(
+        mut self,
+        value: crate::v2027_01::models::orders::newtypes::OrderCreateExternalProductUnits,
+    ) -> Self {
+        self.units = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// A custom description for the order's line item, shown on the invoice and
+    /// receipt (e.g. `5,000 tokens`). Defaults to the product name.
+    #[allow(clippy::should_implement_trait)]
+    pub fn description(
+        mut self,
+        value: crate::v2027_01::models::orders::newtypes::OrderCreateExternalProductDescription,
     ) -> Self {
         self.description = presence_rs::Presence::Some(value);
         self
@@ -1520,6 +2398,25 @@ pub struct OrderNotEligibleForInvoice {
 #[allow(clippy::type_complexity)]
 impl OrderNotEligibleForInvoice {
     pub fn new(required: OrderNotEligibleForInvoiceRequired) -> Self {
+        Self { error: Default::default(), detail: required.detail }
+    }
+}
+#[derive(Debug, Clone)]
+pub struct OrderNotEligibleForRetryRequired {
+    pub detail: String,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(thiserror::Error)]
+#[error("{self:?}")]
+pub struct OrderNotEligibleForRetry {
+    pub error: monostate::MustBe!("OrderNotEligibleForRetry"),
+    pub detail: String,
+}
+#[allow(clippy::type_complexity)]
+impl OrderNotEligibleForRetry {
+    pub fn new(required: OrderNotEligibleForRetryRequired) -> Self {
         Self { error: Default::default(), detail: required.detail }
     }
 }
@@ -1940,10 +2837,20 @@ pub struct OrderUpdate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub billing_name: presence_rs::Presence<String>,
     /// The address of the customer that should appear on the invoice. Address
-    /// fields used for tax calculation cannot be updated.
+    /// fields used for tax calculation can only be updated on draft orders.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub billing_address: Option<crate::v2027_01::models::common::types::AddressInput>,
+    /// Tax ID for the billing address on a draft order. Set to null to remove
+    /// it.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub billing_address:
-        presence_rs::Presence<crate::v2027_01::models::common::types::AddressInput>,
+    pub tax_id: presence_rs::Presence<String>,
+    /// Discount code to apply to the draft order. Set to null to remove it.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub discount_code: presence_rs::Presence<String>,
 }
 #[allow(clippy::type_complexity)]
 impl OrderUpdate {
@@ -1959,13 +2866,28 @@ impl OrderUpdate {
     }
 
     /// The address of the customer that should appear on the invoice. Address
-    /// fields used for tax calculation cannot be updated.
+    /// fields used for tax calculation can only be updated on draft orders.
     #[allow(clippy::should_implement_trait)]
     pub fn billing_address(
         mut self,
         value: crate::v2027_01::models::common::types::AddressInput,
     ) -> Self {
-        self.billing_address = presence_rs::Presence::Some(value);
+        self.billing_address = Some(value);
+        self
+    }
+
+    /// Tax ID for the billing address on a draft order. Set to null to remove
+    /// it.
+    #[allow(clippy::should_implement_trait)]
+    pub fn tax_id(mut self, value: impl Into<String>) -> Self {
+        self.tax_id = presence_rs::Presence::Some(value.into());
+        self
+    }
+
+    /// Discount code to apply to the draft order. Set to null to remove it.
+    #[allow(clippy::should_implement_trait)]
+    pub fn discount_code(mut self, value: impl Into<String>) -> Self {
+        self.discount_code = presence_rs::Presence::Some(value.into());
         self
     }
 }
@@ -1985,6 +2907,25 @@ pub struct OrganizationNotReadyForPayments {
 #[allow(clippy::type_complexity)]
 impl OrganizationNotReadyForPayments {
     pub fn new(required: OrganizationNotReadyForPaymentsRequired) -> Self {
+        Self { error: Default::default(), detail: required.detail }
+    }
+}
+#[derive(Debug, Clone)]
+pub struct PaymentAlreadyInProgressRequired {
+    pub detail: String,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(thiserror::Error)]
+#[error("{self:?}")]
+pub struct PaymentAlreadyInProgress {
+    pub error: monostate::MustBe!("PaymentAlreadyInProgress"),
+    pub detail: String,
+}
+#[allow(clippy::type_complexity)]
+impl PaymentAlreadyInProgress {
+    pub fn new(required: PaymentAlreadyInProgressRequired) -> Self {
         Self { error: Default::default(), detail: required.detail }
     }
 }

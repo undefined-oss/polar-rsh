@@ -3798,6 +3798,8 @@ pub struct CustomerSubscriptionRequired {
         Option<crate::v2027_01::models::common::enums::CustomerCancellationReason>,
     pub customer_cancellation_comment: Option<String>,
     pub product: crate::v2027_01::models::common::types::CustomerSubscriptionProduct,
+    /// ID of the payment method pinned to the subscription, if any.
+    pub payment_method_id: Option<crate::v2027_01::models::common::ids::PaymentMethodId>,
     /// List of enabled prices for the subscription.
     pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of meters associated with the subscription.
@@ -3929,6 +3931,11 @@ pub struct CustomerSubscription {
     )]
     pub customer_cancellation_comment: Option<String>,
     pub product: crate::v2027_01::models::common::types::CustomerSubscriptionProduct,
+    /// ID of the payment method pinned to the subscription, if any.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub payment_method_id: Option<crate::v2027_01::models::common::ids::PaymentMethodId>,
     /// List of enabled prices for the subscription.
     pub prices: Vec<crate::v2027_01::models::common::unions::ProductPrice>,
     /// List of meters associated with the subscription.
@@ -3976,6 +3983,7 @@ impl CustomerSubscription {
             customer_cancellation_reason: required.customer_cancellation_reason,
             customer_cancellation_comment: required.customer_cancellation_comment,
             product: required.product,
+            payment_method_id: required.payment_method_id,
             prices: required.prices,
             meters: required.meters,
             pending_update: required.pending_update,
@@ -4403,9 +4411,6 @@ pub struct DiscountFixedOnceForeverDurationBaseRequired {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -4443,12 +4448,6 @@ pub struct DiscountFixedOnceForeverDurationBase {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -4494,7 +4493,6 @@ impl DiscountFixedOnceForeverDurationBase {
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
-            external_id: required.external_id,
             metadata: required.metadata,
             name: required.name,
             code: required.code,
@@ -4520,9 +4518,6 @@ pub struct DiscountFixedRepeatDurationBaseRequired {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -4561,12 +4556,6 @@ pub struct DiscountFixedRepeatDurationBase {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -4613,7 +4602,6 @@ impl DiscountFixedRepeatDurationBase {
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
-            external_id: required.external_id,
             metadata: required.metadata,
             name: required.name,
             code: required.code,
@@ -4639,9 +4627,6 @@ pub struct DiscountPercentageOnceForeverDurationBaseRequired {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -4680,12 +4665,6 @@ pub struct DiscountPercentageOnceForeverDurationBase {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -4731,7 +4710,6 @@ impl DiscountPercentageOnceForeverDurationBase {
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
-            external_id: required.external_id,
             metadata: required.metadata,
             name: required.name,
             code: required.code,
@@ -4758,9 +4736,6 @@ pub struct DiscountPercentageRepeatDurationBaseRequired {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -4800,12 +4775,6 @@ pub struct DiscountPercentageRepeatDurationBase {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -4852,7 +4821,6 @@ impl DiscountPercentageRepeatDurationBase {
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
-            external_id: required.external_id,
             metadata: required.metadata,
             name: required.name,
             code: required.code,
@@ -5413,6 +5381,25 @@ pub struct PaymentActionRequired {
 #[allow(clippy::type_complexity)]
 impl PaymentActionRequired {
     pub fn new(required: PaymentActionRequiredRequired) -> Self {
+        Self { error: Default::default(), detail: required.detail }
+    }
+}
+#[derive(Debug, Clone)]
+pub struct PaymentErrorRequired {
+    pub detail: String,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(thiserror::Error)]
+#[error("{self:?}")]
+pub struct PaymentError {
+    pub error: monostate::MustBe!("PaymentError"),
+    pub detail: String,
+}
+#[allow(clippy::type_complexity)]
+impl PaymentError {
+    pub fn new(required: PaymentErrorRequired) -> Self {
         Self { error: Default::default(), detail: required.detail }
     }
 }

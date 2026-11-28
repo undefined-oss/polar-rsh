@@ -153,10 +153,18 @@ impl DownloadableFileRead {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct FilePatch {
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name: presence_rs::Presence<String>,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub version: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub name: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub version: Option<String>,
 }
 #[allow(clippy::type_complexity)]
 impl FilePatch {
@@ -166,13 +174,13 @@ impl FilePatch {
 
     #[allow(clippy::should_implement_trait)]
     pub fn name(mut self, value: impl Into<String>) -> Self {
-        self.name = presence_rs::Presence::Some(value.into());
+        self.name = Some(value.into());
         self
     }
 
     #[allow(clippy::should_implement_trait)]
     pub fn version(mut self, value: impl Into<String>) -> Self {
-        self.version = presence_rs::Presence::Some(value.into());
+        self.version = Some(value.into());
         self
     }
 }

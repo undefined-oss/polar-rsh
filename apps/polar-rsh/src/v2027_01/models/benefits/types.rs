@@ -11,8 +11,12 @@ pub struct BenefitCustomCreateRequired {
 #[serde(deny_unknown_fields)]
 pub struct BenefitCustomCreate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -54,7 +58,7 @@ pub struct BenefitCustomCreate {
 impl BenefitCustomCreate {
     pub fn new(required: BenefitCustomCreateRequired) -> Self {
         Self {
-            external_id: presence_rs::Presence::Absent,
+            external_id: None,
             metadata: None,
             r#type: Default::default(),
             description: required.description,
@@ -69,7 +73,7 @@ impl BenefitCustomCreate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -144,8 +148,12 @@ impl BenefitCustomCreateProperties {
 #[derive(Default)]
 pub struct BenefitCustomUpdate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -169,8 +177,12 @@ pub struct BenefitCustomUpdate {
         >,
     >,
     ///The description of the benefit. Will be displayed on products having this benefit.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub description: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub description: Option<
         crate::v2027_01::models::benefits::newtypes::BenefitCustomDescription,
     >,
     ///The visibility of the benefit in the customer portal.
@@ -179,8 +191,12 @@ pub struct BenefitCustomUpdate {
         crate::v2027_01::models::common::enums::BenefitVisibility,
     >,
     pub r#type: monostate::MustBe!("custom"),
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub properties: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub properties: Option<
         crate::v2027_01::models::common::types::BenefitCustomProperties,
     >,
 }
@@ -195,7 +211,7 @@ impl BenefitCustomUpdate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -229,7 +245,7 @@ impl BenefitCustomUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::newtypes::BenefitCustomDescription,
     ) -> Self {
-        self.description = presence_rs::Presence::Some(value);
+        self.description = Some(value);
         self
     }
 
@@ -248,7 +264,7 @@ impl BenefitCustomUpdate {
         mut self,
         value: crate::v2027_01::models::common::types::BenefitCustomProperties,
     ) -> Self {
-        self.properties = presence_rs::Presence::Some(value);
+        self.properties = Some(value);
         self
     }
 }
@@ -264,8 +280,12 @@ pub struct BenefitDiscordCreateRequired {
 #[serde(deny_unknown_fields)]
 pub struct BenefitDiscordCreate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -307,7 +327,7 @@ pub struct BenefitDiscordCreate {
 impl BenefitDiscordCreate {
     pub fn new(required: BenefitDiscordCreateRequired) -> Self {
         Self {
-            external_id: presence_rs::Presence::Absent,
+            external_id: None,
             metadata: None,
             r#type: Default::default(),
             description: required.description,
@@ -322,7 +342,7 @@ impl BenefitDiscordCreate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -407,8 +427,12 @@ impl BenefitDiscordCreateProperties {
 #[derive(Default)]
 pub struct BenefitDiscordUpdate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -432,13 +456,21 @@ pub struct BenefitDiscordUpdate {
         >,
     >,
     ///The description of the benefit. Will be displayed on products having this benefit.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub description: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub description: Option<
         crate::v2027_01::models::benefits::newtypes::BenefitDiscordDescription,
     >,
     pub r#type: monostate::MustBe!("discord"),
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub properties: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub properties: Option<
         crate::v2027_01::models::benefits::types::BenefitDiscordCreateProperties,
     >,
 }
@@ -453,7 +485,7 @@ impl BenefitDiscordUpdate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -487,7 +519,7 @@ impl BenefitDiscordUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::newtypes::BenefitDiscordDescription,
     ) -> Self {
-        self.description = presence_rs::Presence::Some(value);
+        self.description = Some(value);
         self
     }
 
@@ -496,7 +528,7 @@ impl BenefitDiscordUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::types::BenefitDiscordCreateProperties,
     ) -> Self {
-        self.properties = presence_rs::Presence::Some(value);
+        self.properties = Some(value);
         self
     }
 }
@@ -610,8 +642,12 @@ pub struct BenefitDownloadablesCreateRequired {
 #[serde(deny_unknown_fields)]
 pub struct BenefitDownloadablesCreate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -653,7 +689,7 @@ pub struct BenefitDownloadablesCreate {
 impl BenefitDownloadablesCreate {
     pub fn new(required: BenefitDownloadablesCreateRequired) -> Self {
         Self {
-            external_id: presence_rs::Presence::Absent,
+            external_id: None,
             metadata: None,
             r#type: Default::default(),
             description: required.description,
@@ -668,7 +704,7 @@ impl BenefitDownloadablesCreate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -761,8 +797,12 @@ impl BenefitDownloadablesCreateProperties {
 #[derive(Default)]
 pub struct BenefitDownloadablesUpdate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -786,13 +826,21 @@ pub struct BenefitDownloadablesUpdate {
         >,
     >,
     ///The description of the benefit. Will be displayed on products having this benefit.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub description: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub description: Option<
         crate::v2027_01::models::benefits::newtypes::BenefitDownloadablesDescription,
     >,
     pub r#type: monostate::MustBe!("downloadables"),
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub properties: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub properties: Option<
         crate::v2027_01::models::benefits::types::BenefitDownloadablesCreateProperties,
     >,
 }
@@ -807,7 +855,7 @@ impl BenefitDownloadablesUpdate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -841,7 +889,7 @@ impl BenefitDownloadablesUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::newtypes::BenefitDownloadablesDescription,
     ) -> Self {
-        self.description = presence_rs::Presence::Some(value);
+        self.description = Some(value);
         self
     }
 
@@ -850,7 +898,7 @@ impl BenefitDownloadablesUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::types::BenefitDownloadablesCreateProperties,
     ) -> Self {
-        self.properties = presence_rs::Presence::Some(value);
+        self.properties = Some(value);
         self
     }
 }
@@ -867,8 +915,12 @@ pub struct BenefitFeatureFlagCreateRequired {
 #[serde(deny_unknown_fields)]
 pub struct BenefitFeatureFlagCreate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -910,7 +962,7 @@ pub struct BenefitFeatureFlagCreate {
 impl BenefitFeatureFlagCreate {
     pub fn new(required: BenefitFeatureFlagCreateRequired) -> Self {
         Self {
-            external_id: presence_rs::Presence::Absent,
+            external_id: None,
             metadata: None,
             r#type: Default::default(),
             description: required.description,
@@ -925,7 +977,7 @@ impl BenefitFeatureFlagCreate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -991,8 +1043,12 @@ impl BenefitFeatureFlagCreateProperties {
 #[derive(Default)]
 pub struct BenefitFeatureFlagUpdate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -1016,8 +1072,12 @@ pub struct BenefitFeatureFlagUpdate {
         >,
     >,
     ///The description of the benefit. Will be displayed on products having this benefit.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub description: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub description: Option<
         crate::v2027_01::models::benefits::newtypes::BenefitFeatureFlagDescription,
     >,
     ///The visibility of the benefit in the customer portal.
@@ -1026,8 +1086,12 @@ pub struct BenefitFeatureFlagUpdate {
         crate::v2027_01::models::common::enums::BenefitVisibility,
     >,
     pub r#type: monostate::MustBe!("feature_flag"),
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub properties: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub properties: Option<
         crate::v2027_01::models::common::types::BenefitFeatureFlagProperties,
     >,
 }
@@ -1042,7 +1106,7 @@ impl BenefitFeatureFlagUpdate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -1076,7 +1140,7 @@ impl BenefitFeatureFlagUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::newtypes::BenefitFeatureFlagDescription,
     ) -> Self {
-        self.description = presence_rs::Presence::Some(value);
+        self.description = Some(value);
         self
     }
 
@@ -1095,7 +1159,7 @@ impl BenefitFeatureFlagUpdate {
         mut self,
         value: crate::v2027_01::models::common::types::BenefitFeatureFlagProperties,
     ) -> Self {
-        self.properties = presence_rs::Presence::Some(value);
+        self.properties = Some(value);
         self
     }
 }
@@ -1113,8 +1177,12 @@ pub struct BenefitGitHubRepositoryCreateRequired {
 #[serde(deny_unknown_fields)]
 pub struct BenefitGitHubRepositoryCreate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -1156,7 +1224,7 @@ pub struct BenefitGitHubRepositoryCreate {
 impl BenefitGitHubRepositoryCreate {
     pub fn new(required: BenefitGitHubRepositoryCreateRequired) -> Self {
         Self {
-            external_id: presence_rs::Presence::Absent,
+            external_id: None,
             metadata: None,
             r#type: Default::default(),
             description: required.description,
@@ -1171,7 +1239,7 @@ impl BenefitGitHubRepositoryCreate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -1258,8 +1326,12 @@ impl BenefitGitHubRepositoryCreateProperties {
 #[derive(Default)]
 pub struct BenefitGitHubRepositoryUpdate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -1283,13 +1355,21 @@ pub struct BenefitGitHubRepositoryUpdate {
         >,
     >,
     ///The description of the benefit. Will be displayed on products having this benefit.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub description: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub description: Option<
         crate::v2027_01::models::benefits::newtypes::BenefitGitHubRepositoryDescription,
     >,
     pub r#type: monostate::MustBe!("github_repository"),
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub properties: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub properties: Option<
         crate::v2027_01::models::benefits::types::BenefitGitHubRepositoryCreateProperties,
     >,
 }
@@ -1304,7 +1384,7 @@ impl BenefitGitHubRepositoryUpdate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -1338,7 +1418,7 @@ impl BenefitGitHubRepositoryUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::newtypes::BenefitGitHubRepositoryDescription,
     ) -> Self {
-        self.description = presence_rs::Presence::Some(value);
+        self.description = Some(value);
         self
     }
 
@@ -1347,7 +1427,7 @@ impl BenefitGitHubRepositoryUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::types::BenefitGitHubRepositoryCreateProperties,
     ) -> Self {
-        self.properties = presence_rs::Presence::Some(value);
+        self.properties = Some(value);
         self
     }
 }
@@ -1381,8 +1461,12 @@ pub struct BenefitLicenseKeysCreateRequired {
 #[serde(deny_unknown_fields)]
 pub struct BenefitLicenseKeysCreate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -1424,7 +1508,7 @@ pub struct BenefitLicenseKeysCreate {
 impl BenefitLicenseKeysCreate {
     pub fn new(required: BenefitLicenseKeysCreateRequired) -> Self {
         Self {
-            external_id: presence_rs::Presence::Absent,
+            external_id: None,
             metadata: None,
             r#type: Default::default(),
             description: required.description,
@@ -1439,7 +1523,7 @@ impl BenefitLicenseKeysCreate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -1552,8 +1636,12 @@ impl BenefitLicenseKeysCreateProperties {
 #[derive(Default)]
 pub struct BenefitLicenseKeysUpdate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -1577,8 +1665,12 @@ pub struct BenefitLicenseKeysUpdate {
         >,
     >,
     ///The description of the benefit. Will be displayed on products having this benefit.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub description: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub description: Option<
         crate::v2027_01::models::benefits::newtypes::BenefitLicenseKeysDescription,
     >,
     ///The visibility of the benefit in the customer portal.
@@ -1587,8 +1679,12 @@ pub struct BenefitLicenseKeysUpdate {
         crate::v2027_01::models::common::enums::BenefitVisibility,
     >,
     pub r#type: monostate::MustBe!("license_keys"),
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub properties: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub properties: Option<
         crate::v2027_01::models::benefits::types::BenefitLicenseKeysCreateProperties,
     >,
 }
@@ -1603,7 +1699,7 @@ impl BenefitLicenseKeysUpdate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -1637,7 +1733,7 @@ impl BenefitLicenseKeysUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::newtypes::BenefitLicenseKeysDescription,
     ) -> Self {
-        self.description = presence_rs::Presence::Some(value);
+        self.description = Some(value);
         self
     }
 
@@ -1656,7 +1752,7 @@ impl BenefitLicenseKeysUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::types::BenefitLicenseKeysCreateProperties,
     ) -> Self {
-        self.properties = presence_rs::Presence::Some(value);
+        self.properties = Some(value);
         self
     }
 }
@@ -1673,8 +1769,12 @@ pub struct BenefitMeterCreditCreateRequired {
 #[serde(deny_unknown_fields)]
 pub struct BenefitMeterCreditCreate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -1716,7 +1816,7 @@ pub struct BenefitMeterCreditCreate {
 impl BenefitMeterCreditCreate {
     pub fn new(required: BenefitMeterCreditCreateRequired) -> Self {
         Self {
-            external_id: presence_rs::Presence::Absent,
+            external_id: None,
             metadata: None,
             r#type: Default::default(),
             description: required.description,
@@ -1731,7 +1831,7 @@ impl BenefitMeterCreditCreate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -1806,8 +1906,12 @@ impl BenefitMeterCreditCreateProperties {
 #[derive(Default)]
 pub struct BenefitMeterCreditUpdate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -1831,8 +1935,12 @@ pub struct BenefitMeterCreditUpdate {
         >,
     >,
     ///The description of the benefit. Will be displayed on products having this benefit.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub description: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub description: Option<
         crate::v2027_01::models::benefits::newtypes::BenefitMeterCreditDescription,
     >,
     ///The visibility of the benefit in the customer portal.
@@ -1841,8 +1949,12 @@ pub struct BenefitMeterCreditUpdate {
         crate::v2027_01::models::common::enums::BenefitVisibility,
     >,
     pub r#type: monostate::MustBe!("meter_credit"),
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub properties: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub properties: Option<
         crate::v2027_01::models::benefits::types::BenefitMeterCreditCreateProperties,
     >,
 }
@@ -1857,7 +1969,7 @@ impl BenefitMeterCreditUpdate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -1891,7 +2003,7 @@ impl BenefitMeterCreditUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::newtypes::BenefitMeterCreditDescription,
     ) -> Self {
-        self.description = presence_rs::Presence::Some(value);
+        self.description = Some(value);
         self
     }
 
@@ -1910,7 +2022,7 @@ impl BenefitMeterCreditUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::types::BenefitMeterCreditCreateProperties,
     ) -> Self {
-        self.properties = presence_rs::Presence::Some(value);
+        self.properties = Some(value);
         self
     }
 }
@@ -1928,8 +2040,12 @@ pub struct BenefitSlackSharedChannelCreateRequired {
 #[serde(deny_unknown_fields)]
 pub struct BenefitSlackSharedChannelCreate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -1971,7 +2087,7 @@ pub struct BenefitSlackSharedChannelCreate {
 impl BenefitSlackSharedChannelCreate {
     pub fn new(required: BenefitSlackSharedChannelCreateRequired) -> Self {
         Self {
-            external_id: presence_rs::Presence::Absent,
+            external_id: None,
             metadata: None,
             r#type: Default::default(),
             description: required.description,
@@ -1986,7 +2102,7 @@ impl BenefitSlackSharedChannelCreate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -2116,8 +2232,12 @@ impl BenefitSlackSharedChannelCreateProperties {
 #[derive(Default)]
 pub struct BenefitSlackSharedChannelUpdate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -2141,13 +2261,21 @@ pub struct BenefitSlackSharedChannelUpdate {
         >,
     >,
     ///The description of the benefit. Will be displayed on products having this benefit.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub description: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub description: Option<
         crate::v2027_01::models::benefits::newtypes::BenefitSlackSharedChannelDescription,
     >,
     pub r#type: monostate::MustBe!("slack_shared_channel"),
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub properties: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub properties: Option<
         crate::v2027_01::models::benefits::types::BenefitSlackSharedChannelCreateProperties,
     >,
 }
@@ -2162,7 +2290,7 @@ impl BenefitSlackSharedChannelUpdate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -2196,7 +2324,7 @@ impl BenefitSlackSharedChannelUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::newtypes::BenefitSlackSharedChannelDescription,
     ) -> Self {
-        self.description = presence_rs::Presence::Some(value);
+        self.description = Some(value);
         self
     }
 
@@ -2205,7 +2333,7 @@ impl BenefitSlackSharedChannelUpdate {
         mut self,
         value: crate::v2027_01::models::benefits::types::BenefitSlackSharedChannelCreateProperties,
     ) -> Self {
-        self.properties = presence_rs::Presence::Some(value);
+        self.properties = Some(value);
         self
     }
 }

@@ -202,12 +202,9 @@ pub enum SubscriptionUpdateBaseMetadataAdditionalPropertiesUnion {
     Number(f64),
     Boolean(bool),
 }
-/// Set or extend the trial period of the subscription. If set to `now`, the
-/// trial will end immediately and the first billing cycle will be charged
-/// synchronously. The subscription remains trialing if the payment fails.
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 #[serde(untagged)]
-pub enum SubscriptionUpdateBaseTrialEndUnion {
+pub enum SubscriptionUpdateBaseTrialEndAnyOf0Union {
     String(jiff::Timestamp),
     Now(monostate::MustBe!("now")),
 }

@@ -2782,6 +2782,8 @@ pub enum SubscriptionStatus {
     Unpaid,
     #[serde(rename = "paused")]
     Paused,
+    #[serde(rename = "trial_ended")]
+    TrialEnded,
 }
 impl SubscriptionStatus {
     pub fn as_str(&self) -> &'static str {
@@ -2794,6 +2796,7 @@ impl SubscriptionStatus {
             Self::Canceled => "canceled",
             Self::Unpaid => "unpaid",
             Self::Paused => "paused",
+            Self::TrialEnded => "trial_ended",
         }
     }
 }

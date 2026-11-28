@@ -464,18 +464,28 @@ impl CustomerPaymentMethodKrCard {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct CustomerPortalCustomerUpdate {
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub billing_name: presence_rs::Presence<
-        crate::v2027_01::models::customers::newtypes::CustomerPortalCustomerBillingName,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub billing_address:
-        presence_rs::Presence<crate::v2027_01::models::common::types::AddressInput>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub billing_name:
+        Option<crate::v2027_01::models::customers::newtypes::CustomerPortalCustomerBillingName>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub billing_address: Option<crate::v2027_01::models::common::types::AddressInput>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub tax_id: presence_rs::Presence<String>,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
     pub default_payment_method_id:
-        presence_rs::Presence<crate::v2027_01::models::common::ids::DefaultPaymentMethodId>,
+        Option<crate::v2027_01::models::common::ids::DefaultPaymentMethodId>,
 }
 #[allow(clippy::type_complexity)]
 impl CustomerPortalCustomerUpdate {
@@ -488,7 +498,7 @@ impl CustomerPortalCustomerUpdate {
         mut self,
         value: crate::v2027_01::models::customers::newtypes::CustomerPortalCustomerBillingName,
     ) -> Self {
-        self.billing_name = presence_rs::Presence::Some(value);
+        self.billing_name = Some(value);
         self
     }
 
@@ -497,7 +507,7 @@ impl CustomerPortalCustomerUpdate {
         mut self,
         value: crate::v2027_01::models::common::types::AddressInput,
     ) -> Self {
-        self.billing_address = presence_rs::Presence::Some(value);
+        self.billing_address = Some(value);
         self
     }
 
@@ -512,7 +522,7 @@ impl CustomerPortalCustomerUpdate {
         mut self,
         value: crate::v2027_01::models::common::ids::DefaultPaymentMethodId,
     ) -> Self {
-        self.default_payment_method_id = presence_rs::Presence::Some(value);
+        self.default_payment_method_id = Some(value);
         self
     }
 }
@@ -528,6 +538,9 @@ pub struct CustomerStateBenefitGrantRequired {
     pub granted_at: jiff::Timestamp,
     /// The ID of the benefit concerned by this grant.
     pub benefit_id: crate::v2027_01::models::common::ids::BenefitId,
+    /// The external ID of the benefit concerned by this grant, if any. It stays
+    /// the same across benefit versions.
+    pub external_benefit_id: Option<String>,
     /// The type of the benefit concerned by this grant.
     pub benefit_type: crate::v2027_01::models::common::enums::BenefitType,
     /// The metadata of the benefit concerned by this grant.
@@ -553,6 +566,12 @@ pub struct CustomerStateBenefitGrant {
     pub granted_at: jiff::Timestamp,
     /// The ID of the benefit concerned by this grant.
     pub benefit_id: crate::v2027_01::models::common::ids::BenefitId,
+    /// The external ID of the benefit concerned by this grant, if any. It stays
+    /// the same across benefit versions.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub external_benefit_id: Option<String>,
     /// The type of the benefit concerned by this grant.
     pub benefit_type: crate::v2027_01::models::common::enums::BenefitType,
     /// The metadata of the benefit concerned by this grant.
@@ -569,6 +588,7 @@ impl CustomerStateBenefitGrant {
             modified_at: required.modified_at,
             granted_at: required.granted_at,
             benefit_id: required.benefit_id,
+            external_benefit_id: required.external_benefit_id,
             benefit_type: required.benefit_type,
             benefit_metadata: required.benefit_metadata,
             properties: required.properties,
@@ -760,6 +780,9 @@ pub struct CustomerStateMeterRequired {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the meter.
     pub meter_id: crate::v2027_01::models::common::ids::MeterId,
+    /// The external ID of the meter, if any. It stays the same across meter
+    /// versions.
+    pub external_meter_id: Option<String>,
     /// The number of consumed units.
     pub consumed_units: f64,
     /// The number of credited units.
@@ -784,6 +807,12 @@ pub struct CustomerStateMeter {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the meter.
     pub meter_id: crate::v2027_01::models::common::ids::MeterId,
+    /// The external ID of the meter, if any. It stays the same across meter
+    /// versions.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub external_meter_id: Option<String>,
     /// The number of consumed units.
     pub consumed_units: f64,
     /// The number of credited units.
@@ -800,6 +829,7 @@ impl CustomerStateMeter {
             created_at: required.created_at,
             modified_at: required.modified_at,
             meter_id: required.meter_id,
+            external_meter_id: required.external_meter_id,
             consumed_units: required.consumed_units,
             credited_units: required.credited_units,
             balance: required.balance,
@@ -842,6 +872,9 @@ pub struct CustomerStateSubscriptionRequired {
     pub ends_at: Option<jiff::Timestamp>,
     /// The ID of the subscribed product.
     pub product_id: crate::v2027_01::models::common::ids::ProductId,
+    /// The external ID of the subscribed product, if any. It stays the same
+    /// across product versions.
+    pub external_product_id: Option<String>,
     /// The ID of the applied discount, if any.
     pub discount_id: Option<crate::v2027_01::models::common::ids::DiscountId>,
     /// The number of seats for seat-based subscriptions. None for non-seat
@@ -919,6 +952,11 @@ pub struct CustomerStateSubscription {
     pub ends_at: Option<jiff::Timestamp>,
     ///The ID of the subscribed product.
     pub product_id: crate::v2027_01::models::common::ids::ProductId,
+    ///The external ID of the subscribed product, if any. It stays the same across product versions.
+    #[serde(
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
+    )]
+    pub external_product_id: Option<String>,
     ///The ID of the applied discount, if any.
     #[serde(
         deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
@@ -961,6 +999,7 @@ impl CustomerStateSubscription {
             started_at: required.started_at,
             ends_at: required.ends_at,
             product_id: required.product_id,
+            external_product_id: required.external_product_id,
             discount_id: required.discount_id,
             seats: required.seats,
             units: required.units,
@@ -1401,28 +1440,40 @@ pub struct CustomerUpdate {
         >,
     >,
     ///The email address of the customer. This must be unique within the organization.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub email: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub email: Option<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub name: presence_rs::Presence<
         crate::v2027_01::models::customers::newtypes::CustomerName,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub billing_address: presence_rs::Presence<
-        crate::v2027_01::models::common::types::AddressInput,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub billing_address: Option<crate::v2027_01::models::common::types::AddressInput>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub tax_id: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub locale: presence_rs::Presence<String>,
     ///The ID of the customer in your system. This must be unique within the organization. Once set, it can't be updated.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///The customer type. Can only be upgraded from 'individual' to 'team', never downgraded.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub r#type: presence_rs::Presence<
-        crate::v2027_01::models::common::enums::CustomerType,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub r#type: Option<crate::v2027_01::models::common::enums::CustomerType>,
 }
 #[allow(clippy::type_complexity)]
 impl CustomerUpdate {
@@ -1457,7 +1508,7 @@ impl CustomerUpdate {
     /// organization.
     #[allow(clippy::should_implement_trait)]
     pub fn email(mut self, value: impl Into<String>) -> Self {
-        self.email = presence_rs::Presence::Some(value.into());
+        self.email = Some(value.into());
         self
     }
 
@@ -1475,7 +1526,7 @@ impl CustomerUpdate {
         mut self,
         value: crate::v2027_01::models::common::types::AddressInput,
     ) -> Self {
-        self.billing_address = presence_rs::Presence::Some(value);
+        self.billing_address = Some(value);
         self
     }
 
@@ -1495,7 +1546,7 @@ impl CustomerUpdate {
     /// organization. Once set, it can't be updated.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -1503,7 +1554,7 @@ impl CustomerUpdate {
     /// never downgraded.
     #[allow(clippy::should_implement_trait)]
     pub fn r#type(mut self, value: crate::v2027_01::models::common::enums::CustomerType) -> Self {
-        self.r#type = presence_rs::Presence::Some(value);
+        self.r#type = Some(value);
         self
     }
 }
@@ -1535,16 +1586,22 @@ pub struct CustomerUpdateExternalId {
         >,
     >,
     ///The email address of the customer. This must be unique within the organization.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub email: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub email: Option<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub name: presence_rs::Presence<
         crate::v2027_01::models::customers::newtypes::CustomerUpdateExternalIdName,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub billing_address: presence_rs::Presence<
-        crate::v2027_01::models::common::types::AddressInput,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub billing_address: Option<crate::v2027_01::models::common::types::AddressInput>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub tax_id: presence_rs::Presence<String>,
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
@@ -1583,7 +1640,7 @@ impl CustomerUpdateExternalId {
     /// organization.
     #[allow(clippy::should_implement_trait)]
     pub fn email(mut self, value: impl Into<String>) -> Self {
-        self.email = presence_rs::Presence::Some(value.into());
+        self.email = Some(value.into());
         self
     }
 
@@ -1601,7 +1658,7 @@ impl CustomerUpdateExternalId {
         mut self,
         value: crate::v2027_01::models::common::types::AddressInput,
     ) -> Self {
-        self.billing_address = presence_rs::Presence::Some(value);
+        self.billing_address = Some(value);
         self
     }
 
@@ -1740,13 +1797,26 @@ impl MemberOwnerCreate {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct MemberUpdate {
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name: presence_rs::Presence<crate::v2027_01::models::customers::newtypes::MemberName>,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub email: presence_rs::Presence<String>,
+    /// The name of the member.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub name: Option<crate::v2027_01::models::customers::newtypes::MemberName>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub email: Option<String>,
     /// The role of the member within the customer.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub role: presence_rs::Presence<crate::v2027_01::models::common::enums::MemberRole>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub role: Option<crate::v2027_01::models::common::enums::MemberRole>,
 }
 #[allow(clippy::type_complexity)]
 impl MemberUpdate {
@@ -1754,22 +1824,23 @@ impl MemberUpdate {
         Self::default()
     }
 
+    /// The name of the member.
     #[allow(clippy::should_implement_trait)]
     pub fn name(mut self, value: crate::v2027_01::models::customers::newtypes::MemberName) -> Self {
-        self.name = presence_rs::Presence::Some(value);
+        self.name = Some(value);
         self
     }
 
     #[allow(clippy::should_implement_trait)]
     pub fn email(mut self, value: impl Into<String>) -> Self {
-        self.email = presence_rs::Presence::Some(value.into());
+        self.email = Some(value.into());
         self
     }
 
     /// The role of the member within the customer.
     #[allow(clippy::should_implement_trait)]
     pub fn role(mut self, value: crate::v2027_01::models::common::enums::MemberRole) -> Self {
-        self.role = presence_rs::Presence::Some(value);
+        self.role = Some(value);
         self
     }
 }

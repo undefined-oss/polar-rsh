@@ -666,7 +666,7 @@ pub struct CustomerOrderUpdate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub billing_name: presence_rs::Presence<String>,
     /// The address of the customer that should appear on the invoice. Address
-    /// fields used for tax calculation cannot be updated.
+    /// fields used for tax calculation can only be updated on draft orders.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub billing_address:
         presence_rs::Presence<crate::v2026_10::models::common::types::AddressInput>,
@@ -685,7 +685,7 @@ impl CustomerOrderUpdate {
     }
 
     /// The address of the customer that should appear on the invoice. Address
-    /// fields used for tax calculation cannot be updated.
+    /// fields used for tax calculation can only be updated on draft orders.
     #[allow(clippy::should_implement_trait)]
     pub fn billing_address(
         mut self,
@@ -1070,10 +1070,6 @@ pub struct OrderCreate {
     pub organization_id: presence_rs::Presence<
         crate::v2026_10::models::common::ids::OrganizationId,
     >,
-    ///The ID of the customer the order is for. Must belong to the order's organization.
-    pub customer_id: crate::v2026_10::models::common::ids::CustomerId,
-    ///The ID of the one-time product to charge for. Must belong to the order's organization. Only fixed-price, free and unit-based products are supported.
-    pub product_id: crate::v2026_10::models::common::ids::ProductId,
     ///The currency to charge in (ISO 4217, lowercase, e.g. `usd`). Defaults to the organization's default currency; specify it to force a different one, or when the product isn't priced in the organization's default currency.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub currency: presence_rs::Presence<String>,
@@ -1092,6 +1088,10 @@ pub struct OrderCreate {
     pub description: presence_rs::Presence<
         crate::v2026_10::models::orders::newtypes::OrderDescription,
     >,
+    ///The ID of the customer the order is for. Must belong to the order's organization.
+    pub customer_id: crate::v2026_10::models::common::ids::CustomerId,
+    ///The ID of the one-time product to charge for. Must belong to the order's organization. Only fixed-price, free and unit-based products are supported.
+    pub product_id: crate::v2026_10::models::common::ids::ProductId,
 }
 #[allow(clippy::type_complexity)]
 impl OrderCreate {
@@ -1100,12 +1100,12 @@ impl OrderCreate {
             custom_field_data: None,
             metadata: None,
             organization_id: presence_rs::Presence::Absent,
-            customer_id: required.customer_id,
-            product_id: required.product_id,
             currency: presence_rs::Presence::Absent,
             amount: presence_rs::Presence::Absent,
             units: presence_rs::Presence::Absent,
             description: presence_rs::Presence::Absent,
+            customer_id: required.customer_id,
+            product_id: required.product_id,
         }
     }
 
@@ -1931,7 +1931,7 @@ pub struct OrderUpdate {
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub billing_name: presence_rs::Presence<String>,
     /// The address of the customer that should appear on the invoice. Address
-    /// fields used for tax calculation cannot be updated.
+    /// fields used for tax calculation can only be updated on draft orders.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub billing_address:
         presence_rs::Presence<crate::v2026_10::models::common::types::AddressInput>,
@@ -1950,7 +1950,7 @@ impl OrderUpdate {
     }
 
     /// The address of the customer that should appear on the invoice. Address
-    /// fields used for tax calculation cannot be updated.
+    /// fields used for tax calculation can only be updated on draft orders.
     #[allow(clippy::should_implement_trait)]
     pub fn billing_address(
         mut self,

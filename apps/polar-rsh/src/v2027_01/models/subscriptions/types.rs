@@ -44,8 +44,12 @@ pub struct CustomerSubscriptionCancel {
     /// Cancel an active subscription once the current period ends.
     ///
     /// Or uncancel a subscription currently set to be revoked at period end.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub cancel_at_period_end: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub cancel_at_period_end: Option<bool>,
     /// Customers reason for cancellation.
     ///
     /// * `too_expensive`: Too expensive for the customer.
@@ -75,7 +79,7 @@ impl CustomerSubscriptionCancel {
     /// Or uncancel a subscription currently set to be revoked at period end.
     #[allow(clippy::should_implement_trait)]
     pub fn cancel_at_period_end(mut self, value: bool) -> Self {
-        self.cancel_at_period_end = presence_rs::Presence::Some(value);
+        self.cancel_at_period_end = Some(value);
         self
     }
 
@@ -145,6 +149,20 @@ impl CustomerSubscriptionPause {
     pub fn resumes_at(mut self, value: jiff::Timestamp) -> Self {
         self.resumes_at = presence_rs::Presence::Some(value);
         self
+    }
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(Default)]
+pub struct CustomerSubscriptionReactivate {
+    /// Reactivate a subscription whose trial ended.
+    pub reactivate: monostate::MustBe!(true),
+}
+#[allow(clippy::type_complexity)]
+impl CustomerSubscriptionReactivate {
+    pub fn new() -> Self {
+        Self::default()
     }
 }
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
@@ -254,6 +272,44 @@ pub struct InactiveSubscription {
 #[allow(clippy::type_complexity)]
 impl InactiveSubscription {
     pub fn new(required: InactiveSubscriptionRequired) -> Self {
+        Self { error: Default::default(), detail: required.detail }
+    }
+}
+#[derive(Debug, Clone)]
+pub struct MissingBillingDetailsRequired {
+    pub detail: String,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(thiserror::Error)]
+#[error("{self:?}")]
+pub struct MissingBillingDetails {
+    pub error: monostate::MustBe!("MissingBillingDetails"),
+    pub detail: String,
+}
+#[allow(clippy::type_complexity)]
+impl MissingBillingDetails {
+    pub fn new(required: MissingBillingDetailsRequired) -> Self {
+        Self { error: Default::default(), detail: required.detail }
+    }
+}
+#[derive(Debug, Clone)]
+pub struct NotTrialEndedSubscriptionRequired {
+    pub detail: String,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(thiserror::Error)]
+#[error("{self:?}")]
+pub struct NotTrialEndedSubscription {
+    pub error: monostate::MustBe!("NotTrialEndedSubscription"),
+    pub detail: String,
+}
+#[allow(clippy::type_complexity)]
+impl NotTrialEndedSubscription {
+    pub fn new(required: NotTrialEndedSubscriptionRequired) -> Self {
         Self { error: Default::default(), detail: required.detail }
     }
 }
@@ -738,10 +794,12 @@ pub struct SubscriptionCreateCustomer {
     ///The ID of the recurring product to subscribe to. Must be a free product or have a trial with no upfront payment setup required. Otherwise, the customer should go through a checkout flow.
     pub product_id: crate::v2027_01::models::common::ids::ProductId,
     ///The currency of the subscription. The product must have a free price in this currency or have a trial with no upfront payment setup required. If not set, the organization's default currency is used.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub currency: presence_rs::Presence<
-        crate::v2027_01::models::common::enums::PresentmentCurrency,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub currency: Option<crate::v2027_01::models::common::enums::PresentmentCurrency>,
     ///The ID of the customer to create the subscription for.
     pub customer_id: crate::v2027_01::models::common::ids::CustomerId,
 }
@@ -751,7 +809,7 @@ impl SubscriptionCreateCustomer {
         Self {
             metadata: None,
             product_id: required.product_id,
-            currency: presence_rs::Presence::Absent,
+            currency: None,
             customer_id: required.customer_id,
         }
     }
@@ -787,7 +845,117 @@ impl SubscriptionCreateCustomer {
         mut self,
         value: crate::v2027_01::models::common::enums::PresentmentCurrency,
     ) -> Self {
-        self.currency = presence_rs::Presence::Some(value);
+        self.currency = Some(value);
+        self
+    }
+}
+#[derive(Debug, Clone)]
+pub struct SubscriptionCreateExternalRequired {
+    ///The ID of the customer in your system to create the subscription for. It must already exist in Polar.
+    pub external_customer_id: crate::v2027_01::models::subscriptions::newtypes::SubscriptionCreateExternalExternalCustomerId,
+    ///The ID of the recurring product in your system to subscribe to. Resolves to the current version of the product. Must be a free product or have a trial with no upfront payment setup required. Otherwise, the customer should go through a checkout flow.
+    pub external_product_id: String,
+}
+/// Create a subscription using external IDs for the customer and the product.
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+pub struct SubscriptionCreateExternal {
+    ///Key-value object allowing you to store additional information.
+    ///
+    ///The key must be a string with a maximum length of **40 characters**.
+    ///The value must be either:
+    ///
+    ///* A string with a maximum length of **500 characters**
+    ///* An integer
+    ///* A floating-point number
+    ///* A boolean
+    ///
+    ///You can store up to **50 key-value pairs**.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub metadata: Option<
+        std::collections::BTreeMap<
+            crate::v2027_01::models::subscriptions::newtypes::SubscriptionCreateExternalMetadataKey,
+            crate::v2027_01::models::subscriptions::unions::SubscriptionCreateExternalMetadataAdditionalPropertiesUnion,
+        >,
+    >,
+    ///The ID of the customer in your system to create the subscription for. It must already exist in Polar.
+    pub external_customer_id: crate::v2027_01::models::subscriptions::newtypes::SubscriptionCreateExternalExternalCustomerId,
+    ///The ID of the recurring product in your system to subscribe to. Resolves to the current version of the product. Must be a free product or have a trial with no upfront payment setup required. Otherwise, the customer should go through a checkout flow.
+    pub external_product_id: String,
+    ///The ID of the organization owning the customer and product. **Required unless your credential identifies one organization.** Omit this field when using an organization token.
+    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
+    pub organization_id: presence_rs::Presence<
+        crate::v2027_01::models::common::ids::OrganizationId,
+    >,
+    ///The currency of the subscription. The product must have a free price in this currency or have a trial with no upfront payment setup required. If not set, the organization's default currency is used.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub currency: Option<crate::v2027_01::models::common::enums::PresentmentCurrency>,
+}
+#[allow(clippy::type_complexity)]
+impl SubscriptionCreateExternal {
+    pub fn new(required: SubscriptionCreateExternalRequired) -> Self {
+        Self {
+            metadata: None,
+            external_customer_id: required.external_customer_id,
+            external_product_id: required.external_product_id,
+            organization_id: presence_rs::Presence::Absent,
+            currency: None,
+        }
+    }
+
+    /// Key-value object allowing you to store additional information.
+    ///
+    /// The key must be a string with a maximum length of **40 characters**.
+    /// The value must be either:
+    ///
+    /// * A string with a maximum length of **500 characters**
+    /// * An integer
+    /// * A floating-point number
+    /// * A boolean
+    ///
+    /// You can store up to **50 key-value pairs**.
+    #[allow(clippy::should_implement_trait)]
+    pub fn metadata(
+        mut self,
+        value: std::collections::BTreeMap<
+            crate::v2027_01::models::subscriptions::newtypes::SubscriptionCreateExternalMetadataKey,
+            crate::v2027_01::models::subscriptions::unions::SubscriptionCreateExternalMetadataAdditionalPropertiesUnion,
+        >,
+    ) -> Self {
+        self.metadata = Some(value);
+        self
+    }
+
+    /// The ID of the organization owning the customer and product. **Required
+    /// unless your credential identifies one organization.** Omit this field
+    /// when using an organization token.
+    #[allow(clippy::should_implement_trait)]
+    pub fn organization_id(
+        mut self,
+        value: crate::v2027_01::models::common::ids::OrganizationId,
+    ) -> Self {
+        self.organization_id = presence_rs::Presence::Some(value);
+        self
+    }
+
+    /// The currency of the subscription. The product must have a free price in
+    /// this currency or have a trial with no upfront payment setup required. If
+    /// not set, the organization's default currency is used.
+    #[allow(clippy::should_implement_trait)]
+    pub fn currency(
+        mut self,
+        value: crate::v2027_01::models::common::enums::PresentmentCurrency,
+    ) -> Self {
+        self.currency = Some(value);
         self
     }
 }
@@ -831,10 +999,12 @@ pub struct SubscriptionCreateExternalCustomer {
     ///The ID of the recurring product to subscribe to. Must be a free product or have a trial with no upfront payment setup required. Otherwise, the customer should go through a checkout flow.
     pub product_id: crate::v2027_01::models::common::ids::ProductId,
     ///The currency of the subscription. The product must have a free price in this currency or have a trial with no upfront payment setup required. If not set, the organization's default currency is used.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub currency: presence_rs::Presence<
-        crate::v2027_01::models::common::enums::PresentmentCurrency,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub currency: Option<crate::v2027_01::models::common::enums::PresentmentCurrency>,
     ///The ID of the customer in your system to create the subscription for. It must already exist in Polar.
     pub external_customer_id: String,
 }
@@ -844,7 +1014,7 @@ impl SubscriptionCreateExternalCustomer {
         Self {
             metadata: None,
             product_id: required.product_id,
-            currency: presence_rs::Presence::Absent,
+            currency: None,
             external_customer_id: required.external_customer_id,
         }
     }
@@ -880,7 +1050,7 @@ impl SubscriptionCreateExternalCustomer {
         mut self,
         value: crate::v2027_01::models::common::enums::PresentmentCurrency,
     ) -> Self {
-        self.currency = presence_rs::Presence::Some(value);
+        self.currency = Some(value);
         self
     }
 }
@@ -1318,13 +1488,26 @@ pub struct SubscriptionUpdateBase {
         >,
     >,
     ///Update subscription to another product.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub product_id: presence_rs::Presence<
-        crate::v2027_01::models::common::ids::ProductId,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub product_id: Option<crate::v2027_01::models::common::ids::ProductId>,
+    ///Update subscription to another product, referenced by its ID in your system. Resolves to the current version of the product. Can't be combined with `product_id`.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_product_id: Option<String>,
     ///Determine how to handle the proration billing. If not provided, will use the default organization setting.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub proration_behavior: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub proration_behavior: Option<
         crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateBaseProrationBehaviorUnion,
     >,
     ///Update the subscription to apply a new discount. If set to `null`, the discount will be removed. The change will be applied on the next billing cycle.
@@ -1333,8 +1516,12 @@ pub struct SubscriptionUpdateBase {
         crate::v2027_01::models::common::ids::DiscountId,
     >,
     ///Set or extend the trial period of the subscription. If set to `now`, the trial will end immediately and the first billing cycle will be charged synchronously. The subscription remains trialing if the payment fails.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub trial_end: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub trial_end: Option<
         crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateBaseTrialEndUnion,
     >,
 }
@@ -1370,7 +1557,16 @@ impl SubscriptionUpdateBase {
     /// Update subscription to another product.
     #[allow(clippy::should_implement_trait)]
     pub fn product_id(mut self, value: crate::v2027_01::models::common::ids::ProductId) -> Self {
-        self.product_id = presence_rs::Presence::Some(value);
+        self.product_id = Some(value);
+        self
+    }
+
+    /// Update subscription to another product, referenced by its ID in your
+    /// system. Resolves to the current version of the product. Can't be
+    /// combined with `product_id`.
+    #[allow(clippy::should_implement_trait)]
+    pub fn external_product_id(mut self, value: impl Into<String>) -> Self {
+        self.external_product_id = Some(value.into());
         self
     }
 
@@ -1381,7 +1577,7 @@ impl SubscriptionUpdateBase {
         mut self,
         value: crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateBaseProrationBehaviorUnion,
     ) -> Self {
-        self.proration_behavior = presence_rs::Presence::Some(value);
+        self.proration_behavior = Some(value);
         self
     }
 
@@ -1402,7 +1598,7 @@ impl SubscriptionUpdateBase {
         mut self,
         value: crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateBaseTrialEndUnion,
     ) -> Self {
-        self.trial_end = presence_rs::Presence::Some(value);
+        self.trial_end = Some(value);
         self
     }
 }
@@ -1472,15 +1668,19 @@ pub struct SubscriptionUpdateSeats {
     ///Update the number of seats for this subscription.
     pub seats: crate::v2027_01::models::subscriptions::newtypes::SubscriptionUpdateSeatsSeats,
     ///Determine how to handle the proration billing. If not provided, will use the default organization setting.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub proration_behavior: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub proration_behavior: Option<
         crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateSeatsProrationBehaviorUnion,
     >,
 }
 #[allow(clippy::type_complexity)]
 impl SubscriptionUpdateSeats {
     pub fn new(required: SubscriptionUpdateSeatsRequired) -> Self {
-        Self { seats: required.seats, proration_behavior: presence_rs::Presence::Absent }
+        Self { seats: required.seats, proration_behavior: None }
     }
 
     /// Determine how to handle the proration billing. If not provided, will use
@@ -1490,7 +1690,7 @@ impl SubscriptionUpdateSeats {
         mut self,
         value: crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateSeatsProrationBehaviorUnion,
     ) -> Self {
-        self.proration_behavior = presence_rs::Presence::Some(value);
+        self.proration_behavior = Some(value);
         self
     }
 }
@@ -1506,15 +1706,19 @@ pub struct SubscriptionUpdateUnits {
     ///Update the number of units for this subscription.
     pub units: crate::v2027_01::models::subscriptions::newtypes::SubscriptionUpdateUnitsUnits,
     ///Determine how to handle the proration billing. If not provided, will use the default organization setting.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub proration_behavior: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub proration_behavior: Option<
         crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateUnitsProrationBehaviorUnion,
     >,
 }
 #[allow(clippy::type_complexity)]
 impl SubscriptionUpdateUnits {
     pub fn new(required: SubscriptionUpdateUnitsRequired) -> Self {
-        Self { units: required.units, proration_behavior: presence_rs::Presence::Absent }
+        Self { units: required.units, proration_behavior: None }
     }
 
     /// Determine how to handle the proration billing. If not provided, will use
@@ -1524,7 +1728,7 @@ impl SubscriptionUpdateUnits {
         mut self,
         value: crate::v2027_01::models::subscriptions::unions::SubscriptionUpdateUnitsProrationBehaviorUnion,
     ) -> Self {
-        self.proration_behavior = presence_rs::Presence::Some(value);
+        self.proration_behavior = Some(value);
         self
     }
 }

@@ -424,6 +424,225 @@ impl AsRef<str> for SubscriptionCreateExternalCustomerMetadataValueString {
         &self.0
     }
 }
+/// The ID of the customer in your system to create the subscription for. It
+/// must already exist in Polar.
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Eq,
+    Ord,
+    Hash,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref,
+)]
+#[serde(transparent)]
+pub struct SubscriptionCreateExternalExternalCustomerId(String);
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum SubscriptionCreateExternalExternalCustomerIdValidationError {
+    #[error("must contain at least 1 characters")]
+    TooShort,
+}
+impl SubscriptionCreateExternalExternalCustomerId {
+    /// Validate a value.
+    pub fn try_new(
+        value: impl Into<String>,
+    ) -> Result<Self, SubscriptionCreateExternalExternalCustomerIdValidationError> {
+        Self::try_from(value.into())
+    }
+
+    /// Take the underlying value.
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+}
+impl TryFrom<String> for SubscriptionCreateExternalExternalCustomerId {
+    type Error = SubscriptionCreateExternalExternalCustomerIdValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        let length = value.chars().count() as u64;
+        if length < 1u64 {
+            return Err(SubscriptionCreateExternalExternalCustomerIdValidationError::TooShort);
+        }
+        Ok(Self(value))
+    }
+}
+impl From<SubscriptionCreateExternalExternalCustomerId> for String {
+    fn from(value: SubscriptionCreateExternalExternalCustomerId) -> Self {
+        value.0
+    }
+}
+impl<'de> serde::Deserialize<'de> for SubscriptionCreateExternalExternalCustomerId {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <String as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+impl TryFrom<&str> for SubscriptionCreateExternalExternalCustomerId {
+    type Error = SubscriptionCreateExternalExternalCustomerIdValidationError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::try_from(value.to_owned())
+    }
+}
+impl AsRef<str> for SubscriptionCreateExternalExternalCustomerId {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Eq,
+    Ord,
+    Hash,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref,
+)]
+#[serde(transparent)]
+pub struct SubscriptionCreateExternalMetadataKey(String);
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum SubscriptionCreateExternalMetadataKeyValidationError {
+    #[error("must contain at least 1 characters")]
+    TooShort,
+    #[error("must contain at most 40 characters")]
+    TooLong,
+}
+impl SubscriptionCreateExternalMetadataKey {
+    /// Validate a value.
+    pub fn try_new(
+        value: impl Into<String>,
+    ) -> Result<Self, SubscriptionCreateExternalMetadataKeyValidationError> {
+        Self::try_from(value.into())
+    }
+
+    /// Take the underlying value.
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+}
+impl TryFrom<String> for SubscriptionCreateExternalMetadataKey {
+    type Error = SubscriptionCreateExternalMetadataKeyValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        let length = value.chars().count() as u64;
+        if length < 1u64 {
+            return Err(SubscriptionCreateExternalMetadataKeyValidationError::TooShort);
+        }
+        if length > 40u64 {
+            return Err(SubscriptionCreateExternalMetadataKeyValidationError::TooLong);
+        }
+        Ok(Self(value))
+    }
+}
+impl From<SubscriptionCreateExternalMetadataKey> for String {
+    fn from(value: SubscriptionCreateExternalMetadataKey) -> Self {
+        value.0
+    }
+}
+impl<'de> serde::Deserialize<'de> for SubscriptionCreateExternalMetadataKey {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <String as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+impl TryFrom<&str> for SubscriptionCreateExternalMetadataKey {
+    type Error = SubscriptionCreateExternalMetadataKeyValidationError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::try_from(value.to_owned())
+    }
+}
+impl AsRef<str> for SubscriptionCreateExternalMetadataKey {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
+#[derive(
+    Debug,
+    Clone,
+    PartialEq,
+    PartialOrd,
+    Eq,
+    Ord,
+    Hash,
+    serde::Serialize,
+    derive_more::Display,
+    derive_more::Deref,
+)]
+#[serde(transparent)]
+pub struct SubscriptionCreateExternalMetadataValueString(String);
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+pub enum SubscriptionCreateExternalMetadataValueStringValidationError {
+    #[error("must contain at least 1 characters")]
+    TooShort,
+    #[error("must contain at most 500 characters")]
+    TooLong,
+}
+impl SubscriptionCreateExternalMetadataValueString {
+    /// Validate a value.
+    pub fn try_new(
+        value: impl Into<String>,
+    ) -> Result<Self, SubscriptionCreateExternalMetadataValueStringValidationError> {
+        Self::try_from(value.into())
+    }
+
+    /// Take the underlying value.
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+}
+impl TryFrom<String> for SubscriptionCreateExternalMetadataValueString {
+    type Error = SubscriptionCreateExternalMetadataValueStringValidationError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        let length = value.chars().count() as u64;
+        if length < 1u64 {
+            return Err(SubscriptionCreateExternalMetadataValueStringValidationError::TooShort);
+        }
+        if length > 500u64 {
+            return Err(SubscriptionCreateExternalMetadataValueStringValidationError::TooLong);
+        }
+        Ok(Self(value))
+    }
+}
+impl From<SubscriptionCreateExternalMetadataValueString> for String {
+    fn from(value: SubscriptionCreateExternalMetadataValueString) -> Self {
+        value.0
+    }
+}
+impl<'de> serde::Deserialize<'de> for SubscriptionCreateExternalMetadataValueString {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let value = <String as serde::Deserialize>::deserialize(deserializer)?;
+        Self::try_from(value).map_err(serde::de::Error::custom)
+    }
+}
+impl TryFrom<&str> for SubscriptionCreateExternalMetadataValueString {
+    type Error = SubscriptionCreateExternalMetadataValueStringValidationError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::try_from(value.to_owned())
+    }
+}
+impl AsRef<str> for SubscriptionCreateExternalMetadataValueString {
+    fn as_ref(&self) -> &str {
+        &self.0
+    }
+}
 #[derive(
     Debug,
     Clone,

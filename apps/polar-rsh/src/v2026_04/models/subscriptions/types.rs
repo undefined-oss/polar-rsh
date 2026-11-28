@@ -1279,7 +1279,7 @@ pub struct SubscriptionUpdateBase {
     ///Set or extend the trial period of the subscription. If set to `now`, the trial will end immediately and the first billing cycle will be charged synchronously. The subscription remains trialing if the payment fails.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub trial_end: presence_rs::Presence<
-        crate::v2026_04::models::subscriptions::unions::SubscriptionUpdateBaseTrialEndUnion,
+        crate::v2026_04::models::subscriptions::unions::SubscriptionUpdateBaseTrialEndAnyOf0Union,
     >,
 }
 #[allow(clippy::type_complexity)]
@@ -1344,7 +1344,7 @@ impl SubscriptionUpdateBase {
     #[allow(clippy::should_implement_trait)]
     pub fn trial_end(
         mut self,
-        value: crate::v2026_04::models::subscriptions::unions::SubscriptionUpdateBaseTrialEndUnion,
+        value: crate::v2026_04::models::subscriptions::unions::SubscriptionUpdateBaseTrialEndAnyOf0Union,
     ) -> Self {
         self.trial_end = presence_rs::Presence::Some(value);
         self

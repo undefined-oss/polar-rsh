@@ -79,9 +79,6 @@ impl<'de> serde::Deserialize<'de> for Discount {
 pub enum DiscountCreate {
     #[serde(rename = "fixed")]
     Fixed {
-        ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        external_id: presence_rs::Presence<String>,
         ///Key-value object allowing you to store additional information.
         ///
         ///The key must be a string with a maximum length of **40 characters**.
@@ -154,9 +151,6 @@ pub enum DiscountCreate {
     },
     #[serde(rename = "percentage")]
     Percentage {
-        ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        external_id: presence_rs::Presence<String>,
         ///Key-value object allowing you to store additional information.
         ///
         ///The key must be a string with a maximum length of **40 characters**.

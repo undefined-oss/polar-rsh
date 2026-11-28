@@ -254,16 +254,30 @@ pub enum CustomFieldUpdate {
                 crate::v2027_01::models::custom_fields::unions::CustomFieldUpdateTextMetadataAdditionalPropertiesUnion,
             >,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        name: presence_rs::Presence<
+        ///Name of the custom field.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        name: Option<
             crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateTextName,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        slug: presence_rs::Presence<
+        ///Identifier of the custom field. It'll be used as key when storing the value. Must be unique across the organization.It can only contain ASCII letters, numbers and hyphens.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        slug: Option<
             crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateTextSlug,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        properties: presence_rs::Presence<
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        properties: Option<
             crate::v2027_01::models::common::types::CustomFieldTextProperties,
         >,
     },
@@ -291,16 +305,30 @@ pub enum CustomFieldUpdate {
                 crate::v2027_01::models::custom_fields::unions::CustomFieldUpdateNumberMetadataAdditionalPropertiesUnion,
             >,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        name: presence_rs::Presence<
+        ///Name of the custom field.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        name: Option<
             crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateNumberName,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        slug: presence_rs::Presence<
+        ///Identifier of the custom field. It'll be used as key when storing the value. Must be unique across the organization.It can only contain ASCII letters, numbers and hyphens.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        slug: Option<
             crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateNumberSlug,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        properties: presence_rs::Presence<
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        properties: Option<
             crate::v2027_01::models::common::types::CustomFieldNumberProperties,
         >,
     },
@@ -328,16 +356,30 @@ pub enum CustomFieldUpdate {
                 crate::v2027_01::models::custom_fields::unions::CustomFieldUpdateDateMetadataAdditionalPropertiesUnion,
             >,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        name: presence_rs::Presence<
+        ///Name of the custom field.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        name: Option<
             crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateDateName,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        slug: presence_rs::Presence<
+        ///Identifier of the custom field. It'll be used as key when storing the value. Must be unique across the organization.It can only contain ASCII letters, numbers and hyphens.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        slug: Option<
             crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateDateSlug,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        properties: presence_rs::Presence<
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        properties: Option<
             crate::v2027_01::models::common::types::CustomFieldDateProperties,
         >,
     },
@@ -365,16 +407,30 @@ pub enum CustomFieldUpdate {
                 crate::v2027_01::models::custom_fields::unions::CustomFieldUpdateCheckboxMetadataAdditionalPropertiesUnion,
             >,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        name: presence_rs::Presence<
+        ///Name of the custom field.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        name: Option<
             crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateCheckboxName,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        slug: presence_rs::Presence<
+        ///Identifier of the custom field. It'll be used as key when storing the value. Must be unique across the organization.It can only contain ASCII letters, numbers and hyphens.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        slug: Option<
             crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateCheckboxSlug,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        properties: presence_rs::Presence<
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        properties: Option<
             crate::v2027_01::models::common::types::CustomFieldCheckboxProperties,
         >,
     },
@@ -402,16 +458,30 @@ pub enum CustomFieldUpdate {
                 crate::v2027_01::models::custom_fields::unions::CustomFieldUpdateSelectMetadataAdditionalPropertiesUnion,
             >,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        name: presence_rs::Presence<
+        ///Name of the custom field.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        name: Option<
             crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateSelectName,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        slug: presence_rs::Presence<
+        ///Identifier of the custom field. It'll be used as key when storing the value. Must be unique across the organization.It can only contain ASCII letters, numbers and hyphens.
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        slug: Option<
             crate::v2027_01::models::custom_fields::newtypes::CustomFieldUpdateSelectSlug,
         >,
-        #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-        properties: presence_rs::Presence<
+        #[serde(
+            default,
+            skip_serializing_if = "Option::is_none",
+            deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+        )]
+        properties: Option<
             crate::v2027_01::models::common::types::CustomFieldSelectProperties,
         >,
     },

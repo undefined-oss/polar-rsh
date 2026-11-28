@@ -26,7 +26,7 @@ pub enum CheckoutsClientConfirmError<TransportError> {
         "{message}: {0}",
         message = "The payment failed or the shared payment token was rejected."
     )]
-    PaymentError(#[source] crate::v2027_01::models::checkouts::types::PaymentError),
+    PaymentError(#[source] crate::v2027_01::models::common::types::PaymentError),
     /// The payment failed or the shared payment token was rejected.
     #[error(
         "{message}: {0}",
@@ -102,7 +102,7 @@ pub enum CheckoutsClientConfirmError<TransportError> {
 }
 pub(super) type CheckoutsClientConfirmErrors = (
     crate::v2027_01::error::RequestFailure,
-    crate::v2027_01::models::checkouts::types::PaymentError,
+    crate::v2027_01::models::common::types::PaymentError,
     crate::v2027_01::models::checkouts::types::SharedPaymentTokenError,
     crate::v2027_01::models::common::types::ResourceNotFound,
     crate::v2027_01::models::checkouts::types::AlreadyActiveSubscriptionError,
@@ -218,9 +218,7 @@ where
                     #[derive(serde::Deserialize)]
                     #[serde(untagged)]
                     enum ResponseError {
-                        Payload0(
-                            crate::v2027_01::models::checkouts::types::PaymentError,
-                        ),
+                        Payload0(crate::v2027_01::models::common::types::PaymentError),
                         Payload1(
                             crate::v2027_01::models::checkouts::types::SharedPaymentTokenError,
                         ),

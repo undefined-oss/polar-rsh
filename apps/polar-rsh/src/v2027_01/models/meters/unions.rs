@@ -55,14 +55,15 @@ pub enum MeterCreateMetadataAdditionalPropertiesUnion {
     Number(f64),
     Boolean(bool),
 }
+/// The aggregation to apply on the filtered events to calculate the meter.
 #[derive(Debug, Clone, serde::Serialize)]
 #[serde(untagged)]
-pub enum MeterUpdateAggregationAnyOf0Union {
+pub enum MeterUpdateAggregationUnion {
     Count(crate::v2027_01::models::common::types::CountAggregation),
     Avg(crate::v2027_01::models::common::types::PropertyAggregation),
     Unique(crate::v2027_01::models::common::types::UniqueAggregation),
 }
-impl<'de> serde::Deserialize<'de> for MeterUpdateAggregationAnyOf0Union {
+impl<'de> serde::Deserialize<'de> for MeterUpdateAggregationUnion {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
@@ -76,7 +77,7 @@ impl<'de> serde::Deserialize<'de> for MeterUpdateAggregationAnyOf0Union {
                     "missing or non-string discriminator ",
                     "func",
                     " for ",
-                    "MeterUpdateAggregationAnyOf0Union"
+                    "MeterUpdateAggregationUnion"
                 ))
             })?
             .to_owned();
@@ -98,7 +99,7 @@ impl<'de> serde::Deserialize<'de> for MeterUpdateAggregationAnyOf0Union {
             .map_err(serde::de::Error::custom),
             _ => Err(serde::de::Error::custom(format!(
                 "unknown {} discriminator {:?} for {}",
-                "func", tag, "MeterUpdateAggregationAnyOf0Union"
+                "func", tag, "MeterUpdateAggregationUnion"
             ))),
         }
     }

@@ -1,4 +1,4 @@
-/// The name of the member.
+/// The new name for the member.
 #[derive(
     Debug,
     Clone,

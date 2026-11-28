@@ -71,8 +71,8 @@ impl AsRef<str> for EventTypeLabel {
         &self.0
     }
 }
-/// Property path to extract dynamic label from event metadata (e.g., 'subject'
-/// or 'metadata.subject').
+/// Property path to extract a dynamic label from event metadata (e.g.,
+/// 'subject' or 'metadata.subject'). Set to `null` to clear it.
 #[derive(
     Debug,
     Clone,

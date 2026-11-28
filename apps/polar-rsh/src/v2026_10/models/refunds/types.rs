@@ -290,6 +290,25 @@ impl RefundDispute {
     }
 }
 #[derive(Debug, Clone)]
+pub struct RefundPaymentAlreadyRefundedByStripeRequired {
+    pub detail: String,
+}
+#[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
+#[allow(clippy::type_complexity)]
+#[serde(deny_unknown_fields)]
+#[derive(thiserror::Error)]
+#[error("{self:?}")]
+pub struct RefundPaymentAlreadyRefundedByStripe {
+    pub error: monostate::MustBe!("RefundPaymentAlreadyRefundedByStripe"),
+    pub detail: String,
+}
+#[allow(clippy::type_complexity)]
+impl RefundPaymentAlreadyRefundedByStripe {
+    pub fn new(required: RefundPaymentAlreadyRefundedByStripeRequired) -> Self {
+        Self { error: Default::default(), detail: required.detail }
+    }
+}
+#[derive(Debug, Clone)]
 pub struct RefundedAlreadyRequired {
     pub detail: String,
 }

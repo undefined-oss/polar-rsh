@@ -19,9 +19,6 @@ pub struct DiscountFixedCreateRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct DiscountFixedCreate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -102,7 +99,6 @@ pub struct DiscountFixedCreate {
 impl DiscountFixedCreate {
     pub fn new(required: DiscountFixedCreateRequired) -> Self {
         Self {
-            external_id: presence_rs::Presence::Absent,
             metadata: None,
             name: required.name,
             code: presence_rs::Presence::Absent,
@@ -117,15 +113,6 @@ impl DiscountFixedCreate {
             duration_in_months: presence_rs::Presence::Absent,
             amounts: required.amounts,
         }
-    }
-
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource. It must start with a
-    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[allow(clippy::should_implement_trait)]
-    pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
-        self
     }
 
     /// Key-value object allowing you to store additional information.
@@ -246,9 +233,6 @@ pub struct DiscountFixedOnceForeverDurationRequired {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -288,12 +272,6 @@ pub struct DiscountFixedOnceForeverDuration {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -340,7 +318,6 @@ impl DiscountFixedOnceForeverDuration {
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
-            external_id: required.external_id,
             metadata: required.metadata,
             name: required.name,
             code: required.code,
@@ -367,9 +344,6 @@ pub struct DiscountFixedRepeatDurationRequired {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -411,12 +385,6 @@ pub struct DiscountFixedRepeatDuration {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -464,7 +432,6 @@ impl DiscountFixedRepeatDuration {
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
-            external_id: required.external_id,
             metadata: required.metadata,
             name: required.name,
             code: required.code,
@@ -499,9 +466,6 @@ pub struct DiscountPercentageCreateRequired {
 #[allow(clippy::type_complexity)]
 #[serde(deny_unknown_fields)]
 pub struct DiscountPercentageCreate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -582,7 +546,6 @@ pub struct DiscountPercentageCreate {
 impl DiscountPercentageCreate {
     pub fn new(required: DiscountPercentageCreateRequired) -> Self {
         Self {
-            external_id: presence_rs::Presence::Absent,
             metadata: None,
             name: required.name,
             code: presence_rs::Presence::Absent,
@@ -597,15 +560,6 @@ impl DiscountPercentageCreate {
             duration_in_months: presence_rs::Presence::Absent,
             basis_points: required.basis_points,
         }
-    }
-
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource. It must start with a
-    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[allow(clippy::should_implement_trait)]
-    pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
-        self
     }
 
     /// Key-value object allowing you to store additional information.
@@ -727,9 +681,6 @@ pub struct DiscountPercentageOnceForeverDurationRequired {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -770,12 +721,6 @@ pub struct DiscountPercentageOnceForeverDuration {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -822,7 +767,6 @@ impl DiscountPercentageOnceForeverDuration {
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
-            external_id: required.external_id,
             metadata: required.metadata,
             name: required.name,
             code: required.code,
@@ -850,9 +794,6 @@ pub struct DiscountPercentageRepeatDurationRequired {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -895,12 +836,6 @@ pub struct DiscountPercentageRepeatDuration {
     pub modified_at: Option<jiff::Timestamp>,
     /// The ID of the object.
     pub id: crate::v2027_01::models::common::ids::DiscountId,
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource.
-    #[serde(
-        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_required_nullable"
-    )]
-    pub external_id: Option<String>,
     pub metadata: crate::v2027_01::models::common::aliases::MetadataOutputType,
     /// Name of the discount. Will be displayed to the customer when the
     /// discount is applied.
@@ -948,7 +883,6 @@ impl DiscountPercentageRepeatDuration {
             created_at: required.created_at,
             modified_at: required.modified_at,
             id: required.id,
-            external_id: required.external_id,
             metadata: required.metadata,
             name: required.name,
             code: required.code,
@@ -1094,9 +1028,6 @@ impl DiscountProduct {
 #[serde(deny_unknown_fields)]
 #[derive(Default)]
 pub struct DiscountUpdate {
-    ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -1119,10 +1050,13 @@ pub struct DiscountUpdate {
             crate::v2027_01::models::discounts::unions::DiscountUpdateMetadataAdditionalPropertiesUnion,
         >,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name: presence_rs::Presence<
-        crate::v2027_01::models::discounts::newtypes::DiscountName,
-    >,
+    ///Name of the discount. Will be displayed to the customer when the discount is applied.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub name: Option<crate::v2027_01::models::discounts::newtypes::DiscountName>,
     ///Code customers can use to apply the discount during checkout. Must be between 3 and 256 characters long and contain only alphanumeric characters.If not provided, the discount can only be applied via the API.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub code: presence_rs::Presence<String>,
@@ -1142,47 +1076,66 @@ pub struct DiscountUpdate {
     pub max_redemptions_per_customer: presence_rs::Presence<
         crate::v2027_01::models::discounts::newtypes::DiscountMaxRedemptionsPerCustomer,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub duration: presence_rs::Presence<
-        crate::v2027_01::models::common::enums::DiscountDuration,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub duration_in_months: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub duration: Option<crate::v2027_01::models::common::enums::DiscountDuration>,
+    ///Number of months the discount should be applied.
+    ///
+    ///For this to work on yearly pricing, you should multiply this by 12.
+    ///For example, to apply the discount for 2 years, set this to 24.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub duration_in_months: Option<
         crate::v2027_01::models::discounts::newtypes::DiscountDurationInMonths,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub r#type: presence_rs::Presence<
-        crate::v2027_01::models::common::enums::DiscountType,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub amounts: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub r#type: Option<crate::v2027_01::models::common::enums::DiscountType>,
+    ///Map of currency to fixed amount to discount from the total. This allows specifying different discount amounts for different currencies.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub amounts: Option<
         std::collections::BTreeMap<
             crate::v2027_01::models::common::enums::PresentmentCurrency,
             crate::v2027_01::models::discounts::newtypes::DiscountAmountsValue,
         >,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub basis_points: presence_rs::Presence<
+    ///Discount percentage in basis points.
+    ///
+    ///A basis point is 1/100th of a percent.
+    ///For example, to create a 25.5% discount, set this to 2550.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub basis_points: Option<
         crate::v2027_01::models::discounts::newtypes::DiscountBasisPoints,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub products: presence_rs::Presence<
-        Vec<crate::v2027_01::models::common::ids::ProductId>,
-    >,
+    ///List of product IDs the discount can be applied to.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub products: Option<Vec<crate::v2027_01::models::common::ids::ProductId>>,
 }
 #[allow(clippy::type_complexity)]
 impl DiscountUpdate {
     pub fn new() -> Self {
         Self::default()
-    }
-
-    /// An ID from your own system to reference this resource. It must be unique
-    /// within the organization for this type of resource. It must start with a
-    /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[allow(clippy::should_implement_trait)]
-    pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
-        self
     }
 
     /// Key-value object allowing you to store additional information.
@@ -1208,12 +1161,14 @@ impl DiscountUpdate {
         self
     }
 
+    /// Name of the discount. Will be displayed to the customer when the
+    /// discount is applied.
     #[allow(clippy::should_implement_trait)]
     pub fn name(
         mut self,
         value: crate::v2027_01::models::discounts::newtypes::DiscountName,
     ) -> Self {
-        self.name = presence_rs::Presence::Some(value);
+        self.name = Some(value);
         self
     }
 
@@ -1267,25 +1222,31 @@ impl DiscountUpdate {
         mut self,
         value: crate::v2027_01::models::common::enums::DiscountDuration,
     ) -> Self {
-        self.duration = presence_rs::Presence::Some(value);
+        self.duration = Some(value);
         self
     }
 
+    /// Number of months the discount should be applied.
+    ///
+    /// For this to work on yearly pricing, you should multiply this by 12.
+    /// For example, to apply the discount for 2 years, set this to 24.
     #[allow(clippy::should_implement_trait)]
     pub fn duration_in_months(
         mut self,
         value: crate::v2027_01::models::discounts::newtypes::DiscountDurationInMonths,
     ) -> Self {
-        self.duration_in_months = presence_rs::Presence::Some(value);
+        self.duration_in_months = Some(value);
         self
     }
 
     #[allow(clippy::should_implement_trait)]
     pub fn r#type(mut self, value: crate::v2027_01::models::common::enums::DiscountType) -> Self {
-        self.r#type = presence_rs::Presence::Some(value);
+        self.r#type = Some(value);
         self
     }
 
+    /// Map of currency to fixed amount to discount from the total. This allows
+    /// specifying different discount amounts for different currencies.
     #[allow(clippy::should_implement_trait)]
     pub fn amounts(
         mut self,
@@ -1294,22 +1255,27 @@ impl DiscountUpdate {
             crate::v2027_01::models::discounts::newtypes::DiscountAmountsValue,
         >,
     ) -> Self {
-        self.amounts = presence_rs::Presence::Some(value);
+        self.amounts = Some(value);
         self
     }
 
+    /// Discount percentage in basis points.
+    ///
+    /// A basis point is 1/100th of a percent.
+    /// For example, to create a 25.5% discount, set this to 2550.
     #[allow(clippy::should_implement_trait)]
     pub fn basis_points(
         mut self,
         value: crate::v2027_01::models::discounts::newtypes::DiscountBasisPoints,
     ) -> Self {
-        self.basis_points = presence_rs::Presence::Some(value);
+        self.basis_points = Some(value);
         self
     }
 
+    /// List of product IDs the discount can be applied to.
     #[allow(clippy::should_implement_trait)]
     pub fn products(mut self, value: Vec<crate::v2027_01::models::common::ids::ProductId>) -> Self {
-        self.products = presence_rs::Presence::Some(value);
+        self.products = Some(value);
         self
     }
 }

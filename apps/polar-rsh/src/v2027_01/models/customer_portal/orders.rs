@@ -1,16 +1,37 @@
+pub mod create;
 pub mod generate_invoice;
 pub mod get;
 pub mod invoice;
 pub mod list;
+pub mod pay;
 pub mod receipt;
 pub mod update;
-pub use self::{generate_invoice::*, get::*, invoice::*, list::*, receipt::*, update::*};
+pub use self::{
+    create::*, generate_invoice::*, get::*, invoice::*, list::*, pay::*, receipt::*, update::*,
+};
 pub struct CustomerPortalOrders<'a, ClientService> {
     client: &'a crate::v2027_01::client::PolarClient<ClientService>,
 }
 impl<'a, ClientService> CustomerPortalOrders<'a, ClientService> {
     pub(crate) fn new(client: &'a crate::v2027_01::client::PolarClient<ClientService>) -> Self {
         Self { client }
+    }
+
+    /// Prepare a draft order for the first paid period of an ended trial.
+    ///
+    /// **Scopes**: `customer_portal:write`
+    pub fn create(
+        &self,
+        payload: crate::v2027_01::models::orders::types::CustomerOrderCreate,
+    ) -> crate::v2027_01::models::customer_portal::orders::CustomerPortalOrdersCreate<
+        'a,
+        ClientService,
+    > {
+        crate::v2027_01::models::customer_portal::orders::CustomerPortalOrdersCreate {
+            client: self.client,
+            options: crate::v2027_01::client::RequestOptions::default(),
+            payload,
+        }
     }
 
     /// Trigger generation of an order's invoice.
@@ -73,6 +94,23 @@ impl<'a, ClientService> CustomerPortalOrders<'a, ClientService> {
             client: self.client,
             options: crate::v2027_01::client::RequestOptions::default(),
             params: None,
+        }
+    }
+
+    /// Submit payment for an order for asynchronous settlement.
+    ///
+    /// **Scopes**: `customer_portal:write`
+    pub fn pay(
+        &self,
+        id: crate::v2027_01::models::common::ids::OrderId,
+        payload: crate::v2027_01::models::orders::unions::CustomerOrderPay,
+    ) -> crate::v2027_01::models::customer_portal::orders::CustomerPortalOrdersPay<'a, ClientService>
+    {
+        crate::v2027_01::models::customer_portal::orders::CustomerPortalOrdersPay {
+            client: self.client,
+            options: crate::v2027_01::client::RequestOptions::default(),
+            id,
+            payload,
         }
     }
 

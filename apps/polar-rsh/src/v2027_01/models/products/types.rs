@@ -79,8 +79,12 @@ pub struct ProductCreateOneTimeRequired {
 #[serde(deny_unknown_fields)]
 pub struct ProductCreateOneTime {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -157,7 +161,7 @@ pub struct ProductCreateOneTime {
 impl ProductCreateOneTime {
     pub fn new(required: ProductCreateOneTimeRequired) -> Self {
         Self {
-            external_id: presence_rs::Presence::Absent,
+            external_id: None,
             metadata: None,
             name: required.name,
             description: presence_rs::Presence::Absent,
@@ -176,7 +180,7 @@ impl ProductCreateOneTime {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -286,8 +290,12 @@ pub struct ProductCreateRecurringRequired {
 #[serde(deny_unknown_fields)]
 pub struct ProductCreateRecurring {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -388,7 +396,7 @@ pub struct ProductCreateRecurring {
 impl ProductCreateRecurring {
     pub fn new(required: ProductCreateRecurringRequired) -> Self {
         Self {
-            external_id: presence_rs::Presence::Absent,
+            external_id: None,
             metadata: None,
             name: required.name,
             description: presence_rs::Presence::Absent,
@@ -412,7 +420,7 @@ impl ProductCreateRecurring {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -580,8 +588,12 @@ impl ProductNotDeletable {
 #[derive(Default)]
 pub struct ProductUpdate {
     ///An ID from your own system to reference this resource. It must be unique within the organization for this type of resource. It must start with a letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub external_id: presence_rs::Presence<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub external_id: Option<String>,
     ///Key-value object allowing you to store additional information.
     ///
     ///The key must be a string with a maximum length of **40 characters**.
@@ -614,50 +626,62 @@ pub struct ProductUpdate {
     pub trial_interval_count: presence_rs::Presence<
         crate::v2027_01::models::products::newtypes::ProductTrialIntervalCount,
     >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub name: presence_rs::Presence<
-        crate::v2027_01::models::products::newtypes::ProductName,
-    >,
+    ///The name of the product.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub name: Option<crate::v2027_01::models::products::newtypes::ProductName>,
     ///The description of the product.
     #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
     pub description: presence_rs::Presence<String>,
-    ///The recurring interval of the product. If `None`, the product is a one-time purchase. **Can only be set on legacy recurring products. Once set, it can't be changed.**
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub recurring_interval: presence_rs::Presence<
-        crate::v2027_01::models::common::enums::RecurringInterval,
-    >,
-    ///Number of interval units of the subscription. If this is set to 1 the charge will happen every interval (e.g. every month), if set to 2 it will be every other month, and so on. Once set, it can't be changed.**
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub recurring_interval_count: presence_rs::Presence<
-        crate::v2027_01::models::products::newtypes::ProductRecurringIntervalCount,
-    >,
     ///Whether the product is archived. If `true`, the product won't be available for purchase anymore. Existing customers will still have access to their benefits, and subscriptions will continue normally.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub is_archived: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub is_archived: Option<bool>,
     ///The visibility of the product.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub visibility: presence_rs::Presence<
-        crate::v2027_01::models::common::enums::ProductVisibility,
-    >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub visibility: Option<crate::v2027_01::models::common::enums::ProductVisibility>,
     ///List of available prices for this product. If you want to keep existing prices, include them in the list as an `ExistingProductPrice` object.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub prices: presence_rs::Presence<
-        Vec<
-            crate::v2027_01::models::products::unions::ProductUpdatePricesAnyOf0ItemsUnion,
-        >,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub prices: Option<
+        Vec<crate::v2027_01::models::products::unions::ProductUpdatePricesItemsUnion>,
     >,
     ///List of file IDs. Each one must be on the same organization as the product, of type `product_media` and correctly uploaded.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub medias: presence_rs::Presence<
-        Vec<crate::v2027_01::models::common::ids::ProductUpdateMediasId>,
-    >,
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub attached_custom_fields: presence_rs::Presence<
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub medias: Option<Vec<crate::v2027_01::models::common::ids::ProductUpdateMediasId>>,
+    ///List of custom fields to attach.
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub attached_custom_fields: Option<
         Vec<crate::v2027_01::models::products::types::AttachedCustomFieldCreate>,
     >,
     ///Whether customers must provide a payment method to start a trial. If `false`, customers can start a trial without entering payment details.
-    #[serde(default, skip_serializing_if = "presence_rs::Presence::is_absent")]
-    pub trial_payment_setup_required: presence_rs::Presence<bool>,
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::v2027_01::models::common::serde_helpers::deserialize_optional_value"
+    )]
+    pub trial_payment_setup_required: Option<bool>,
 }
 #[allow(clippy::type_complexity)]
 impl ProductUpdate {
@@ -670,7 +694,7 @@ impl ProductUpdate {
     /// letter or digit and contain only letters, digits, `_`, `-`, `.` and `:`.
     #[allow(clippy::should_implement_trait)]
     pub fn external_id(mut self, value: impl Into<String>) -> Self {
-        self.external_id = presence_rs::Presence::Some(value.into());
+        self.external_id = Some(value.into());
         self
     }
 
@@ -717,9 +741,10 @@ impl ProductUpdate {
         self
     }
 
+    /// The name of the product.
     #[allow(clippy::should_implement_trait)]
     pub fn name(mut self, value: crate::v2027_01::models::products::newtypes::ProductName) -> Self {
-        self.name = presence_rs::Presence::Some(value);
+        self.name = Some(value);
         self
     }
 
@@ -730,36 +755,12 @@ impl ProductUpdate {
         self
     }
 
-    /// The recurring interval of the product. If `None`, the product is a
-    /// one-time purchase. **Can only be set on legacy recurring products. Once
-    /// set, it can't be changed.**
-    #[allow(clippy::should_implement_trait)]
-    pub fn recurring_interval(
-        mut self,
-        value: crate::v2027_01::models::common::enums::RecurringInterval,
-    ) -> Self {
-        self.recurring_interval = presence_rs::Presence::Some(value);
-        self
-    }
-
-    /// Number of interval units of the subscription. If this is set to 1 the
-    /// charge will happen every interval (e.g. every month), if set to 2 it
-    /// will be every other month, and so on. Once set, it can't be changed.**
-    #[allow(clippy::should_implement_trait)]
-    pub fn recurring_interval_count(
-        mut self,
-        value: crate::v2027_01::models::products::newtypes::ProductRecurringIntervalCount,
-    ) -> Self {
-        self.recurring_interval_count = presence_rs::Presence::Some(value);
-        self
-    }
-
     /// Whether the product is archived. If `true`, the product won't be
     /// available for purchase anymore. Existing customers will still have
     /// access to their benefits, and subscriptions will continue normally.
     #[allow(clippy::should_implement_trait)]
     pub fn is_archived(mut self, value: bool) -> Self {
-        self.is_archived = presence_rs::Presence::Some(value);
+        self.is_archived = Some(value);
         self
     }
 
@@ -769,7 +770,7 @@ impl ProductUpdate {
         mut self,
         value: crate::v2027_01::models::common::enums::ProductVisibility,
     ) -> Self {
-        self.visibility = presence_rs::Presence::Some(value);
+        self.visibility = Some(value);
         self
     }
 
@@ -778,9 +779,9 @@ impl ProductUpdate {
     #[allow(clippy::should_implement_trait)]
     pub fn prices(
         mut self,
-        value: Vec<crate::v2027_01::models::products::unions::ProductUpdatePricesAnyOf0ItemsUnion>,
+        value: Vec<crate::v2027_01::models::products::unions::ProductUpdatePricesItemsUnion>,
     ) -> Self {
-        self.prices = presence_rs::Presence::Some(value);
+        self.prices = Some(value);
         self
     }
 
@@ -791,16 +792,17 @@ impl ProductUpdate {
         mut self,
         value: Vec<crate::v2027_01::models::common::ids::ProductUpdateMediasId>,
     ) -> Self {
-        self.medias = presence_rs::Presence::Some(value);
+        self.medias = Some(value);
         self
     }
 
+    /// List of custom fields to attach.
     #[allow(clippy::should_implement_trait)]
     pub fn attached_custom_fields(
         mut self,
         value: Vec<crate::v2027_01::models::products::types::AttachedCustomFieldCreate>,
     ) -> Self {
-        self.attached_custom_fields = presence_rs::Presence::Some(value);
+        self.attached_custom_fields = Some(value);
         self
     }
 
@@ -808,7 +810,7 @@ impl ProductUpdate {
     /// `false`, customers can start a trial without entering payment details.
     #[allow(clippy::should_implement_trait)]
     pub fn trial_payment_setup_required(mut self, value: bool) -> Self {
-        self.trial_payment_setup_required = presence_rs::Presence::Some(value);
+        self.trial_payment_setup_required = Some(value);
         self
     }
 }
